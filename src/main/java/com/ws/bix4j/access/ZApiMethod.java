@@ -34,7 +34,7 @@ public class ZApiMethod {
 
     protected String sendRequest(String requestJson) throws ZApiException {
 
-        logger.debug("api请求json：\n" + requestJson);
+        logger.debug("api request json：\n" + requestJson);
 
         // HTTP POST
         HttpResponse httpResponse;
@@ -50,19 +50,19 @@ public class ZApiMethod {
             responseBody = EntityUtils.toString(httpResponse.getEntity());
 
         } catch (Exception e) {
-            throw new ZApiException("HTTP 请求错误");
+            throw new ZApiException("HTTP request error");
         }
 
         // HTTP 状态错误
         if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new ZApiException("HTTP 错误 : " + responseBody);
+            throw new ZApiException("HTTP error : " + responseBody);
         }
 
 
         // API 错误
         JSONObject responseJO = JSON.parseObject(responseBody);
         if (responseJO.containsKey("error")) {
-            String message = "API 错误:" + responseJO.getString("error");
+            String message = "API error:" + responseJO.getString("error");
             message += "\nRequest:" + requestJson;
             throw new ZApiException(message);
         }
@@ -71,11 +71,11 @@ public class ZApiMethod {
         // check id
         JSONObject requestJO = JSON.parseObject(requestJson);
         if (!requestJO.getInteger("id").equals(responseJO.getInteger("id"))) {
-            throw new ZApiException("id 不匹配");
+            throw new ZApiException("id not match");
         }
 
 
-        logger.debug("api响应json：\n" + responseBody);
+        logger.debug("api response json：\n" + responseBody);
 
         return responseBody;
     }

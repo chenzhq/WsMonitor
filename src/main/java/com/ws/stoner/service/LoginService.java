@@ -28,6 +28,11 @@ public class LoginService {
         } catch (ZApiException e) {
             e.printStackTrace();
         }
+        logger.info("{} login success.", loginFormQuery.getUsername());
+
+        if(loginFormQuery.isRememberMe()) {
+
+        }
         return result;
     }
 }
