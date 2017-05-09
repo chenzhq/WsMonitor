@@ -1,5 +1,6 @@
 package com.ws.stoner.controller;
 
+import com.ws.bix4j.ZApiException;
 import com.ws.bix4j.access.user.UserLoginResponse;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.bean.UserDO;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +26,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +50,23 @@ public class LoginController {
     private Map<String, String> sessionMap;
 
     @RequestMapping(value = {"/", ""})
-    public String index(Model model) {
+    public String index(HttpServletRequest request, Model model) {
+
+        String zbx_session = getCookies(request.getCookies(), "zbx_session");
+        if(zbx_session != null) {
+            try {
+                loginService.loginWithCookie(zbx_session);
+                request.getSession().setAttribute("zbx_session", zbx_session);
+                sessionMap.put(request.getSession().getId(), zbx_session);
+                return "redirect:/dashboard";
+            } catch (ZApiException e) {
+                if("re-login".equals(e.getMessage())) {
+                    // TODO: 2017/5/9 zbx_session过期或失效，需要重新登录
+//                    model.addAttribute("loginFormQuery", new LoginFormQuery());
+//                    return "login";
+                }
+            }
+        }
         model.addAttribute("loginFormQuery", new LoginFormQuery());
         return "login";
     }
@@ -65,38 +84,29 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public String login(@ModelAttribute LoginFormQuery loginFormQuery, Model model, HttpSession session,
-                        RedirectAttributes redirectAttributes, HttpServletRequest httpRequest, HttpServletResponse response) {
-        if(getCookies(httpRequest.getCookies(), "zbx_session") != null) {
-
+    public String login(@Valid @ModelAttribute LoginFormQuery loginFormQuery, BindingResult bindingResult,
+                        HttpSession session, HttpServletResponse response) {
+        if(bindingResult.hasErrors()) {
+            return "login";
         }
+
         UserLoginResponse.Result result = (UserLoginResponse.Result) loginService.login(loginFormQuery);
-        logger.debug("登录成功");
+        logger.info("登录成功");
 
-        session.setAttribute("zbx_session", result.getSessionId());
-        logger.debug("auth 存入 session");
+        String zbx_session = result.getSessionId();
+        session.setAttribute("zbx_session", zbx_session);
 
-        sessionMap.put(session.getId(), result.getSessionId());
+        session.setMaxInactiveInterval(90);
+        sessionMap.put(session.getId(), zbx_session);
 
+        Cookie zbxCookie = new Cookie("zbx_session", zbx_session);
         if(loginFormQuery.isRememberMe()) {
-
+            zbxCookie.setMaxAge(7 * 24 * 60 * 60 );
+            session.setAttribute("rememberMe", true);
         }
-        session.setMaxInactiveInterval(1 * 60);
-//        Cookie cookie = new Cookie("JSESSION", session.getId());
-//        cookie.setMaxAge(DEFAULT_EXPIRE_MIN * 60);
+        zbxCookie.setPath("/");
+        response.addCookie(zbxCookie);
 
-        UserInfoVO userInfoVO = new UserInfoVO(result);
-        session.setAttribute("userInfo", userInfoVO);
-
-//        response.addCookie(new Cookie("JSESSION", session.getId()));
-//        response.addCookie(new Cookie("ZSESSION", result.getSessionId()));
-
-        List<UserDO> userDOList = userService.listUser();
-        List<HostDO> hostDOList = hostService.listHost();
-        model.addAttribute("users", userDOList);
-        model.addAttribute("hosts", hostDOList);
-        redirectAttributes.addFlashAttribute("users", userDOList);
-        logger.debug("login success, auth store in session. {}", userInfoVO.getAuth());
         return "redirect:/dashboard";
     }
 }

@@ -23,10 +23,6 @@ public class LoginService {
     private Logger logger = LoggerFactory.getLogger(LoginService.class);
     @Autowired
     private ZApi zApi;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private Map<String, String> sessionMap;
 
     public ZResult login(LoginFormQuery loginFormQuery) {
         ZResult result = null;
@@ -43,9 +39,10 @@ public class LoginService {
         return result;
     }
 
-    public void loginWithCache(String zbxSessionId) {
+    public void loginWithCookie(String zbxSessionId) throws ZApiException {
         zApi.cacheLogin(zbxSessionId);
-        UserGetRequest userGetRequest = new UserGetRequest();
+            zApi.User().get(new UserGetRequest());
+
 
     }
 }

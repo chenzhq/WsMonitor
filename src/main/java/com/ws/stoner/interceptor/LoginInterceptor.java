@@ -31,6 +31,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
         if(uri.endsWith("/login/") || uri.endsWith("/login")) {
             if(request.getSession() != null && request.getSession().getAttribute("zbx_session") != null) {
                 response.sendRedirect(request.getContextPath() + "/dashboard");
+                return false;
             } else {
                 return true;
             }

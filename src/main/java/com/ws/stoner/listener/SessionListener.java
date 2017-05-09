@@ -33,7 +33,10 @@ public class SessionListener implements HttpSessionListener{
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
         try {
-            logoutZApi.cacheLogout(sessionMap.get(httpSessionEvent.getSession().getId()));
+            if(sessionMap.get(httpSessionEvent.getSession().getId()) != null
+                    && httpSessionEvent.getSession().getAttribute("rememberMe") == null) {
+                logoutZApi.cacheLogout(sessionMap.get(httpSessionEvent.getSession().getId()));
+            }
         } catch (ZApiException e) {
             e.printStackTrace();
         }
