@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,5 +35,16 @@ public class HostService {
         return hosts;
     }
 
+    public HostDO getHost(String... hostId) {
+       HostGetRequest hostGetRequest = new HostGetRequest();
+       hostGetRequest.getParams().setHostIds(Arrays.asList(hostId));
+       HostDO hostDO = new HostDO();
+        try {
+            hostDO = zApi.Host().get(hostGetRequest).getResult().get(1);
+        } catch (ZApiException e) {
+            e.printStackTrace();
+        }
+        return hostDO;
+    }
 
 }

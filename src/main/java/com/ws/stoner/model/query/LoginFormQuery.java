@@ -1,10 +1,16 @@
 package com.ws.stoner.model.query;
 
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by chenzheqi on 2017/4/27.
  */
 public class LoginFormQuery {
+    @NotBlank(message = "用户名不能为空")
     private String username;
+    @NotBlank(message = "密码不能为空")
     private String password;
     private boolean rememberMe;
 

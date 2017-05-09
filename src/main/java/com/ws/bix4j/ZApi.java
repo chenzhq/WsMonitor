@@ -52,6 +52,15 @@ public class ZApi {
 
     }
 
+    public void cacheLogin(String zbxSessionId) {
+       this.auth = zbxSessionId;
+    }
+
+    public void cacheLogout(String zbsSessionId) throws ZApiException {
+        this.auth = zbsSessionId;
+        logout();
+    }
+
     public User User() {
         return new User(uri.toString(), auth);
     }

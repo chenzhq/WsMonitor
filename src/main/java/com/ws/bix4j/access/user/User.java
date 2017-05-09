@@ -51,7 +51,7 @@ public class User extends ZApiMethod {
     }
 
     public UserLogoutResponse logout(UserLogoutRequest request) throws ZApiException {
-        String requestString = JSON.toJSONString(request, SerializerFeature.NotWriteDefaultValue);
+        String requestString = JSON.toJSONString(request, SerializerFeature.WriteNullListAsEmpty);
         String responseJson = sendRequest(requestString);
         UserLogoutResponse response = JSON.parseObject(responseJson, UserLogoutResponse.class);
         return response;

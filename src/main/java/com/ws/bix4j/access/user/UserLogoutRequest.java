@@ -2,6 +2,7 @@ package com.ws.bix4j.access.user;
 
 import com.ws.bix4j.access.ZRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * @Author chen
  */
 public class UserLogoutRequest extends ZRequest {
-    private List params;
+    private List params = new ArrayList();
     public UserLogoutRequest() {
         this.setMethod("user.logout");
     }
