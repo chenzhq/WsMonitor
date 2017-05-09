@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chenzheqi on 2017/4/26.
@@ -42,6 +43,8 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private Map<String, String> sessionMap;
 
     @RequestMapping(value = {"/", ""})
     public String index(Model model) {
@@ -49,14 +52,31 @@ public class LoginController {
         return "login";
     }
 
+
+    private String getCookies(Cookie[] cookies, String key) {
+        if(cookies != null) {
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equals(key)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     public String login(@ModelAttribute LoginFormQuery loginFormQuery, Model model, HttpSession session,
                         RedirectAttributes redirectAttributes, HttpServletRequest httpRequest, HttpServletResponse response) {
+        if(getCookies(httpRequest.getCookies(), "zbx_session") != null) {
+
+        }
         UserLoginResponse.Result result = (UserLoginResponse.Result) loginService.login(loginFormQuery);
         logger.debug("登录成功");
 
         session.setAttribute("zbx_session", result.getSessionId());
         logger.debug("auth 存入 session");
+
+        sessionMap.put(session.getId(), result.getSessionId());
 
         if(loginFormQuery.isRememberMe()) {
 

@@ -62,6 +62,10 @@ public class ZApiMethod {
         // API 错误
         JSONObject responseJO = JSON.parseObject(responseBody);
         if (responseJO.containsKey("error")) {
+            JSONObject errorJO = (JSONObject) responseJO.get("error");
+            if(errorJO.get("data").toString().contains("re-login")) {
+                throw new ZApiException("");
+            }
             String message = "API error:" + responseJO.getString("error");
             message += "\nRequest:" + requestJson;
             throw new ZApiException(message);

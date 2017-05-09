@@ -22,4 +22,9 @@ public class ZabbixConfiguration {
     public ZApi zApi() {
         return new ZApi(URL);
     }
+
+    @Bean
+    public ZApi logoutZApi() {
+        return new ZApi(URL);
+    }
 }

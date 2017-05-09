@@ -29,7 +29,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
         String uri = request.getRequestURI();
 
         if(uri.endsWith("/login/") || uri.endsWith("/login")) {
-            if(request.getSession() != null && request.getSession().getAttribute("zbx_session") != null || getCookies(request.getCookies(), "zbx_session") != null) {
+            if(request.getSession() != null && request.getSession().getAttribute("zbx_session") != null) {
                 response.sendRedirect(request.getContextPath() + "/dashboard");
             } else {
                 return true;

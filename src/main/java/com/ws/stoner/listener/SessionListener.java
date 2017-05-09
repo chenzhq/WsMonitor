@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by chenzheqi on 2017/5/5.
@@ -19,7 +21,9 @@ import javax.servlet.http.HttpSessionListener;
 public class SessionListener implements HttpSessionListener{
     private static final Logger logger = LoggerFactory.getLogger(SessionListener.class);
     @Autowired
-    private ZApi zApi;
+    private ZApi logoutZApi;
+    @Autowired
+    private Map<String, String> sessionMap;
 
     @Override
     public void sessionCreated(HttpSessionEvent httpSessionEvent) {
@@ -29,12 +33,9 @@ public class SessionListener implements HttpSessionListener{
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
         try {
-            zApi.User().logout(new UserLogoutRequest());
+            logoutZApi.cacheLogout(sessionMap.get(httpSessionEvent.getSession().getId()));
         } catch (ZApiException e) {
             e.printStackTrace();
-            if(e.getMessage().contains("API")) {
-                logger.error("zabbix logout failure");
-            }
         }
         logger.debug("session destroyed {}", httpSessionEvent.getSession().getId());
     }
