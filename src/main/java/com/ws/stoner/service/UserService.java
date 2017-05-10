@@ -1,7 +1,7 @@
 package com.ws.stoner.service;
 
 import com.ws.bix4j.ZApi;
-import com.ws.bix4j.ZApiException;
+import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.access.user.UserGetRequest;
 import com.ws.bix4j.bean.UserDO;
 import org.springframework.beans.factory.annotation.Autowired;

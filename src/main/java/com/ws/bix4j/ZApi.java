@@ -3,6 +3,7 @@ package com.ws.bix4j;
 import com.ws.bix4j.access.host.Host;
 import com.ws.bix4j.access.user.*;
 import com.ws.bix4j.access.user.User;
+import com.ws.bix4j.exception.ZApiException;
 
 import java.net.URI;
 import java.net.URISyntaxException;

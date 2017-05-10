@@ -1,33 +1,29 @@
 package com.ws.stoner.controller;
 
-import com.ws.bix4j.ZApiException;
+import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.access.user.UserLoginResponse;
-import com.ws.bix4j.bean.HostDO;
-import com.ws.bix4j.bean.UserDO;
+import com.ws.stoner.model.bo.LoginBO;
 import com.ws.stoner.model.query.LoginFormQuery;
-import com.ws.stoner.model.view.UserInfoVO;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.LoginService;
 import com.ws.stoner.service.UserService;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -90,10 +86,15 @@ public class LoginController {
             return "login";
         }
 
-        UserLoginResponse.Result result = (UserLoginResponse.Result) loginService.login(loginFormQuery);
+        LoginBO loginReslut = loginService.login(loginFormQuery);
+        if(!loginReslut.isLoginSuccess()) {
+            FieldError fieldError = new FieldError("loginFormQuery", "password", "用户名或密码错误");
+            bindingResult.addError(fieldError);
+            return "login";
+        }
         logger.info("登录成功");
 
-        String zbx_session = result.getSessionId();
+        String zbx_session = loginReslut.getSessionId();
         session.setAttribute("zbx_session", zbx_session);
 
         session.setMaxInactiveInterval(90);

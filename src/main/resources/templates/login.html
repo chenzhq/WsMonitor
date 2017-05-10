@@ -10,13 +10,13 @@
     <form action="/login/auth" th:action="@{/login/auth}" method="post" th:object="${loginFormQuery}">
         <label>用户名：</label>
         <input type="text" th:field="*{username}" /><br>
-        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">请输入用户名</p>
+        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">username error</p>
         <label>密码：</label>
         <input type="password" th:field="*{password}" /><br>
-        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">请输入密码</p>
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password error</p>
         <label >记住我</label>
         <input type="checkbox" th:field ="*{rememberMe}">
-        <input type="submit" value="登录">
+        <input type="submit" value="登录"><br>
     </form>
 </body>
 </html>
