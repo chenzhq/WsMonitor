@@ -38,11 +38,6 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
     @Autowired
-    private HostService hostService;
-
-    @Autowired
-    private UserService userService;
-    @Autowired
     private Map<String, String> sessionMap;
 
     @RequestMapping(value = {"/", ""})
@@ -50,18 +45,13 @@ public class LoginController {
 
         String zbx_session = getCookies(request.getCookies(), "zbx_session");
         if(zbx_session != null) {
-            try {
-                loginService.loginWithCookie(zbx_session);
+            if (loginService.loginWithCookie(zbx_session)) {
                 request.getSession().setAttribute("zbx_session", zbx_session);
+                request.getSession().setAttribute("rememberMe", true);
                 sessionMap.put(request.getSession().getId(), zbx_session);
                 return "redirect:/dashboard";
-            } catch (ZApiException e) {
-                if("re-login".equals(e.getMessage())) {
-                    // TODO: 2017/5/9 zbx_session过期或失效，需要重新登录
-//                    model.addAttribute("loginFormQuery", new LoginFormQuery());
-//                    return "login";
-                }
             }
+            logger.debug("zbx_session expire, re-login.");
         }
         model.addAttribute("loginFormQuery", new LoginFormQuery());
         return "login";
@@ -97,7 +87,7 @@ public class LoginController {
         String zbx_session = loginReslut.getSessionId();
         session.setAttribute("zbx_session", zbx_session);
 
-        session.setMaxInactiveInterval(90);
+//        session.setMaxInactiveInterval(90);
         sessionMap.put(session.getId(), zbx_session);
 
         Cookie zbxCookie = new Cookie("zbx_session", zbx_session);

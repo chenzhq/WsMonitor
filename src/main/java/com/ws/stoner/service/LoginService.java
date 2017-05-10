@@ -6,6 +6,7 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.access.ZResult;
 import com.ws.bix4j.access.user.UserGetRequest;
+import com.ws.stoner.config.ZabbixConfiguration;
 import com.ws.stoner.model.bo.LoginBO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import org.slf4j.Logger;
@@ -43,10 +44,18 @@ public class LoginService {
         return loginBO;
     }
 
-    public void loginWithCookie(String zbxSessionId) throws ZApiException {
+    public boolean loginWithCookie(String zbxSessionId) {
         zApi.cacheLogin(zbxSessionId);
+        try {
             zApi.User().get(new UserGetRequest());
-
-
+            return true;
+        } catch (ZApiException e) {
+            if(e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+               return false;
+            } else {
+                //网络问题
+                return false;
+            }
+        }
     }
 }
