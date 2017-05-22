@@ -1,7 +1,7 @@
 package com.ws.stoner.service;
 
 import com.ws.bix4j.ZApi;
-import com.ws.bix4j.ZApiException;
+import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.bean.HostDO;
 import org.slf4j.Logger;
