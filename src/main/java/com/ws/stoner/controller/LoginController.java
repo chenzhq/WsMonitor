@@ -2,6 +2,7 @@ package com.ws.stoner.controller;
 
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.access.user.UserLoginResponse;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.bo.LoginBO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import com.ws.stoner.service.HostService;
@@ -71,7 +72,7 @@ public class LoginController {
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     public String login(@Valid @ModelAttribute LoginFormQuery loginFormQuery, BindingResult bindingResult,
-                        HttpSession session, HttpServletResponse response) {
+                        HttpSession session, HttpServletResponse response) throws ServiceException {
         if(bindingResult.hasErrors()) {
             return "login";
         }

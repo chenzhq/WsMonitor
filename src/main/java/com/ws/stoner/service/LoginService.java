@@ -7,6 +7,7 @@ import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.access.ZResult;
 import com.ws.bix4j.access.user.UserGetRequest;
 import com.ws.stoner.config.ZabbixConfiguration;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.bo.LoginBO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class LoginService {
     @Autowired
     private ZApi zApi;
 
-    public LoginBO login(LoginFormQuery loginFormQuery) {
+    public LoginBO login(LoginFormQuery loginFormQuery) throws ServiceException {
         UserLoginResponse.Result result;
         LoginBO loginBO = new LoginBO(false);
         try {
@@ -35,7 +36,7 @@ public class LoginService {
                 return loginBO;
             } else {
                 //如果是网络问题，或者请求参数不合法等问题
-                e.printStackTrace();
+                throw new ServiceException(e.getMessage());
             }
 
         }

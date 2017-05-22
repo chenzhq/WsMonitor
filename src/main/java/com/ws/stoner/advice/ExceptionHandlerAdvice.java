@@ -1,5 +1,6 @@
 package com.ws.stoner.advice;
 
+import com.ws.stoner.exception.ServiceException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -10,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(value = ServiceException.class)
     public String exception() {
        return "404";
     }
