@@ -1,22 +1,201 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>登录</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" th:href="@{/plugins/layui/css/layui.css}" media="all"/>
+    <link rel="stylesheet" href="css/login.css" th:href="@{/css/login.css}"/>
+    <script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+    <style>
+        /*Tooltips*/
+        .tooltips_main {
+            position: absolute;
+            left: 35px;
+            margin: -5px 0 0 2px;
+            z-index: 999;
+        }
+
+        .tooltips_box, .tooltips, .msg {
+            display: inline-block;
+            *display: inline;
+            *zoom: 1;
+            position: relative;
+            border-style: solid;
+            border-color: #FF1F1F;
+        }
+
+        .tooltips, .msg {
+            border-width: 0 1px;
+            *left: -2px;
+            background-color: #FFCFCF;
+        }
+
+        .tooltips_box {
+            border-width: 1px;
+            line-height: 1.5;
+        }
+
+        .tooltips {
+            margin: 0 -2px;
+        }
+
+        .msg {
+            margin: 1px -2px;
+            padding: 0 6px;
+            color: #2F2C2C;
+            text-shadow: 0 1px 0 #FFFFFF;
+            font-size: 12px;
+        }
+
+        .ov {
+            background: url('../images/tri.gif') no-repeat scroll 0 0 transparent;
+            position: absolute;
+            left: 30%;
+            overflow: hidden;
+            width: 15px;
+            height: 15px;
+            margin: 16px 0 0 0;
+            display: inline;
+        }
+    </style>
 </head>
-<body>
-<!--/*@thymesVar loginFormVOForm" type="com.ws.stoner.model.query.LoginFormQuery"*/-->
-    <div>test</div>
-    <form action="/login/auth" th:action="@{/login/auth}" method="post" th:object="${loginFormQuery}">
-        <label>用户名：</label>
-        <input type="text" th:field="*{username}" /><br>
-        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">username error</p>
-        <label>密码：</label>
-        <input type="password" th:field="*{password}" /><br>
-        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password error</p>
-        <label >记住我</label>
-        <input type="checkbox" th:field ="*{rememberMe}">
-        <input type="submit" value="登录"><br>
-    </form>
+
+<body class="beg-login-bg">
+<div class="beg-login-box">
+    <header>
+        <h1>监控系统登录</h1>
+    </header>
+    <div class="beg-login-main">
+        <form class="layui-form" id="form" th:action="@{/login/auth}" th:object="${loginFormQuery}" method="post" onSubmit="return check();">
+            <input
+                name="__RequestVerificationToken" type="hidden"
+                value="fkfh8D89BFqTdrE2iiSdG_L781RSRtdWOH411poVUWhxzA5MzI8es07g6KPYQh9Log-xf84pIR2RIAEkOokZL3Ee3UKmX0Jc8bW8jOdhqo81"/>
+            <div class="layui-form-item" style="margin-top:10px">
+                <label class="beg-login-icon">
+                    <i class="layui-icon">&#xe612;</i>
+                </label>
+                <span class="control-group" id="userName1_input">
+						<input type="text" name="userName" lay-verify="userName" autocomplete="off" placeholder="请输入登录名"
+                               class="layui-input" id="userName1" value="" onblur="checkUNm1(this.value);" th:field="*{username}">
+						</span>
+            </div>
+            <div class="layui-form-item" style="margin-top:25px">
+                <label class="beg-login-icon">
+                    <i class="layui-icon">&#xe642;</i>
+                </label>
+                <span class="control-group" id="password1_input">
+						<input type="password" name="password1" lay-verify="password" autocomplete="off"
+                               placeholder="这里输入密码" class="layui-input" id="password1" value=""
+                               onblur="checkPwd1(this.value);" th:field="*{password}">
+						</span>
+            </div>
+            <div class="layui-form-item" style="margin-top:20px">
+                <div class="beg-pull-left beg-login-remember">
+                    <label>记住帐号？</label>
+                    <input type="checkbox" name="rememberMe" value="true" lay-skin="switch" checked title="记住帐号" th:field ="*{rememberMe}">
+                </div>
+                <div class="beg-pull-right">
+                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="login" id="submit">
+                        <i class="layui-icon">&#xe650;</i> 登录
+                    </button>
+                </div>
+                <div class="beg-clear"></div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="plugins/layui/layui.js" th:src="@{plugins/layui/layui.js}"></script>
+<script>
+    /*登陆验证*/
+    layui.use(['layer', 'form'], function () {
+        var layer = layui.layer,
+            $ = layui.jquery,
+            form = layui.form();
+
+        form.on('submit(login)', function (data) {
+            hideAllTooltips();
+            var ckh_result = true;
+            if ($('#userName1').val() == '' || $('#password1').val() == '') {
+                if ($('#userName1').val() == '') {
+                    showTooltips('userName1_input', '用户名不能为空');
+                    ckh_result = false;
+                }
+                if ($('#password1').val() == '') {
+                    showTooltips('password1_input', '密码不能为空');
+                    ckh_result = false;
+                }
+            }
+//            else {
+//                location.href = 'index.html';
+//                return false;
+//
+//            }
+            return ckh_result;
+        });
+    });
+
+    /*验证用户名不为空或太少*/
+    function checkUNm1(unm1) {
+        if (unm1.search(/^.{6,20}$/) == -1) {
+            showTooltips('userName1_input', '用户名为空或位数太少');
+        } else {
+            hideTooltips('userName1_input');
+        }
+    }
+
+    /*验证密码不为空或太少*/
+    function checkPwd1(pwd1) {
+        if (pwd1.search(/^.{6,20}$/) == -1) {
+            showTooltips('password1_input', '密码为空或位数太少');
+        } else {
+            hideTooltips('password1_input');
+        }
+    }
+
+    /*Error message Tooltips*/
+    $(document).ready(function () {
+        /*点击隐藏错误提示,如果不想让提示点击消失,需要加上class='not_click_hide'*/
+        $('.control-group input').not('.not_click_hide').focus(function () {
+            hideTooltips($(this).parent().parent().attr('id'));
+        });
+    });
+    /*
+     *msgid:想让tooltips出现的地方的id
+     *msg:提示的内容
+     *time:自动消失的时间，如果不想让提示自动消失，则此参数不写
+     */
+    function showTooltips(msgid, msg, time) {
+        if (msgid == '') {
+            return;
+        }
+        if (msg == '') {
+            msg = 'Error!';
+        }
+        $('#' + msgid).prepend("<div class='for_fix_ie6_bug' style='position:relative;'><div class='tooltips_main'><div class='tooltips_box'><div class='tooltips'><div class='msg'>" + msg + "</div></div><div class='ov'></div></div></div></div>");
+        $('#' + msgid + ' .tooltips_main').fadeIn("slow").animate({marginTop: "-23px"}, {queue: true, duration: 400});
+        try {
+            if (typeof time != "undefined") {
+                setTimeout('hideTooltips("' + msgid + '")', time);
+            }
+        } catch (err) {
+        }
+
+    }
+    function hideTooltips(msgid) {
+        try {
+            $('#' + msgid).find('.tooltips_main').fadeOut("slow");
+            $('#' + msgid).find('.tooltips_main').remove();
+        } catch (e) {
+        }
+    }
+    function hideAllTooltips() {
+        $('.tooltips_main').fadeOut("slow");
+        $('.tooltips_main').remove();
+    }
+</script>
 </body>
+
 </html>

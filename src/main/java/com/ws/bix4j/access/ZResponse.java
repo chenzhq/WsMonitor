@@ -8,8 +8,6 @@ public abstract class ZResponse<T> {
     private int id;
     private String jsonrpc;
 
-    private T result;
-
     public int getId() {
         return id;
     }

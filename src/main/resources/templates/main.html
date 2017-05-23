@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<!-- 引入 echarts.js -->
+        <script src="js/echarts.min.js"></script>
+		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/main.css" />
+	</head>
+
+	<body>
+		<div class="admin-main">
+			<!-- 主内容开始-
+				<ul class="layui-nav layui-inline"   style=" background:#FFF;">
+					<li class="layui-nav-item  layui-this"  >
+						<a href="javascript:;" style=" color:#000;font-size:18px;line-height:200%;">全部</a>
+					</li>
+					<li class="layui-nav-item">
+						<a href=""  style=" color:#000;font-size:18px;line-height:200%;">设备</a>
+					</li>
+					<li class="layui-nav-item">
+						<a href=""  style=" color:#000;font-size:18px;line-height:200%;">监控点</a>
+					</li>
+					<li class="layui-nav-item">
+						<a href=""  style=" color:#000;font-size:18px;line-height:200%;">业务平台</a>
+					</li>
+				</ul>-->
+				<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin-top: -20px;">
+				  <ul class="layui-tab-title">
+					<li class="layui-this">全部</li>
+					<li>设备</li>
+					<li>监控点</li>
+					<li>业务平台</li>
+				  </ul>
+				  <div class="layui-tab-content" style="margin-top: -20px;margin-bottom: -50px;">
+					<div class="layui-tab-item layui-show" style="height: 300px;">
+						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+							<div id="main0" style="float:right;width: 33%;height:100%;"></div>
+							<div id="main1" style="float:right;width: 33%;height:100%;"></div>
+							<div id="main2" style="float:right;width: 33%;height:100%;"></div>
+						<!-- 为 Table 准备一个具备样式的 DOM -->
+					</div>
+					<div class="layui-tab-item"  style="height: 300px;">
+						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+							<div id="main0" style="float:right;width: 33%;height:100%;"></div>
+						<!-- 为 Table 准备一个具备样式的 DOM -->					
+					</div>
+					<div class="layui-tab-item"  style="height: 300px;">
+						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+							<div id="main1" style="float:right;width: 33%;height:100%;"></div>
+						<!-- 为 Table 准备一个具备样式的 DOM -->
+					</div>
+					<div class="layui-tab-item"  style="height: 300px;">
+						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+							<div id="main2" style="float:right;width: 33%;height:100%;"></div>
+						<!-- 为 Table 准备一个具备样式的 DOM -->					
+					</div>
+				  </div>
+				</div> 
+
+			    
+				<fieldset class="layui-elem-field">
+					<legend>最近20个问题</legend>
+					<div class="layui-field-box">
+						<table class="layui-table">
+							<thead>
+								<tr>
+									<th style="text-align: center;">主机</th>
+									<th style="text-align: center;">问题</th>
+									<th style="text-align: center;">上次修改于</th>
+									<th style="text-align: center;">历时</th>
+									<th style="text-align: center;">确认</th>
+								</tr>				
+							</thead>
+							<tbody id="content">							
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								<tr>
+									<td>主机1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="text-align: center;">2017-4-27 15:33:20</td>
+									<td style="text-align: center;"><p>2天4小时50分</p></td>
+									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
+								</tr>
+								
+							
+							</tbody>
+						</table>
+					</div>
+				</fieldset>
+			<!-- 主内容结束-->
+			<script type="text/javascript">
+				// 基于准备好的dom，初始化echarts实例
+				var myChart = echarts.init(document.getElementById('main0'));
+				
+		
+				// 指定图表的配置项和数据
+				var option = {
+						title: {
+									text: '7台',
+									subtext: '业务设备',
+									x: 'center',
+									y: 'center',
+									itemGap: 10,
+									textStyle : {
+										color : '#01AAED',
+										fontFamily : '微软雅黑',
+										fontSize : 24,
+										fontWeight : 'bolder'
+									}
+								},
+						tooltip : {
+									trigger: 'item',
+									formatter: "{a} <br/>{b} : {c} ({d}%)"
+								},
+						series: [
+							{
+								name:'访问来源',
+								type:'pie',
+								radius: ['40%', '60%'],
+								itemStyle: {  
+									normal: {  
+									 label:{  
+											show: true,  
+											formatter: function(param) {
+												 return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
+											},
+											textStyle : {
+												fontWeight : 'bolder'
+											}
+										}   
+									},
+								 },    
+								data:[
+									{value:2, name:'危险'},
+									{value:1, name:'故障'},
+									{value:4, name:'正常'},
+									{value:0, name:'未知'},
+								], 
+								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
+							}
+						]
+					};
+		
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);
+
+				// 基于准备好的dom，初始化echarts实例
+				var myChart = echarts.init(document.getElementById('main1'));
+		
+				// 指定图表的配置项和数据
+				var option = {
+						title: {
+									text: '1014个',
+									subtext: '监控点',
+									x: 'center',
+									y: 'center',
+									itemGap: 10,
+									textStyle : {
+										color : '#01AAED',
+										fontFamily : '微软雅黑',
+										fontSize : 24,
+										fontWeight : 'bolder'
+									}
+								},
+						tooltip : {
+									trigger: 'item',
+									formatter: "{a} <br/>{b} : {c} ({d}%)"
+								},
+						series: [
+							{
+								name:'访问来源',
+								type:'pie',
+								radius: ['40%', '60%'],
+								itemStyle: {  
+									normal: {  
+									 label:{  
+											show: true,  
+											formatter: function(param) {
+												 return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
+											},
+											textStyle : {
+												fontWeight : 'bolder'
+											}
+										}   
+									},
+								 },    
+								data:[
+									{value:335, name:'危险'},
+									{value:310, name:'故障'},
+									{value:234, name:'正常'},
+									{value:135, name:'未知'},
+								], 
+								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
+							}
+						]
+					};
+		
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);
+
+
+				// 基于准备好的dom，初始化echarts实例
+				var myChart = echarts.init(document.getElementById('main2'));
+		
+				// 指定图表的配置项和数据
+				var option = {
+						title: {
+									text: '80台',
+									subtext: '设备',
+									x: 'center',
+									y: 'center',
+									itemGap: 10,
+									textStyle : {
+										color : '#01AAED',
+										fontFamily : '微软雅黑',
+										fontSize : 24,
+										fontWeight : 'bolder'
+									}
+								},
+						tooltip : {
+									trigger: 'item',
+									formatter: "{a} <br/>{b} : {c} ({d}%)"
+								},
+						series: [
+							{
+								name:'访问来源',
+								type:'pie',
+								radius: ['40%', '60%'],
+								itemStyle: {  
+									normal: {  
+									 label:{  
+											show: true,  
+											formatter: function(param) {
+												 return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
+											},
+											textStyle : {
+												fontWeight : 'bolder'
+											}
+										}   
+									},
+								 },    
+								data:[
+									{value:31, name:'危险'},
+									{value:10, name:'故障'},
+									{value:34, name:'正常'},
+									{value:5, name:'未知'},
+								], 
+								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
+							}
+						]
+					};
+		
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);				
+			</script>
+			
+			<script type="text/javascript" src="plugins/layui/layui.js"></script>
+			<script>
+				layui.use('element', function() {
+					var element = layui.element(); //导航的hover效果、二级菜单等功能，需要依赖element模块
+	
+				});
+			</script>
+		</div>
+	</body>
+
+</html>

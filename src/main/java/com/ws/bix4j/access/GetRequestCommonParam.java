@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by chen on 2017/4/1.
  */
 public abstract class GetRequestCommonParam {
-    private String countOutput;
+    private boolean countOutput;
     private boolean editable;
     private String excludeSearch;
     private Map filter;
@@ -31,7 +31,7 @@ public abstract class GetRequestCommonParam {
      *
      * @return string
      */
-    public String isCountOutput() {
+    public boolean isCountOutput() {
         return countOutput;
     }
 
@@ -42,7 +42,7 @@ public abstract class GetRequestCommonParam {
      *
      * @param countOutput output
      */
-    public void setCountOutput(String countOutput) {
+    public void setCountOutput(boolean countOutput) {
         this.countOutput = countOutput;
     }
 
@@ -58,8 +58,8 @@ public abstract class GetRequestCommonParam {
 
     /**
      * 设置是否返回当前用户有"写"权限的对象 <br>
-     *     默认 false，只返回有"读"权限的对象 <br>
-     *     true, 返回有"写"权限的对象
+     * 默认 false，只返回有"读"权限的对象 <br>
+     * true, 返回有"写"权限的对象
      *
      * @param editable
      */

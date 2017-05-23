@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.util.Map;
 
+import static com.ws.stoner.constant.CookieConsts.REMEMBER_ME;
+
 /**
  * Created by chenzheqi on 2017/5/5.
  */
@@ -31,7 +33,7 @@ public class SessionListener implements HttpSessionListener{
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
         try {
             if(sessionMap.get(httpSessionEvent.getSession().getId()) != null
-                    && httpSessionEvent.getSession().getAttribute("rememberMe") == null) {
+                    && httpSessionEvent.getSession().getAttribute(REMEMBER_ME) == null) {
                 logoutZApi.cacheLogout(sessionMap.get(httpSessionEvent.getSession().getId()));
             }
         } catch (ZApiException e) {

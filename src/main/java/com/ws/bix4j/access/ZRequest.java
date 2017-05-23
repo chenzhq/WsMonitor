@@ -11,7 +11,6 @@ public abstract class ZRequest<T> {
     private String jsonrpc = "2.0";
     private String method;
     private String auth;
-    private T params;
 
     public int getId() {
         return id;

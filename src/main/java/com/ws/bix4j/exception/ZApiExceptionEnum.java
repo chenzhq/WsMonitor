@@ -12,7 +12,7 @@ public enum ZApiExceptionEnum {
     ZBX_API_LOGIN_ERROR(10012);
 
     private int code;
-    private ZApiExceptionEnum(int code) {
+    ZApiExceptionEnum(int code) {
         this.code = code;
     }
 }

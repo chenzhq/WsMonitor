@@ -2,6 +2,7 @@ package com.ws.stoner.controller;
 
 import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.bean.UserDO;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,14 @@ public class DashboardController {
     private UserService userService;
 
     @RequestMapping(value = {"/", ""})
-    public String dashboard(Model model) {
+    public String dashboard(Model model) throws ServiceException {
 
         List<UserDO> userDOList = userService.listUser();
         List<HostDO> hostDOList = hostService.listHost();
+        int problemHostCount = hostService.countProblemHost();
         model.addAttribute("users", userDOList);
         model.addAttribute("hosts", hostDOList);
+        model.addAttribute("problemHostCount", problemHostCount);
 
         return "dashboard";
     }

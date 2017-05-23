@@ -1,13 +1,11 @@
 package com.ws.stoner.controller;
 
-import com.ws.bix4j.exception.ZApiException;
-import com.ws.bix4j.access.user.UserLoginResponse;
+import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.bo.LoginBO;
 import com.ws.stoner.model.query.LoginFormQuery;
-import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.LoginService;
-import com.ws.stoner.service.UserService;
+import com.ws.stoner.utils.CookieUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +24,10 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Map;
 
+import static com.ws.stoner.constant.CookieConsts.REMEMBER_ME;
+import static com.ws.stoner.constant.CookieConsts.REMEMBER_ME_EXPIRE_TIME;
+import static com.ws.stoner.constant.CookieConsts.ZBX_SESSION;
+
 /**
  * Created by chenzheqi on 2017/4/26.
  */
@@ -35,40 +36,30 @@ import java.util.Map;
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-    public static final int DEFAULT_EXPIRE_MIN = 30;
     @Autowired
     private LoginService loginService;
     @Autowired
     private Map<String, String> sessionMap;
 
     @RequestMapping(value = {"/", ""})
-    public String index(HttpServletRequest request, Model model) {
+    public String index(HttpServletRequest request, HttpServletResponse response, Model model) {
 
-        String zbx_session = getCookies(request.getCookies(), "zbx_session");
+        String zbx_session = CookieUtils.getValue(request, ZBX_SESSION);
         if(zbx_session != null) {
             if (loginService.loginWithCookie(zbx_session)) {
-                request.getSession().setAttribute("zbx_session", zbx_session);
-                request.getSession().setAttribute("rememberMe", true);
+                request.getSession().setAttribute(ZBX_SESSION, zbx_session);
+                request.getSession().setAttribute(REMEMBER_ME, true);
                 sessionMap.put(request.getSession().getId(), zbx_session);
                 return "redirect:/dashboard";
             }
             logger.debug("zbx_session expire, re-login.");
+            CookieUtils.remove(response, ZBX_SESSION);
         }
         model.addAttribute("loginFormQuery", new LoginFormQuery());
         return "login";
     }
 
 
-    private String getCookies(Cookie[] cookies, String key) {
-        if(cookies != null) {
-            for (Cookie cookie : cookies) {
-                if(cookie.getName().equals(key)) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     public String login(@Valid @ModelAttribute LoginFormQuery loginFormQuery, BindingResult bindingResult,
@@ -86,18 +77,16 @@ public class LoginController {
         logger.info("登录成功");
 
         String zbx_session = loginReslut.getSessionId();
-        session.setAttribute("zbx_session", zbx_session);
+        session.setAttribute(ZBX_SESSION, zbx_session);
 
-//        session.setMaxInactiveInterval(90);
         sessionMap.put(session.getId(), zbx_session);
 
-        Cookie zbxCookie = new Cookie("zbx_session", zbx_session);
-        if(loginFormQuery.isRememberMe()) {
-            zbxCookie.setMaxAge(7 * 24 * 60 * 60 );
-            session.setAttribute("rememberMe", true);
+        if (!loginFormQuery.isRememberMe()) {
+            CookieUtils.add(response, ZBX_SESSION, zbx_session);
+        } else {
+            CookieUtils.add(response, ZBX_SESSION, zbx_session, REMEMBER_ME_EXPIRE_TIME);
+            session.setAttribute(REMEMBER_ME, true);
         }
-        zbxCookie.setPath("/");
-        response.addCookie(zbxCookie);
 
         return "redirect:/dashboard";
     }

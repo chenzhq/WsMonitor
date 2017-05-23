@@ -12,13 +12,6 @@ public class ZApiException extends Exception{
         super(message);
         this.code = code;
     }
-    public ZApiException(String message){
-        super(message);
-    }
-
-    public ZApiException(Throwable t){
-        super(t);
-    }
 
     public ZApiExceptionEnum getCode() {
         return code;
