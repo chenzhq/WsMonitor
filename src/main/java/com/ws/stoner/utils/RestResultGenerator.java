@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
 public class RestResultGenerator {
     private static final Logger logger = LoggerFactory.getLogger(RestResultGenerator.class);
 
-    static <T> ResponseResult<T> genResult(T data, String message) {
+    public static <T> ResponseResult<T> genResult(T data, String message) {
         ResponseResult<T> result = new ResponseResult<>();
         result.setSuccess(true).setMessage(message).setData(data);
         logger.debug("responseResult : {}", JSON.toJSONString(result));
         return result;
     }
 
-    static <T> ResponseResult<T> genErrorResult(ResponseErrorEnum errorEnum) {
+    public static <T> ResponseResult<T> genErrorResult(ResponseErrorEnum errorEnum) {
         ResponseResult<T> result = new ResponseResult<>();
         result.setSuccess(false).setErrorInfo(errorEnum);
         logger.debug("error: {}", JSON.toJSONString(result));

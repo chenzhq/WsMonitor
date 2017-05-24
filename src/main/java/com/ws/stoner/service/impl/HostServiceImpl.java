@@ -7,15 +7,16 @@ import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.bean.ProblemDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.HostStatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.bo.HostStatusNumBO;
 import com.ws.stoner.service.HostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.message.AuthException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,7 @@ public class HostServiceImpl implements HostService {
     @Autowired
     private ZApi zApi;
 
+    @Override
     public List<HostDO> listHost() throws AuthExpireException {
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams();
@@ -46,15 +48,23 @@ public class HostServiceImpl implements HostService {
         return hosts;
     }
 
-    public int countUnmonitoredHost() {
-        return 0;
+    /**
+     * Count unmonitored host int.
+     *
+     * @return the int
+     */
+    @Override
+    public int countUnknownHost() {
+        return 4;
     }
 
+    @Override
     public int countMaintenanceHost() {
-        return 0;
+        return 3;
     }
 
 
+    @Override
     public int countProblemHost() throws ServiceException {
 
         ProblemGetRequest problemGetRequest = new ProblemGetRequest();
@@ -62,7 +72,7 @@ public class HostServiceImpl implements HostService {
         List<ProblemDO> problems;
         List<String> triggerIds = new ArrayList<>();
         HostGetRequest hostGetRequest = new HostGetRequest();
-        int problemHostNum = 0;
+        int problemHostNum;
 
         try {
             problems = zApi.Problems().get(problemGetRequest).getResult();
@@ -81,11 +91,27 @@ public class HostServiceImpl implements HostService {
         return problemHostNum;
     }
 
+
+    @Override
     public int countOkHost() {
 
-        return 0;
+        return 2;
     }
 
+    @Override
+    public List<HostStatusNumBO> countAllHost() throws ServiceException {
+        List<HostStatusNumBO> hostStatusNumBOList = new ArrayList<>();
+
+        HostStatusNumBO hostStatusNumBO = new HostStatusNumBO(HostStatusEnum.PROBLEM.getName(), countProblemHost());
+        hostStatusNumBOList.add(hostStatusNumBO);
+
+        hostStatusNumBOList.add(new HostStatusNumBO(HostStatusEnum.MAINTENANCE.getName(), countMaintenanceHost()));
+        hostStatusNumBOList.add(new HostStatusNumBO(HostStatusEnum.NORMAL.getName(), countOkHost()));
+        hostStatusNumBOList.add(new HostStatusNumBO(HostStatusEnum.UNKNOWN.getName(), countUnknownHost()));
+        return hostStatusNumBOList;
+    }
+
+    @Override
     public HostDO getHost(String... hostId) {
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams().setHostIds(Arrays.asList(hostId));

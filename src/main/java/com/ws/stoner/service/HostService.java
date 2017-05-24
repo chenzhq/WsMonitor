@@ -1,8 +1,10 @@
 package com.ws.stoner.service;
 
 import com.ws.bix4j.bean.HostDO;
+import com.ws.stoner.constant.HostStatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.bo.HostStatusNumBO;
 
 import java.util.List;
 
@@ -22,7 +24,7 @@ public interface HostService {
      *
      * @return the int
      */
-    int countUnmonitoredHost();
+    int countUnknownHost();
 
     /**
      * Count maintenance host int.
@@ -46,6 +48,7 @@ public interface HostService {
      */
     int countOkHost();
 
+    List<HostStatusNumBO> countAllHost() throws ServiceException;
     /**
      * Gets host.
      *
