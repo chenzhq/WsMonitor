@@ -8,59 +8,6 @@
     <title>登录</title>
     <link rel="stylesheet" href="plugins/layui/css/layui.css" th:href="@{/plugins/layui/css/layui.css}" media="all"/>
     <link rel="stylesheet" href="css/login.css" th:href="@{/css/login.css}"/>
-    <script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
-    <style>
-        /*Tooltips*/
-        .tooltips_main {
-            position: absolute;
-            left: 35px;
-            margin: -5px 0 0 2px;
-            z-index: 999;
-        }
-
-        .tooltips_box, .tooltips, .msg {
-            display: inline-block;
-            *display: inline;
-            *zoom: 1;
-            position: relative;
-            border-style: solid;
-            border-color: #FF1F1F;
-        }
-
-        .tooltips, .msg {
-            border-width: 0 1px;
-            *left: -2px;
-            background-color: #FFCFCF;
-        }
-
-        .tooltips_box {
-            border-width: 1px;
-            line-height: 1.5;
-        }
-
-        .tooltips {
-            margin: 0 -2px;
-        }
-
-        .msg {
-            margin: 1px -2px;
-            padding: 0 6px;
-            color: #2F2C2C;
-            text-shadow: 0 1px 0 #FFFFFF;
-            font-size: 12px;
-        }
-
-        .ov {
-            background: url('../images/tri.gif') no-repeat scroll 0 0 transparent;
-            position: absolute;
-            left: 30%;
-            overflow: hidden;
-            width: 15px;
-            height: 15px;
-            margin: 16px 0 0 0;
-            display: inline;
-        }
-    </style>
 </head>
 
 <body class="beg-login-bg">
@@ -77,20 +24,13 @@
                 <label class="beg-login-icon">
                     <i class="layui-icon">&#xe612;</i>
                 </label>
-                <span class="control-group" id="userName1_input">
-						<input type="text" name="userName" lay-verify="userName" autocomplete="off" placeholder="请输入登录名"
-                               class="layui-input" id="userName1" value="" onblur="checkUNm1(this.value);" th:field="*{username}">
-						</span>
+                    <input type="text" name="userName" lay-verify="username" autocomplete="off" placeholder="这里输入登录名" class="layui-input" th:field="*{username}">
             </div>
             <div class="layui-form-item" style="margin-top:25px">
                 <label class="beg-login-icon">
                     <i class="layui-icon">&#xe642;</i>
                 </label>
-                <span class="control-group" id="password1_input">
-						<input type="password" name="password1" lay-verify="password" autocomplete="off"
-                               placeholder="这里输入密码" class="layui-input" id="password1" value=""
-                               onblur="checkPwd1(this.value);" th:field="*{password}">
-						</span>
+                <input type="password" name="password" lay-verify="password" autocomplete="off" placeholder="这里输入密码" class="layui-input">
             </div>
             <div class="layui-form-item" style="margin-top:20px">
                 <div class="beg-pull-left beg-login-remember">
@@ -98,7 +38,7 @@
                     <input type="checkbox" name="rememberMe" value="true" lay-skin="switch" checked title="记住帐号" th:field ="*{rememberMe}">
                 </div>
                 <div class="beg-pull-right">
-                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="login" id="submit">
+                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="login">
                         <i class="layui-icon">&#xe650;</i> 登录
                     </button>
                 </div>
@@ -115,86 +55,24 @@
             $ = layui.jquery,
             form = layui.form();
 
-        form.on('submit(login)', function (data) {
-            hideAllTooltips();
-            var ckh_result = true;
-            if ($('#userName1').val() == '' || $('#password1').val() == '') {
-                if ($('#userName1').val() == '') {
-                    showTooltips('userName1_input', '用户名不能为空');
-                    ckh_result = false;
-                }
-                if ($('#password1').val() == '') {
-                    showTooltips('password1_input', '密码不能为空');
-                    ckh_result = false;
-                }
+        //自定义验证规则
+        form.verify({
+            username:[/\S/, '用户名不能为空'],
+            content: function(value) {
+                layedit.sync(editIndex);
             }
-//            else {
-//                location.href = 'index.html';
-//                return false;
-//
-//            }
-            return ckh_result;
+            ,password: [/\S/, '密码不能为空'],
+            content: function(value) {
+                layedit.sync(editIndex);
+            }
+        });
+        form.on('submit(login)',function(data){
+            console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            location.href='index.html';
         });
     });
 
-    /*验证用户名不为空或太少*/
-    function checkUNm1(unm1) {
-        if (unm1.search(/^.{6,20}$/) == -1) {
-            showTooltips('userName1_input', '用户名为空或位数太少');
-        } else {
-            hideTooltips('userName1_input');
-        }
-    }
-
-    /*验证密码不为空或太少*/
-    function checkPwd1(pwd1) {
-        if (pwd1.search(/^.{6,20}$/) == -1) {
-            showTooltips('password1_input', '密码为空或位数太少');
-        } else {
-            hideTooltips('password1_input');
-        }
-    }
-
-    /*Error message Tooltips*/
-    $(document).ready(function () {
-        /*点击隐藏错误提示,如果不想让提示点击消失,需要加上class='not_click_hide'*/
-        $('.control-group input').not('.not_click_hide').focus(function () {
-            hideTooltips($(this).parent().parent().attr('id'));
-        });
-    });
-    /*
-     *msgid:想让tooltips出现的地方的id
-     *msg:提示的内容
-     *time:自动消失的时间，如果不想让提示自动消失，则此参数不写
-     */
-    function showTooltips(msgid, msg, time) {
-        if (msgid == '') {
-            return;
-        }
-        if (msg == '') {
-            msg = 'Error!';
-        }
-        $('#' + msgid).prepend("<div class='for_fix_ie6_bug' style='position:relative;'><div class='tooltips_main'><div class='tooltips_box'><div class='tooltips'><div class='msg'>" + msg + "</div></div><div class='ov'></div></div></div></div>");
-        $('#' + msgid + ' .tooltips_main').fadeIn("slow").animate({marginTop: "-23px"}, {queue: true, duration: 400});
-        try {
-            if (typeof time != "undefined") {
-                setTimeout('hideTooltips("' + msgid + '")', time);
-            }
-        } catch (err) {
-        }
-
-    }
-    function hideTooltips(msgid) {
-        try {
-            $('#' + msgid).find('.tooltips_main').fadeOut("slow");
-            $('#' + msgid).find('.tooltips_main').remove();
-        } catch (e) {
-        }
-    }
-    function hideAllTooltips() {
-        $('.tooltips_main').fadeOut("slow");
-        $('.tooltips_main').remove();
-    }
 </script>
 </body>
 
