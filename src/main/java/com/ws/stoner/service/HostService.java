@@ -3,6 +3,7 @@ package com.ws.stoner.service;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.dto.StateNumDTO;
 
 import java.util.List;
 
@@ -18,14 +19,14 @@ public interface HostService {
     List<HostDO> listHost() throws AuthExpireException;
 
     /**
-     * Count unmonitored host int.
+     * 停用主机的数量.
      *
      * @return the int
      */
-    int countUnmonitoredHost();
+    int countDisableHost();
 
     /**
-     * Count maintenance host int.
+     * 维护状态主机的数量.
      *
      * @return the int
      */
@@ -37,8 +38,9 @@ public interface HostService {
      *
      * @return 有问题的主机数
      */
-    int countProblemHost() throws ServiceException;
+    int countDangerHost() throws ServiceException;
 
+    int countUnsupportedHost();
     /**
      * Count ok host int.
      *
@@ -46,6 +48,10 @@ public interface HostService {
      */
     int countOkHost();
 
+    StateNumDTO countAllHostState() throws ServiceException;
+
+
+    int countAllHost();
     /**
      * Gets host.
      *
