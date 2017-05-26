@@ -121,4 +121,32 @@ public class ZApiParameter {
     public static enum QUERY {
         count, shorten, refer, extend;
     }
+
+    public static enum SOURCE {
+        TRIGGER(0),
+        DISCOVERY_RULE(1),
+        AUTO_REGISTRATION(2),
+        INTERNAL_EVENT(3);
+
+        public int value;
+
+        private SOURCE(int value) {
+            this.value = value;
+        }
+    }
+
+    public static enum OBJECT {
+        TRIGGER(0),
+        DISCOVERED_HOST(1),
+        DISCOVERED_SERVICE(2),
+        AUTO_REGISTERED_HOST(3),
+        ITEM(4),
+        LLD_RULE(5);
+
+        public int value;
+
+        private OBJECT(int value) {
+            this.value = value;
+        }
+    }
 }

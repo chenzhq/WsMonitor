@@ -1,6 +1,7 @@
 package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
+import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.problem.ProblemGetRequest;
 import com.ws.bix4j.bean.HostDO;
@@ -17,9 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by chenzheqi on 2017/5/2.
@@ -54,8 +53,22 @@ public class HostServiceImpl implements HostService {
      * @return the int
      */
     @Override
-    public int countDisableHost() {
-        return 4;
+    public int countDisableHost() throws ServiceException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String, Integer> statusFilter = new HashMap<>();
+        statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.UNMONITORED_HOST.value);
+        hostGetRequest.getParams().setFilter(statusFilter).setCountOutput(true);
+        int disableHostNum;
+        try {
+            disableHostNum = zApi.Host().count(hostGetRequest);
+        } catch (ZApiException e) {
+            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+                throw new AuthExpireException("");
+            } else {
+                throw new ServiceException("");
+            }
+        }
+        return disableHostNum;
     }
 
     @Override
@@ -68,7 +81,8 @@ public class HostServiceImpl implements HostService {
     public int countDangerHost() throws ServiceException {
 
         ProblemGetRequest problemGetRequest = new ProblemGetRequest();
-        problemGetRequest.getParams().setSource(0).setObject(0);
+        problemGetRequest.getParams().setSource(ZApiParameter.SOURCE.TRIGGER.value)
+                .setObject(ZApiParameter.OBJECT.TRIGGER.value);
         List<ProblemDO> problems;
         List<String> triggerIds = new ArrayList<>();
         HostGetRequest hostGetRequest = new HostGetRequest();
