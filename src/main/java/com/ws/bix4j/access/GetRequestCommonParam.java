@@ -11,12 +11,12 @@ import java.util.Map;
 public abstract class GetRequestCommonParam {
     private boolean countOutput;
     private boolean editable;
-    private String excludeSearch;
+    private boolean excludeSearch;
     private Map filter;
     private int limit;
     private String output;
     @JSONField(name = "preservekeys")
-    private String preserveKeys;
+    private boolean preserveKeys;
     private Map search;
     private boolean searchByAny;
     private boolean searchWildcardsEnabled;
@@ -24,7 +24,7 @@ public abstract class GetRequestCommonParam {
     private List<String> sortField;
     @JSONField(name = "sortorder")
     private List<String> sortOrder;
-    private String startSearch;
+    private boolean startSearch;
 
     /**
      * 是否返回记录数 flag
@@ -72,7 +72,7 @@ public abstract class GetRequestCommonParam {
      *
      * @return String flag
      */
-    public String isExcludeSearch() {
+    public boolean isExcludeSearch() {
         return excludeSearch;
     }
 
@@ -81,7 +81,7 @@ public abstract class GetRequestCommonParam {
      *
      * @param excludeSearch flag
      */
-    public void setExcludeSearch(String excludeSearch) {
+    public void setExcludeSearch(boolean excludeSearch) {
         this.excludeSearch = excludeSearch;
     }
 
@@ -100,8 +100,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param filter Map key：属性名 value：单值／多个值的数组
      */
-    public void setFilter(Map filter) {
+    public GetRequestCommonParam setFilter(Map filter) {
         this.filter = filter;
+        return this;
     }
 
     /**
@@ -148,7 +149,7 @@ public abstract class GetRequestCommonParam {
      *
      * @return the string
      */
-    public String isPreserveKeys() {
+    public boolean isPreserveKeys() {
         return preserveKeys;
     }
 
@@ -157,7 +158,7 @@ public abstract class GetRequestCommonParam {
      *
      * @param preserveKeys the preserve keys
      */
-    public void setPreserveKeys(String preserveKeys) {
+    public void setPreserveKeys(boolean preserveKeys) {
         this.preserveKeys = preserveKeys;
     }
 
@@ -172,6 +173,7 @@ public abstract class GetRequestCommonParam {
 
     /**
      * 设置查询通配符
+     * 只用于String 和 Text类型的字段
      *
      * @param search Map key：属性名 value：查询字符串 默认"%…%"
      */
@@ -258,7 +260,7 @@ public abstract class GetRequestCommonParam {
      *
      * @return the string
      */
-    public String isStartSearch() {
+    public boolean isStartSearch() {
         return startSearch;
     }
 
@@ -267,7 +269,7 @@ public abstract class GetRequestCommonParam {
      *
      * @param startSearch flag
      */
-    public void setStartSearch(String startSearch) {
+    public void setStartSearch(boolean startSearch) {
         this.startSearch = startSearch;
     }
 }

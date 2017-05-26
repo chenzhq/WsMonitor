@@ -23,7 +23,7 @@ public interface HostService {
      *
      * @return the int
      */
-    int countDisableHost();
+    int countDisableHost() throws ServiceException;
 
     /**
      * 维护状态主机的数量.
