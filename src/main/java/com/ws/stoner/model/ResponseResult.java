@@ -1,5 +1,8 @@
 package com.ws.stoner.model;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ws.stoner.exception.ResponseErrorEnum;
 
 /**
@@ -9,6 +12,7 @@ public class ResponseResult<T> {
     private boolean success;
     private String message;
     private T data;
+    @JSONField(serialzeFeatures = SerializerFeature.NotWriteDefaultValue)
     private String errorCode;
 
     public void setErrorInfo(ResponseErrorEnum errorEnum) {
@@ -44,5 +48,10 @@ public class ResponseResult<T> {
     public ResponseResult setData(T data) {
         this.data = data;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

@@ -1,13 +1,13 @@
-package com.ws.stoner.model.bo;
+package com.ws.stoner.model.dto;
 
 /**
  * Created by chenzheqi on 2017/5/10.
  */
-public class LoginBO {
+public class LoginDTO {
     private boolean isLoginSuccess;
     private String sessionId;
 
-    public LoginBO(boolean isLoginSuccess) {
+    public LoginDTO(boolean isLoginSuccess) {
         this.isLoginSuccess = isLoginSuccess;
     }
 
@@ -15,7 +15,7 @@ public class LoginBO {
         return isLoginSuccess;
     }
 
-    public LoginBO setLoginSuccess(boolean loginSuccess) {
+    public LoginDTO setLoginSuccess(boolean loginSuccess) {
         isLoginSuccess = loginSuccess;
         return this;
     }
@@ -24,7 +24,7 @@ public class LoginBO {
         return sessionId;
     }
 
-    public LoginBO setSessionId(String sessionId) {
+    public LoginDTO setSessionId(String sessionId) {
         this.sessionId = sessionId;
         return this;
     }

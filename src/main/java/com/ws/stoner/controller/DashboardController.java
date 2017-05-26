@@ -30,7 +30,7 @@ public class DashboardController {
 
         List<UserDO> userDOList = userService.listUser();
         List<HostDO> hostDOList = hostService.listHost();
-        int problemHostCount = hostService.countProblemHost();
+        int problemHostCount = hostService.countDangerHost();
         model.addAttribute("users", userDOList);
         model.addAttribute("hosts", hostDOList);
         model.addAttribute("problemHostCount", problemHostCount);

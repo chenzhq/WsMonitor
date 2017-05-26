@@ -6,7 +6,7 @@ import com.ws.bix4j.access.user.UserLoginResponse;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.bo.LoginBO;
+import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import com.ws.stoner.service.LoginService;
 import org.slf4j.Logger;
@@ -24,15 +24,15 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private ZApi zApi;
 
-    public LoginBO login(LoginFormQuery loginFormQuery) throws ServiceException {
+    public LoginDTO login(LoginFormQuery loginFormQuery) throws ServiceException {
         UserLoginResponse.Result result;
-        LoginBO loginBO = new LoginBO(false);
+        LoginDTO loginDTO = new LoginDTO(false);
         try {
             result = zApi.login(loginFormQuery.getUsername(), loginFormQuery.getPassword()).getResult();
-            loginBO.setLoginSuccess(true).setSessionId(result.getSessionId());
+            loginDTO.setLoginSuccess(true).setSessionId(result.getSessionId());
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_LOGIN_ERROR)) {
-                return loginBO;
+                return loginDTO;
             } else {
                 //如果是网络问题，或者请求参数不合法等问题
                 throw new ServiceException(e.getMessage());
@@ -41,7 +41,7 @@ public class LoginServiceImpl implements LoginService {
         }
         logger.info("{} login success.", loginFormQuery.getUsername());
 
-        return loginBO;
+        return loginDTO;
     }
 
     public boolean loginWithCookie(String zbxSessionId) {

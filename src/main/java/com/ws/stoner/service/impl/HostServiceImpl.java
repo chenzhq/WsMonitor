@@ -10,7 +10,7 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.constant.HostStatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.bo.HostStatusNumBO;
+import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.HostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class HostServiceImpl implements HostService {
      * @return the int
      */
     @Override
-    public int countUnknownHost() {
+    public int countDisableHost() {
         return 4;
     }
 
@@ -65,7 +65,7 @@ public class HostServiceImpl implements HostService {
 
 
     @Override
-    public int countProblemHost() throws ServiceException {
+    public int countDangerHost() throws ServiceException {
 
         ProblemGetRequest problemGetRequest = new ProblemGetRequest();
         problemGetRequest.getParams().setSource(0).setObject(0);
@@ -79,7 +79,7 @@ public class HostServiceImpl implements HostService {
             for (ProblemDO problem : problems) {
                 triggerIds.add(problem.getObjectId());
             }
-            hostGetRequest.getParams().setTriggerIds(triggerIds);
+            hostGetRequest.getParams().setTriggerIds(triggerIds).setMonitoredHosts(true);
             problemHostNum = zApi.Host().count(hostGetRequest);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
@@ -91,6 +91,10 @@ public class HostServiceImpl implements HostService {
         return problemHostNum;
     }
 
+    @Override
+    public int countUnsupportedHost() {
+        return 0;
+    }
 
     @Override
     public int countOkHost() {
@@ -99,16 +103,25 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public List<HostStatusNumBO> countAllHost() throws ServiceException {
-        List<HostStatusNumBO> hostStatusNumBOList = new ArrayList<>();
+    public StateNumDTO countAllHostState() throws ServiceException {
+        StateNumDTO stateNumDTO = new StateNumDTO();
+        List<StateNumDTO.StateNum> stateNumList = new ArrayList<>();
 
-        HostStatusNumBO hostStatusNumBO = new HostStatusNumBO(HostStatusEnum.PROBLEM.getName(), countProblemHost());
-        hostStatusNumBOList.add(hostStatusNumBO);
+        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.OK, countOkHost()));
+        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.DANGER, countDangerHost()));
+        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.MAINTENANCE, countMaintenanceHost()));
+        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.UNSUPPORT, countUnsupportedHost()));
+        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.DISABLE, countDisableHost()));
 
-        hostStatusNumBOList.add(new HostStatusNumBO(HostStatusEnum.MAINTENANCE.getName(), countMaintenanceHost()));
-        hostStatusNumBOList.add(new HostStatusNumBO(HostStatusEnum.NORMAL.getName(), countOkHost()));
-        hostStatusNumBOList.add(new HostStatusNumBO(HostStatusEnum.UNKNOWN.getName(), countUnknownHost()));
-        return hostStatusNumBOList;
+        stateNumDTO.setStateNum(stateNumList);
+        stateNumDTO.setTotalNum(countAllHost());
+
+        return stateNumDTO;
+    }
+
+    @Override
+    public int countAllHost() {
+        return 10;
     }
 
     @Override

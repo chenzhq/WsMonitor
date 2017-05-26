@@ -44,7 +44,7 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
          * flag
          */
         @JSONField(name = "monitored_hosts")
-        private String monitoredHosts;
+        private boolean monitoredHosts;
         /**
          * 返回代理 <br>
          * flag
@@ -173,11 +173,11 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public String getMonitoredHosts() {
+        public boolean getMonitoredHosts() {
             return monitoredHosts;
         }
 
-        public Params setMonitoredHosts(String monitoredHosts) {
+        public Params setMonitoredHosts(boolean monitoredHosts) {
             this.monitoredHosts = monitoredHosts;
             return this;
         }

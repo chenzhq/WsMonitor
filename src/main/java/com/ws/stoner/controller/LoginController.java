@@ -1,8 +1,7 @@
 package com.ws.stoner.controller;
 
-import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.bo.LoginBO;
+import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import com.ws.stoner.service.LoginService;
 import com.ws.stoner.utils.CookieUtils;
@@ -17,16 +16,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Map;
 
-import static com.ws.stoner.constant.CookieConsts.REMEMBER_ME;
-import static com.ws.stoner.constant.CookieConsts.REMEMBER_ME_EXPIRE_TIME;
-import static com.ws.stoner.constant.CookieConsts.ZBX_SESSION;
+import static com.ws.stoner.constant.CookieConsts.*;
 
 /**
  * Created by chenzheqi on 2017/4/26.
@@ -68,7 +64,7 @@ public class LoginController {
             return "login";
         }
 
-        LoginBO loginReslut = loginService.login(loginFormQuery);
+        LoginDTO loginReslut = loginService.login(loginFormQuery);
         if(!loginReslut.isLoginSuccess()) {
             FieldError fieldError = new FieldError("loginFormQuery", "password", "用户名或密码错误");
             bindingResult.addError(fieldError);

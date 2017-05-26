@@ -4,10 +4,13 @@ package com.ws.stoner.constant;
  * Created by chenzheqi on 2017/5/24.
  */
 public enum HostStatusEnum {
-    PROBLEM("问题"),
+    WARNING("警告"),
+    DANGER("危险"),
     MAINTENANCE("维护"),
+    DISABLE("停用"),
+    UNSUPPORT("不支持"),
     UNKNOWN("未知"),
-    NORMAL("正常");
+    OK("正常");
 
     HostStatusEnum(String name) {
         this.name = name;
