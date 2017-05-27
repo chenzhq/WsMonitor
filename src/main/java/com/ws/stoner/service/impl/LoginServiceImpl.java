@@ -5,6 +5,7 @@ import com.ws.bix4j.access.user.UserGetRequest;
 import com.ws.bix4j.access.user.UserLoginResponse;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
@@ -59,5 +60,20 @@ public class LoginServiceImpl implements LoginService {
                 return false;
             }
         }
+    }
+
+    @Override
+    public boolean logout() throws ServiceException {
+        boolean logoutSuccess;
+        try {
+            logoutSuccess = zApi.logout().getResult();
+        } catch (ZApiException e) {
+            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+                throw new AuthExpireException("");
+            } else {
+                throw new ServiceException("");
+            }
+        }
+        return logoutSuccess;
     }
 }

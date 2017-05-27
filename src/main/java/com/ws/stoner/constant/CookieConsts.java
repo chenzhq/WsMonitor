@@ -8,6 +8,9 @@ public class CookieConsts {
 
     public static final int DEFAULT_EXPIRE_TIME = -1;
 
-    public static final String ZBX_SESSION = "zbx_session";
-    public static final String REMEMBER_ME = "remember_me";
+    public static final String ZBX_SESSION = "ZBX_SESSION";
+    public static final String USER_ID = "USER_ID";
+
+    public static final String USER_INFO = "userInfo";
+    public static final String REMEMBER_ME = "REMEMBER_ME";
 }

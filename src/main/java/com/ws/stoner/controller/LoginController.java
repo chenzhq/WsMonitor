@@ -1,5 +1,6 @@
 package com.ws.stoner.controller;
 
+import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
@@ -45,7 +46,7 @@ public class LoginController {
     public String index(HttpServletRequest request, HttpServletResponse response, Model model) {
 
         String zbx_session = CookieUtils.getValue(request, ZBX_SESSION);
-        String userId = CookieUtils.getValue(request, "id");
+        String userId = CookieUtils.getValue(request, CookieConsts.USER_ID);
         if (null == zbx_session || null == userId) {
             model.addAttribute("loginFormQuery", new LoginFormQuery());
             return "login";
@@ -54,13 +55,13 @@ public class LoginController {
             request.getSession().setAttribute(REMEMBER_ME, true);
 
             UserInfoDTO userInfo = userService.getUser(userId);
-            request.getSession().setAttribute("userInfo", userInfo);
+            request.getSession().setAttribute(CookieConsts.USER_INFO, userInfo);
             sessionMap.put(request.getSession().getId(), zbx_session);
             return "redirect:/dashboard";
         }
         logger.debug("zbx_session expire, re-login.");
         CookieUtils.remove(response, ZBX_SESSION);
-        CookieUtils.remove(response, "id");
+        CookieUtils.remove(response, CookieConsts.USER_ID);
 
         model.addAttribute("loginFormQuery", new LoginFormQuery());
         return "login";
@@ -85,7 +86,7 @@ public class LoginController {
         String zbx_session = loginResult.getSessionId();
         UserInfoDTO userInfo = loginResult.getUserInfoDTO();
         session.setAttribute(ZBX_SESSION, zbx_session);
-        session.setAttribute("userInfo", userInfo);
+        session.setAttribute(CookieConsts.USER_INFO, userInfo);
 
         sessionMap.put(session.getId(), zbx_session);
 
@@ -96,9 +97,10 @@ public class LoginController {
         */
         if (!loginFormQuery.isRememberMe()) {
             CookieUtils.add(response, ZBX_SESSION, zbx_session);
+            CookieUtils.add(response, CookieConsts.USER_ID, userInfo.getUserId());
         } else {
             CookieUtils.add(response, ZBX_SESSION, zbx_session, REMEMBER_ME_EXPIRE_TIME);
-            CookieUtils.add(response, "id", userInfo.getUserId(), REMEMBER_ME_EXPIRE_TIME);
+            CookieUtils.add(response, CookieConsts.USER_ID, userInfo.getUserId(), REMEMBER_ME_EXPIRE_TIME);
             session.setAttribute(REMEMBER_ME, true);
         }
 
