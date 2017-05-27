@@ -6,6 +6,7 @@ package com.ws.stoner.model.dto;
 public class LoginDTO {
     private boolean isLoginSuccess;
     private String sessionId;
+    private UserInfoDTO userInfoDTO;
 
     public LoginDTO(boolean isLoginSuccess) {
         this.isLoginSuccess = isLoginSuccess;
@@ -26,6 +27,15 @@ public class LoginDTO {
 
     public LoginDTO setSessionId(String sessionId) {
         this.sessionId = sessionId;
+        return this;
+    }
+
+    public UserInfoDTO getUserInfoDTO() {
+        return userInfoDTO;
+    }
+
+    public LoginDTO setUserInfoDTO(UserInfoDTO userInfoDTO) {
+        this.userInfoDTO = userInfoDTO;
         return this;
     }
 }

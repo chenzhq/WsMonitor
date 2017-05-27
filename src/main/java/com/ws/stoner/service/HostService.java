@@ -15,43 +15,64 @@ public interface HostService {
      * List host list.
      *
      * @return the list
+     * @throws AuthExpireException the auth expire exception
      */
     List<HostDO> listHost() throws AuthExpireException;
 
     /**
-     * 停用主机的数量.
+     * 计算停用主机的数量.
      *
      * @return the int
+     * @throws ServiceException the service exception
      */
     int countDisableHost() throws ServiceException;
 
     /**
-     * 维护状态主机的数量.
+     * 计算维护状态主机的数量.
      *
      * @return the int
      */
     int countMaintenanceHost();
 
     /**
-     * 返回有问题的主机数量
+     * 计算有问题的主机数量
      * 该主机触发器产生了Problem
      *
-     * @return 有问题的主机数
+     * @return 有问题的主机数 int
+     * @throws ServiceException the service exception
      */
     int countDangerHost() throws ServiceException;
 
-    int countUnsupportedHost();
     /**
-     * Count ok host int.
+     * Count unsupported host int.
+     *
+     * @return the int
+     */
+    int countUnsupportedHost();
+
+    /**
+     * 计算正常的主机数量
      *
      * @return the int
      */
     int countOkHost();
 
+    /**
+     * Count all host state state num dto.
+     *
+     * @return the state num dto
+     * @throws ServiceException the service exception
+     */
     StateNumDTO countAllHostState() throws ServiceException;
 
 
+    /**
+     * Count all host int.
+     *
+     * @return the int
+     */
     int countAllHost();
+
     /**
      * Gets host.
      *

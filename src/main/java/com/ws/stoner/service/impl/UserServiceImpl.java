@@ -6,10 +6,12 @@ import com.ws.bix4j.bean.UserDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
+import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +21,24 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private ZApi zApi;
+
+    @Override
+    public UserInfoDTO getUser(String id) {
+        UserGetRequest userGetRequest = new UserGetRequest();
+        List<String> ids = new ArrayList<>(1);
+        ids.add(id);
+        userGetRequest.getParams().setUserIds(ids);
+        List<UserDO> userList = new ArrayList<>();
+        try {
+            userList = zApi.User().get(userGetRequest).getResult();
+        } catch (ZApiException e) {
+            e.printStackTrace();
+        }
+        if (null != userList) {
+            return new UserInfoDTO(userList.get(0));
+        }
+        return null;
+    }
 
     public List<UserDO> listUser() throws AuthExpireException {
         UserGetRequest userGetRequest = new UserGetRequest();

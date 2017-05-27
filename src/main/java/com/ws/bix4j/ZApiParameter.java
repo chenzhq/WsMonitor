@@ -149,4 +149,16 @@ public class ZApiParameter {
             this.value = value;
         }
     }
+
+    public static enum USER_TYPE {
+        USER(1),
+        ADMIN(2),
+        SUPER_ADMIN(3);
+
+        public int value;
+
+        private USER_TYPE(int value) {
+            this.value = value;
+        }
+    }
 }
