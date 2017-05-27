@@ -5,8 +5,10 @@ import com.ws.bix4j.access.user.UserGetRequest;
 import com.ws.bix4j.access.user.UserLoginResponse;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.LoginDTO;
+import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import com.ws.stoner.service.LoginService;
 import org.slf4j.Logger;
@@ -29,7 +31,8 @@ public class LoginServiceImpl implements LoginService {
         LoginDTO loginDTO = new LoginDTO(false);
         try {
             result = zApi.login(loginFormQuery.getUsername(), loginFormQuery.getPassword()).getResult();
-            loginDTO.setLoginSuccess(true).setSessionId(result.getSessionId());
+            loginDTO.setLoginSuccess(true).setSessionId(result.getSessionId())
+                    .setUserInfoDTO(new UserInfoDTO(result));
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_LOGIN_ERROR)) {
                 return loginDTO;
@@ -57,5 +60,20 @@ public class LoginServiceImpl implements LoginService {
                 return false;
             }
         }
+    }
+
+    @Override
+    public boolean logout() throws ServiceException {
+        boolean logoutSuccess;
+        try {
+            logoutSuccess = zApi.logout().getResult();
+        } catch (ZApiException e) {
+            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+                throw new AuthExpireException("");
+            } else {
+                throw new ServiceException("");
+            }
+        }
+        return logoutSuccess;
     }
 }

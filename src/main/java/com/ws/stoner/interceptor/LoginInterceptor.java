@@ -1,10 +1,11 @@
 package com.ws.stoner.interceptor;
 
+import com.ws.stoner.constant.CookieConsts;
+import com.ws.stoner.utils.CookieUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,6 +24,16 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
         if(uri.endsWith("/login/") || uri.endsWith("/login")) {
             if(request.getSession() != null && request.getSession().getAttribute(ZBX_SESSION) != null) {
                 response.sendRedirect(request.getContextPath() + "/dashboard");
+                return false;
+            } else {
+                return true;
+            }
+        } else if (uri.endsWith("/logout/") || uri.endsWith("/logout")) {
+            if (request.getSession() != null && request.getSession().getAttribute(ZBX_SESSION) == null) {
+                //已经自动登出，old session已经销毁
+                CookieUtils.remove(response, CookieConsts.ZBX_SESSION);
+                CookieUtils.remove(response, CookieConsts.USER_ID);
+                response.sendRedirect(request.getContextPath() + "/login");
                 return false;
             } else {
                 return true;

@@ -34,7 +34,9 @@ public class SessionListener implements HttpSessionListener{
         try {
             if(sessionMap.get(httpSessionEvent.getSession().getId()) != null
                     && httpSessionEvent.getSession().getAttribute(REMEMBER_ME) == null) {
-                logoutZApi.cacheLogout(sessionMap.get(httpSessionEvent.getSession().getId()));
+                String destroyedSessionId = httpSessionEvent.getSession().getId();
+                logoutZApi.cacheLogout(sessionMap.get(destroyedSessionId));
+                sessionMap.remove(destroyedSessionId);
             }
         } catch (ZApiException e) {
             e.printStackTrace();

@@ -11,4 +11,7 @@ public interface LoginService {
     LoginDTO login(LoginFormQuery loginFormQuery) throws ServiceException;
 
     boolean loginWithCookie(String zbxSessionId);
+
+    boolean logout() throws ServiceException;
+
 }
