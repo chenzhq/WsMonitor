@@ -14,12 +14,17 @@ import org.springframework.web.context.WebApplicationContext;
 @Configuration
 public class ZabbixConfiguration {
 
-    private final String URL = "http://145.170.23.28/zabbix/api_jsonrpc.php";
+    private final static String URL = "http://145.170.23.28/zabbix/api_jsonrpc.php";
 
     @Bean
     @Scope(value = WebApplicationContext.SCOPE_SESSION,
             proxyMode = ScopedProxyMode.TARGET_CLASS)
     public ZApi zApi() {
+        return new ZApi(URL);
+    }
+
+    @Bean
+    public ZApi logoutZApi() {
         return new ZApi(URL);
     }
 }

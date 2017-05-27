@@ -2,7 +2,8 @@ package com.ws.bix4j.access;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.ws.bix4j.ZApiException;
+import com.ws.bix4j.exception.ZApiException;
+import com.ws.bix4j.exception.ZApiExceptionEnum;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPost;
@@ -34,13 +35,13 @@ public class ZApiMethod {
 
     protected String sendRequest(String requestJson) throws ZApiException {
 
-        logger.debug("api请求json：\n" + requestJson);
+        logger.debug("api request json：\n" + requestJson);
 
         // HTTP POST
         HttpResponse httpResponse;
         HttpPost httpPost = new HttpPost(apiUrl);
 
-        String responseBody = null;
+        String responseBody;
         try {
             httpPost.setHeader("Content-Type", "application/json-rpc");
             httpPost.setEntity(new StringEntity(requestJson));
@@ -50,32 +51,37 @@ public class ZApiMethod {
             responseBody = EntityUtils.toString(httpResponse.getEntity());
 
         } catch (Exception e) {
-            throw new ZApiException("HTTP 请求错误");
+            throw new ZApiException(ZApiExceptionEnum.HTTP_REQUSET_ERROR, "HTTP request error");
         }
 
         // HTTP 状态错误
         if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new ZApiException("HTTP 错误 : " + responseBody);
+            throw new ZApiException(ZApiExceptionEnum.HTTP_STATUS_ERROR, "HTTP error : " + responseBody);
         }
 
 
         // API 错误
         JSONObject responseJO = JSON.parseObject(responseBody);
         if (responseJO.containsKey("error")) {
-            String message = "API 错误:" + responseJO.getString("error");
-            message += "\nRequest:" + requestJson;
-            throw new ZApiException(message);
+            JSONObject errorJO = (JSONObject) responseJO.get("error");
+            if(errorJO.get("data").toString().equals("Session terminated, re-login, please.")) {
+                throw new ZApiException(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE, "auth失效，需要重新登录");
+            } if(errorJO.getString("data").equals("Login name or password is incorrect.")) {
+                throw new ZApiException(ZApiExceptionEnum.ZBX_API_LOGIN_ERROR, "用户名或密码错误");
+            } else {
+                throw new ZApiException(ZApiExceptionEnum.ZBX_API_ERROR, errorJO.getString("data"));
+            }
         }
 
 
         // check id
         JSONObject requestJO = JSON.parseObject(requestJson);
         if (!requestJO.getInteger("id").equals(responseJO.getInteger("id"))) {
-            throw new ZApiException("id 不匹配");
+            throw new ZApiException(ZApiExceptionEnum.ID_MATCH_ERROR, "id not match");
         }
 
 
-        logger.debug("api响应json：\n" + responseBody);
+        logger.debug("api response json：\n" + responseBody);
 
         return responseBody;
     }

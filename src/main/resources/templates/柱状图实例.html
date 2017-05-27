@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<!-- 引入 echarts.js -->
+        <script src="js/echarts.min.js"></script>
+		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/main.css" />
+	</head>
+
+	<body>
+		<div class="admin-main">
+			<!-- 主内容开始--->
+			<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+			<div id="main" style="width: 400px;height:200px;"></div>
+			<!-- 主内容结束-->
+			<script type="text/javascript">
+				// 基于准备好的dom，初始化echarts实例例
+				var myChart = echarts.init(document.getElementById('main'));
+		
+				// 指定图表的配置项和数据
+				
+				var labelTop = {// 环形图数值显示
+						normal : {
+							
+							label : {
+								show : true,
+								position : 'center',
+								formatter : function (params){
+									return params.value + '%'
+								},
+							},
+							},
+					};
+					var labelBottom = {
+						normal : {
+							color: '#ccc',
+							label : {
+								show : false
+							},
+							labelLine : {
+								show : false
+							}
+						},
+						emphasis: {
+							color: 'rgba(0,0,0,0)'
+						}
+					};
+					var radius = [22, 30];// 环形图横截面积的宽度
+
+				var option = {
+						legend: {
+							x : 'center',
+							y : 'center',
+							data:[
+								'可用性','繁忙度'
+							]
+						},
+						series : [
+							{
+								type : 'pie',
+								center : ['10%', '30%'],
+								radius : radius,
+								x: '0%', // for funnel
+								data : [
+									{name:'其他', value:46, itemStyle : labelBottom},
+									{name:'可用性', value:54,itemStyle : labelTop}
+								]
+							},
+							{
+								type : 'pie',
+								center : ['30%', '30%'],
+								radius : radius,
+								x:'20%', // for funnel
+								data : [
+									{name:'其他', value:56, itemStyle : labelBottom},
+									{name:'繁忙度', value:44,itemStyle : labelTop}
+								]
+							}
+						]
+					};
+							
+		
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);				
+			</script>
+			
+			<script type="text/javascript" src="plugins/layui/layui.js"></script>
+
+		</div>
+	</body>
+
+</html>

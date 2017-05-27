@@ -2,7 +2,7 @@ package com.ws.bix4j.access.user;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ws.bix4j.ZApiException;
+import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.access.ZApiMethod;
 
 /**
@@ -51,7 +51,7 @@ public class User extends ZApiMethod {
     }
 
     public UserLogoutResponse logout(UserLogoutRequest request) throws ZApiException {
-        String requestString = JSON.toJSONString(request, SerializerFeature.NotWriteDefaultValue);
+        String requestString = JSON.toJSONString(request, SerializerFeature.WriteNullListAsEmpty);
         String responseJson = sendRequest(requestString);
         UserLogoutResponse response = JSON.parseObject(responseJson, UserLogoutResponse.class);
         return response;
