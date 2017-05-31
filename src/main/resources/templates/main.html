@@ -4,9 +4,12 @@
 		<meta charset="UTF-8">
 		<title></title>
 		<!-- 引入 echarts.js -->
-        <script src="js/echarts.min.js"></script>
-		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
-		<link rel="stylesheet" href="css/main.css" />
+        <script src="../static/js/echarts.min.js"></script>
+		<!--<script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>-->
+		<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544"></script>
+		<link rel="stylesheet" href="../static/plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="../static/css/main.css" />
 	</head>
 
 	<body>
@@ -229,8 +232,8 @@
 				// 指定图表的配置项和数据
 				var option = {
 						title: {
-									text: '7台',
-									subtext: '业务设备',
+									text: '  ',
+									subtext: ' ',
 									x: 'center',
 									y: 'center',
 									itemGap: 10,
@@ -247,7 +250,7 @@
 								},
 						series: [
 							{
-								name:'访问来源',
+								name:'访问来源1',
 								type:'pie',
 								radius: ['40%', '60%'],
 								itemStyle: {  
@@ -262,21 +265,45 @@
 											}
 										}   
 									},
-								 },    
-								data:[
-									{value:2, name:'危险'},
-									{value:1, name:'故障'},
-									{value:4, name:'正常'},
-									{value:0, name:'未知'},
-								], 
-								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
+								 },
+                                data: [],
+								color:['#FF5722','#F7B824','#5FB878','#d2d2d2','#2F4056']
 							}
 						]
 					};
 		
 				// 使用刚指定的配置项和数据显示图表。
-				myChart.setOption(option);
+				/*myChart.setOption(option);*/
 
+                /*myChart.showLoading();  */  //数据加载完之前先显示一段简单的loading动画
+
+                $.ajax({
+                    type: "post",
+                    async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+                    url: "/host/count",
+                    data: {},
+                    dataType: "json",        //返回数据形式为json
+                    success: function (result) {
+                        var seriesdata = [];
+                        var data=result.data;
+                        var dataList=data.stateNum;
+                        var total=data.totalNum;
+                        var str=JSON.stringify(dataList);
+                        alert(str+total);
+                        if(dataList){
+                            option.title.text = total;
+                            option.series[0].data = dataList;
+                            myChart.setOption(option);
+                        }
+                    },
+                    error: function (errorMsg) {
+                        //请求失败时执行该函数
+                        alert("图表请求数据失败!");
+                        myChart.hideLoading();
+                    }
+                })
+				</script>
+                <script type="text/javascript">
 				// 基于准备好的dom，初始化echarts实例
 				var myChart = echarts.init(document.getElementById('main1'));
 		
@@ -323,7 +350,7 @@
 									{value:234, name:'正常'},
 									{value:135, name:'未知'},
 								], 
-								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
+								color:['#FF5722','#F7B824','#5FB878','#d2d2d2','#2F4056']
 							}
 						]
 					};
@@ -378,7 +405,7 @@
 									{value:34, name:'正常'},
 									{value:5, name:'未知'},
 								], 
-								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
+								color:['#FF5722','#F7B824','#5FB878','#d2d2d2','#2F4056']
 							}
 						]
 					};
@@ -387,7 +414,7 @@
 				myChart.setOption(option);				
 			</script>
 			
-			<script type="text/javascript" src="plugins/layui/layui.js"></script>
+			<script type="text/javascript" src="../static/plugins/layui/layui.js"></script>
 			<script>
 				layui.use('element', function() {
 					var element = layui.element(); //导航的hover效果、二级菜单等功能，需要依赖element模块
