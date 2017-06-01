@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>���� Semantic-UI</title>
+        <script src="../static/js/semantic.js"></script>
+		<link rel="stylesheet" href="../static/css/semantic.css"  />
+	</head>
+	<body>
+	  <!--sidebar start-->
+	  <div class="ui thin visible sidebar left inverted vertical menu ">
+	      <div class="header item">
+		    <img src="../static/images/logo-1.png">
+		  </div>
+		  <div class="item">
+			<i class="home icon"></i>
+			仪表盘
+		  </div>
+		  <div class="item">
+			<i class="block layout icon"></i>
+			监控视图
+		  </div>
+		  <div class="item">
+			<i class="smile icon"></i>
+			告警管理
+		  </div>
+	  </div>
+	  
+	  <!--sidebar end-->
+	  <!--navbar start-->
+	  <div class="pusher">
+		  <div class="ui top fixed  menu">
+			  <div class="header item" id="sidebarmenu">
+				  <i class="contrnt icon"></i>				  侧边
+			  </div>
+			  <div class="item">
+				  <i class="contrnt icon"></i>				  全屏
+			  </div>
+  
+  
+			  <div class="right menu">
+				  <div class="item ui colhidden">
+					  <div class="ui icon input">
+						<input type="text" placeholder="Search...">
+						  <i class="search icon"></i>
+					  </div>
+				  </div>
+
+				  <div class="ui dropdown item icon">
+					<i class="bell icon"></i>				  告警
+					<div class="ui red label mini circular">6</div>
+					<div class="menu" >
+						<div class="header">
+							紧急告警
+						</div>
+						<div class="item">
+							告警信息1……
+							<div class="ui teal left pointing label">1</div>
+						</div>
+						<div class="item">
+							告警信息2……
+							<div class="ui label">51</div>
+						</div>
+						<div class="item">
+							告警信息3……
+							<div class="ui label">1</div>
+						</div>
+						<div class="header">
+							严重告警
+						</div>
+						<div class="item">
+							<i class="dropdown icon"></i>
+							<span class="text">更多</span>
+							<div class="menu">
+							  <div class="item">告警信息……</div>
+							  <div class="item">告警信息……</div>
+							</div>
+						</div>
+					</div>
+				</div>			  
+
+				<div class="ui dropdown item" >
+					<img src="../static/images/0.jpg">
+					<div class="menu" >
+						<a class="item" href="#">注销</a>
+						<a class="item" href="#">>Profile</a>
+						<a class="item" href="#">>Settings</a>
+
+					</div>
+				</div>
+
+				<a class="item labeled rightsidebar computer only">
+					<i class="wrench icon"></i>          设置
+				</a>
+				<a class="item labeled rightsidebar computer only">
+					<i class="wrench icon"></i>          设置
+				</a>
+				<a class="item labeled rightsidebar computer only">
+					<i class="wrench icon"></i>          设置
+				</a>
+
+				
+			  </div>	
+		  </div>		  
+		  
+	  </div>
+	  <!--navbar start-->	  
+	  <div class="pusher">
+		<!-- Site content !-->
+	  </div>
+	  <script>
+		$('#sidebarmenu').click(function(){
+		     alert("1");
+			$('.ui.sidebar').sidebar('toggle');
+			});
+	  </script>
+	 
+	</body>
+
+</html>
