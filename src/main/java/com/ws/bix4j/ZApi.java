@@ -1,6 +1,7 @@
 package com.ws.bix4j;
 
 import com.ws.bix4j.access.host.Host;
+import com.ws.bix4j.access.group.Group;
 import com.ws.bix4j.access.problem.Problem;
 import com.ws.bix4j.access.user.*;
 import com.ws.bix4j.exception.ZApiException;
@@ -67,6 +68,9 @@ public class ZApi {
     }
     public Host Host() {
         return new Host(uri.toString(), auth);
+    }
+    public Group Group() {
+        return new Group(uri.toString(), auth);
     }
 
     public Problem Problems() {

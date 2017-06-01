@@ -73,7 +73,17 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public int countMaintenanceHost() {
-        return 3;
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String, Integer> statusFilter = new HashMap<>();
+        statusFilter.put("maintenance_status", ZApiParameter.HOST_MAINTENANCE_STATUS.MAINTENANCE_IN_EFFECT.value);
+        hostGetRequest.getParams().setFilter(statusFilter).setCountOutput(true);
+        int maintenanceHostNum = 0;
+        try {
+            maintenanceHostNum = zApi.Host().count(hostGetRequest);
+        } catch (ZApiException e) {
+            e.printStackTrace();
+        }
+        return maintenanceHostNum;
     }
 
 
@@ -106,14 +116,24 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public int countUnsupportedHost() {
+    public int countUnsupportedHost()  {
         return 0;
     }
 
     @Override
-    public int countOkHost() {
+    public int countOkHost() throws ServiceException{
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String, Integer> availableFilter = new HashMap<>();
+        availableFilter.put("available", ZApiParameter.HOST_AVAILABLE.AVAILABLE_HOST.value);
 
-        return 2;
+        hostGetRequest.getParams().setFilter(availableFilter).setCountOutput(true);
+        int enableHostNum = 0;
+        try {
+            enableHostNum = zApi.Host().count(hostGetRequest);
+        } catch (ZApiException e) {
+            e.printStackTrace();
+        }
+        return enableHostNum;
     }
 
     @Override
@@ -134,8 +154,21 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public int countAllHost() {
-        return 10;
+    public int countAllHost() throws AuthExpireException{
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        hostGetRequest.getParams().setCountOutput(true);
+        int allHost = 0;
+        try {
+            allHost = zApi.Host().count(hostGetRequest);
+        } catch (ZApiException e) {
+            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+                throw new AuthExpireException("");
+            }
+            e.printStackTrace();
+            logger.error("查询主机错误！{}", e.getMessage());
+            return 0;
+        }
+        return allHost;
     }
 
     @Override

@@ -68,6 +68,34 @@ public class ZApiParameter {
 
     }
 
+    /**
+     * 适用于agent,ipmi,jmx,snmp四个类型的状态值
+     */
+    public static enum HOST_AVAILABLE {
+        UNKOWN_HOST(0), AVAILABLE_HOST(1),UNAVAILABLE_HOST(2);
+
+        public int value;
+
+        private HOST_AVAILABLE(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
+     * 适用于agent,ipmi,jmx,snmp四个类型的状态值
+     */
+    public static enum HOST_MAINTENANCE_STATUS  {
+        NO_MAINTENANCE(0), MAINTENANCE_IN_EFFECT(1);
+
+        public int value;
+
+        private HOST_MAINTENANCE_STATUS(int value) {
+            this.value = value;
+        }
+
+    }
+
     public static enum ITEM_VALUE_TYPE {
         NUMERIC_FLOAT(0), CHARACTOR(1), LOG(2), NUMERIC_UNSIGNED(3), TEXT(4);
 
