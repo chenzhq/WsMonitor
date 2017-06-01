@@ -83,7 +83,9 @@ public class ZApiParameter {
     }
 
     /**
-     * 适用于agent,ipmi,jmx,snmp四个类型的状态值
+     * 主机维护状态值
+     * NO_MAINTENANCE(0) 非维护状态
+     * MAINTENANCE_IN_EFFECT(1) 维护状态
      */
     public static enum HOST_MAINTENANCE_STATUS  {
         NO_MAINTENANCE(0), MAINTENANCE_IN_EFFECT(1);

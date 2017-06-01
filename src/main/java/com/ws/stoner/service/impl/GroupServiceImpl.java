@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Service
 public class GroupServiceImpl implements GroupService {
-    private static final Logger logger = LoggerFactory.getLogger(HostServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
     @Autowired
     private ZApi zApi;
     @Override

@@ -47,6 +47,6 @@ public class DashboardController {
         model.addAttribute("disHostsNum", disbleHost);
         model.addAttribute("okHostsNum", okHost);
         model.addAttribute("maintenanceHostsNum", maintenanceHost);
-        return "dashboard_";
+        return "dashboard";
     }
 }
