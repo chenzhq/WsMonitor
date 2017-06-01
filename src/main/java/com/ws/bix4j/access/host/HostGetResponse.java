@@ -10,6 +10,15 @@ import java.util.List;
  */
 public class HostGetResponse extends ZResponse {
     private List<HostDO> result;
+    private  int countHost;
+
+    public int getCountHost() {
+        return countHost;
+    }
+
+    public void setCountHost(int countHost) {
+        this.countHost = countHost;
+    }
 
     public HostGetResponse setResult(List<HostDO> result) {
         this.result = result;

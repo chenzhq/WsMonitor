@@ -55,7 +55,7 @@ public interface HostService {
      *
      * @return the int
      */
-    int countOkHost();
+    int countOkHost() throws ServiceException;
 
     /**
      * Count all host state state num dto.
@@ -71,7 +71,7 @@ public interface HostService {
      *
      * @return the int
      */
-    int countAllHost();
+    int countAllHost() throws AuthExpireException;
 
     /**
      * Gets host.
