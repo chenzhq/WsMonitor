@@ -2,9 +2,7 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.group.GroupGetRequest;
-import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.bean.GroupDO;
-import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;

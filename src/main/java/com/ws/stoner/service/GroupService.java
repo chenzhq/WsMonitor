@@ -1,10 +1,7 @@
 package com.ws.stoner.service;
 
 import com.ws.bix4j.bean.GroupDO;
-import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.StateNumDTO;
 
 import java.util.List;
 

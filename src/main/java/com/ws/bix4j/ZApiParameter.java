@@ -98,6 +98,21 @@ public class ZApiParameter {
 
     }
 
+    /**
+     * 主机维护获取数据type
+     * WITH_DATA(0) 维护状态获取数据
+     * WITHOUT_DATA(1) 维护状态不获取数据
+     */
+    public static enum HOST_MAINTENANCE_TYPE  {
+        WITH_DATA(0), WITHOUT_DATA(1);
+
+        public int value;
+
+        private HOST_MAINTENANCE_TYPE(int value) {
+            this.value = value;
+        }
+
+    }
     public static enum ITEM_VALUE_TYPE {
         NUMERIC_FLOAT(0), CHARACTOR(1), LOG(2), NUMERIC_UNSIGNED(3), TEXT(4);
 

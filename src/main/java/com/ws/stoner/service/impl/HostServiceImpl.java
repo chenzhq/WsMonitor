@@ -29,6 +29,11 @@ public class HostServiceImpl implements HostService {
     @Autowired
     private ZApi zApi;
 
+    /**
+     * 获取所有的主机列表
+     * @return
+     * @throws AuthExpireException
+     */
     @Override
     public List<HostDO> listHost() throws AuthExpireException {
         HostGetRequest hostGetRequest = new HostGetRequest();
@@ -49,7 +54,7 @@ public class HostServiceImpl implements HostService {
 
     /**
      * Count unmonitored host int.
-     *
+     *获取停用的主机数量
      * @return the int
      */
     @Override
@@ -71,11 +76,16 @@ public class HostServiceImpl implements HostService {
         return disableHostNum;
     }
 
+    /**
+     * 获取维护中并且不获取数据的主机数量
+     * @return
+     */
     @Override
     public int countMaintenanceHost() {
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("maintenance_status", ZApiParameter.HOST_MAINTENANCE_STATUS.MAINTENANCE_IN_EFFECT.value);
+        statusFilter.put("maintenance_type", ZApiParameter.HOST_MAINTENANCE_TYPE.WITHOUT_DATA.value);
         hostGetRequest.getParams().setFilter(statusFilter).setCountOutput(true);
         int maintenanceHostNum = 0;
         try {
@@ -86,7 +96,11 @@ public class HostServiceImpl implements HostService {
         return maintenanceHostNum;
     }
 
-
+    /**
+     * 获取危险的主机数量
+     * @return
+     * @throws ServiceException
+     */
     @Override
     public int countDangerHost() throws ServiceException {
 
@@ -115,25 +129,24 @@ public class HostServiceImpl implements HostService {
         return problemHostNum;
     }
 
+    /**
+     * 弃用
+     * @return
+     */
     @Override
     public int countUnsupportedHost()  {
         return 0;
     }
 
+    /**
+     * 统计正常的主机数量 = 总主机数（不包含停用主机）-维护主机数（无数据）-危险主机数（报警）
+     * @return
+     * @throws ServiceException
+     */
     @Override
     public int countOkHost() throws ServiceException{
-        HostGetRequest hostGetRequest = new HostGetRequest();
-        Map<String, Integer> availableFilter = new HashMap<>();
-        availableFilter.put("available", ZApiParameter.HOST_AVAILABLE.AVAILABLE_HOST.value);
-
-        hostGetRequest.getParams().setFilter(availableFilter).setCountOutput(true);
-        int enableHostNum = 0;
-        try {
-            enableHostNum = zApi.Host().count(hostGetRequest);
-        } catch (ZApiException e) {
-            e.printStackTrace();
-        }
-        return enableHostNum;
+        int okHostNum = countAllHost() - countMaintenanceHost() - countDangerHost();
+        return okHostNum;
     }
 
     @Override
@@ -144,8 +157,8 @@ public class HostServiceImpl implements HostService {
         stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.OK, countOkHost()));
         stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.DANGER, countDangerHost()));
         stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.MAINTENANCE, countMaintenanceHost()));
-        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.UNSUPPORT, countUnsupportedHost()));
-        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.DISABLE, countDisableHost()));
+//        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.UNSUPPORT, countUnsupportedHost()));
+//        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.DISABLE, countDisableHost()));
 
         stateNumDTO.setStateNum(stateNumList);
         stateNumDTO.setTotalNum(countAllHost());
@@ -156,7 +169,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public int countAllHost() throws AuthExpireException{
         HostGetRequest hostGetRequest = new HostGetRequest();
-        hostGetRequest.getParams().setCountOutput(true);
+        hostGetRequest.getParams().setMonitoredHosts(true).setCountOutput(true);
         int allHost = 0;
         try {
             allHost = zApi.Host().count(hostGetRequest);
