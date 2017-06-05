@@ -1,43 +1,64 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title></title>
-		<!-- 引入 echarts.js -->
-        <script src="../static/js/echarts.min.js"></script>
-		<link rel="stylesheet" href="../static/plugins/layui/css/layui.css" media="all" />
-		<link rel="stylesheet" href="../static/css/main.css" />
-	</head>
+<html xmlns:th="http://www.thymeleaf.org">
 
-	<body>
-		<div class="admin-main">
-			<!-- 主内容开始-->
-			<div style="margin-left:20px;margin-top:-20px">
-				<p><i class="layui-icon" style="font-size: 120px; color: #009688;">&#xe61c;</i><a style="font-size: 60px; color: #009688;">抱歉！</a><a style=" font-size: 30px; color: #009688;">您访问的页面不存在……</a></p>	
+<head>
+	<meta charset="utf-8">
+	<title>404</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/semantic.js"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css"  />
+	<link rel="stylesheet" href="../static/css/icon.css"  />
+	<style type="text/css">
+		body {
+			background-color: #DADADA;
+		}
+		body > .grid {
+			height: 100%;
+		}
+		.image {
+			margin-top: -100px;
+		}
+		.column {
+			max-width: 450px;
+		}
+	</style>
+</head>
+
+<body>
+<div class="ui center aligned middle aligned grid">
+	<div class="column">
+		<h2 class="ui teal image header">
+			<img src="../static/images/logo.png" class="image">
+			<div class="content">
+				抱歉！
+				您访问的页面不存在……
 			</div>
-					
-			<fieldset class="layui-elem-field">
-			  <legend>什么问题？</legend>
-			  <div class="layui-field-box">
-					<blockquote class="layui-elem-quote">
-						<p><i class="layui-icon" style="font-size: 25px;">&#xe642;</i> 您要查看的网址可能已被删或者暂时不可用</p>
-						<p>&nbsp <i class="layui-icon">&#xe64c;</i> 您可以点击此链接继续浏览网址<a href="main.html" style="color: #01AAED;">>>返回网址首页<a></p>
-					</blockquote>
-			  </div>
-			</fieldset>
-			
-			<fieldset class="layui-elem-field">
-			  <legend>请联系我们</legend>
-			  <div class="layui-field-box">
-					<blockquote class="layui-elem-quote">
-						<p>&nbsp <i class="layui-icon">&#xe616;</i> &nbsp Mon-Fri 8:30 - 17:30</p>
-						<p>&nbsp <i class="layui-icon">&#xe612;</i> &nbsp (027) 8766 7780</p>
-						<p>&nbsp <i class="layui-icon">&#xe611;</i> &nbsp whstoneJK@whstone.com.cn</p>
-					</blockquote>
-			  </div>
-			</fieldset>
+		</h2>
+		<form class="ui large form" >
+			<div class="ui stacked segment">
+				<div class="ui message">
+					<div class="header">什么问题？</div>
+					<ul class="list">
+						<li>您要查看的网址可能已被删。</li>
+						<li>您要查看的网址或许暂时不可用。</li>
+						<li>……</li>
+					</ul>
+				</div>
+				<div class="ui fluid large teal submit button">返回首页</div>
+				<div class="ui fluid large teal submit button" style="margin-top: 15px">返回上一级页面</div>
+			</div>
+		</form>
 
+		<div class="ui message">
+			<div class="header">请联系我们</div>
+			<ul class="list">
+				<p><i class="wait  icon"></i> &nbsp Mon-Fri 8:30 - 17:30</p>
+				<p><i class="call icon"></i> &nbsp (027) 8766 7780</p>
+				<p><i class="user icon"></i> &nbsp whstoneJK@whstone.com.cn</p>
+			</ul>
 		</div>
-	</body>
+	</div>
+</div>
+</body>
 
 </html>
