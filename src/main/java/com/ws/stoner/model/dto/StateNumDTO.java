@@ -61,7 +61,21 @@ public class StateNumDTO {
             this.value = value;
             return this;
         }
+
+        @Override
+        public String toString() {
+            return "StateNum{" +
+                    "name='" + name + '\'' +
+                    ", value=" + value +
+                    '}';
+        }
     }
 
-
+    @Override
+    public String toString() {
+        return "StateNumDTO{" +
+                "totalNum=" + totalNum +
+                ", stateNum=" + stateNum +
+                '}';
+    }
 }
