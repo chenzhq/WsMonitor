@@ -5,9 +5,9 @@
 	<meta charset="utf-8">
 	<title>404</title>
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-	<script src="../static/js/semantic.js"></script>
-	<link rel="stylesheet" href="../static/css/semantic.css"  />
-	<link rel="stylesheet" href="../static/css/icon.css"  />
+	<script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}" />
+	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}" />
 	<style type="text/css">
 		body {
 			background-color: #DADADA;
@@ -28,7 +28,7 @@
 <div class="ui center aligned middle aligned grid">
 	<div class="column">
 		<h2 class="ui teal image header">
-			<img src="../static/images/logo.png" class="image">
+			<img src="../static/images/logo.png" th:href="@{/images/logo.png}" class="image">
 			<div class="content">
 				抱歉！
 				您访问的页面不存在……

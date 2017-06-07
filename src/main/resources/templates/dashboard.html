@@ -1,19 +1,20 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title>监控系统</title>
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="../static/js/semantic.js"></script>
-		<link rel="stylesheet" href="../static/css/semantic.css"  />
-		<link rel="stylesheet" href="../static/css/icon.css"  />
+        <script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
+		<link rel="stylesheet" href="../static/css/semantic.css"  th:href="@{/css/semantic.css}"/>
+		<link rel="stylesheet" href="../static/css/icon.css"  th:href="@{/css/icon.css}" />
 	</head>
 	<body>
 	<!--header start-->
 	<div class="header">
 		 <div class="ui top fixed  borderless  menu">
 			 <div class="header item">
-				 <img src="../static/images/logo-1.png">
+				 <img src="../static/images/logo-1.png" th:src="@{/images/logo-1.png}">
 			 </div>
 			 <div class="header item" id="sidebarmenu">
 				<i class="contrnt icon"></i>				  菜单
@@ -61,7 +62,7 @@
 				</div>
 
 				<div class="ui dropdown item" >
-					<img src="../static/images/0.jpg">
+					<img src="../static/images/0.jpg" th:src="@{/images/0.jpg}">
 					<div class="menu" >
 						<a class="item" href="#">注销</a>
 						<a class="item" href="#">Profile</a>

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<title>监控系统</title>
 		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-		<script src="../static/js/semantic.js"></script>
-		<link rel="stylesheet" href="../static/css/semantic.css"  />
-		<link rel="stylesheet" href="../static/css/icon.css"  />
+		<script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
+		<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"  />
+		<link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}" />
 		<!-- 引入 echarts.js -->
-		<script src="../static/js/echarts.min.js"></script>
+		<script src="../static/js/echarts.min.js" th:src="@{/js/echarts.min.js}"></script>
 		<!-- 引入 ajax异步请求，模拟服务器地址 -->
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544"></script>
 	</head>
