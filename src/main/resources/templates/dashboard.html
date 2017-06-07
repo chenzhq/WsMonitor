@@ -1,13 +1,14 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>监控系统</title>
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-	<script src="../static/js/semantic.js"></script>
-	<link rel="stylesheet" href="../static/css/semantic.css"  />
-	<link rel="stylesheet" href="../static/css/icon.css"  />
-	<style type="text/css">
+	<head>
+		<meta charset="UTF-8">
+		<title>监控系统</title>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
+		<link rel="stylesheet" href="../static/css/semantic.css"  th:href="@{/css/semantic.css}"/>
+		<link rel="stylesheet" href="../static/css/icon.css"  th:href="@{/css/icon.css}" />
+		<style type="text/css">
 		.ui.inverted.accordion .title{
 			padding: 0.92857143em 1.14285714em;
 		}
@@ -18,10 +19,10 @@
 			padding: 0em 0em 0em;
 		}
 	</style>
-</head>
-<body>
-<!--header start-->
-<div class="header">
+	</head>
+	<body>
+	<!--header start-->
+	<div class="header">
 		 <div class="ui top fixed  borderless  menu">
 			 <div class="item">
 				 <a class="ui small image" href="main.html" target="menuFrame" >
@@ -74,7 +75,7 @@
 				</div>
 
 				<div class="ui dropdown item" >
-					<img class="ui mini rounded image" style="padding-top: -5px" src="../static/images/0.jpg">
+					<img src="../static/images/0.jpg">
 					<div class="menu" >
 						<a class="item" href="#">注销</a>
 						<a class="item" href="#">Profile</a>
@@ -103,19 +104,19 @@
 			</a>
 			<div class="title item">
 				<i class="dropdown icon"></i>设备概览
-			</div>
+		</div>
 			<div class="content">
 				<a class="item" href="tab.html" target="menuFrame">服务器</a>
 				<a class="item" href="table.html" target="menuFrame">网络设备</a>
 				<a class="item" href="error.html" target="menuFrame">数据库</a>
 				<a class="item" href="login.html" target="menuFrame">应用</a>
-			</div>
+		</div>
 			<a class="item" href="error.html" target="menuFrame">
 				<i class="home icon"></i>视图展示
 			</a>
 			<div class="title item">
 				<i class="dropdown icon"></i>告警展示
-			</div>
+		</div>
 			<div class="content">
 				<a class="item" href="error.html" target="menuFrame">告警日历</a>
 				<a class="item" href="error.html" target="menuFrame">告警列表</a>
@@ -134,11 +135,11 @@
 		</div>
 	</div>
 
-	<script>
+	  <script>
 		//侧边栏初始化
-        $('#sidebarmenu').click(function(){
-            $('.ui.sidebar').sidebar('toggle');
-        });
+		$('#sidebarmenu').click(function(){
+			$('.ui.sidebar').sidebar('toggle');
+			});
         $('.ui.dropdown')
             .dropdown()
         ;
@@ -147,8 +148,8 @@
             .accordion()
         ;
 
-	</script>
+	  </script>
 	 
-</body>
+	</body>
 
 </html>
