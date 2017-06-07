@@ -1,121 +1,143 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<meta charset="utf-8">
-	<title>监控模板</title>
-	<meta name="renderer" content="webkit">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="format-detection" content="telephone=no">
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>监控系统</title>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="../static/js/semantic.js"></script>
+		<link rel="stylesheet" href="../static/css/semantic.css"  />
+		<link rel="stylesheet" href="../static/css/icon.css"  />
+	</head>
+	<body>
+	<!--header start-->
+	<div class="header">
+		 <div class="ui top fixed  borderless  menu">
+			 <div class="header item">
+				 <img src="../static/images/logo-1.png">
+			 </div>
+			 <div class="header item" id="sidebarmenu">
+				<i class="contrnt icon"></i>				  菜单
+			 </div>
 
-	<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all"/>
-	<link rel="stylesheet" href="css/global.css" media="all">
+			 <div class="right menu">
+				<div class="item ui colhidden">
+					<div class="ui icon input">
+						<input type="text" placeholder="Search...">
+						<i class="search icon"></i>
+					</div>
+				</div>
 
-</head>
+				<div class="ui dropdown item icon">
+					<i class="bell icon"></i>				  告警
+					<div class="ui red label mini circular">6</div>
+					<div class="menu" >
+						<div class="header">
+							紧急告警
+						</div>
+						<div class="item">
+							告警信息1……
+							<div class="ui teal left pointing label">1</div>
+						</div>
+						<div class="item">
+							告警信息2……
+							<div class="ui label">51</div>
+						</div>
+						<div class="item">
+							告警信息3……
+							<div class="ui label">1</div>
+						</div>
+						<div class="header">
+							严重告警
+						</div>
+						<div class="item">
+							<i class="dropdown icon"></i>
+							<span class="text">更多</span>
+							<div class="menu">
+								<div class="item">告警信息……</div>
+								<div class="item">告警信息……</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-<body>
-<div class="layui-layout layui-layout-admin" style="border-bottom: solid 5px #1aa094;">
-	<div class="layui-header header header-demo">
-		<div class="layui-main">
-			<div class="admin-login-box">
-				<a class="logo" style="left: 0;" href="#">
-					<span style="font-size: 22px;">监控系统</span>
+				<div class="ui dropdown item" >
+					<img src="../static/images/0.jpg">
+					<div class="menu" >
+						<a class="item" href="#">注销</a>
+						<a class="item" href="#">Profile</a>
+						<a class="item" href="#">Settings</a>
+					</div>
+				</div>
+
+				<a class="item labeled rightsidebar computer only">
+					<i class="wrench icon"></i>          设置
 				</a>
-				<div class="admin-side-toggle">
-					<i class="layui-icon" aria-hidden="true">&#xe64e;</i>
-				</div>
-				<div class="admin-side-full">
-					<i class="layui-icon" aria-hidden="true">&#xe638;</i>
-				</div>
-			</div>
-			<ul class="layui-nav admin-header-item">
-				<li class="layui-nav-item">
-					<a href="javascript:;" class="admin-header-user">
-						<img src="images/0.jpg"/>
-
-						<span th:text="${session.userInfo.name}">晏梦莎</span>
-					</a>
-					<dl class="layui-nav-child">
-						<dd>
-							<a href="javascript:;"><i class="fa fa-user-circle" aria-hidden="true"></i> 个人信息</a>
-						</dd>
-						<dd>
-							<a href="javascript:;"><i class="fa fa-gear" aria-hidden="true"></i> 设置</a>
-						</dd>
-						<dd id="lock">
-							<a href="javascript:;">
-								<i class="fa fa-lock" aria-hidden="true"
-								   style="padding-right: 3px;padding-left: 1px;"></i> 锁屏 (Alt+L)
-							</a>
-						</dd>
-						<dd>
-							<a href="/logout" th:href="@{/logout}"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a>
-						</dd>
-					</dl>
-				</li>
-			</ul>
-			<ul class="layui-nav admin-header-item-mobile">
-				<li class="layui-nav-item">
-					<a href="login.html"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<div class="layui-side layui-bg-black" id="admin-side">
-		<div class="layui-side-scroll" id="admin-navbar-side" lay-filter="side"></div>
-	</div>
-	<div class="layui-body" style="bottom: 0;border-left: solid 2px #1AA094;" id="admin-body">
-		<div class="layui-tab admin-nav-card layui-tab-brief" lay-filter="admin-tab">
-			<ul class="layui-tab-title">
-				<li class="layui-this">
-					<i class="fa fa-dashboard" aria-hidden="true"></i>
-					<cite>控制面板</cite>
-				</li>
-			</ul>
-			<div class="layui-tab-content" style="min-height: 150px; padding: 5px 0 0 0;">
-				<div class="layui-tab-item layui-show">
-					<iframe src="main.html"></iframe>
-				</div>
 			</div>
 		</div>
 	</div>
-
-
-	<!--锁屏模板 start-->
-	<script type="text/template" id="lock-temp">
-		<div class="admin-header-lock" id="lock-box">
-			<div class="admin-header-lock-img">
-				<img src="images/0.jpg"/>
-			</div>
-			<div class="admin-header-lock-name" id="lockUserName">beginner</div>
-			<input type="text" class="admin-header-lock-input" value="输入密码解锁.." name="lockPwd" id="lockPwd"/>
-			<button class="layui-btn layui-btn-small" id="unlock">解锁</button>
+	<!--header start-->
+	<!--sidebar start-->
+	<div class="ui header thin  sidebar left inverted vertical menu " style="padding-top: 55px">
+		<div class="item" href="main.html">
+			<i class="home icon"></i>
+			仪表盘
 		</div>
-	</script>
-	<!--锁屏模板 end -->
+		<div class="item" href="error.html">
+			<i class="block layout icon"></i>
+			监控视图
+		</div>
+		<div class="item">
+			<i class="block layout icon"></i>
+			业务概览
+		</div>
+		<div class="item">
+			<div class="header">设备概览
+				<i class="dropdown icon"></i>
+			</div>
+			  <div class="menu">
+				  <a class="item" href="main.html">服务器</a>
+				  <a class="item" href="#">网络设备</a>
+				  <a class="item" href="#">数据库</a>
+				  <a class="item" href="#">应用</a>
+			  </div>
+		</div>
+		<div class="item">
+			<i class="block layout icon"></i>
+			视图展示
+		</div>
+		<div class="item">
+			<div class="header">告警展示
+				<i class="dropdown icon"></i>
+			</div>
+			<div class="menu">
+				<a class="item" href="#">告警日历</a>
+				<a class="item" href="#">告警列表</a>
+			</div>
+		</div>
+		<div class="item">
+			<i class="block layout icon"></i>
+			报表统计
+		</div>
+	</div>
+	  
+	  <!--sidebar end-->
 
-	<script type="text/javascript" src="plugins/layui/layui.js"></script>
-	<script type="text/javascript" src="datas/nav.js"></script>
-	<script src="js/index.js"></script>
-	<script>
-        layui.use('layer', function () {
-            var $ = layui.jquery,
-                layer = layui.layer;
+	<div class="pusher">
+		<div  style="margin-top: 55px">
+		     <iframe src="main.html"  width="100%" height="650px" frameborder="0" ></iframe>
+		</div>
+	</div>
 
-            $('#video1').on('click', function () {
-                layer.open({
-                    title: 'YouTube',
-                    maxmin: true,
-                    type: 2,
-                    content: 'video.html',
-                    area: ['800px', '500px']
-                });
-            });
+	  <script>
+		$('#sidebarmenu').click(function(){
+			$('.ui.sidebar').sidebar('toggle');
+			});
+        $('.ui.dropdown')
+            .dropdown()
+        ;
 
-        });
-	</script>
-</div>
-</body>
+	  </script>
+	 
+	</body>
+
 </html>
