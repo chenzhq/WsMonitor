@@ -50,7 +50,11 @@
                     <div class="ui fluid large teal submit button">登录</div>
                 </div>
 
-                <div class="ui error message"></div>
+                <div class="ui error message">
+                    <ul class="list">
+                        <li th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></li>
+                    </ul>
+                </div>
 
                 <div class="ui message">
                     <div class="ui fluid large slider checkbox " >
