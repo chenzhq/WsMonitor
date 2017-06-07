@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
+<head  th:fragment="header">
     <meta charset="utf-8">
     <title>登录</title>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="../static/js/semantic.js"></script>
-    <link rel="stylesheet" href="../static/css/semantic.css"  />
-    <link rel="stylesheet" href="../static/css/icon.css"  />
+    <script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
+    <link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}" />
+    <link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}" />
     <style type="text/css">
         body {
             background-color: #DADADA;
@@ -28,17 +28,17 @@
     <div class="ui center aligned middle aligned grid">
         <div class="column">
             <h2 class="ui teal image header">
-                <img src="../static/images/logo.png" class="image">
+                <img src="../static/images/logo.png" th:src="@{/images/logo.png}" class="image">
                 <div class="content">
                     登录到账号
                 </div>
             </h2>
-            <form class="ui large form" >
+            <form class="ui large form" th:classappend="${#fields.hasErrors('password')} ? error : '' " id="form" th:action="@{/login/auth}" th:object="${loginFormQuery}" method="post" onSubmit="return check();">
                 <div class="ui stacked segment">
                     <div class="field">
                         <div class="ui left icon input">
                             <i class="user icon"></i>
-                            <input type="text" name="username" placeholder="请输入您的账号" >
+                            <input type="text" name="username" th:field="*{username}" placeholder="请输入您的账号" >
                         </div>
                     </div>
                     <div class="field">
@@ -52,17 +52,22 @@
 
                 <div class="ui error message"></div>
 
+                <div class="ui message">
+                    <div class="ui fluid large slider checkbox " >
+                        <label>记住帐号？</label>
+                        <input type="checkbox"  name="rememberMe" th:field ="*{rememberMe}" />
+                    </div>
+                </div>
             </form>
 
-            <div class="ui message">
-                <div class="ui fluid large slider checkbox " >
-                    <label>记住帐号？</label>
-                    <input type="checkbox" .>
-                </div>
-            </div>
+
         </div>
     </div>
     <script>
+        //登录提交验证
+        function check() {
+
+        }
         //登录验证
         $(document)
             .ready(function() {
@@ -99,7 +104,8 @@
         ;
 
         $('.ui.form').submit(function(e){
-            return false;
+
+            return true;
         });
         //复选框初始化
         $('.ui.button')
