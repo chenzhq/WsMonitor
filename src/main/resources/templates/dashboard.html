@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>监控系统</title>
-		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="../static/js/semantic.js"></script>
-		<link rel="stylesheet" href="../static/css/semantic.css"  />
-		<link rel="stylesheet" href="../static/css/icon.css"  />
-	</head>
-	<body>
-	<!--header start-->
-	<div class="header">
+<head>
+	<meta charset="UTF-8">
+	<title>监控系统</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/semantic.js"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css"  />
+	<link rel="stylesheet" href="../static/css/icon.css"  />
+	<style type="text/css">
+		.ui.inverted.accordion .title{
+			padding: 0.92857143em 1.14285714em;
+		}
+		.ui.inverted.accordion .content{
+			margin-left: 1em;
+		}
+		.ui.accordion:not(.styled) .title ~ .content:not(.ui), .ui.accordion:not(.styled) .accordion .title ~ .content:not(.ui) {
+			padding: 0em 0em 0em;
+		}
+	</style>
+</head>
+<body>
+<!--header start-->
+<div class="header">
 		 <div class="ui top fixed  borderless  menu">
-			 <div class="header item">
-				 <img src="../static/images/logo-1.png">
+			 <div class="item">
+				 <a class="ui small image" href="main.html" target="menuFrame" >
+				 <img src="../static/images/logo-1.png" >
+				 </a>
 			 </div>
 			 <div class="header item" id="sidebarmenu">
 				<i class="contrnt icon"></i>				  菜单
@@ -61,7 +74,7 @@
 				</div>
 
 				<div class="ui dropdown item" >
-					<img src="../static/images/0.jpg">
+					<img class="ui mini rounded image" style="padding-top: -5px" src="../static/images/0.jpg">
 					<div class="menu" >
 						<a class="item" href="#">注销</a>
 						<a class="item" href="#">Profile</a>
@@ -77,67 +90,65 @@
 	</div>
 	<!--header start-->
 	<!--sidebar start-->
-	<div class="ui header thin  sidebar left inverted vertical menu " style="padding-top: 55px">
-		<div class="item" href="main.html">
-			<i class="home icon"></i>
-			仪表盘
-		</div>
-		<div class="item" href="error.html">
-			<i class="block layout icon"></i>
-			监控视图
-		</div>
-		<div class="item">
-			<i class="block layout icon"></i>
-			业务概览
-		</div>
-		<div class="item">
-			<div class="header">设备概览
-				<i class="dropdown icon"></i>
+	<div class="ui thin sidebar left inverted vertical menu " style="padding-top: 60px">
+		<div class="ui inverted accordion ">
+			<a class="item" href="main.html" target="menuFrame">
+				<i class="home icon"></i>仪表盘
+			</a>
+			<a class="item" href="tab.html" target="menuFrame">
+				<i class="block layout icon"></i>监控视图
+			</a>
+			<a class="item" href="table.html" target="menuFrame">
+				<i class="block layout icon"></i>业务概览
+			</a>
+			<div class="title item">
+				<i class="dropdown icon"></i>设备概览
 			</div>
-			  <div class="menu">
-				  <a class="item" href="main.html">服务器</a>
-				  <a class="item" href="#">网络设备</a>
-				  <a class="item" href="#">数据库</a>
-				  <a class="item" href="#">应用</a>
-			  </div>
-		</div>
-		<div class="item">
-			<i class="block layout icon"></i>
-			视图展示
-		</div>
-		<div class="item">
-			<div class="header">告警展示
-				<i class="dropdown icon"></i>
+			<div class="content">
+				<a class="item" href="tab.html" target="menuFrame">服务器</a>
+				<a class="item" href="table.html" target="menuFrame">网络设备</a>
+				<a class="item" href="error.html" target="menuFrame">数据库</a>
+				<a class="item" href="login.html" target="menuFrame">应用</a>
 			</div>
-			<div class="menu">
-				<a class="item" href="#">告警日历</a>
-				<a class="item" href="#">告警列表</a>
+			<a class="item" href="error.html" target="menuFrame">
+				<i class="home icon"></i>视图展示
+			</a>
+			<div class="title item">
+				<i class="dropdown icon"></i>告警展示
 			</div>
-		</div>
-		<div class="item">
-			<i class="block layout icon"></i>
-			报表统计
+			<div class="content">
+				<a class="item" href="error.html" target="menuFrame">告警日历</a>
+				<a class="item" href="error.html" target="menuFrame">告警列表</a>
+			</div>
+			<a class="item" href="error.html" target="menuFrame">
+				<i class="home icon"></i>报表统计
+			</a>
 		</div>
 	</div>
 	  
 	  <!--sidebar end-->
 
 	<div class="pusher">
-		<div  style="margin-top: 55px">
-		     <iframe src="main.html"  width="100%" height="650px" frameborder="0" ></iframe>
+		<div  style="margin-top: 65px">
+		     <iframe src="main.html" name="menuFrame" width="100%" height="650px" frameborder="0" ></iframe>
 		</div>
 	</div>
 
-	  <script>
-		$('#sidebarmenu').click(function(){
-			$('.ui.sidebar').sidebar('toggle');
-			});
+	<script>
+		//侧边栏初始化
+        $('#sidebarmenu').click(function(){
+            $('.ui.sidebar').sidebar('toggle');
+        });
         $('.ui.dropdown')
             .dropdown()
         ;
+        //折叠菜单初始化
+        $('.ui.accordion')
+            .accordion()
+        ;
 
-	  </script>
+	</script>
 	 
-	</body>
+</body>
 
 </html>
