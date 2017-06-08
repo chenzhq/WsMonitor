@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Created by chenzheqi on 2017/5/22.
+ * Ref: https://www.zabbix.com/documentation/3.2/manual/api/reference/problem/get
  * tags查询条件 暂时未实现 需要额外设计一个类
  * selectAcknowledges selectTags未实现
  */

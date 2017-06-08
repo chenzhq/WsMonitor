@@ -1,14 +1,14 @@
 package com.ws.bix4j.access.user;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.ws.bix4j.access.ZRequest;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.ZRequest;
 
 import java.util.List;
 
 /**
  * Created by chen on 2017/4/1.
+ * Ref: https://www.zabbix.com/documentation/3.2/manual/api/reference/user/get
  */
 public class UserGetRequest extends ZRequest {
 

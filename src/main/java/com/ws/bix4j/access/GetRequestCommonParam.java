@@ -14,7 +14,7 @@ public abstract class GetRequestCommonParam {
     private boolean excludeSearch;
     private Map filter;
     private int limit;
-    private String output;
+    private String[] output;
     @JSONField(name = "preservekeys")
     private boolean preserveKeys;
     private Map search;
@@ -128,19 +128,20 @@ public abstract class GetRequestCommonParam {
      *
      * @return the output
      */
-    public String getOutput() {
+    public String[] getOutput() {
         return output;
     }
 
     /**
      * 限制返回对象的属性 query 可以有以下几种值：<br>
-     * 1.extend 所有 <br>
-     * 2.count 检索的数量，用于确定的子查询中 <br>
-     * 3.属性名的数组 String[]
+     * 1.extend 所有 默认值 <br>
+     * 2.count 检索的数量，只用于确定的子查询中 <br>
+     * 3.属性名的数组 String[] <br>
+     * 默认就是extend，如果需要约束返回的属性，set一个数组
      *
      * @param output the output
      */
-    public void setOutput(String output) {
+    public void setOutput(String[] output) {
         this.output = output;
     }
 

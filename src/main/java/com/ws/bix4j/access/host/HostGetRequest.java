@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by chenzheqi on 2017/5/2.
+ * Ref: https://www.zabbix.com/documentation/3.2/manual/api/reference/host/get
  */
 public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
     public HostGetRequest() {
@@ -69,9 +70,30 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
         private List<String> triggerIds;
 
         /**
-         * with参数未实现
+         * with 2016.6.8 add
          */
+        @JSONField(name = "with_items")
+        private boolean withItems;
+        @JSONField(name = "with_applications")
+        private boolean withApplications;
+        @JSONField(name = "with_graphs")
+        private boolean withGraphs;
+        @JSONField(name = "with_httptests")
+        private boolean withHttptests;
+        @JSONField(name = "with_monitored_httptests")
+        private boolean withMonitoredHttptests;
+        @JSONField(name = "with_monitored_items")
+        private boolean withMonitoredItems;
+        @JSONField(name = "with_monitored_triggers")
+        private boolean withMonitoredTriggers;
+        @JSONField(name = "with_triggers")
+        private boolean withTriggers;
+        private boolean withInventory;
 
+        /**
+         * select参数 string类型的可能值为 "extend" "count"
+         * list类型的值是返回对象的属性列表
+         */
         @JSONField(name = "selectGroups")
         private String stringGroups;
         @JSONField(name = "selectGroups")
@@ -227,8 +249,153 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
+        public boolean isMonitoredHosts() {
+            return monitoredHosts;
+        }
 
-        //以下为select参数设置
+        public boolean isWithItems() {
+            return withItems;
+        }
+
+        public Params setWithItems(boolean withItems) {
+            this.withItems = withItems;
+            return this;
+        }
+
+        public boolean isWithApplications() {
+            return withApplications;
+        }
+
+        public Params setWithApplications(boolean withApplications) {
+            this.withApplications = withApplications;
+            return this;
+        }
+
+        public boolean isWithGraphs() {
+            return withGraphs;
+        }
+
+        public Params setWithGraphs(boolean withGraphs) {
+            this.withGraphs = withGraphs;
+            return this;
+        }
+
+        public boolean isWithHttptests() {
+            return withHttptests;
+        }
+
+        public Params setWithHttptests(boolean withHttptests) {
+            this.withHttptests = withHttptests;
+            return this;
+        }
+
+        public boolean isWithMonitoredHttptests() {
+            return withMonitoredHttptests;
+        }
+
+        public Params setWithMonitoredHttptests(boolean withMonitoredHttptests) {
+            this.withMonitoredHttptests = withMonitoredHttptests;
+            return this;
+        }
+
+        public boolean isWithMonitoredItems() {
+            return withMonitoredItems;
+        }
+
+        public Params setWithMonitoredItems(boolean withMonitoredItems) {
+            this.withMonitoredItems = withMonitoredItems;
+            return this;
+        }
+
+        public boolean isWithMonitoredTriggers() {
+            return withMonitoredTriggers;
+        }
+
+        public Params setWithMonitoredTriggers(boolean withMonitoredTriggers) {
+            this.withMonitoredTriggers = withMonitoredTriggers;
+            return this;
+        }
+
+        public boolean isWithTriggers() {
+            return withTriggers;
+        }
+
+        public Params setWithTriggers(boolean withTriggers) {
+            this.withTriggers = withTriggers;
+            return this;
+        }
+
+        public boolean isWithInventory() {
+            return withInventory;
+        }
+
+        public Params setWithInventory(boolean withInventory) {
+            this.withInventory = withInventory;
+            return this;
+        }
+
+        public String getStringGroups() {
+            return stringGroups;
+        }
+
+        public Params setStringGroups(String stringGroups) {
+            this.stringGroups = stringGroups;
+            return this;
+        }
+
+        public List<String> getListGroups() {
+            return listGroups;
+        }
+
+        public Params setListGroups(List<String> listGroups) {
+            this.listGroups = listGroups;
+            return this;
+        }
+
+        public String getStringApplications() {
+            return stringApplications;
+        }
+
+        public Params setStringApplications(String stringApplications) {
+            this.stringApplications = stringApplications;
+            return this;
+        }
+
+        public List<String> getListApplications() {
+            return listApplications;
+        }
+
+        public String getStringItems() {
+            return stringItems;
+        }
+
+        public Params setStringItems(String stringItems) {
+            this.stringItems = stringItems;
+            return this;
+        }
+
+        public List<String> getListItems() {
+            return listItems;
+        }
+
+        public Params setListItems(List<String> listItems) {
+            this.listItems = listItems;
+            return this;
+        }
+
+        public String getStringTriggers() {
+            return stringTriggers;
+        }
+
+        public Params setStringTriggers(String stringTriggers) {
+            this.stringTriggers = stringTriggers;
+            return this;
+        }
+
+        public List<String> getListTriggers() {
+            return listTriggers;
+        }
+//以下为select参数设置
 
         /**
          *
