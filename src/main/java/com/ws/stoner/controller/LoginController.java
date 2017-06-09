@@ -57,7 +57,7 @@ public class LoginController {
             UserInfoDTO userInfo = userService.getUser(userId);
             request.getSession().setAttribute(CookieConsts.USER_INFO, userInfo);
             sessionMap.put(request.getSession().getId(), zbx_session);
-            return "redirect:/dashboard";
+            return "redirect:/layout";
         }
         logger.debug("zbx_session expire, re-login.");
         CookieUtils.remove(response, ZBX_SESSION);
@@ -104,6 +104,6 @@ public class LoginController {
             session.setAttribute(REMEMBER_ME, true);
         }
 
-        return "redirect:/dashboard";
+        return "redirect:/layout";
     }
 }

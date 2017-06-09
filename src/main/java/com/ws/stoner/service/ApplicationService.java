@@ -19,6 +19,21 @@ public interface ApplicationService {
     List<ApplicationDO> listApplication() throws AuthExpireException;
 
     /**
+     * 获取 itemid 在给定的ItemIds list 中的所有application
+     * @return
+     * @throws ServiceException
+     */
+    List<ApplicationDO> listAppByItemIds(List<String> itemIds) throws ServiceException;
+
+    /**
+     * 统计 itemid 在给定的ItemIds list 中所有application 的数量
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    int countAppByItemIds(List<String> itemIds) throws ServiceException;
+
+    /**
      * 统计停用的监控点
      * @return停用的监控点数量
      * @throws ServiceException

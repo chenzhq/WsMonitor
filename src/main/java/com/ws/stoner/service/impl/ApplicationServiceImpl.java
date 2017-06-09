@@ -4,6 +4,7 @@ import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.bix4j.bean.ApplicationDO;
 import com.ws.bix4j.bean.HostDO;
+import com.ws.bix4j.bean.ItemDO;
 import com.ws.bix4j.bean.TriggerDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
@@ -11,6 +12,7 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.ApplicationService;
 import com.ws.stoner.service.HostService;
+import com.ws.stoner.service.ItemService;
 import com.ws.stoner.service.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private TriggerService triggerService;
+
+    @Autowired
+    private ItemService itemService;
 
     @Autowired
     private ZApi zApi;
@@ -57,6 +62,47 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         return listApplication;
     }
+
+    /**
+     * 获取 itemid 在给定的ItemIds list 中的所有application
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<ApplicationDO> listAppByItemIds(List<String> itemIds) throws ServiceException {
+        ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
+        applicationGetRequest.getParams().setItemIds(itemIds);
+        List<ApplicationDO> listApplication ;
+        try {
+            listApplication = zApi.Application().get(applicationGetRequest).getResult();
+        } catch (ZApiException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return listApplication;
+    }
+
+    /**
+     * 获取 itemid 在给定的ItemIds list 中的所有application 的数量
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countAppByItemIds(List<String> itemIds) throws ServiceException {
+        ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
+        applicationGetRequest.getParams().setItemIds(itemIds).setCountOutput(true);
+        int appByItemIdsNum ;
+        try {
+            appByItemIdsNum = zApi.Application().count(applicationGetRequest);
+        } catch (ZApiException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return appByItemIdsNum;
+    }
+
 
     /**
      * 统计停用的监控点数量
@@ -121,12 +167,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         //step1:筛选监控中monitored，非维护maintenance，状态为unknownfilter: state的触发器
         List<TriggerDO> unknownTriggers = triggerService.listUnknownTrigger();
         //step2:根据这些触发器筛选item
-        List<String> triggers = new ArrayList<String>();
+        List<String> triggerIds = new ArrayList<String>();
         for(TriggerDO triggerDO : unknownTriggers) {
-            triggers.add(triggerDO.getTriggerId());
+            triggerIds.add(triggerDO.getTriggerId());
         }
+        List<ItemDO> items = itemService.listItemByTriggerIds(triggerIds);
         //step3:根据item，查询它们所属的应用集
-        return 0;
+        List<String> itemIds = new ArrayList<String>();
+        for(ItemDO item : items) {
+            itemIds.add(item.getItemId());
+        }
+        int appByItemIdsNum = countAppByItemIds(itemIds);
+        return appByItemIdsNum;
     }
 
     /**

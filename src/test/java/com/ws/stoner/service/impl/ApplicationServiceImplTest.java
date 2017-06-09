@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -66,5 +67,30 @@ public void testListApplication() throws Exception {
         System.out.println(maintencanceAppNum);
     }
 
+       @Test
+    public void testListAppByItemIds() throws  Exception {
+        List<String> itemIds = new ArrayList<String>();
+        itemIds.add("23167");
+        itemIds.add("23174");
+        itemIds.add("23181");
+        List<ApplicationDO> apps = applicationService.listAppByItemIds(itemIds);
+        System.out.println(apps);
+    }
+
+    @Test
+    public void testCountAppByItemIds() throws  Exception {
+        List<String> itemIds = new ArrayList<String>();
+        itemIds.add("23167");
+        itemIds.add("23174");
+        itemIds.add("23181");
+        int apps = applicationService.countAppByItemIds(itemIds);
+        System.out.println(apps);
+    }
+
+    @Test
+    public void testCountUnknownApp() throws Exception {
+        int unknownApp = applicationService.countUnknownApp();
+        System.out.println(unknownApp);
+    }
 
 } 
