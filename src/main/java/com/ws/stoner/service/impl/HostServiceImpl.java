@@ -37,7 +37,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public List<HostDO> listHost() throws AuthExpireException {
         HostGetRequest hostGetRequest = new HostGetRequest();
-        hostGetRequest.getParams();
+        //hostGetRequest.getParams();
         List<HostDO> hosts;
         try {
             hosts = zApi.Host().get(hostGetRequest).getResult();
@@ -50,6 +50,75 @@ public class HostServiceImpl implements HostService {
             return null;
         }
         return hosts;
+    }
+
+    /**
+     * 获取停用的主机list
+     * @return
+     * @throws AuthExpireException
+     */
+    @Override
+    public List<HostDO> listDisableHost() throws AuthExpireException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String, Integer> statusFilter = new HashMap<>();
+        statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.UNMONITORED_HOST.value);
+        hostGetRequest.getParams().setFilter(statusFilter);
+        List<HostDO> disableHosts;
+        try {
+            disableHosts = zApi.Host().get(hostGetRequest).getResult();
+        } catch (ZApiException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return disableHosts;
+    }
+
+    /**
+     * 维护主机list
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<HostDO> listMaintenanceHost() throws ServiceException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String, Integer> statusFilter = new HashMap<>();
+        statusFilter.put("maintenance_status", ZApiParameter.HOST_MAINTENANCE_STATUS.MAINTENANCE_IN_EFFECT.value);
+        statusFilter.put("maintenance_type", ZApiParameter.HOST_MAINTENANCE_TYPE.WITHOUT_DATA.value);
+        statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
+        hostGetRequest.getParams().setFilter(statusFilter);
+        List<HostDO> MaintenanceHosts;
+        try {
+            MaintenanceHosts = zApi.Host().get(hostGetRequest).getResult();
+        } catch (ZApiException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return MaintenanceHosts;
+
+    }
+
+    @Override
+    public List<HostDO> listDangerHost() throws ServiceException {
+
+        ProblemGetRequest problemGetRequest = new ProblemGetRequest();
+        problemGetRequest.getParams().setSource(ZApiParameter.SOURCE.TRIGGER.value)
+                .setObject(ZApiParameter.OBJECT.TRIGGER.value);
+        List<ProblemDO> problems;
+        List<String> triggerIds = new ArrayList<>();
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        List<HostDO> problemHosts;
+        try {
+            problems = zApi.Problems().get(problemGetRequest).getResult();
+            for (ProblemDO problem : problems) {
+                triggerIds.add(problem.getObjectId());
+            }
+            hostGetRequest.getParams().setTriggerIds(triggerIds);
+            problemHosts = zApi.Host().get(hostGetRequest).getResult();
+        } catch (ZApiException e) {
+            e.printStackTrace();
+            return  null;
+        }
+        return problemHosts;
     }
 
     /**
@@ -86,6 +155,9 @@ public class HostServiceImpl implements HostService {
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("maintenance_status", ZApiParameter.HOST_MAINTENANCE_STATUS.MAINTENANCE_IN_EFFECT.value);
         statusFilter.put("maintenance_type", ZApiParameter.HOST_MAINTENANCE_TYPE.WITHOUT_DATA.value);
+        statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
+
+
         hostGetRequest.getParams().setFilter(statusFilter).setCountOutput(true);
         int maintenanceHostNum = 0;
         try {
