@@ -20,6 +20,28 @@ public interface HostService {
     List<HostDO> listHost() throws AuthExpireException;
 
     /**
+     * 获取停用主机list
+     * @return
+     * @throws ServiceException
+     */
+    List<HostDO> listDisableHost() throws ServiceException;
+
+    /**
+     *
+     * 获取维护主机list
+     * @return
+     * @throws ServiceException
+     */
+    List<HostDO> listMaintenanceHost() throws ServiceException;
+
+    /**
+     * 获取问题主机list
+     * @return
+     * @throws ServiceException
+     */
+    List<HostDO> listDangerHost() throws ServiceException;
+
+    /**
      * 计算停用主机的数量.
      *
      * @return the int

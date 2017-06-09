@@ -26,5 +26,5 @@ public abstract class ZResponse<T> {
 
     public abstract T getResult();
 
-    ;
+
 }

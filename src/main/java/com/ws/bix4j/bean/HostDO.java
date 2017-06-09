@@ -481,4 +481,54 @@ public class HostDO{
 
     public HostDO() {
     }
+
+    @Override
+    public String toString() {
+        return "HostDO{" +
+                "hostId='" + hostId + '\'' +
+                ", host='" + host + '\'' +
+                ", name='" + name + '\'' +
+                ", available=" + available +
+                ", description='" + description + '\'' +
+                ", disableUntil=" + disableUntil +
+                ", error='" + error + '\'' +
+                ", errorsFrom=" + errorsFrom +
+                ", flags=" + flags +
+                ", inventoryMode=" + inventoryMode +
+                ", proxyHostId='" + proxyHostId + '\'' +
+                ", status=" + status +
+                ", lastaccess='" + lastaccess + '\'' +
+                ", ipmiAuthtype=" + ipmiAuthtype +
+                ", ipmiDisableUntil=" + ipmiDisableUntil +
+                ", ipmiAvailable=" + ipmiAvailable +
+                ", ipmiError='" + ipmiError + '\'' +
+                ", ipmiErrorsFrom=" + ipmiErrorsFrom +
+                ", ipmiPrivilege='" + ipmiPrivilege + '\'' +
+                ", ipmiUsername='" + ipmiUsername + '\'' +
+                ", ipmiPassword='" + ipmiPassword + '\'' +
+                ", jmxDisableUntil=" + jmxDisableUntil +
+                ", jmxAvailable=" + jmxAvailable +
+                ", jmxErrorsFrom=" + jmxErrorsFrom +
+                ", jmxError='" + jmxError + '\'' +
+                ", maintenanceid='" + maintenanceid + '\'' +
+                ", maintenanceStatus=" + maintenanceStatus +
+                ", maintenanceType=" + maintenanceType +
+                ", maintenanceFrom=" + maintenanceFrom +
+                ", snmpDisableUntil=" + snmpDisableUntil +
+                ", snmpAvailable=" + snmpAvailable +
+                ", snmpErrorsFrom=" + snmpErrorsFrom +
+                ", snmpError='" + snmpError + '\'' +
+                ", tlsConnect='" + tlsConnect + '\'' +
+                ", tlsAccept='" + tlsAccept + '\'' +
+                ", tlsIssuer='" + tlsIssuer + '\'' +
+                ", tlsSubject='" + tlsSubject + '\'' +
+                ", tlsPskIdentity='" + tlsPskIdentity + '\'' +
+                ", tlsPsk='" + tlsPsk + '\'' +
+                ", maintenances=" + maintenances +
+                ", groups=" + groups +
+                ", applications=" + applications +
+                ", items=" + items +
+                ", triggers=" + triggers +
+                '}';
+    }
 }
