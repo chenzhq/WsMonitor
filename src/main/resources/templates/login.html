@@ -57,7 +57,7 @@
                 </div>
 
                 <div class="ui message">
-                    <div class="ui slider checkbox" >
+                    <div class="ui fluid large slider checkbox " >
                         <label>记住帐号？</label>
                         <input type="checkbox"  name="rememberMe" th:field ="*{rememberMe}" />
                     </div>
@@ -70,6 +70,7 @@
     <script>
         //登录提交验证
         function check() {
+
         }
         //登录验证
         $(document)
@@ -107,11 +108,10 @@
         ;
 
         $('.ui.form').submit(function(e){
-
             return true;
         });
         //复选框初始化
-        $('.ui.checkbox')
+        $('.ui.button')
             .checkbox()
         ;
     </script>

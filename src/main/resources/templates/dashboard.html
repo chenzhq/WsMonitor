@@ -24,10 +24,8 @@
 	<!--header start-->
 	<div class="header">
 		 <div class="ui top fixed  borderless  menu">
-			 <div class="item">
-				 <a class="ui small image" href="main.html" target="menuFrame" >
-				 <img src="../static/images/logo-1.png" >
-				 </a>
+			 <div class="header item">
+				 <img src="../static/images/logo-1.png" th:src="@{/images/logo-1.png}">
 			 </div>
 			 <div class="header item" id="sidebarmenu">
 				<i class="contrnt icon"></i>				  菜单
@@ -75,7 +73,7 @@
 				</div>
 
 				<div class="ui dropdown item" >
-					<img src="../static/images/0.jpg">
+					<img src="../static/images/0.jpg" th:src="@{/images/0.jpg}">
 					<div class="menu" >
 						<a class="item" href="#">注销</a>
 						<a class="item" href="#">Profile</a>
