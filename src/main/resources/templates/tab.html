@@ -20,7 +20,19 @@
 			border-bottom: 1px solid rgba(34, 36, 38, 0.15);
 		}
 		.ui.styled.accordion .content, .ui.styled.accordion .accordion .content {
-			padding: 0em 0em  0em 1em;
+			padding: 0em 0em  0em 0em;
+		}
+		.indent_one{
+			margin-left: 1em;
+			margin-right: -1em;
+		}
+		.indent_two{
+			margin-left: 2em;
+			margin-right: -2em;
+		}
+		.indent_three{
+			margin-left: 3em;
+			margin-right: -3em;
 		}
 	</style>
 </head>
@@ -56,8 +68,10 @@
 					<div class="active title">
 						<div class="ui grid">
 							<div class="four wide column">
+								<div class="indent_one">
 								<i class="dropdown icon"></i>
 								<i class="red server icon" ></i>OA系统
+								</div>
 							</div>
 							<div class="four wide column">业务系统</div>
 							<div class="one wide column">OK</div>
@@ -71,8 +85,10 @@
 							<div class="title">
 								<div class="ui grid">
 									<div class="four wide column">
-										<i class="dropdown icon"></i>
-										<i class="red desktop icon"></i>127.0.0.1
+										<div   class="indent_two">
+											<i class="dropdown icon"></i>
+											<i class="red server icon" ></i>127.0.0.1
+										</div>
 									</div>
 									<div class="four wide column">操作设备</div>
 									<div class="one wide column">OK</div>
@@ -86,7 +102,9 @@
 									<div class="title">
 										<div class="ui grid">
 											<div class="four wide column">
-												<i class="red circle icon"></i>CPU
+												<div   class="indent_three">
+													<i class="red circle icon"></i>CPU
+												</div>
 											</div>
 											<div class="four wide column">Agent监控</div>
 											<div class="one wide column">OK</div>
@@ -99,7 +117,9 @@
 									<div class="title">
 										<div class="ui grid">
 											<div class="four wide column">
-												<i class="red circle icon"></i>内存
+												<div   class="indent_three">
+													<i class="red circle icon"></i>内存
+												</div>
 											</div>
 											<div class="four wide column">Agent监控</div>
 											<div class="one wide column">OK</div>
@@ -112,7 +132,9 @@
 									<div class="title">
 										<div class="ui grid">
 											<div class="four wide column">
-												<i class="green circle icon"></i>Ping
+												<div   class="indent_three">
+													<i class="red circle icon"></i>Ping
+												</div>
 											</div>
 											<div class="four wide column">Agent监控</div>
 											<div class="one wide column">OK</div>
@@ -127,8 +149,10 @@
 							<div class="title">
 								<div class="ui grid">
 									<div class="four wide column">
+										<div   class="indent_two">
 										<i class="dropdown icon"></i>
 										<i class="yellow desktop icon"></i>127.0.0.2
+										</div>
 									</div>
 									<div class="four wide column">网络设备</div>
 									<div class="one wide column">OK</div>
@@ -140,13 +164,17 @@
 						</div>
 					</div>
 					<div class="title">
+						<div class="indent_one">
 						<i class="dropdown icon"></i>
 						<i class="grey server icon"></i>操作系统2
+						</div>
 					</div>
 					<div class="content"></div>
 					<div class="title">
+						<div class="indent_one">
 						<i class="dropdown icon"></i>
 						<i class="green server icon"></i>操作系统3
+						</div>
 					</div>
 					<div class="content"></div>
 				</div>
