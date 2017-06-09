@@ -1,8 +1,8 @@
-package test.com.ws.stoner.service.impl; 
+package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
+import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.HostService;
 import org.junit.Test;
 import org.junit.Before; 
@@ -12,16 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
 /** 
 * HostServiceImpl Tester. 
 * 
 * @author <Authors name> 
-* @since <pre>六月 2, 2017</pre> 
+* @since <pre>六月 8, 2017</pre> 
 * @version 1.0 
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class HostServiceImplTest { 
+public class HostServiceImplTest {
 
     @Autowired
     private HostService hostService;
@@ -44,8 +46,34 @@ public void after() throws Exception {
 */ 
 @Test
 public void testListHost() throws Exception { 
-//TODO: Test goes here... 
+//TODO: Test goes here...
+    List<HostDO> hosts = hostService.listHost();
+    System.out.println(hosts.toString());
 } 
+
+/** 
+* 
+* Method: listDisableHost() 
+* 
+*/ 
+@Test
+public void testListDisableHost() throws Exception { 
+//TODO: Test goes here...
+    List<HostDO> disableHosts = hostService.listDisableHost();
+    System.out.println(disableHosts);
+} 
+@Test
+public void testListMaintenanceHost() throws  Exception {
+    List<HostDO> maintenanceHosts = hostService.listMaintenanceHost();
+    System.out.println(maintenanceHosts.toString());
+}
+    @Test
+    public void testListDangerHost() throws  Exception {
+        List<HostDO> dangerHosts = hostService.listDangerHost();
+        System.out.println(dangerHosts.toString());
+    }
+
+
 
 /** 
 * 
@@ -64,9 +92,7 @@ public void testCountDisableHost() throws Exception {
 */ 
 @Test
 public void testCountMaintenanceHost() throws Exception { 
-//TODO: Test goes here...
-    int maintenanceHostNum = hostService.countMaintenanceHost();
-    System.out.println(maintenanceHostNum);
+//TODO: Test goes here... 
 } 
 
 /** 
@@ -76,10 +102,7 @@ public void testCountMaintenanceHost() throws Exception {
 */ 
 @Test
 public void testCountDangerHost() throws Exception { 
-//TODO: Test goes here...
-    int dangerHost = hostService.countDangerHost();
-    System.out.println(dangerHost);
-
+//TODO: Test goes here... 
 } 
 
 /** 
@@ -99,10 +122,7 @@ public void testCountUnsupportedHost() throws Exception {
 */ 
 @Test
 public void testCountOkHost() throws Exception { 
-//TODO: Test goes here...
-    int okHost = hostService.countOkHost();
-    System.out.println(okHost);
-
+//TODO: Test goes here... 
 } 
 
 /** 
@@ -112,9 +132,7 @@ public void testCountOkHost() throws Exception {
 */ 
 @Test
 public void testCountAllHostState() throws Exception { 
-//TODO: Test goes here...
-    StateNumDTO stateNumDTO = hostService.countAllHostState();
-    System.out.println(stateNumDTO.toString());
+//TODO: Test goes here... 
 } 
 
 /** 
@@ -124,9 +142,7 @@ public void testCountAllHostState() throws Exception {
 */ 
 @Test
 public void testCountAllHost() throws Exception { 
-//TODO: Test goes here...
-    int allHost = hostService.countAllHost();
-    System.out.println(allHost);
+//TODO: Test goes here... 
 } 
 
 /** 
