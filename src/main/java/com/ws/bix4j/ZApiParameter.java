@@ -113,6 +113,21 @@ public class ZApiParameter {
         }
 
     }
+
+    /**
+     * 触发器state状态
+     */
+    public static enum TRIGGER_STATE  {
+        UP_TO_DATE(0), UNKNOWN(1);
+
+        public int value;
+
+        private TRIGGER_STATE(int value) {
+            this.value = value;
+        }
+
+    }
+
     public static enum ITEM_VALUE_TYPE {
         NUMERIC_FLOAT(0), CHARACTOR(1), LOG(2), NUMERIC_UNSIGNED(3), TEXT(4);
 

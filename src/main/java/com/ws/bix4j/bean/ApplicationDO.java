@@ -24,6 +24,21 @@ public class ApplicationDO {
     @JSONField(name = "templateids")
     private List<String> templateIds;
 
+    public ApplicationDO setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+        return this;
+    }
+
+    public ApplicationDO setFlag(int flag) {
+        this.flag = flag;
+        return this;
+    }
+
+    public ApplicationDO setTemplateIds(List<String> templateIds) {
+        this.templateIds = templateIds;
+        return this;
+    }
+
     public String getApplicationId() {
         return applicationId;
     }
@@ -53,5 +68,7 @@ public class ApplicationDO {
     public List<String> getTemplateIds() {
         return templateIds;
     }
+
+
 
 }

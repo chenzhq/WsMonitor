@@ -4,6 +4,7 @@ import com.ws.bix4j.bean.GroupDO;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.bean.UserDO;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.service.ApplicationService;
 import com.ws.stoner.service.GroupService;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.UserService;
@@ -29,6 +30,9 @@ public class DashboardController {
 
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private ApplicationService applicationService;
+
 
     @RequestMapping(value = {"/", ""})
     public String dashboard(Model model) throws ServiceException {
