@@ -69,6 +69,14 @@ public class ApplicationDO {
         return templateIds;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "ApplicationDO{" +
+                "applicationId='" + applicationId + '\'' +
+                ", hostId='" + hostId + '\'' +
+                ", name='" + name + '\'' +
+                ", flag=" + flag +
+                ", templateIds=" + templateIds +
+                '}';
+    }
 }

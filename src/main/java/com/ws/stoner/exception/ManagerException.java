@@ -3,7 +3,7 @@ package com.ws.stoner.exception;
 /**
  * Created by chenzheqi on 2017/5/22.
  */
-public class ServiceException extends Exception{
+public class ManagerException extends Exception{
     /**
      * Constructs a new exception with the specified detail message.  The
      * cause is not initialized, and may subsequently be initialized by
@@ -12,7 +12,7 @@ public class ServiceException extends Exception{
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public ServiceException(String message) {
+    public ManagerException(String message) {
         super(message);
     }
 

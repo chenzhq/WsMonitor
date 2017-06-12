@@ -1,8 +1,8 @@
-package com.ws.stoner.service;
+package com.ws.stoner.manager;
 
 import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.model.dto.StateNumDTO;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by chenzheqi on 2017/5/23.
  */
-public interface HostService {
+public interface HostManager {
     /**
      * List host list.
      *
@@ -22,32 +22,32 @@ public interface HostService {
     /**
      * 获取停用主机list
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
-    List<HostDO> listDisableHost() throws ServiceException;
+    List<HostDO> listDisableHost() throws ManagerException;
 
     /**
      *
      * 获取维护主机list
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
-    List<HostDO> listMaintenanceHost() throws ServiceException;
+    List<HostDO> listMaintenanceHost() throws ManagerException;
 
     /**
      * 获取问题主机list
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
-    List<HostDO> listDangerHost() throws ServiceException;
+    List<HostDO> listDangerHost() throws ManagerException;
 
     /**
      * 计算停用主机的数量.
      *
      * @return the int
-     * @throws ServiceException the service exception
+     * @throws ManagerException the service exception
      */
-    int countDisableHost() throws ServiceException;
+    int countDisableHost() throws ManagerException;
 
     /**
      * 计算维护状态主机的数量.
@@ -61,9 +61,9 @@ public interface HostService {
      * 该主机触发器产生了Problem
      *
      * @return 有问题的主机数 int
-     * @throws ServiceException the service exception
+     * @throws ManagerException the service exception
      */
-    int countDangerHost() throws ServiceException;
+    int countDangerHost() throws ManagerException;
 
     /**
      * Count unsupported host int.
@@ -77,15 +77,15 @@ public interface HostService {
      *
      * @return the int
      */
-    int countOkHost() throws ServiceException;
+    int countOkHost() throws ManagerException;
 
     /**
      * Count all host state state num dto.
      *
      * @return the state num dto
-     * @throws ServiceException the service exception
+     * @throws ManagerException the service exception
      */
-    StateNumDTO countAllHostState() throws ServiceException;
+    StateNumDTO countAllHostState() throws ManagerException;
 
 
     /**

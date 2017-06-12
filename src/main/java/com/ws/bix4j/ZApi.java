@@ -3,6 +3,7 @@ package com.ws.bix4j;
 import com.ws.bix4j.access.application.Application;
 import com.ws.bix4j.access.host.Host;
 import com.ws.bix4j.access.group.Group;
+import com.ws.bix4j.access.item.Item;
 import com.ws.bix4j.access.problem.Problem;
 import com.ws.bix4j.access.trigger.Trigger;
 import com.ws.bix4j.access.user.*;
@@ -79,6 +80,9 @@ public class ZApi {
     }
     public Trigger Trigger() {
         return new Trigger(uri.toString(), auth);
+    }
+    public Item Item() {
+        return new Item(uri.toString(), auth);
     }
     public Problem Problems() {
         return new Problem(uri.toString(), auth);

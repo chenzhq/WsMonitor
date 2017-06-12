@@ -1,4 +1,4 @@
-package com.ws.stoner.service;
+package com.ws.stoner.manager;
 
 import com.ws.bix4j.bean.GroupDO;
 import com.ws.stoner.exception.AuthExpireException;
@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by zkf on 2017/6/1.
  */
-public interface GroupService {
+public interface GroupManager {
     /**
      * List hostgroup list.
      *

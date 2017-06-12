@@ -1,7 +1,7 @@
 package com.ws.stoner.advice;
 
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.model.query.LoginFormQuery;
 import com.ws.stoner.utils.CookieUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,7 +29,7 @@ public class ExceptionHandlerAdvice {
         return mav;
     }
 
-    @ExceptionHandler(value = ServiceException.class)
+    @ExceptionHandler(value = ManagerException.class)
     public String exception() {
        return "404";
     }

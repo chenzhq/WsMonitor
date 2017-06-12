@@ -1,9 +1,9 @@
 package com.ws.stoner.controller.rest;
 
-import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.model.dto.StateNumDTO;
-import com.ws.stoner.service.HostService;
-import com.ws.stoner.service.PlatformService;
+import com.ws.stoner.manager.HostManager;
+import com.ws.stoner.manager.PlatformManager;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,20 +18,20 @@ import java.util.List;
 @RestController
 public class DashboardRestController {
     @Autowired
-    private HostService hostService;
+    private HostManager hostManager;
 
     @Autowired
-    private PlatformService platformService;
+    private PlatformManager platformManager;
 
     @RequestMapping(value = "host/count", method = RequestMethod.GET)
-    public String countHost() throws ServiceException {
-        StateNumDTO allHostNum = hostService.countAllHostState();
+    public String countHost() throws ManagerException {
+        StateNumDTO allHostNum = hostManager.countAllHostState();
         return RestResultGenerator.genResult(allHostNum, "查询成功").toString();
     }
 
     @RequestMapping(value = "platform/count", method = RequestMethod.GET)
-    public String countPlatform() throws ServiceException {
-        List<StateNumDTO> allPlatformStatusNum = platformService.countAllPlatform();
+    public String countPlatform() throws ManagerException {
+        List<StateNumDTO> allPlatformStatusNum = platformManager.countAllPlatform();
         return RestResultGenerator.genResult(allPlatformStatusNum, "查询成功").toString();
     }
 }

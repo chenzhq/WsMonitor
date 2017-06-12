@@ -1,4 +1,4 @@
-package com.ws.stoner.service.impl;
+package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.group.GroupGetRequest;
@@ -6,7 +6,7 @@ import com.ws.bix4j.bean.GroupDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.service.GroupService;
+import com.ws.stoner.manager.GroupManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ import java.util.List;
  * Created by pc on 2017/6/1.
  */
 @Service
-public class GroupServiceImpl implements GroupService {
-    private static final Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
+public class GroupManagerImpl implements GroupManager {
+    private static final Logger logger = LoggerFactory.getLogger(GroupManagerImpl.class);
     @Autowired
     private ZApi zApi;
     @Override

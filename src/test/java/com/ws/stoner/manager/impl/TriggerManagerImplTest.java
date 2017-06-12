@@ -1,9 +1,9 @@
-package com.ws.stoner.service.impl;
+package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.bean.TriggerDO;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.manager.TriggerManager;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 /** 
-* TriggerServiceImpl Tester. 
+* TriggerManagerImpl Tester.
 * 
 * @author <Authors name> 
 * @since <pre>六月 8, 2017</pre> 
@@ -23,10 +23,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class TriggerServiceImplTest {
+public class TriggerManagerImplTest {
 
     @Autowired
-    private TriggerService triggerService;
+    private TriggerManager triggerManager;
 
     @Autowired
     private ZApi zApi;
@@ -48,13 +48,13 @@ public void after() throws Exception {
 @Test
 public void testListTrigger() throws Exception { 
 //TODO: Test goes here...
-    List<TriggerDO> triggerDOList = triggerService.listTrigger();
+    List<TriggerDO> triggerDOList = triggerManager.listTrigger();
     System.out.println(triggerDOList.toString());
 } 
 
 @Test
     public void testListUnknownTrigger() throws Exception {
-    List<TriggerDO> unknownTriggers = triggerService.listUnknownTrigger();
+    List<TriggerDO> unknownTriggers = triggerManager.listUnknownTrigger();
     System.out.println(unknownTriggers);
 }
 

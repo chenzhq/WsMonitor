@@ -30,7 +30,7 @@ public class ItemDO {
     private String description;
     private String error;
     private Integer flags;
-    private Integer formula;
+    private Float formula;
     private Integer history;
     @JSONField(name = "inventory_link")
     private Integer inventoryLink;
@@ -213,11 +213,11 @@ public class ItemDO {
         return this;
     }
 
-    public Integer getFormula() {
+    public Float getFormula() {
         return formula;
     }
 
-    public ItemDO setFormula(Integer formula) {
+    public ItemDO setFormula(Float formula) {
         this.formula = formula;
         return this;
     }
