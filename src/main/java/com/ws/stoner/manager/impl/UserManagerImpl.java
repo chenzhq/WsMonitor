@@ -1,4 +1,4 @@
-package com.ws.stoner.service.impl;
+package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.user.UserGetRequest;
@@ -7,7 +7,7 @@ import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.model.dto.UserInfoDTO;
-import com.ws.stoner.service.UserService;
+import com.ws.stoner.manager.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import java.util.List;
  * Created by chenzheqi on 2017/4/28.
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class UserManagerImpl implements UserManager {
     @Autowired
     private ZApi zApi;
 

@@ -3,11 +3,11 @@ package com.ws.stoner.controller;
 import com.ws.bix4j.bean.GroupDO;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.bean.UserDO;
-import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.ApplicationService;
-import com.ws.stoner.service.GroupService;
-import com.ws.stoner.service.HostService;
-import com.ws.stoner.service.UserService;
+import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.manager.ApplicationManager;
+import com.ws.stoner.manager.GroupManager;
+import com.ws.stoner.manager.HostManager;
+import com.ws.stoner.manager.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,27 +23,27 @@ import java.util.List;
 public class DashboardController {
 
     @Autowired
-    private HostService hostService;
+    private HostManager hostManager;
 
     @Autowired
-    private UserService userService;
+    private UserManager userManager;
 
     @Autowired
-    private GroupService groupService;
+    private GroupManager groupManager;
     @Autowired
-    private ApplicationService applicationService;
+    private ApplicationManager applicationManager;
 
 
     @RequestMapping(value = {"/", ""})
-    public String dashboard(Model model) throws ServiceException {
+    public String dashboard(Model model) throws ManagerException {
 
-        List<UserDO> userDOList = userService.listUser();
-        List<HostDO> hostDOList = hostService.listHost();
-        List<GroupDO> groupDOList = groupService.listGroup();
-        int allHost = hostService.countAllHost();
-        int disbleHost = hostService.countDisableHost();
-        int okHost = hostService.countOkHost();
-        int maintenanceHost = hostService.countMaintenanceHost();
+        List<UserDO> userDOList = userManager.listUser();
+        List<HostDO> hostDOList = hostManager.listHost();
+        List<GroupDO> groupDOList = groupManager.listGroup();
+        int allHost = hostManager.countAllHost();
+        int disbleHost = hostManager.countDisableHost();
+        int okHost = hostManager.countOkHost();
+        int maintenanceHost = hostManager.countMaintenanceHost();
         model.addAttribute("users", userDOList);
         model.addAttribute("hosts", hostDOList);
         model.addAttribute("groups",groupDOList);

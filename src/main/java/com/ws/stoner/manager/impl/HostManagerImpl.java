@@ -1,4 +1,4 @@
-package com.ws.stoner.service.impl;
+package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
@@ -10,9 +10,9 @@ import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.constant.HostStatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.model.dto.StateNumDTO;
-import com.ws.stoner.service.HostService;
+import com.ws.stoner.manager.HostManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ import java.util.*;
  * Created by chenzheqi on 2017/5/2.
  */
 @Service
-public class HostServiceImpl implements HostService {
-    private static final Logger logger = LoggerFactory.getLogger(HostServiceImpl.class);
+public class HostManagerImpl implements HostManager {
+    private static final Logger logger = LoggerFactory.getLogger(HostManagerImpl.class);
     @Autowired
     private ZApi zApi;
 
@@ -76,10 +76,10 @@ public class HostServiceImpl implements HostService {
     /**
      * 维护主机list
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public List<HostDO> listMaintenanceHost() throws ServiceException {
+    public List<HostDO> listMaintenanceHost() throws ManagerException {
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("maintenance_status", ZApiParameter.HOST_MAINTENANCE_STATUS.MAINTENANCE_IN_EFFECT.value);
@@ -98,7 +98,7 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public List<HostDO> listDangerHost() throws ServiceException {
+    public List<HostDO> listDangerHost() throws ManagerException {
 
         ProblemGetRequest problemGetRequest = new ProblemGetRequest();
         problemGetRequest.getParams().setSource(ZApiParameter.SOURCE.TRIGGER.value)
@@ -127,7 +127,7 @@ public class HostServiceImpl implements HostService {
      * @return the int
      */
     @Override
-    public int countDisableHost() throws ServiceException {
+    public int countDisableHost() throws ManagerException {
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.UNMONITORED_HOST.value);
@@ -139,7 +139,7 @@ public class HostServiceImpl implements HostService {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");
             } else {
-                throw new ServiceException("");
+                throw new ManagerException("");
             }
         }
         return disableHostNum;
@@ -171,10 +171,10 @@ public class HostServiceImpl implements HostService {
     /**
      * 获取危险的主机数量
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public int countDangerHost() throws ServiceException {
+    public int countDangerHost() throws ManagerException {
 
         ProblemGetRequest problemGetRequest = new ProblemGetRequest();
         problemGetRequest.getParams().setSource(ZApiParameter.SOURCE.TRIGGER.value)
@@ -195,7 +195,7 @@ public class HostServiceImpl implements HostService {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");
             } else {
-                throw new ServiceException("");
+                throw new ManagerException("");
             }
         }
         return problemHostNum;
@@ -213,16 +213,16 @@ public class HostServiceImpl implements HostService {
     /**
      * 统计正常的主机数量 = 总主机数（不包含停用主机）-维护主机数（无数据）-危险主机数（报警）
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public int countOkHost() throws ServiceException{
+    public int countOkHost() throws ManagerException {
         int okHostNum = countAllHost() - countMaintenanceHost() - countDangerHost();
         return okHostNum;
     }
 
     @Override
-    public StateNumDTO countAllHostState() throws ServiceException {
+    public StateNumDTO countAllHostState() throws ManagerException {
         StateNumDTO stateNumDTO = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNumList = new ArrayList<>();
 

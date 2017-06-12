@@ -1,9 +1,9 @@
-package com.ws.stoner.service.impl;
+package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.service.HostService;
+import com.ws.stoner.manager.HostManager;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
@@ -23,10 +23,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class HostServiceImplTest {
+public class HostManagerImplTest {
 
     @Autowired
-    private HostService hostService;
+    private HostManager hostManager;
 
     @Autowired
     private ZApi zApi;
@@ -47,7 +47,7 @@ public void after() throws Exception {
 @Test
 public void testListHost() throws Exception { 
 //TODO: Test goes here...
-    List<HostDO> hosts = hostService.listHost();
+    List<HostDO> hosts = hostManager.listHost();
     System.out.println(hosts.toString());
 } 
 
@@ -59,17 +59,17 @@ public void testListHost() throws Exception {
 @Test
 public void testListDisableHost() throws Exception { 
 //TODO: Test goes here...
-    List<HostDO> disableHosts = hostService.listDisableHost();
+    List<HostDO> disableHosts = hostManager.listDisableHost();
     System.out.println(disableHosts);
 } 
 @Test
 public void testListMaintenanceHost() throws  Exception {
-    List<HostDO> maintenanceHosts = hostService.listMaintenanceHost();
+    List<HostDO> maintenanceHosts = hostManager.listMaintenanceHost();
     System.out.println(maintenanceHosts.toString());
 }
     @Test
     public void testListDangerHost() throws  Exception {
-        List<HostDO> dangerHosts = hostService.listDangerHost();
+        List<HostDO> dangerHosts = hostManager.listDangerHost();
         System.out.println(dangerHosts.toString());
     }
 

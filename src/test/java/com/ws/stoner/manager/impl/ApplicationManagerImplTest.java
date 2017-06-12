@@ -1,9 +1,9 @@
-package com.ws.stoner.service.impl;
+package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.bean.ApplicationDO;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.service.ApplicationService;
+import com.ws.stoner.manager.ApplicationManager;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
-* ApplicationServiceImpl Tester. 
+* ApplicationManagerImpl Tester.
 * 
 * @author <Authors name> 
 * @since <pre>六月 8, 2017</pre> 
@@ -24,10 +24,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class ApplicationServiceImplTest {
+public class ApplicationManagerImplTest {
 
     @Autowired
-    private ApplicationService applicationService;
+    private ApplicationManager applicationManager;
 
     @Autowired
     private ZApi zApi;
@@ -50,20 +50,20 @@ public void after() throws Exception {
 @Test
 public void testListApplication() throws Exception { 
 //TODO: Test goes here...
-    List<ApplicationDO> listApp = applicationService.listApplication();
+    List<ApplicationDO> listApp = applicationManager.listApplication();
     System.out.println(listApp.toString());
 
 }
 
 @Test
     public void testListDisableApp() throws  Exception {
-        int disableAppNum = applicationService.countDisableApp();
+        int disableAppNum = applicationManager.countDisableApp();
         System.out.println(disableAppNum);
 }
 
     @Test
     public void testListMaintencanceApp() throws  Exception {
-        int maintencanceAppNum = applicationService.countMaintenanceApp();
+        int maintencanceAppNum = applicationManager.countMaintenanceApp();
         System.out.println(maintencanceAppNum);
     }
 
@@ -73,7 +73,7 @@ public void testListApplication() throws Exception {
         itemIds.add("23167");
         itemIds.add("23174");
         itemIds.add("23181");
-        List<ApplicationDO> apps = applicationService.listAppByItemIds(itemIds);
+        List<ApplicationDO> apps = applicationManager.listAppByItemIds(itemIds);
         System.out.println(apps);
     }
 
@@ -83,13 +83,13 @@ public void testListApplication() throws Exception {
         itemIds.add("23167");
         itemIds.add("23174");
         itemIds.add("23181");
-        int apps = applicationService.countAppByItemIds(itemIds);
+        int apps = applicationManager.countAppByItemIds(itemIds);
         System.out.println(apps);
     }
 
     @Test
     public void testCountUnknownApp() throws Exception {
-        int unknownApp = applicationService.countUnknownApp();
+        int unknownApp = applicationManager.countUnknownApp();
         System.out.println(unknownApp);
     }
 

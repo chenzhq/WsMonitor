@@ -1,13 +1,12 @@
-package com.ws.stoner.service.impl;
+package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
-import com.ws.bix4j.bean.TriggerDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.ItemService;
+import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.manager.ItemManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,9 @@ import java.util.List;
  * Created by pc on 2017/6/9.
  */
 @Service
-public class ItemServiceImpl implements ItemService {
+public class ItemManagerImpl implements ItemManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostManagerImpl.class);
     @Autowired
     private ZApi zApi;
 
@@ -47,10 +46,10 @@ public class ItemServiceImpl implements ItemService {
     /**
      * 获取在给定 触发器trigger list中的 item
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public List<ItemDO> listItemByTriggerIds(List<String> triggerIds) throws ServiceException {
+    public List<ItemDO> listItemByTriggerIds(List<String> triggerIds) throws ManagerException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         itemGetRequest.getParams().setTriggerIds(triggerIds);
         List<ItemDO> items ;

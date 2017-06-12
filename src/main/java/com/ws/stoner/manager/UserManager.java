@@ -1,4 +1,4 @@
-package com.ws.stoner.service;
+package com.ws.stoner.manager;
 
 import com.ws.bix4j.bean.UserDO;
 import com.ws.stoner.exception.AuthExpireException;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by chenzheqi on 2017/5/23.
  */
-public interface UserService {
+public interface UserManager {
 
     UserInfoDTO getUser(String id);
 

@@ -1,4 +1,4 @@
-package com.ws.stoner.service.impl;
+package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
@@ -9,11 +9,11 @@ import com.ws.bix4j.bean.TriggerDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.ApplicationService;
-import com.ws.stoner.service.HostService;
-import com.ws.stoner.service.ItemService;
-import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.manager.ApplicationManager;
+import com.ws.stoner.manager.HostManager;
+import com.ws.stoner.manager.ItemManager;
+import com.ws.stoner.manager.TriggerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +26,17 @@ import java.util.List;
  * Created by zkf on 2017/6/8.
  */
 @Service
-public class ApplicationServiceImpl implements ApplicationService {
+public class ApplicationManagerImpl implements ApplicationManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostManagerImpl.class);
     @Autowired
-    private HostService hostService;
-
-    @Autowired
-    private TriggerService triggerService;
+    private HostManager hostManager;
 
     @Autowired
-    private ItemService itemService;
+    private TriggerManager triggerManager;
+
+    @Autowired
+    private ItemManager itemManager;
 
     @Autowired
     private ZApi zApi;
@@ -67,10 +67,10 @@ public class ApplicationServiceImpl implements ApplicationService {
      * 获取 itemid 在给定的ItemIds list 中的所有application
      * @param itemIds
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public List<ApplicationDO> listAppByItemIds(List<String> itemIds) throws ServiceException {
+    public List<ApplicationDO> listAppByItemIds(List<String> itemIds) throws ManagerException {
         ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
         applicationGetRequest.getParams().setItemIds(itemIds);
         List<ApplicationDO> listApplication ;
@@ -87,10 +87,10 @@ public class ApplicationServiceImpl implements ApplicationService {
      * 获取 itemid 在给定的ItemIds list 中的所有application 的数量
      * @param itemIds
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public int countAppByItemIds(List<String> itemIds) throws ServiceException {
+    public int countAppByItemIds(List<String> itemIds) throws ManagerException {
         ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
         applicationGetRequest.getParams().setItemIds(itemIds).setCountOutput(true);
         int appByItemIdsNum ;
@@ -109,12 +109,12 @@ public class ApplicationServiceImpl implements ApplicationService {
      * 1、如果该监控点所属的主机为停用状态，则该监控点为停用状态
      * 2、如果所有配置触发器的监控项为停用状态（status : disable）,则该监控点为停用状态
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public int countDisableApp() throws ServiceException {
+    public int countDisableApp() throws ManagerException {
         //step1:查询所有停用状态主机
-        List<HostDO> disableHosts = hostService.listDisableHost();
+        List<HostDO> disableHosts = hostManager.listDisableHost();
         //step2:根据这些主机，筛选查询其下的所有应用集 hostids
         List<String> hostsIds = new ArrayList<String>();
         for(HostDO host : disableHosts) {
@@ -134,12 +134,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     /**
      * 维护主机下的所有监控点（应用集）全为维护状态
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public int countMaintenanceApp() throws ServiceException {
+    public int countMaintenanceApp() throws ManagerException {
         //step1:查询所有维护状态主机（非停用）
-        List<HostDO> maintencanceHosts = hostService.listMaintenanceHost();
+        List<HostDO> maintencanceHosts = hostManager.listMaintenanceHost();
         //step2:根据这些主机，筛选查询其下的所有应用集 hostids
         List<String> hostsIds = new ArrayList<String>();
         for(HostDO host : maintencanceHosts) {
@@ -160,18 +160,18 @@ public class ApplicationServiceImpl implements ApplicationService {
      * 如果有任何一个触发器的state处于unknown状态，则该触发器所属的监控点为未知状态；如果不支持状态的监控项没有配置触发器，则视为正常状态
      * 如果一个监控点下配置有触发器的监控项中，同时存在问题和未知2种状态，视作未知状态
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public int countUnknownApp() throws ServiceException {
+    public int countUnknownApp() throws ManagerException {
         //step1:筛选监控中monitored，非维护maintenance，状态为unknownfilter: state的触发器
-        List<TriggerDO> unknownTriggers = triggerService.listUnknownTrigger();
+        List<TriggerDO> unknownTriggers = triggerManager.listUnknownTrigger();
         //step2:根据这些触发器筛选item
         List<String> triggerIds = new ArrayList<String>();
         for(TriggerDO triggerDO : unknownTriggers) {
             triggerIds.add(triggerDO.getTriggerId());
         }
-        List<ItemDO> items = itemService.listItemByTriggerIds(triggerIds);
+        List<ItemDO> items = itemManager.listItemByTriggerIds(triggerIds);
         //step3:根据item，查询它们所属的应用集
         List<String> itemIds = new ArrayList<String>();
         for(ItemDO item : items) {
@@ -185,10 +185,10 @@ public class ApplicationServiceImpl implements ApplicationService {
      * 如果有任何一个监控项的值超过了触发器的阀值，则该监控点为问题状态
      * 如果一个监控点下配置有触发器的监控项中，同时存在问题和未知2种状态，视作未知状态
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public int countProblemApp() throws ServiceException {
+    public int countProblemApp() throws ManagerException {
         //step1:筛选监控中monitored，非维护maintenance，状态为up to datefilter: state，值为problemfilter: value的触发器
         //step2:根据这些触发器筛选item
         //step3:根据item，查询它们所属的应用集
@@ -200,10 +200,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     /**
      *
      * @return
-     * @throws ServiceException
+     * @throws ManagerException
      */
     @Override
-    public int countOkApp() throws ServiceException {
+    public int countOkApp() throws ManagerException {
         //step1:筛选所有监控中，非维护，状态为up to date，值为OK的触发器
         //step2:根据这些触发器筛选item
         //step3:根据item，查询所属应用集
