@@ -32,7 +32,7 @@ public class TriggerManagerImpl implements TriggerManager {
         TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
         List<TriggerDO> triggers;
         try {
-            triggers = zApi.Trigger().get(triggerGetRequest).getResult();
+            triggers = zApi.Trigger().get(triggerGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;
@@ -56,7 +56,7 @@ public class TriggerManagerImpl implements TriggerManager {
 
         List<TriggerDO> unknownTriggers;
         try {
-            unknownTriggers = zApi.Trigger().get(triggerGetRequest).getResult();
+            unknownTriggers = zApi.Trigger().get(triggerGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;

@@ -11,8 +11,8 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.constant.HostStatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.manager.HostManager;
+import com.ws.stoner.model.dto.StateNumDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +108,7 @@ public class HostManagerImpl implements HostManager {
         HostGetRequest hostGetRequest = new HostGetRequest();
         List<HostDO> problemHosts;
         try {
-            problems = zApi.Problems().get(problemGetRequest).getResult();
+            problems = zApi.Problems().get(problemGetRequest);
             for (ProblemDO problem : problems) {
                 triggerIds.add(problem.getObjectId());
             }
@@ -185,7 +185,7 @@ public class HostManagerImpl implements HostManager {
         int problemHostNum;
 
         try {
-            problems = zApi.Problems().get(problemGetRequest).getResult();
+            problems = zApi.Problems().get(problemGetRequest);
             for (ProblemDO problem : problems) {
                 triggerIds.add(problem.getObjectId());
             }
