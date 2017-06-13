@@ -39,11 +39,20 @@ public class UserGetRequest extends ZRequest {
         private List<String> userGrpIds;
 
         private String getAccess;
+        @JSONField(name = "selectMedias")
         private String selectMedias;
+        @JSONField(name = "selectMedias")
+        private String[] listMedias;
+
         @JSONField(name = "selectMediatypes")
-        private String selectMediaTypes;
+        private String stringMediaTypes;
+        @JSONField(name = "selectMediatypes")
+        private String[] listMediaTypes;
+
         @JSONField(name = "selectUsrgrps")
         private String selectUsrGrps;
+        @JSONField(name = "selectUsrgrps")
+        private String[] listUsrgrps;
 
         public List<String> getMediaIds() {
             return mediaIds;
@@ -93,12 +102,12 @@ public class UserGetRequest extends ZRequest {
             this.selectMedias = selectMedias;
         }
 
-        public String getSelectMediaTypes() {
-            return selectMediaTypes;
+        public String getStringMediaTypes() {
+            return stringMediaTypes;
         }
 
-        public void setSelectMediaTypes(String selectMediaTypes) {
-            this.selectMediaTypes = selectMediaTypes;
+        public void setStringMediaTypes(String stringMediaTypes) {
+            this.stringMediaTypes = stringMediaTypes;
         }
 
         public String getSelectUsrGrps() {
@@ -107,6 +116,33 @@ public class UserGetRequest extends ZRequest {
 
         public void setSelectUsrGrps(String selectUsrGrps) {
             this.selectUsrGrps = selectUsrGrps;
+        }
+
+        public String[] getListMedias() {
+            return listMedias;
+        }
+
+        public Params setListMedias(String[] listMedias) {
+            this.listMedias = listMedias;
+            return this;
+        }
+
+        public String[] getListMediaTypes() {
+            return listMediaTypes;
+        }
+
+        public Params setListMediaTypes(String[] listMediaTypes) {
+            this.listMediaTypes = listMediaTypes;
+            return this;
+        }
+
+        public String[] getListUsrgrps() {
+            return listUsrgrps;
+        }
+
+        public Params setListUsrgrps(String[] listUsrgrps) {
+            this.listUsrgrps = listUsrgrps;
+            return this;
         }
     }
 

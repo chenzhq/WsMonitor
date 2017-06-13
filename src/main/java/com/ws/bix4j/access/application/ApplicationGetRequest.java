@@ -44,16 +44,28 @@ public class ApplicationGetRequest  extends ZRequest<ApplicationGetRequest.Param
          * select 参数
          */
         //在host属性中返回应用程序所属的主机
-        private List<String> selectHost;
+        @JSONField(name = "selectHosts")
+        private String[] listHosts;
+        @JSONField(name = "selectHosts")
+        private String stringHosts;
 
         //返回属性中应用程序中包含的项目items
-        private List<String> selectItems;
+        @JSONField(name = "selectItems")
+        private String[] listItems;
+        @JSONField(name = "selectItems")
+        private String stringItems;
 
         //返回在属性中创建监控点的LLD规则discoveryRule
-        private List<String> selectDiscoveryRule;
+        @JSONField(name = "selectDiscoveryRule")
+        private String[] listDiscoveryRule;
+        @JSONField(name = "selectDiscoveryRule")
+        private String stringDiscoveryRule;
 
         //返回在属性中创建监控点的自动发现监控点对象discoveryRule
-        private List<String> selectApplicationDiscovery;
+        @JSONField(name = "selectApplicationDiscovery")
+        private String[] listApplicationDiscovery;
+        @JSONField(name = "selectApplicationDiscovery")
+        private String stringApplicationDiscovery;
 
         public List<String> getApplicationIds() {
             return applicationIds;
@@ -118,39 +130,75 @@ public class ApplicationGetRequest  extends ZRequest<ApplicationGetRequest.Param
             return this;
         }
 
-        public List<String> getSelectHost() {
-            return selectHost;
+        public String[] getListHosts() {
+            return listHosts;
         }
 
-        public Params setSelectHost(List<String> selectHost) {
-            this.selectHost = selectHost;
+        public Params setListHosts(String[] listHosts) {
+            this.listHosts = listHosts;
             return this;
         }
 
-        public List<String> getSelectItems() {
-            return selectItems;
+        public String[] getListItems() {
+            return listItems;
         }
 
-        public Params setSelectItems(List<String> selectItems) {
-            this.selectItems = selectItems;
+        public Params setListItems(String[] listItems) {
+            this.listItems = listItems;
             return this;
         }
 
-        public List<String> getSelectDiscoveryRule() {
-            return selectDiscoveryRule;
+        public String[] getListDiscoveryRule() {
+            return listDiscoveryRule;
         }
 
-        public Params setSelectDiscoveryRule(List<String> selectDiscoveryRule) {
-            this.selectDiscoveryRule = selectDiscoveryRule;
+        public Params setListDiscoveryRule(String[] listDiscoveryRule) {
+            this.listDiscoveryRule = listDiscoveryRule;
             return this;
         }
 
-        public List<String> getSelectApplicationDiscovery() {
-            return selectApplicationDiscovery;
+        public String[] getListApplicationDiscovery() {
+            return listApplicationDiscovery;
         }
 
-        public Params setSelectApplicationDiscovery(List<String> selectApplicationDiscovery) {
-            this.selectApplicationDiscovery = selectApplicationDiscovery;
+        public Params setListApplicationDiscovery(String[] listApplicationDiscovery) {
+            this.listApplicationDiscovery = listApplicationDiscovery;
+            return this;
+        }
+
+        public String getStringHosts() {
+            return stringHosts;
+        }
+
+        public Params setStringHosts(String stringHosts) {
+            this.stringHosts = stringHosts;
+            return this;
+        }
+
+        public String getStringItems() {
+            return stringItems;
+        }
+
+        public Params setStringItems(String stringItems) {
+            this.stringItems = stringItems;
+            return this;
+        }
+
+        public String getStringDiscoveryRule() {
+            return stringDiscoveryRule;
+        }
+
+        public Params setStringDiscoveryRule(String stringDiscoveryRule) {
+            this.stringDiscoveryRule = stringDiscoveryRule;
+            return this;
+        }
+
+        public String getStringApplicationDiscovery() {
+            return stringApplicationDiscovery;
+        }
+
+        public Params setStringApplicationDiscovery(String stringApplicationDiscovery) {
+            this.stringApplicationDiscovery = stringApplicationDiscovery;
             return this;
         }
     }

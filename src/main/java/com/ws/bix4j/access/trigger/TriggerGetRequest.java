@@ -67,7 +67,7 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
         @JSONField(name = "selectGroups")
         private String stringGroups;
         @JSONField(name = "selectGroups")
-        private List<String> listGroups;
+        private String[] listGroups;
 
         @JSONField(name = "selectHosts")
         private String stringHosts;
@@ -77,27 +77,27 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
         @JSONField(name = "selectItems")
         private String stringItems;
         @JSONField(name = "selectItems")
-        private List<String> listItems;
+        private String[] listItems;
 
         @JSONField(name = "selectFunctions")
         private String stringFunctions;
         @JSONField(name = "selectFunctions")
-        private List<String> listFunctions;
+        private String[] listFunctions;
 
         @JSONField(name = "selectDiscoveryRule")
         private String stringDiscoveryRule;
         @JSONField(name = "selectDiscoveryRule")
-        private List<String> listDiscoveryRule;
+        private String[] listDiscoveryRule;
 
         @JSONField(name = "selectLastEvent")
         private String stringLastEvent;
         @JSONField(name = "selectLastEvent")
-        private List<String> listLastEvent;
+        private String[] listLastEvent;
 
         @JSONField(name = "selectTags")
         private String stringTags;
         @JSONField(name = "selectTags")
-        private List<String> listTags;
+        private String[] listTags;
 
         @Override
         public String toString() {
@@ -378,11 +378,11 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListGroups() {
+        public String[] getListGroups() {
             return listGroups;
         }
 
-        public Params setListGroups(List<String> listGroups) {
+        public Params setListGroups(String[] listGroups) {
             this.listGroups = listGroups;
             return this;
         }
@@ -414,11 +414,11 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListItems() {
+        public String[] getListItems() {
             return listItems;
         }
 
-        public Params setListItems(List<String> listItems) {
+        public Params setListItems(String[] listItems) {
             this.listItems = listItems;
             return this;
         }
@@ -432,11 +432,11 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListFunctions() {
+        public String[] getListFunctions() {
             return listFunctions;
         }
 
-        public Params setListFunctions(List<String> listFunctions) {
+        public Params setListFunctions(String[] listFunctions) {
             this.listFunctions = listFunctions;
             return this;
         }
@@ -450,11 +450,11 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListDiscoveryRule() {
+        public String[] getListDiscoveryRule() {
             return listDiscoveryRule;
         }
 
-        public Params setListDiscoveryRule(List<String> listDiscoveryRule) {
+        public Params setListDiscoveryRule(String[] listDiscoveryRule) {
             this.listDiscoveryRule = listDiscoveryRule;
             return this;
         }
@@ -468,11 +468,11 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListLastEvent() {
+        public String[] getListLastEvent() {
             return listLastEvent;
         }
 
-        public Params setListLastEvent(List<String> listLastEvent) {
+        public Params setListLastEvent(String[] listLastEvent) {
             this.listLastEvent = listLastEvent;
             return this;
         }
@@ -486,11 +486,11 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListTags() {
+        public String[] getListTags() {
             return listTags;
         }
 
-        public Params setListTags(List<String> listTags) {
+        public Params setListTags(String[] listTags) {
             this.listTags = listTags;
             return this;
         }

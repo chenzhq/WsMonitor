@@ -97,22 +97,22 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
         @JSONField(name = "selectGroups")
         private String stringGroups;
         @JSONField(name = "selectGroups")
-        private List<String> listGroups;
+        private String[] listGroups;
 
         @JSONField(name = "selectApplications")
         private String stringApplications;
         @JSONField(name = "selectApplications")
-        private List<String> listApplications;
+        private String[] listApplications;
 
         @JSONField(name = "selectItems")
         private String stringItems;
         @JSONField(name = "selectItems")
-        private List<String> listItems;
+        private String[] listItems;
 
         @JSONField(name = "selectTriggers")
         private String stringTriggers;
         @JSONField(name = "selectTriggers")
-        private List<String> listTriggers;
+        private String[] listTriggers;
 
         public List<String> getGroupIds() {
             return groupIds;
@@ -343,11 +343,11 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListGroups() {
+        public String[] getListGroups() {
             return listGroups;
         }
 
-        public Params setListGroups(List<String> listGroups) {
+        public Params setListGroups(String[] listGroups) {
             this.listGroups = listGroups;
             return this;
         }
@@ -361,7 +361,7 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListApplications() {
+        public String[] getListApplications() {
             return listApplications;
         }
 
@@ -374,11 +374,11 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListItems() {
+        public String[] getListItems() {
             return listItems;
         }
 
-        public Params setListItems(List<String> listItems) {
+        public Params setListItems(String[] listItems) {
             this.listItems = listItems;
             return this;
         }
@@ -392,7 +392,7 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListTriggers() {
+        public String[] getListTriggers() {
             return listTriggers;
         }
 //以下为select参数设置
@@ -407,7 +407,7 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public Params setSelectGroups(List<String> groupProps) {
+        public Params setSelectGroups(String[] groupProps) {
             this.listGroups = groupProps;
             return this;
         }
@@ -417,7 +417,7 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public Params setListApplications(List<String> applicationProps) {
+        public Params setListApplications(String[] applicationProps) {
             this.listApplications = applicationProps;
             return this;
         }
@@ -427,7 +427,7 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public Params setSelectItems(List<String> itemProps) {
+        public Params setSelectItems(String[] itemProps) {
             this.listItems = listItems;
             return this;
         }
@@ -437,7 +437,7 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public Params setListTriggers(List<String> triggerProps) {
+        public Params setListTriggers(String[] triggerProps) {
             this.listTriggers = triggerProps;
             return this;
         }

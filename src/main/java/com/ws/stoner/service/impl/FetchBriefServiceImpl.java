@@ -27,8 +27,12 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         TriggerGetRequest request = new TriggerGetRequest();
         Map<String, Integer> triggerFilter = new HashMap<>();
         triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
-        request.getParams().setMonitored(true).setOnlyTrue(true).setListHosts(BriefHostDTO.PROPERTY_NAMES)
-                .setOutput(BriefProblemVO.PROPERTY_NAMES).setFilter(triggerFilter);
+        request.getParams()
+                .setMonitored(true)
+                .setOnlyTrue(true)
+                .setListHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setOutput(BriefProblemVO.PROPERTY_NAMES)
+                .setFilter(triggerFilter);
         return triggerManager.listTrigger(request, BriefProblemVO.class);
     }
 }
