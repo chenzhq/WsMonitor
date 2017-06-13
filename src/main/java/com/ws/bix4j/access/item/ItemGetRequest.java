@@ -108,7 +108,7 @@ public class ItemGetRequest extends ZRequest<ItemGetRequest.Params>{
                     ", inherited=" + inherited +
                     ", templated=" + templated +
                     ", monitored=" + monitored +
-                    ", group='" + group + '\'' +
+                    ", hostgroup='" + group + '\'' +
                     ", host='" + host + '\'' +
                     ", application='" + application + '\'' +
                     ", withTriggers=" + withTriggers +

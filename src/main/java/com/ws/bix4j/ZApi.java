@@ -2,7 +2,7 @@ package com.ws.bix4j;
 
 import com.ws.bix4j.access.application.Application;
 import com.ws.bix4j.access.host.Host;
-import com.ws.bix4j.access.group.Group;
+import com.ws.bix4j.access.hostgroup.HostGroup;
 import com.ws.bix4j.access.item.Item;
 import com.ws.bix4j.access.problem.Problem;
 import com.ws.bix4j.access.trigger.Trigger;
@@ -72,8 +72,9 @@ public class ZApi {
     public Host Host() {
         return new Host(uri.toString(), auth);
     }
-    public Group Group() {
-        return new Group(uri.toString(), auth);
+
+    public HostGroup Group() {
+        return new HostGroup(uri.toString(), auth);
     }
     public Application Application() {
         return new Application(uri.toString(), auth);

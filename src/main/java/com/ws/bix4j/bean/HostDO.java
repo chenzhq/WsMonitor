@@ -1,6 +1,7 @@
 package com.ws.bix4j.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
+
 import java.time.Instant;
 import java.util.List;
 
@@ -100,7 +101,7 @@ public class HostDO{
      * 查询参数 selectGroups 则返回该字段 <br>
      * Query 【extend props]
      */
-    private List<GroupDO> groups;
+    private List<HostGroupDO> groups;
     /**
      * 查询参数 selectApplications 则返回该字段 <br>
      * Query [all]

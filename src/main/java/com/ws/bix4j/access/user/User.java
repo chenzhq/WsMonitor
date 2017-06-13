@@ -2,8 +2,11 @@ package com.ws.bix4j.access.user;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.access.ZApiMethod;
+import com.ws.bix4j.bean.UserDO;
+import com.ws.bix4j.exception.ZApiException;
+
+import java.util.List;
 
 /**
  * @Date 2017/4/4
@@ -19,14 +22,14 @@ public class User extends ZApiMethod {
         this.apiUrl = apiUrl;
     }
 
-    public UserGetResponse get(UserGetRequest request) throws ZApiException {
+    public List<UserDO> get(UserGetRequest UserGetRequest) throws ZApiException {
+        return get(UserGetRequest, UserDO.class);
+    }
+
+    public <T> List<T> get(UserGetRequest request, Class<T> clazz) throws ZApiException {
         request.setAuth(this.auth);
-
-        UserGetResponse response;
-
         String responseJson = sendRequest(JSON.toJSONString(request, SerializerFeature.NotWriteDefaultValue));
-        response = JSON.parseObject(responseJson, UserGetResponse.class);
-
+        List<T> response = JSON.parseArray(JSON.parseObject(responseJson).getJSONArray("result").toString(), clazz);
         return response;
     }
 
@@ -45,10 +48,6 @@ public class User extends ZApiMethod {
         return response;
     }
 
-    public void loginReturnInfo(UserLoginRequest request) throws ZApiException {
-        String responseJson = sendRequest(JSON.toJSONString(request, SerializerFeature.NotWriteDefaultValue));
-
-    }
 
     public UserLogoutResponse logout(UserLogoutRequest request) throws ZApiException {
         String requestString = JSON.toJSONString(request, SerializerFeature.WriteNullListAsEmpty);

@@ -6,8 +6,8 @@ import com.ws.bix4j.bean.UserDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.manager.UserManager;
+import com.ws.stoner.model.dto.UserInfoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class UserManagerImpl implements UserManager {
         userGetRequest.getParams().setUserIds(ids);
         List<UserDO> userList = new ArrayList<>();
         try {
-            userList = zApi.User().get(userGetRequest).getResult();
+            userList = zApi.User().get(userGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
         }
@@ -45,7 +45,7 @@ public class UserManagerImpl implements UserManager {
         userGetRequest.getParams();
         List<UserDO> userDOList = null;
         try {
-            userDOList = zApi.User().get(userGetRequest).getResult();
+            userDOList = zApi.User().get(userGetRequest);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");

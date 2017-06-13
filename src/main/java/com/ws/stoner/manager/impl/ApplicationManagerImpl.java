@@ -51,7 +51,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
         ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
         List<ApplicationDO> listApplication ;
         try {
-            listApplication = zApi.Application().get(applicationGetRequest).getResult();
+            listApplication = zApi.Application().get(applicationGetRequest);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");
@@ -75,7 +75,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
         applicationGetRequest.getParams().setItemIds(itemIds);
         List<ApplicationDO> listApplication ;
         try {
-            listApplication = zApi.Application().get(applicationGetRequest).getResult();
+            listApplication = zApi.Application().get(applicationGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;

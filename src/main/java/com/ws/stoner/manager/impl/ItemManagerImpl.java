@@ -35,7 +35,7 @@ public class ItemManagerImpl implements ItemManager {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         List<ItemDO> items ;
         try {
-            items = zApi.Item().get(itemGetRequest).getResult();
+            items = zApi.Item().get(itemGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;
@@ -54,7 +54,7 @@ public class ItemManagerImpl implements ItemManager {
         itemGetRequest.getParams().setTriggerIds(triggerIds);
         List<ItemDO> items ;
         try {
-            items = zApi.Item().get(itemGetRequest).getResult();
+            items = zApi.Item().get(itemGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;

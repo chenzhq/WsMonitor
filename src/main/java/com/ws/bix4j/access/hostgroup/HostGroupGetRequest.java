@@ -1,17 +1,16 @@
-package com.ws.bix4j.access.group;
+package com.ws.bix4j.access.hostgroup;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
 import com.ws.bix4j.access.ZRequest;
-
 
 import java.util.List;
 
 /**
  * Created by zkf on 2017/5/18.
  */
-public class GroupGetRequest extends ZRequest<GroupGetRequest.Params> {
-    public GroupGetRequest() {
+public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
+    public HostGroupGetRequest() {
         this.setMethod("hostgroup.get");
     }
 

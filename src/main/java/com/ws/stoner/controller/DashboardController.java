@@ -1,7 +1,7 @@
 package com.ws.stoner.controller;
 
-import com.ws.bix4j.bean.GroupDO;
 import com.ws.bix4j.bean.HostDO;
+import com.ws.bix4j.bean.HostGroupDO;
 import com.ws.bix4j.bean.UserDO;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.ApplicationManager;
@@ -39,14 +39,14 @@ public class DashboardController {
 
         List<UserDO> userDOList = userManager.listUser();
         List<HostDO> hostDOList = hostManager.listHost();
-        List<GroupDO> groupDOList = groupManager.listGroup();
+        List<HostGroupDO> hostGroupDOList = groupManager.listGroup();
         int allHost = hostManager.countAllHost();
         int disbleHost = hostManager.countDisableHost();
         int okHost = hostManager.countOkHost();
         int maintenanceHost = hostManager.countMaintenanceHost();
         model.addAttribute("users", userDOList);
         model.addAttribute("hosts", hostDOList);
-        model.addAttribute("groups",groupDOList);
+        model.addAttribute("groups", hostGroupDOList);
         model.addAttribute("hostsNum", allHost);
         model.addAttribute("disHostsNum", disbleHost);
         model.addAttribute("okHostsNum", okHost);

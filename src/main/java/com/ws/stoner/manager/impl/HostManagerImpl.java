@@ -40,7 +40,7 @@ public class HostManagerImpl implements HostManager {
         //hostGetRequest.getParams();
         List<HostDO> hosts;
         try {
-            hosts = zApi.Host().get(hostGetRequest).getResult();
+            hosts = zApi.Host().get(hostGetRequest);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");
@@ -65,7 +65,7 @@ public class HostManagerImpl implements HostManager {
         hostGetRequest.getParams().setFilter(statusFilter);
         List<HostDO> disableHosts;
         try {
-            disableHosts = zApi.Host().get(hostGetRequest).getResult();
+            disableHosts = zApi.Host().get(hostGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;
@@ -88,7 +88,7 @@ public class HostManagerImpl implements HostManager {
         hostGetRequest.getParams().setFilter(statusFilter);
         List<HostDO> MaintenanceHosts;
         try {
-            MaintenanceHosts = zApi.Host().get(hostGetRequest).getResult();
+            MaintenanceHosts = zApi.Host().get(hostGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;
@@ -113,7 +113,7 @@ public class HostManagerImpl implements HostManager {
                 triggerIds.add(problem.getObjectId());
             }
             hostGetRequest.getParams().setTriggerIds(triggerIds);
-            problemHosts = zApi.Host().get(hostGetRequest).getResult();
+            problemHosts = zApi.Host().get(hostGetRequest);
         } catch (ZApiException e) {
             e.printStackTrace();
             return  null;
@@ -262,7 +262,7 @@ public class HostManagerImpl implements HostManager {
         hostGetRequest.getParams().setHostIds(Arrays.asList(hostId));
         HostDO hostDO = new HostDO();
         try {
-            hostDO = zApi.Host().get(hostGetRequest).getResult().get(1);
+            hostDO = zApi.Host().get(hostGetRequest).get(1);
         } catch (ZApiException e) {
             e.printStackTrace();
         }

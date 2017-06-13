@@ -5,7 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 /**
  * Created by chenzheqi on 2017/5/2.
  */
-public class GroupDO {
+public class HostGroupDO {
     @JSONField(name = "groupid")
     private String groupId;
     private String name;
@@ -23,7 +23,7 @@ public class GroupDO {
         return groupId;
     }
 
-    public GroupDO setGroupId(String groupId) {
+    public HostGroupDO setGroupId(String groupId) {
         this.groupId = groupId;
         return this;
     }
@@ -32,7 +32,7 @@ public class GroupDO {
         return name;
     }
 
-    public GroupDO setName(String name) {
+    public HostGroupDO setName(String name) {
         this.name = name;
         return this;
     }

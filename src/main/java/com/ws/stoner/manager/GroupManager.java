@@ -1,6 +1,6 @@
 package com.ws.stoner.manager;
 
-import com.ws.bix4j.bean.GroupDO;
+import com.ws.bix4j.bean.HostGroupDO;
 import com.ws.stoner.exception.AuthExpireException;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public interface GroupManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<GroupDO> listGroup() throws AuthExpireException;
+    List<HostGroupDO> listGroup() throws AuthExpireException;
 
 
 }

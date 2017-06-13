@@ -108,7 +108,7 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
                     ", itemIds=" + itemIds +
                     ", applicationIds=" + applicationIds +
                     ", functions=" + functions +
-                    ", group='" + group + '\'' +
+                    ", hostgroup='" + group + '\'' +
                     ", host='" + host + '\'' +
                     ", inherited=" + inherited +
                     ", templated=" + templated +

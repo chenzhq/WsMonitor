@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ws.bix4j.access.ZApiMethod;
+import com.ws.bix4j.bean.ItemDO;
 import com.ws.bix4j.exception.ZApiException;
+
+import java.util.List;
 
 /**
  * Created by pc on 2017/6/9.
@@ -15,13 +18,17 @@ public class Item extends ZApiMethod {
         super(apiUrl, auth);
     }
 
-    //获取response对象
-    public ItemGetResponse get(ItemGetRequest itemGetRequest) throws ZApiException {
-        itemGetRequest.setAuth(this.auth);
-        String responseJson = sendRequest(JSON.toJSONString(itemGetRequest, SerializerFeature.NotWriteDefaultValue));
-        ItemGetResponse itemGetResponse = JSON.parseObject(responseJson,ItemGetResponse.class);
-        return itemGetResponse;
+    public List<ItemDO> get(ItemGetRequest problemGetRequest) throws ZApiException {
+        return get(problemGetRequest, ItemDO.class);
     }
+
+    public <T> List<T> get(ItemGetRequest request, Class<T> clazz) throws ZApiException {
+        request.setAuth(this.auth);
+        String responseJson = sendRequest(JSON.toJSONString(request, SerializerFeature.NotWriteDefaultValue));
+        List<T> response = JSON.parseArray(JSON.parseObject(responseJson).getJSONArray("result").toString(), clazz);
+        return response;
+    }
+
 
     //获取数量
     public int count(ItemGetRequest itemGetRequest) throws ZApiException {
