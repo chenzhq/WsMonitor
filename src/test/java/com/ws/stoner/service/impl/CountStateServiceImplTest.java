@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
 /** 
 * CountStateServiceImpl Tester. 
 * 
@@ -41,7 +43,9 @@ public void after() throws Exception {
 * 
 * Method: countAllHost() 
 * 
-*/ 
+*/
+
+//host相关测试
 @Test
 public void testCountAllHost() throws Exception { 
 //TODO: Test goes here...
@@ -56,7 +60,46 @@ public void testCountProblemHost() throws Exception {
     System.out.println(phostNum);
 }
 
+    @Test
+    public void testCountOKHost() throws Exception {
+        int okhostNum = countStateService.countOkHost();
+        System.out.println(okhostNum);
+    }
 
 
+//hostgroup相关测试
+    @Test
+    public void testCountAllHostGroup() throws Exception {
+        int allHostGroupNum = countStateService.countAllHostGroup();
+        System.out.println(allHostGroupNum);
+    }
+
+    @Test
+    public void testCountProblemHostGroup() throws Exception {
+        int problemHostGroupNum = countStateService.countProblemHostGroup();
+        System.out.println(problemHostGroupNum);
+    }
+
+
+//app相关测试
+@Test
+public void testCountAllApp() throws Exception {
+    int allAppNum = countStateService.countAllApp();
+    System.out.println(allAppNum);
+}
+
+@Test
+public void testCountProbelmApp() throws Exception {
+    int problemAppNum = countStateService.countProblemApp();
+    System.out.println(problemAppNum);
+}
+
+
+//trigger测试相关
+@Test
+public void testGetProblemTrigger() throws Exception {
+    List<String> triggerIds = countStateService.getProblemTriggerIds();
+    System.out.println(triggerIds);
+}
 
 } 

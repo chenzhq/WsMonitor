@@ -1,6 +1,7 @@
 package com.ws.stoner.controller;
 
 import com.ws.bix4j.access.host.HostGetRequest;
+import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.bean.HostGroupDO;
 import com.ws.bix4j.bean.UserDO;
@@ -35,9 +36,10 @@ public class DashboardController {
     @RequestMapping(value = {"/", ""})
     public String dashboard(Model model) throws ManagerException {
         HostGetRequest hostGetRequest = new HostGetRequest();
+        HostGroupGetRequest hostGroupGetRequest = new HostGroupGetRequest();
         List<UserDO> userDOList = userManager.listUser();
         List<HostDO> hostDOList = hostManager.listHost();
-        List<HostGroupDO> groupDOList = groupManager.listGroup();
+        List<HostGroupDO> groupDOList = groupManager.listGroup(hostGroupGetRequest);
         int allHost = hostManager.countHost(hostGetRequest);
         int disbleHost = hostManager.countDisableHost();
         int okHost = hostManager.countOkHost();

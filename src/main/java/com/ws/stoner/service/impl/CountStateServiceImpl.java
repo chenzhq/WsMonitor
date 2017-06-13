@@ -1,14 +1,18 @@
 package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApiParameter;
+import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.bix4j.access.host.HostGetRequest;
+import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
+import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
+import com.ws.bix4j.bean.HostDO;
+import com.ws.bix4j.bean.ItemDO;
 import com.ws.bix4j.bean.TriggerDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.manager.HostManager;
-import com.ws.stoner.manager.TriggerManager;
+import com.ws.stoner.manager.*;
 import com.ws.stoner.service.CountStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +30,18 @@ public class CountStateServiceImpl implements CountStateService {
 
     @Autowired
     private HostManager hostManager;
+
     @Autowired
     private TriggerManager triggerManager;
+
+    @Autowired
+    private ApplicationManager appManager;
+
+    @Autowired
+    private ItemManager itemManager;
+
+    @Autowired
+    private GroupManager groupManager;
 
     /**
      * 获取主机总数量，排除停用主机，filter： status:0
@@ -61,40 +75,9 @@ public class CountStateServiceImpl implements CountStateService {
      */
     @Override
     public int countProblemHost() throws ServiceException {
-        //step1:获取state:up to date 触发器list
-        TriggerGetRequest triggerGetRequest1 = new TriggerGetRequest();
-        Map<String, Object> triggerFilter = new HashMap<>();
-        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
-        triggerFilter.put("value",ZApiParameter.TRIGGER_VALUE.PROBLEM.value);
-        triggerFilter.put("only_true",true);
-        triggerGetRequest1.getParams().setFilter(triggerFilter);
-        List<TriggerDO> triggers1 ;
-        try {
-            triggers1 = triggerManager.listTrigger(triggerGetRequest1);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return 0;
-        }
-        //step2:获取state:unknown 触发器list
-        TriggerGetRequest triggerGetRequest2 = new TriggerGetRequest();
-        Map<String, Object> triggerFilter2 = new HashMap<>();
-        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UNKNOWN.value);
-        triggerGetRequest2.getParams().setFilter(triggerFilter2);
-        List<TriggerDO> triggers2 ;
-        try {
-            triggers2 = triggerManager.listTrigger(triggerGetRequest2);
-        } catch (AuthExpireException e) {
-            e.printStackTrace();
-            return 0;
-        }
-        //step3:根据两个触发器的ids得到主机数量 hosts1
-        List<String> triggerIds = new ArrayList<>();
-        for(TriggerDO trigger : triggers1) {
-            triggerIds.add(trigger.getTriggerId());
-        }
-        for(TriggerDO trigger : triggers2) {
-            triggerIds.add(trigger.getTriggerId());
-        }
+        //step1:获取问题触发器ids
+        List<String> triggerIds = getProblemTriggerIds();
+        //step2:根据两个触发器的ids得到主机数量 hosts1
         HostGetRequest hostGetRequest1 = new HostGetRequest();
         Map<String,Object> hostFilter1 = new HashMap<>();
         hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
@@ -126,5 +109,208 @@ public class CountStateServiceImpl implements CountStateService {
         //step5:求和host1 + host2
         int hostNum = host1 + host2;
         return hostNum;
+    }
+
+    /**
+     *  获取正常主机的数量
+     *  okHostNum = allHostNum - problemHostNum
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countOkHost() throws ServiceException {
+        int okHostNum = countAllHost() - countProblemHost();
+        return okHostNum;
+    }
+
+
+    /**
+     * 获取所有业务平台数量 hostgroup number
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countAllHostGroup() throws ServiceException {
+        HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        groupRequest.getParams().setMonitoredHosts(true).setRealHosts(true);
+        groupRequest.getParams().setCountOutput(true);
+        int hostGroupNum ;
+        try {
+            hostGroupNum = groupManager.countHostGroup(groupRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return hostGroupNum;
+    }
+
+    /**
+     * 获取问题业务平台数量 problem
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countProblemHostGroup() throws ServiceException {
+        //step1:获取问题触发器Ids
+        List<String> triggerIds = getProblemTriggerIds();
+        //step2:根据触发器Ids获取业务平台数量
+        HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        groupRequest.getParams().setTriggerIds(triggerIds);
+        groupRequest.getParams().setMonitoredHosts(true).setRealHosts(true);
+        groupRequest.getParams().setCountOutput(true);
+        int problemHostGroupNum ;
+        try {
+            problemHostGroupNum = groupManager.countHostGroup(groupRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return problemHostGroupNum;
+    }
+
+    /**
+     * 获取正常的业务平台数量 OK
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countOkHostGroup() throws ServiceException {
+        int OkHostGroupNum = countAllHostGroup() - countProblemHost();
+        return OkHostGroupNum;
+    }
+
+    /**
+     * 获取所有的监控点
+     * 根据筛选监控中的主机得到所有的监控点
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countAllApp() throws ServiceException {
+        //step1:筛选所有监控中的主机monitored
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        hostGetRequest.getParams().setMonitoredHosts(true).setCountOutput(true);
+        List<HostDO> hosts;
+        try {
+            hosts = hostManager.listHost();
+        } catch (AuthExpireException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step2:根据这些主机筛选其下的所有应用集hostids，即为所有的应用集（排出了停用状态，和模版中的应用集）
+        List<String> hostIds = new ArrayList<>();
+        if(hosts == null) {
+            return 0;
+        }
+        for(HostDO host : hosts) {
+            hostIds.add(host.getHostId());
+        }
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        appRequest.getParams().setHostIds(hostIds);
+        int appALlNum ;
+        try {
+            appALlNum = appManager.countAppliction(appRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return appALlNum;
+    }
+
+    /**
+     * 获取所有的问题监控点
+     * 根据触发器获取监控点
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countProblemApp() throws ServiceException {
+        //step1:获取问题触发器Ids
+        List<String> triggerIds = getProblemTriggerIds();
+        //step2:根据触发器Ids获取items
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        itemGetRequest.getParams().setTriggerIds(triggerIds);
+        itemGetRequest.getParams().setMonitored(true);
+        List<ItemDO> items ;
+        try {
+            items = itemManager.listItem(itemGetRequest);
+        } catch (AuthExpireException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step3:根据item筛选出应用集
+        List<String> itemIds = new ArrayList<>();
+        for(ItemDO item : items) {
+            itemIds.add(item.getItemId());
+        }
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        appRequest.getParams().setItemIds(itemIds);
+        appRequest.getParams().setCountOutput(true);
+        int appProblemNum ;
+        try {
+            appProblemNum = appManager.countAppliction(appRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return appProblemNum;
+
+    }
+
+    /**
+     * 获取正常监控点
+     * okAppNum = allAppNum - problemAppNum
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countOkApp() throws ServiceException {
+        int okAppNum = countAllApp() - countProblemHost();
+        return okAppNum;
+
+    }
+
+    /**
+     * 获取问题触发器IDS
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<String> getProblemTriggerIds() throws ServiceException {
+        //step1:获取state:up to date 触发器list
+        TriggerGetRequest triggerGetRequest1 = new TriggerGetRequest();
+        Map<String, Object> triggerFilter = new HashMap<>();
+        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
+        triggerFilter.put("value",ZApiParameter.TRIGGER_VALUE.PROBLEM.value);
+        triggerFilter.put("only_true",true);
+        triggerGetRequest1.getParams().setFilter(triggerFilter);
+        List<TriggerDO> triggers1 ;
+        try {
+            triggers1 = triggerManager.listTrigger(triggerGetRequest1);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //step2:获取state:unknown 触发器list
+        TriggerGetRequest triggerGetRequest2 = new TriggerGetRequest();
+        Map<String, Object> triggerFilter2 = new HashMap<>();
+        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UNKNOWN.value);
+        triggerGetRequest2.getParams().setFilter(triggerFilter2);
+        List<TriggerDO> triggers2 ;
+        try {
+            triggers2 = triggerManager.listTrigger(triggerGetRequest2);
+        } catch (AuthExpireException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //step3:组装两类触发器得到 triggerIds
+        List<String> triggerIds = new ArrayList<>();
+        for(TriggerDO trigger : triggers1) {
+            triggerIds.add(trigger.getTriggerId());
+        }
+        for(TriggerDO trigger : triggers2) {
+            triggerIds.add(trigger.getTriggerId());
+        }
+        return triggerIds;
     }
 }
