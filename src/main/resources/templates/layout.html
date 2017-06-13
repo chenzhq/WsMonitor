@@ -1,27 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<title>监控系统</title>
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-	<script src="../static/js/semantic.js"></script>
-	<link rel="stylesheet" href="../static/css/semantic.css"  />
-	<link rel="stylesheet" href="../static/css/icon.css"  />
-	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
-	<link href="../static/css/main.css" rel="stylesheet" />
-	<link href="../static/css/pace.css" rel="stylesheet" />
+	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
+	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 </head>
 <body>
 <!--header start-->
 <div id="contextWrap">
 	<!--sidebar-->
-	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" style="-webkit-transition-duration: 0.1s; transition-duration: 0.1s;" data-color="grey">
-		<a class="item logo" href="index.html">
-			<img src="../static/images/logo.png" alt="stagblogo" /><img src="../static/images/thumblogo.png" alt="stagblogo" class="displaynone" />
+	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
+		 th:fragment="left_menu">
+		<a class="item logo" href="#">
+			<img src="../static/images/logo.png" th:src="@{images/logo.png}" alt="whstone"/><img
+				src="../static/images/thumblogo.png" th:src="@{images/thumblogo.png}" alt="whstone"
+				class="displaynone"/>
 		</a>
 		<div class="ui accordion inverted">
-			<a class="title item" href="main.html">
-				<i class="ion-speedometer titleIcon icon"></i>仪表盘
+			<a class="title item" href="dashboard.html">
+				<i class="ion-speedometer titleIcon icon"></i>仪表盘lo
 			</a>
 			<a class="title item" href="tab.html">
 				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
@@ -136,7 +139,7 @@
 
 	<div class="pusher">
 		<!--navbar-->
-		<div class="navslide navwrap">
+		<div class="navslide navwrap" th:fragment="top_nav">
 			<div class="ui menu icon borderless grid" data-color="inverted white">
 				<a class="item labeled openbtn">
 					<i class="ion-navicon-round big icon"></i>
@@ -204,9 +207,9 @@
 		<!--maincontent-->
 	</div>
 </div>
-<script src="../static/js/js.cookie.js"></script>
-<script src="../static/js/jquery.nicescroll.min.js"></script>
-<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
-<script src="../static/js/main.js"></script>
+<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
+<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
+<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
+<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
 </body>
 </html>

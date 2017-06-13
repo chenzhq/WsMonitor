@@ -2,11 +2,11 @@ package com.ws.stoner.controller;
 
 import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.manager.UserManager;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import com.ws.stoner.service.LoginService;
-import com.ws.stoner.manager.UserManager;
 import com.ws.stoner.utils.CookieUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class LoginController {
             UserInfoDTO userInfo = userManager.getUser(userId);
             request.getSession().setAttribute(CookieConsts.USER_INFO, userInfo);
             sessionMap.put(request.getSession().getId(), zbx_session);
-            return "redirect:/layout";
+            return "redirect:/dashboard";
         }
         logger.debug("zbx_session expire, re-login.");
         CookieUtils.remove(response, ZBX_SESSION);
@@ -104,6 +104,6 @@ public class LoginController {
             session.setAttribute(REMEMBER_ME, true);
         }
 
-        return "redirect:/layout";
+        return "redirect:/dashboard";
     }
 }
