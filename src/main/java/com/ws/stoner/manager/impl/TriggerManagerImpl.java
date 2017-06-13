@@ -5,6 +5,7 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.bix4j.bean.TriggerDO;
 import com.ws.bix4j.exception.ZApiException;
+import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.TriggerManager;
@@ -28,11 +29,10 @@ public class TriggerManagerImpl implements TriggerManager {
     private ZApi zApi;
 
     @Override
-    public List<TriggerDO> listTrigger() throws AuthExpireException {
-        TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
+    public List<TriggerDO> listTrigger(TriggerGetRequest request) throws AuthExpireException {
         List<TriggerDO> triggers;
         try {
-            triggers = zApi.Trigger().get(triggerGetRequest);
+            triggers = zApi.Trigger().get(request);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;
@@ -62,5 +62,21 @@ public class TriggerManagerImpl implements TriggerManager {
             return null;
         }
         return unknownTriggers;
+    }
+
+    @Override
+    public int countTrigger(TriggerGetRequest request) throws ManagerException {
+        int triggerNum;
+        try {
+            triggerNum = zApi.Trigger().count(request);
+        } catch (ZApiException e) {
+            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+                throw new AuthExpireException("");
+            }
+            e.printStackTrace();
+            logger.error("查询触发器错误！{}", e.getMessage());
+            return 0;
+        }
+        return triggerNum;
     }
 }
