@@ -42,6 +42,24 @@ public class ApplicationManagerImpl implements ApplicationManager {
     private ZApi zApi;
 
     /**
+     * 根据request 获取监控点数量
+     * @param request
+     * @return
+     * @throws ManagerException
+     */
+    @Override
+    public int countAppliction(ApplicationGetRequest request) throws ManagerException {
+        int appNum ;
+        try {
+            appNum = zApi.Application().count(request);
+        } catch (ZApiException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return appNum;
+    }
+
+    /**
      *
      * @return 获取监控点列表
      * @throws AuthExpireException

@@ -26,16 +26,15 @@ public class ItemManagerImpl implements ItemManager {
 
 
     /**
-     * 获取 所有的item
+     * 根据request 获取 所有的item
      * @return
      * @throws AuthExpireException
      */
     @Override
-    public List<ItemDO> listItem() throws AuthExpireException {
-        ItemGetRequest itemGetRequest = new ItemGetRequest();
+    public List<ItemDO> listItem(ItemGetRequest request) throws AuthExpireException {
         List<ItemDO> items ;
         try {
-            items = zApi.Item().get(itemGetRequest);
+            items = zApi.Item().get(request);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;

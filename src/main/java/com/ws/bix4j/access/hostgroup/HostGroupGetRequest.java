@@ -33,9 +33,9 @@ public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
         @JSONField(name = "maintenanceids")
         private List<String> maintenanceIds;
         @JSONField(name = "monitored_hosts")
-        private String monitoredHosts;
+        private boolean monitoredHosts;
         @JSONField(name = "real_hosts")
-        private String realHosts;
+        private boolean realHosts;
         @JSONField(name = "templated_hosts")
         private String templatedHosts;
         @JSONField(name = "templateids")
@@ -55,72 +55,81 @@ public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
             return graphIds;
         }
 
-        public void setGraphIds(List<String> graphIds) {
+        public Params setGraphIds(List<String> graphIds) {
             this.graphIds = graphIds;
+            return this;
         }
 
         public List<String> getGroupIds() {
             return groupIds;
         }
 
-        public void setGroupIds(List<String> groupIds) {
+        public Params setGroupIds(List<String> groupIds) {
             this.groupIds = groupIds;
+            return this;
         }
 
         public List<String> getHostIds() {
             return hostIds;
         }
 
-        public void setHostIds(List<String> hostIds) {
+        public Params setHostIds(List<String> hostIds) {
             this.hostIds = hostIds;
+            return this;
         }
 
         public List<String> getMaintenanceIds() {
             return maintenanceIds;
         }
 
-        public void setMaintenanceIds(List<String> maintenanceIds) {
+        public Params setMaintenanceIds(List<String> maintenanceIds) {
             this.maintenanceIds = maintenanceIds;
+            return this;
         }
 
-        public String getMonitoredHosts() {
+        public boolean isMonitoredHosts() {
             return monitoredHosts;
         }
 
-        public void setMonitoredHosts(String monitoredHosts) {
+        public Params setMonitoredHosts(boolean monitoredHosts) {
             this.monitoredHosts = monitoredHosts;
+            return this;
         }
 
-        public String getRealHosts() {
+        public boolean getRealHosts() {
             return realHosts;
         }
 
-        public void setRealHosts(String realHosts) {
+        public Params setRealHosts(boolean realHosts) {
             this.realHosts = realHosts;
+            return this;
         }
 
         public String getTemplatedHosts() {
             return templatedHosts;
         }
 
-        public void setTemplatedHosts(String templatedHosts) {
+        public Params setTemplatedHosts(String templatedHosts) {
             this.templatedHosts = templatedHosts;
+            return this;
         }
 
         public List<String> getTemplateIds() {
             return templateIds;
         }
 
-        public void setTemplateIds(List<String> templateIds) {
+        public Params setTemplateIds(List<String> templateIds) {
             this.templateIds = templateIds;
+            return this;
         }
 
         public List<String> getTriggerIds() {
             return triggerIds;
         }
 
-        public void setTriggerIds(List<String> triggerIds) {
+        public Params setTriggerIds(List<String> triggerIds) {
             this.triggerIds = triggerIds;
+            return this;
         }
     }
 

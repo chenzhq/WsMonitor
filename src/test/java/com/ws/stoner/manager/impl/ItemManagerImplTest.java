@@ -1,6 +1,7 @@
 package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
+import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.ItemManager;
@@ -49,7 +50,8 @@ public void after() throws Exception {
 @Test
 public void testListItem() throws Exception { 
 //TODO: Test goes here...
-    List<ItemDO> items = itemManager.listItem();
+    ItemGetRequest itemGetRequest = new ItemGetRequest();
+    List<ItemDO> items = itemManager.listItem(itemGetRequest);
     System.out.println(items.toString());
 
 }
