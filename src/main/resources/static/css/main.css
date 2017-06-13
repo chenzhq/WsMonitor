@@ -76,7 +76,7 @@ html.ios body {
     padding: 0 !important;
 }
 .error404 {
-    background: url(../images/404.png) no-repeat top center #6a8733 !important;
+    background: url(../images/404.png) no-repeat top center darkseagreen !important;
     background-size: cover;
     width: 100%;
     min-height: 100%;
