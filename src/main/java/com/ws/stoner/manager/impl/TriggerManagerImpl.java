@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,17 @@ public class TriggerManagerImpl implements TriggerManager {
     private ZApi zApi;
 
     @Override
+    public <T> List<T> listTrigger(TriggerGetRequest triggerGetRequest, Class<T> clazz) {
+        List<T> result = new ArrayList<T>();
+        try {
+            result = zApi.Trigger().get(triggerGetRequest, clazz);
+        } catch (ZApiException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
     public List<TriggerDO> listTrigger(TriggerGetRequest request) throws AuthExpireException {
         List<TriggerDO> triggers;
         try {
@@ -40,6 +52,7 @@ public class TriggerManagerImpl implements TriggerManager {
 
         return triggers;
     }
+
 
     /**
      * 获取监控中monitored，非维护maintenance，状态为unknown的触发器

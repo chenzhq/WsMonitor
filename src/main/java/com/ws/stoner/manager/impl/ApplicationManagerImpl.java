@@ -134,7 +134,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
         //step1:查询所有停用状态主机
         List<HostDO> disableHosts = hostManager.listDisableHost();
         //step2:根据这些主机，筛选查询其下的所有应用集 hostids
-        List<String> hostsIds = new ArrayList<String>();
+        List<String> hostsIds = new ArrayList<>();
         for(HostDO host : disableHosts) {
             hostsIds.add(host.getHostId());
         }
