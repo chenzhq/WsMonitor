@@ -8,6 +8,9 @@
 	<script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"  />
 	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}" />
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
+	<link href="../static/css/main.css" rel="stylesheet" />
+	<link href="../static/css/pace.css" rel="stylesheet" />
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
@@ -15,101 +18,327 @@
 </head>
 
 <body >
-<div class="ui three column grid">
-	<div class="column">
-		<div  class="ui segment"   style="padding-top : 0px;padding-bottom: 0px">
-			<h4>业务系统</h4>
-			<div class="ui divider"></div>
-			<div id="main0" style="height: 200px"></div>
-		</div>
-	</div>
-	<div class="column">
-		<div class="ui segment"   style="padding-top : 0px;padding-bottom: 0px">
-			<h4>监控点</h4>
-			<div class="ui divider"></div>
-			<div id="main1" style="height: 200px"></div>
-		</div>
-	</div>
-	<div class="column">
-		<div class="ui segment"  style="padding-top : 0px;padding-bottom: 0px">
-			<h4>设备</h4>
-			<div class="ui divider"></div>
-			<div id="main2" style="height: 200px"></div>
-		</div>
-	</div>
-</div>
-<div class="ui segment">
-	<h3>
-		<i class="bar chart icon"></i>
-		最近的20个问题
-	</h3>
-	<table class="ui small table">
-		<thead>
-		<tr >
-			<th>主机</th>
-			<th>问题</th>
-			<th>上次修改于</th>
-			<th>历时</th>
-			<th>确认</th>
-		</tr></thead>
-		<tbody>
-		<tr >
-			<td>
-				<div class="ui ribbon label">主机1</div>
-			</td>
-			<td>主机1内存使用率超过90%</td>
-			<td>2017-4-27 15:33:20</td>
-			<td><p>2天4小时50分</p></td>
-			<td><button >不</button></td>
-		</tr>
-		<tr >
-			<td>主机1</td>
-			<td>主机1内存使用率超过90%</td>
-			<td>2017-4-27 15:33:20</td>
-			<td><p>2天4小时50分</p></td>
-			<td><button >不</button></td>
-		</tr>
-		<tr >
-			<td>主机1</td>
-			<td>主机1内存使用率超过90%</td>
-			<td>2017-4-27 15:33:20</td>
-			<td><p>2天4小时50分</p></td>
-			<td><button >不</button></td>
-		</tr>
-		<tr >
-			<td>主机1</td>
-			<td>主机1内存使用率超过90%</td>
-			<td>2017-4-27 15:33:20</td>
-			<td><p>2天4小时50分</p></td>
-			<td><button >不</button></td>
-		</tr>
-		<tr>
-			<td>主机1</td>
-			<td>主机1内存使用率超过90%</td>
-			<td>2017-4-27 15:33:20</td>
-			<td><p>2天4小时50分</p></td>
-			<td><button >不</button></td>
-		</tr>
-		</tbody>
-		<tfoot>
-		<tr><th colspan="5">
-			<div class="ui mini right teal floated pagination menu">
-				<a class="icon item">
-					<i class="left chevron icon"></i>
-				</a>
-				<a class="item">1</a>
-				<a class="item">2</a>
-				<a class="item">3</a>
-				<a class="item">4</a>
-				<a class="icon item">
-					<i class="right chevron icon"></i>
-				</a>
+<!--header start-->
+<div id="contextWrap">
+	<!--sidebar-->
+	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" style="-webkit-transition-duration: 0.1s; transition-duration: 0.1s;" data-color="grey">
+		<a class="item logo" href="index.html">
+			<img src="../static/images/logo.png" alt="stagblogo" /><img src="../static/images/thumblogo.png" alt="stagblogo" class="displaynone" />
+		</a>
+		<div class="ui accordion inverted">
+			<a class="title item" href="main.html">
+				<i class="ion-speedometer titleIcon icon"></i>仪表盘
+			</a>
+			<a class="title item" href="tab.html">
+				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
+			</a>
+			<a class="item" href="table.html">
+				<i class="ion-ios-world titleIcon  icon"></i>业务概览
+			</a>
+			<div class="title item">
+				<i class="ion-mouse titleIcon icon"></i>设备概览<i class="dropdown icon"></i>
 			</div>
-		</th>
-		</tr></tfoot>
-	</table>
-</div>
+			<div class="content">
+				<a class="item" href="tab.html">服务器</a>
+				<a class="item" href="table.html">网络设备</a>
+				<a class="item" href="error.html">数据库</a>
+				<a class="item" href="login.html">应用</a>
+			</div>
+			<a class="title item" href="error.html">
+				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+			</a>
+			<div class="title item">
+				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="error.html">告警日历</a>
+				<a class="item" href="error.html">告警列表</a>
+			</div>
+			<a class="title item" href="error.html">
+				<i class="ion-briefcase titleIcon icon"></i>报表统计
+			</a>
+		</div>
 
+		<div class="ui dropdown item displaynone scrolling">
+			<span>仪表盘1</span>
+			<i class="ion-speedometer icon"></i>
+			<div class="menu">
+				<div class="header">
+					仪表盘1
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>监控视图</span>
+			<i class="ion-ios-lightbulb icon"></i>
+			<div class="menu">
+				<div class="header">
+					监控视图
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>业务概览</span>
+			<i class="ion-ios-world icon"></i>
+			<div class="menu">
+				<div class="header">
+					业务概览
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>设备概览</span>
+			<i class="ion-mouse icon"></i>
+			<div class="menu">
+				<div class="header">
+					设备概览
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="tab.html">服务器</a>
+				<a class="item" href="table.html">网络设备</a>
+				<a class="item" href="error.html">数据库</a>
+				<a class="item" href="login.html">应用</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>视图展示</span>
+			<i class="ion-arrow-graph-up-right icon"></i>
+			<div class="menu">
+				<div class="header">
+					视图展示
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>告警展示</span>
+			<i class="ion-paintbrush icon"></i>
+			<div class="menu">
+				<div class="header">
+					告警展示
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="error.html">告警日历</a>
+				<a class="item" href="error.html">告警列表</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>报表统计</span>
+			<a href="error.html">
+				<i class="ion-briefcase icon"></i>
+			</a>
+		</div>
+
+		<div class="ui divider"></div>
+
+	</div>
+
+	<!--sidebar-->
+
+	<div class="pusher">
+		<!--navbar-->
+		<div class="navslide navwrap">
+			<div class="ui menu icon borderless grid" data-color="inverted white">
+				<a class="item labeled openbtn">
+					<i class="ion-navicon-round big icon"></i>
+				</a>
+				<div class="item ui colhidden">
+					<div class="ui icon input">
+						<input type="text" placeholder="Search...">
+						<i class="search icon"></i>
+					</div>
+				</div>
+				<div class="right menu colhidden">
+					<div class="ui dropdown item labeled icon">
+						<i class="bell icon"></i>   告警
+						<div class="ui red label mini circular">6</div>
+						<div class="menu" >
+							<div class="header">
+								紧急告警
+							</div>
+							<div class="item">
+								告警信息1……
+								<div class="ui teal left pointing label">1</div>
+							</div>
+							<div class="item">
+								告警信息2……
+								<div class="ui label">51</div>
+							</div>
+							<div class="item">
+								告警信息3……
+								<div class="ui label">1</div>
+							</div>
+							<div class="header">
+								严重告警
+							</div>
+							<div class="item">
+								<i class="dropdown icon"></i>
+								<span class="text">更多</span>
+								<div class="menu">
+									<div class="item">告警信息……</div>
+									<div class="item">告警信息……</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="ui dropdown item">
+						<img class="ui mini circular image" src="../static/images/0.jpg" alt="label-image" />
+						<div class="menu">
+							<a class="item" href="mail.html">注销</a>
+						</div>
+					</div>
+					<a class="item labeled rightsidebar computer only">
+						<i class="ion-wrench large icon"></i>工具
+					</a>
+
+				</div>
+			</div>
+		</div>
+		<!--navbar-->
+		<!--maincontent-->
+		<div class="mainWrap navslide">
+			<div class="ui equal width left aligned padded grid stackable">
+				<!--Site Content-->
+				<div class="row">
+					<div class="sixteen wide column">
+						<div class="ui segments">
+							<div class="ui segment">
+								<h5 class="ui header">
+									全局图表
+								</h5>
+							</div>
+							<div class="ui segment">
+								<div class="ui three doubling cards">
+									<div class="card">
+										<div class="image">
+											<div id="main0" style="height: 200px"></div>
+										</div>
+										<div class="extra">
+											业务系统:
+											<div class="ui star rating" data-rating="4"><i class="icon active"></i><i class="icon active"></i><i class="icon active"></i><i
+													class="icon active"></i></div>
+										</div>
+									</div>
+									<div class="card">
+										<div class="image">
+											<div id="main1" style="height: 200px"></div>
+										</div>
+										<div class="extra">
+											监控点:
+											<div class="ui star rating" data-rating="2"><i class="icon active"></i><i class="icon active"></i><i class="icon"></i><i
+													class="icon"></i></div>
+										</div>
+									</div>
+									<div class="card">
+										<div class="image">
+											<div id="main2" style="height: 200px"></div>
+										</div>
+										<div class="extra">
+											设备:
+											<div class="ui star rating" data-rating="3"><i class="icon active"></i><i class="icon active"></i><i class="icon active"></i><i
+													class="icon"></i></div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="sixteen wide column">
+						<div class="ui segments">
+							<div class="ui segment">
+								<h5 class="ui header">
+									<i class="bar chart icon"></i>
+									最近的20个问题
+								</h5>
+							</div>
+							<div class="ui segment">
+								<table class="ui small table">
+									<thead>
+									<tr >
+										<th>主机</th>
+										<th>问题</th>
+										<th>上次修改于</th>
+										<th>历时</th>
+										<th>确认</th>
+									</tr></thead>
+									<tbody>
+									<tr >
+										<td>
+											<div class="ui ribbon label">主机1</div>
+										</td>
+										<td>主机1内存使用率超过90%</td>
+										<td>2017-4-27 15:33:20</td>
+										<td><p>2天4小时50分</p></td>
+										<td><button >不</button></td>
+									</tr>
+									<tr >
+										<td>主机1</td>
+										<td>主机1内存使用率超过90%</td>
+										<td>2017-4-27 15:33:20</td>
+										<td><p>2天4小时50分</p></td>
+										<td><button >不</button></td>
+									</tr>
+									<tr >
+										<td>主机1</td>
+										<td>主机1内存使用率超过90%</td>
+										<td>2017-4-27 15:33:20</td>
+										<td><p>2天4小时50分</p></td>
+										<td><button >不</button></td>
+									</tr>
+									<tr >
+										<td>主机1</td>
+										<td>主机1内存使用率超过90%</td>
+										<td>2017-4-27 15:33:20</td>
+										<td><p>2天4小时50分</p></td>
+										<td><button >不</button></td>
+									</tr>
+									<tr>
+										<td>主机1</td>
+										<td>主机1内存使用率超过90%</td>
+										<td>2017-4-27 15:33:20</td>
+										<td><p>2天4小时50分</p></td>
+										<td><button >不</button></td>
+									</tr>
+									</tbody>
+									<tfoot>
+									<tr><th colspan="5">
+										<div class="ui mini right teal floated pagination menu">
+											<a class="icon item">
+												<i class="left chevron icon"></i>
+											</a>
+											<a class="item">1</a>
+											<a class="item">2</a>
+											<a class="item">3</a>
+											<a class="item">4</a>
+											<a class="icon item">
+												<i class="right chevron icon"></i>
+											</a>
+										</div>
+									</th>
+									</tr></tfoot>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--Site Content-->
+			</div>
+		</div>
+		<!--maincontent-->
+	</div>
+</div>
+<script src="../static/js/js.cookie.js"></script>
+<script src="../static/js/jquery.nicescroll.min.js"></script>
+<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
+<script src="../static/js/main.js"></script>
 <script type="text/javascript">
     var myChart = echarts.init(document.getElementById('main0'));
     var onemyChart = echarts.init(document.getElementById('main1'));
@@ -185,6 +414,5 @@
         }
     })
 </script>
-</div>
 </body>
 </html>
