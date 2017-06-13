@@ -1,6 +1,7 @@
 package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
+import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.bix4j.bean.TriggerDO;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.TriggerManager;
@@ -48,7 +49,8 @@ public void after() throws Exception {
 @Test
 public void testListTrigger() throws Exception { 
 //TODO: Test goes here...
-    List<TriggerDO> triggerDOList = triggerManager.listTrigger();
+    TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
+    List<TriggerDO> triggerDOList = triggerManager.listTrigger(triggerGetRequest);
     System.out.println(triggerDOList.toString());
 } 
 

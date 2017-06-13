@@ -1,5 +1,6 @@
 package com.ws.stoner.manager;
 
+import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
@@ -11,6 +12,15 @@ import java.util.List;
  * Created by chenzheqi on 2017/5/23.
  */
 public interface HostManager {
+    /**
+     * 根据 request 获取主机总数量
+     * @return
+     * @throws ManagerException
+     */
+    int countHost(HostGetRequest request) throws ManagerException;
+
+
+
     /**
      * List host list.
      *
@@ -87,13 +97,6 @@ public interface HostManager {
      */
     StateNumDTO countAllHostState() throws ManagerException;
 
-
-    /**
-     * Count all host int.
-     *
-     * @return the int
-     */
-    int countAllHost() throws AuthExpireException;
 
     /**
      * Gets host.

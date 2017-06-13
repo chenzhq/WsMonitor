@@ -29,6 +29,23 @@ public class HostManagerImpl implements HostManager {
     @Autowired
     private ZApi zApi;
 
+
+    @Override
+    public int countHost(HostGetRequest request) throws ManagerException {
+        int allHost;
+        try {
+            allHost = zApi.Host().count(request);
+        } catch (ZApiException e) {
+            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+                throw new AuthExpireException("");
+            }
+            e.printStackTrace();
+            logger.error("查询主机错误！{}", e.getMessage());
+            return 0;
+        }
+        return allHost;
+    }
+
     /**
      * 获取所有的主机列表
      * @return
@@ -217,12 +234,14 @@ public class HostManagerImpl implements HostManager {
      */
     @Override
     public int countOkHost() throws ManagerException {
-        int okHostNum = countAllHost() - countMaintenanceHost() - countDangerHost();
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        int okHostNum = countHost(hostGetRequest) - countMaintenanceHost() - countDangerHost();
         return okHostNum;
     }
 
     @Override
     public StateNumDTO countAllHostState() throws ManagerException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
         StateNumDTO stateNumDTO = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNumList = new ArrayList<>();
 
@@ -233,28 +252,11 @@ public class HostManagerImpl implements HostManager {
 //        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.DISABLE, countDisableHost()));
 
         stateNumDTO.setStateNum(stateNumList);
-        stateNumDTO.setTotalNum(countAllHost());
+        stateNumDTO.setTotalNum(countHost(hostGetRequest));
 
         return stateNumDTO;
     }
 
-    @Override
-    public int countAllHost() throws AuthExpireException{
-        HostGetRequest hostGetRequest = new HostGetRequest();
-        hostGetRequest.getParams().setMonitoredHosts(true).setCountOutput(true);
-        int allHost = 0;
-        try {
-            allHost = zApi.Host().count(hostGetRequest);
-        } catch (ZApiException e) {
-            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new AuthExpireException("");
-            }
-            e.printStackTrace();
-            logger.error("查询主机错误！{}", e.getMessage());
-            return 0;
-        }
-        return allHost;
-    }
 
     @Override
     public HostDO getHost(String... hostId) {
