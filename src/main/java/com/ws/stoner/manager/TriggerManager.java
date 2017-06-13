@@ -27,6 +27,7 @@ public interface TriggerManager {
      */
     List<TriggerDO> listUnknownTrigger() throws ManagerException;
 
+    <T> List<T> listTrigger(TriggerGetRequest triggerGetRequest, Class<T> clazz);
 
     /**
      * 根据 request 获取触发器数量

@@ -55,7 +55,8 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
         private boolean skipDependent;
         private Instant lastChangeSince;
         private Instant lastChangeTill;
-        private boolean only_true;
+        @JSONField(name = "only_true")
+        private boolean onlyTrue;
         private Integer min_severity;
         private boolean expandComment;
         private boolean expandDescription;
@@ -71,7 +72,7 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
         @JSONField(name = "selectHosts")
         private String stringHosts;
         @JSONField(name = "selectHosts")
-        private List<String> listHosts;
+        private String[] listHosts;
 
         @JSONField(name = "selectItems")
         private String stringItems;
@@ -121,7 +122,7 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
                     ", skipDependent=" + skipDependent +
                     ", lastChangeSince=" + lastChangeSince +
                     ", lastChangeTill=" + lastChangeTill +
-                    ", only_true=" + only_true +
+                    ", onlyTrue=" + onlyTrue +
                     ", min_severity=" + min_severity +
                     ", expandComment=" + expandComment +
                     ", expandDescription=" + expandDescription +
@@ -323,12 +324,12 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public boolean isOnly_true() {
-            return only_true;
+        public boolean isOnlyTrue() {
+            return onlyTrue;
         }
 
-        public Params setOnly_true(boolean only_true) {
-            this.only_true = only_true;
+        public Params setOnlyTrue(boolean only_true) {
+            this.onlyTrue = only_true;
             return this;
         }
 
@@ -395,11 +396,11 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public List<String> getListHosts() {
+        public String[] getListHosts() {
             return listHosts;
         }
 
-        public Params setListHosts(List<String> listHosts) {
+        public Params setListHosts(String[] listHosts) {
             this.listHosts = listHosts;
             return this;
         }

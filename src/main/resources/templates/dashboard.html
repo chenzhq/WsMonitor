@@ -14,7 +14,7 @@
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-	<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544"></script>-->
+    <script src="http://rapapi.org/rap.plugin.js?projectId=19544"></script>
 </head>
 
 <body>
@@ -144,7 +144,7 @@
 
 	<div class="pusher">
 		<!--navbar-->
-		<div class="navslide navwrap">
+        <div class="navslide navwrap" th:replace="layout::top_nav">
 			<div class="ui menu icon borderless grid" data-color="inverted white">
 				<a class="item labeled openbtn">
 					<i class="ion-navicon-round big icon"></i>
