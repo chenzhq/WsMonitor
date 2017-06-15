@@ -3,12 +3,12 @@ package com.ws.stoner.manager.impl;
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
-import com.ws.bix4j.bean.TriggerDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.TriggerManager;
+import com.ws.stoner.model.brief.TriggerBrief;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +30,10 @@ public class TriggerManagerImpl implements TriggerManager {
     private ZApi zApi;
 
     @Override
-    public <T> List<T> listTrigger(TriggerGetRequest triggerGetRequest, Class<T> clazz) {
-        List<T> result = new ArrayList<T>();
+    public List<TriggerBrief> listTrigger(TriggerGetRequest request) throws AuthExpireException {
+        List<TriggerBrief> triggers;
         try {
-            result = zApi.Trigger().get(triggerGetRequest, clazz);
-        } catch (ZApiException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    @Override
-    public List<TriggerDO> listTrigger(TriggerGetRequest request) throws AuthExpireException {
-        List<TriggerDO> triggers;
-        try {
-            triggers = zApi.Trigger().get(request);
+            triggers = zApi.Trigger().get(request,TriggerBrief.class);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;
@@ -53,29 +42,50 @@ public class TriggerManagerImpl implements TriggerManager {
         return triggers;
     }
 
-
-    /**
-     * 获取监控中monitored，非维护maintenance，状态为unknown的触发器
-     * @return
-     * @throws ManagerException
-     */
     @Override
-    public List<TriggerDO> listUnknownTrigger() throws ManagerException {
-       TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
-        Map<String, Integer> statusFilter = new HashMap<>();
-        statusFilter.put("state", ZApiParameter.TRIGGER_STATE.UNKNOWN.value);
-        triggerGetRequest.getParams().setFilter(statusFilter);
-        triggerGetRequest.getParams().setMonitored(true).setMaintenance(false);
-
-        List<TriggerDO> unknownTriggers;
+    public List<String> getProblemTriggerIds() throws ManagerException {
+        //step1:获取state:up to date 触发器list
+        TriggerGetRequest triggerGetRequest1 = new TriggerGetRequest();
+        Map<String, Object> triggerFilter = new HashMap<>();
+        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
+        triggerFilter.put("value",ZApiParameter.TRIGGER_VALUE.PROBLEM.value);
+        triggerFilter.put("only_true",true);
+        triggerGetRequest1.getParams().setFilter(triggerFilter);
+        List<TriggerBrief> triggers1 ;
         try {
-            unknownTriggers = zApi.Trigger().get(triggerGetRequest);
-        } catch (ZApiException e) {
+            triggers1 = listTrigger(triggerGetRequest1);
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
-        return unknownTriggers;
+        //step2:获取state:unknown 触发器list
+        TriggerGetRequest triggerGetRequest2 = new TriggerGetRequest();
+        Map<String, Object> triggerFilter2 = new HashMap<>();
+        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UNKNOWN.value);
+        triggerGetRequest2.getParams().setFilter(triggerFilter2);
+        List<TriggerBrief> triggers2 ;
+        try {
+            triggers2 = listTrigger(triggerGetRequest2);
+        } catch (AuthExpireException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //step3:组装两类触发器得到 triggerIds
+        List<String> triggerIds = new ArrayList<>();
+        for(TriggerBrief trigger : triggers1) {
+            triggerIds.add(trigger.getTriggerId());
+        }
+        for(TriggerBrief trigger : triggers2) {
+            triggerIds.add(trigger.getTriggerId());
+        }
+        return triggerIds;
     }
+
+    @Override
+    public <T> List<T> listTrigger(TriggerGetRequest triggerGetRequest, Class<T> clazz) {
+        return null;
+    }
+
 
     @Override
     public int countTrigger(TriggerGetRequest request) throws ManagerException {

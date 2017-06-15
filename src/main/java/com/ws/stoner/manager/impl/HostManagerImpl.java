@@ -12,6 +12,7 @@ import com.ws.stoner.constant.HostStatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.HostManager;
+import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.dto.StateNumDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +53,10 @@ public class HostManagerImpl implements HostManager {
      * @throws AuthExpireException
      */
     @Override
-    public List<HostDO> listHost() throws AuthExpireException {
-        HostGetRequest hostGetRequest = new HostGetRequest();
-        //hostGetRequest.getParams();
-        List<HostDO> hosts;
+    public List<HostBrief> listHost(HostGetRequest request) throws AuthExpireException {
+        List<HostBrief> hosts;
         try {
-            hosts = zApi.Host().get(hostGetRequest);
+            hosts = zApi.Host().get(request,HostBrief.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");

@@ -4,8 +4,6 @@ import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.bix4j.bean.ApplicationDO;
 import com.ws.bix4j.bean.HostDO;
-import com.ws.bix4j.bean.ItemDO;
-import com.ws.bix4j.bean.TriggerDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
@@ -14,6 +12,7 @@ import com.ws.stoner.manager.ApplicationManager;
 import com.ws.stoner.manager.HostManager;
 import com.ws.stoner.manager.ItemManager;
 import com.ws.stoner.manager.TriggerManager;
+import com.ws.stoner.model.brief.ApplicationBrief;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,11 +64,10 @@ public class ApplicationManagerImpl implements ApplicationManager {
      * @throws AuthExpireException
      */
     @Override
-    public List<ApplicationDO> listApplication() throws AuthExpireException {
-        ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
-        List<ApplicationDO> listApplication ;
+    public List<ApplicationBrief> listApplication(ApplicationGetRequest request) throws AuthExpireException {
+        List<ApplicationBrief> listApplication ;
         try {
-            listApplication = zApi.Application().get(applicationGetRequest);
+            listApplication = zApi.Application().get(request,ApplicationBrief.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");
@@ -182,21 +180,22 @@ public class ApplicationManagerImpl implements ApplicationManager {
      */
     @Override
     public int countUnknownApp() throws ManagerException {
-        //step1:筛选监控中monitored，非维护maintenance，状态为unknownfilter: state的触发器
-        List<TriggerDO> unknownTriggers = triggerManager.listUnknownTrigger();
-        //step2:根据这些触发器筛选item
-        List<String> triggerIds = new ArrayList<String>();
-        for(TriggerDO triggerDO : unknownTriggers) {
-            triggerIds.add(triggerDO.getTriggerId());
-        }
-        List<ItemDO> items = itemManager.listItemByTriggerIds(triggerIds);
-        //step3:根据item，查询它们所属的应用集
-        List<String> itemIds = new ArrayList<String>();
-        for(ItemDO item : items) {
-            itemIds.add(item.getItemId());
-        }
-        int appByItemIdsNum = countAppByItemIds(itemIds);
-        return appByItemIdsNum;
+//        //step1:筛选监控中monitored，非维护maintenance，状态为unknownfilter: state的触发器
+//        List<TriggerDO> unknownTriggers = triggerManager.listUnknownTrigger();
+//        //step2:根据这些触发器筛选item
+//        List<String> triggerIds = new ArrayList<String>();
+//        for(TriggerDO triggerDO : unknownTriggers) {
+//            triggerIds.add(triggerDO.getTriggerId());
+//        }
+//        List<ItemDO> items = itemManager.listItemByTriggerIds(triggerIds);
+//        //step3:根据item，查询它们所属的应用集
+//        List<String> itemIds = new ArrayList<String>();
+//        for(ItemDO item : items) {
+//            itemIds.add(item.getItemId());
+//        }
+//        int appByItemIdsNum = countAppByItemIds(itemIds);
+//        return appByItemIdsNum;
+        return 0;
     }
 
     /**

@@ -2,7 +2,11 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
+import com.ws.stoner.model.brief.ApplicationBrief;
+import com.ws.stoner.model.brief.HostBrief;
+import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.service.CountStateService;
+import com.ws.stoner.service.FetchBriefService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +32,13 @@ public class CountStateServiceImplTest {
     private ZApi zApi;
 
     @Autowired
+    private FetchBriefService fetchBriefService;
+
+    @Autowired
     private CountStateService countStateService;
+
+    @Autowired
+    private CountStateServiceImpl countStateServiceImpl;
 
 @Before
 public void before() throws Exception {
@@ -46,6 +56,31 @@ public void after() throws Exception {
 */
 
 //host相关测试
+
+@Test
+public void testListAllHost() throws Exception {
+//TODO: Test goes here...
+    List<HostBrief> hosts = fetchBriefService.listHost();
+    System.out.println(hosts);
+
+}
+
+    @Test
+    public void testListProblemHost() throws Exception {
+//TODO: Test goes here...
+        List<HostBrief> hosts = fetchBriefService.listProblemHost();
+        System.out.println(hosts);
+
+    }
+
+@Test
+public void testListOkHost() throws Exception {
+//TODO: Test goes here...
+    List<HostBrief> hosts = fetchBriefService.listOkHost();
+    System.out.println(hosts);
+
+}
+
 @Test
 public void testCountAllHost() throws Exception { 
 //TODO: Test goes here...
@@ -60,14 +95,19 @@ public void testCountProblemHost() throws Exception {
     System.out.println(phostNum);
 }
 
-    @Test
-    public void testCountOKHost() throws Exception {
-        int okhostNum = countStateService.countOkHost();
-        System.out.println(okhostNum);
-    }
+@Test
+public void testCountOKHost() throws Exception {
+    int okhostNum = countStateService.countOkHost();
+    System.out.println(okhostNum);
+}
 
 
 //hostgroup相关测试
+    @Test
+    public void testListAllHostGroup() throws Exception {
+        List<HostGroupBrief> allHostGroups = fetchBriefService.listHostGroup();
+        System.out.println(allHostGroups);
+    }
     @Test
     public void testCountAllHostGroup() throws Exception {
         int allHostGroupNum = countStateService.countAllHostGroup();
@@ -82,6 +122,14 @@ public void testCountProblemHost() throws Exception {
 
 
 //app相关测试
+@Test
+public void testListAllApp() throws Exception {
+    List<ApplicationBrief> allApp = fetchBriefService.listApp();
+    System.out.println(allApp);
+}
+
+
+
 @Test
 public void testCountAllApp() throws Exception {
     int allAppNum = countStateService.countAllApp();
@@ -98,8 +146,7 @@ public void testCountProbelmApp() throws Exception {
 //trigger测试相关
 @Test
 public void testGetProblemTrigger() throws Exception {
-    List<String> triggerIds = countStateService.getProblemTriggerIds();
-    System.out.println(triggerIds);
+
 }
 
 } 

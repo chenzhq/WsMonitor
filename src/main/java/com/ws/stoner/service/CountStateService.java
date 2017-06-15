@@ -2,8 +2,6 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 
-import java.util.List;
-
 /**
  * Created by zkf on 2017/6/12.
  */
@@ -96,12 +94,7 @@ public interface CountStateService {
 /*
  * trigger service
  */
-    /**
-     * 获取所有问题的触发器Ids
-     * @return
-     * @throws ServiceException
-     */
-    List<String> getProblemTriggerIds() throws ServiceException;
+
 
 
 }

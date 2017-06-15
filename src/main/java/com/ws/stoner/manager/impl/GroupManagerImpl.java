@@ -2,12 +2,12 @@ package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
-import com.ws.bix4j.bean.HostGroupDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.GroupManager;
+import com.ws.stoner.model.brief.HostGroupBrief;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,10 @@ public class GroupManagerImpl implements GroupManager {
     @Autowired
     private ZApi zApi;
     @Override
-    public List<HostGroupDO> listGroup(HostGroupGetRequest request) throws AuthExpireException {
-        List<HostGroupDO> groups;
+    public List<HostGroupBrief> listGroup(HostGroupGetRequest request) throws AuthExpireException {
+        List<HostGroupBrief> groups;
         try {
-            groups = zApi.Group().get(request);
+            groups = zApi.Group().get(request, HostGroupBrief.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");

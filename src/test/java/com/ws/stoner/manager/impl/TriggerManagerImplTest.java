@@ -2,12 +2,12 @@ package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
-import com.ws.bix4j.bean.TriggerDO;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.TriggerManager;
-import org.junit.Test;
-import org.junit.Before; 
+import com.ws.stoner.model.brief.TriggerBrief;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,14 +50,14 @@ public void after() throws Exception {
 public void testListTrigger() throws Exception { 
 //TODO: Test goes here...
     TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
-    List<TriggerDO> triggerDOList = triggerManager.listTrigger(triggerGetRequest);
+    List<TriggerBrief> triggerDOList = triggerManager.listTrigger(triggerGetRequest);
     System.out.println(triggerDOList.toString());
 } 
 
 @Test
     public void testListUnknownTrigger() throws Exception {
-    List<TriggerDO> unknownTriggers = triggerManager.listUnknownTrigger();
-    System.out.println(unknownTriggers);
+//    List<TriggerDO> unknownTriggers = triggerManager.listUnknownTrigger();
+//    System.out.println(unknownTriggers);
 }
 
 } 

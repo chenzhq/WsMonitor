@@ -1,9 +1,11 @@
 package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
+import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.HostManager;
+import com.ws.stoner.model.brief.HostBrief;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
@@ -47,7 +49,8 @@ public void after() throws Exception {
 @Test
 public void testListHost() throws Exception { 
 //TODO: Test goes here...
-    List<HostDO> hosts = hostManager.listHost();
+    HostGetRequest hostGetRequest = new HostGetRequest();
+    List<HostBrief> hosts = hostManager.listHost(hostGetRequest);
     System.out.println(hosts.toString());
 } 
 

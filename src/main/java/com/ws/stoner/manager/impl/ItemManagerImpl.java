@@ -7,6 +7,7 @@ import com.ws.bix4j.exception.ZApiException;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.ItemManager;
+import com.ws.stoner.model.brief.ItemBrief;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,10 @@ public class ItemManagerImpl implements ItemManager {
      * @throws AuthExpireException
      */
     @Override
-    public List<ItemDO> listItem(ItemGetRequest request) throws AuthExpireException {
-        List<ItemDO> items ;
+    public List<ItemBrief> listItem(ItemGetRequest request) throws AuthExpireException {
+        List<ItemBrief> items ;
         try {
-            items = zApi.Item().get(request);
+            items = zApi.Item().get(request,ItemBrief.class);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;

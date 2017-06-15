@@ -4,6 +4,7 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.dto.StateNumDTO;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface HostManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<HostDO> listHost() throws AuthExpireException;
+    List<HostBrief> listHost(HostGetRequest request) throws AuthExpireException;
 
     /**
      * 获取停用主机list

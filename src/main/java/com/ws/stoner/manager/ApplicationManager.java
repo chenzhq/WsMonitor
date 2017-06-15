@@ -4,6 +4,7 @@ import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.bix4j.bean.ApplicationDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.model.brief.ApplicationBrief;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public interface ApplicationManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<ApplicationDO> listApplication() throws AuthExpireException;
+    List<ApplicationBrief> listApplication(ApplicationGetRequest request) throws AuthExpireException;
 
     /**
      * 获取 itemid 在给定的ItemIds list 中的所有application
