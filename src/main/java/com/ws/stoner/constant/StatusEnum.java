@@ -3,16 +3,11 @@ package com.ws.stoner.constant;
 /**
  * Created by chenzheqi on 2017/5/24.
  */
-public enum HostStatusEnum {
-    WARNING("警告"),
-    DANGER("危险"),
-    MAINTENANCE("维护"),
-    DISABLE("停用"),
-    UNSUPPORT("不支持"),
-    UNKNOWN("未知"),
+public enum StatusEnum {
+    PROBLEM("问题"),
     OK("正常");
 
-    HostStatusEnum(String name) {
+    StatusEnum(String name) {
         this.name = name;
     }
     private String name;
@@ -21,7 +16,7 @@ public enum HostStatusEnum {
         return name;
     }
 
-    public HostStatusEnum setName(String name) {
+    public StatusEnum setName(String name) {
         this.name = name;
         return this;
     }

@@ -1,9 +1,10 @@
 package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.model.dto.StateNumDTO;
-import com.ws.stoner.manager.HostManager;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.PlatformManager;
+import com.ws.stoner.model.dto.StateNumDTO;
+import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,14 +19,20 @@ import java.util.List;
 @RestController
 public class DashboardRestController {
     @Autowired
-    private HostManager hostManager;
+    private CountStateService countStateService;
 
     @Autowired
     private PlatformManager platformManager;
 
     @RequestMapping(value = "host/count", method = RequestMethod.GET)
     public String countHost() throws ManagerException {
-        StateNumDTO allHostNum = hostManager.countAllHostState();
+        StateNumDTO allHostNum ;
+        try {
+            allHostNum = countStateService.CountHostState();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            return null;
+        }
         return RestResultGenerator.genResult(allHostNum, "查询成功").toString();
     }
 

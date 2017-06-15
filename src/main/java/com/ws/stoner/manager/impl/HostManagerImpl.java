@@ -8,7 +8,7 @@ import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.bean.ProblemDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
-import com.ws.stoner.constant.HostStatusEnum;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.HostManager;
@@ -237,25 +237,6 @@ public class HostManagerImpl implements HostManager {
         int okHostNum = countHost(hostGetRequest) - countMaintenanceHost() - countDangerHost();
         return okHostNum;
     }
-
-    @Override
-    public StateNumDTO countAllHostState() throws ManagerException {
-        HostGetRequest hostGetRequest = new HostGetRequest();
-        StateNumDTO stateNumDTO = new StateNumDTO();
-        List<StateNumDTO.StateNum> stateNumList = new ArrayList<>();
-
-        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.OK, countOkHost()));
-        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.DANGER, countDangerHost()));
-        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.MAINTENANCE, countMaintenanceHost()));
-//        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.UNSUPPORT, countUnsupportedHost()));
-//        stateNumList.add(new StateNumDTO.StateNum(HostStatusEnum.DISABLE, countDisableHost()));
-
-        stateNumDTO.setStateNum(stateNumList);
-        stateNumDTO.setTotalNum(countHost(hostGetRequest));
-
-        return stateNumDTO;
-    }
-
 
     @Override
     public HostDO getHost(String... hostId) {
