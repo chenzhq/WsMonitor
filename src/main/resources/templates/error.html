@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="utf-8">
 	<title>404</title>
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -11,6 +11,7 @@
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
 	<link href="../static/css/main.css" rel="stylesheet" />
 	<link href="../static/css/pace.css" rel="stylesheet" />
+	<th:block th:fragment="supplement"></th:block>
 </head>
 <body class="error404">
 	<!--Site Content-->
@@ -25,7 +26,7 @@
 						</div>
 					</div>
 					<div class="ui container center aligned" style="width: 220px">
-						<a class="ui yellow fluid button" href="main.html">
+						<a class="ui yellow fluid button" href="#" th:href="@{/dashboard}">
 							返回首页
 						</a>
 					</div>
@@ -51,10 +52,12 @@
 			</div>
 		</div>
 	</div>
-<script src="../static/js/js.cookie.js"></script>
-<script src="../static/js/jquery.nicescroll.min.js"></script>
-<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
-<script src="../static/js/main.js"></script>
+	<th:block th:replace="layout::bottom_script">
+		<script src="../static/js/js.cookie.js"></script>
+		<script src="../static/js/jquery.nicescroll.min.js"></script>
+		<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
+		<script src="../static/js/main.js"></script>
+	</th:block>
 </body>
 </html>
 
