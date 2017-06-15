@@ -1,7 +1,7 @@
 package com.ws.stoner.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.ws.stoner.exception.ResponseErrorEnum;
+import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.model.ResponseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -3,7 +3,7 @@ package com.ws.stoner.model;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ws.stoner.exception.ResponseErrorEnum;
+import com.ws.stoner.constant.ResponseErrorEnum;
 
 /**
  * Created by chenzheqi on 2017/5/24.
@@ -11,12 +11,13 @@ import com.ws.stoner.exception.ResponseErrorEnum;
 public class ResponseResult<T> {
     private boolean success;
     private String message;
+    @JSONField(serialzeFeatures = SerializerFeature.NotWriteDefaultValue)
     private T data;
     @JSONField(serialzeFeatures = SerializerFeature.NotWriteDefaultValue)
     private String errorCode;
 
     public void setErrorInfo(ResponseErrorEnum errorEnum) {
-        this.errorCode = errorEnum.name();
+        this.errorCode = errorEnum.name;
     }
 
     public String getErrorCode() {
