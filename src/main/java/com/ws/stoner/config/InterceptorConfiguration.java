@@ -13,6 +13,6 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter{
     @Override
     public void addInterceptors(InterceptorRegistry interceptorRegistry) {
         interceptorRegistry.addInterceptor(new LoginInterceptor())
-                .addPathPatterns("**").excludePathPatterns("/login/auth", "/error");
+                .addPathPatterns("/**").excludePathPatterns("/login/auth", "/error");
     }
 }
