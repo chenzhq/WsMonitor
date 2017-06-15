@@ -1,6 +1,7 @@
 package com.ws.stoner.controller;
 
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,12 @@ public class DashboardController {
     @RequestMapping(value = {"/", ""})
     public ModelAndView dashboard(Model model) throws ManagerException {
         ModelAndView mav = new ModelAndView("dashboard");
-        List<BriefProblemVO> problemVOList = fetchBriefService.listBriefProblems();
+        List<BriefProblemVO> problemVOList = null;
+        try {
+            problemVOList = fetchBriefService.listBriefProblems();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
         mav.addObject("problemList", problemVOList);
         return mav;
     }

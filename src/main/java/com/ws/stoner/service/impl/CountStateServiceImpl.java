@@ -5,22 +5,17 @@ import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.access.item.ItemGetRequest;
-import com.ws.bix4j.access.trigger.TriggerGetRequest;
-import com.ws.bix4j.bean.HostDO;
-import com.ws.bix4j.bean.ItemDO;
-import com.ws.bix4j.bean.TriggerDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
+import com.ws.stoner.model.brief.HostBrief;
+import com.ws.stoner.model.brief.ItemBrief;
 import com.ws.stoner.service.CountStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by pc on 2017/6/12.
@@ -76,16 +71,22 @@ public class CountStateServiceImpl implements CountStateService {
     @Override
     public int countProblemHost() throws ServiceException {
         //step1:获取问题触发器ids
-        List<String> triggerIds = getProblemTriggerIds();
+        List<String> triggerIds ;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
         //step2:根据两个触发器的ids得到主机数量 hosts1
         HostGetRequest hostGetRequest1 = new HostGetRequest();
         Map<String,Object> hostFilter1 = new HashMap<>();
         hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest1.getParams().setFilter(hostFilter1);
-        hostGetRequest1.getParams().setTriggerIds(triggerIds).setCountOutput(true);
-        int host1 = 0;
+        hostGetRequest1.getParams().setTriggerIds(triggerIds);
+        List<HostBrief> host1 ;
         try {
-            host1 = hostManager.countHost(hostGetRequest1);
+            host1 = hostManager.listHost(hostGetRequest1);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
@@ -99,15 +100,18 @@ public class CountStateServiceImpl implements CountStateService {
         hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostGetRequest2.getParams().setFilter(hostFilter2).setSearchByAny(true);
-        int host2 = 0;
+        List<HostBrief> host2 ;
         try {
-            host2 = hostManager.countHost(hostGetRequest2);
+            host2 = hostManager.listHost(hostGetRequest2);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
         }
-        //step5:求和host1 + host2
-        int hostNum = host1 + host2;
+        //step5:去掉重复的主机并求和
+        List<HostBrief> hosts = new ArrayList<>(host1);
+        hosts.retainAll(host2);
+        host1.removeAll(hosts);
+        int hostNum = host1.size() + host2.size();
         return hostNum;
     }
 
@@ -152,7 +156,13 @@ public class CountStateServiceImpl implements CountStateService {
     @Override
     public int countProblemHostGroup() throws ServiceException {
         //step1:获取问题触发器Ids
-        List<String> triggerIds = getProblemTriggerIds();
+        List<String> triggerIds ;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
         //step2:根据触发器Ids获取业务平台数量
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         groupRequest.getParams().setTriggerIds(triggerIds);
@@ -189,10 +199,10 @@ public class CountStateServiceImpl implements CountStateService {
     public int countAllApp() throws ServiceException {
         //step1:筛选所有监控中的主机monitored
         HostGetRequest hostGetRequest = new HostGetRequest();
-        hostGetRequest.getParams().setMonitoredHosts(true).setCountOutput(true);
-        List<HostDO> hosts;
+        hostGetRequest.getParams().setMonitoredHosts(true);
+        List<HostBrief> hosts;
         try {
-            hosts = hostManager.listHost();
+            hosts = hostManager.listHost(hostGetRequest);
         } catch (AuthExpireException e) {
             e.printStackTrace();
             return 0;
@@ -202,11 +212,12 @@ public class CountStateServiceImpl implements CountStateService {
         if(hosts == null) {
             return 0;
         }
-        for(HostDO host : hosts) {
+        for(HostBrief host : hosts) {
             hostIds.add(host.getHostId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
         appRequest.getParams().setHostIds(hostIds);
+        appRequest.getParams().setCountOutput(true);
         int appALlNum ;
         try {
             appALlNum = appManager.countAppliction(appRequest);
@@ -226,12 +237,18 @@ public class CountStateServiceImpl implements CountStateService {
     @Override
     public int countProblemApp() throws ServiceException {
         //step1:获取问题触发器Ids
-        List<String> triggerIds = getProblemTriggerIds();
+        List<String> triggerIds ;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
         //step2:根据触发器Ids获取items
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         itemGetRequest.getParams().setTriggerIds(triggerIds);
         itemGetRequest.getParams().setMonitored(true);
-        List<ItemDO> items ;
+        List<ItemBrief> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
         } catch (AuthExpireException e) {
@@ -240,7 +257,7 @@ public class CountStateServiceImpl implements CountStateService {
         }
         //step3:根据item筛选出应用集
         List<String> itemIds = new ArrayList<>();
-        for(ItemDO item : items) {
+        for(ItemBrief item : items) {
             itemIds.add(item.getItemId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
@@ -270,47 +287,5 @@ public class CountStateServiceImpl implements CountStateService {
 
     }
 
-    /**
-     * 获取问题触发器IDS
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public List<String> getProblemTriggerIds() throws ServiceException {
-        //step1:获取state:up to date 触发器list
-        TriggerGetRequest triggerGetRequest1 = new TriggerGetRequest();
-        Map<String, Object> triggerFilter = new HashMap<>();
-        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
-        triggerFilter.put("value",ZApiParameter.TRIGGER_VALUE.PROBLEM.value);
-        triggerFilter.put("only_true",true);
-        triggerGetRequest1.getParams().setFilter(triggerFilter);
-        List<TriggerDO> triggers1 ;
-        try {
-            triggers1 = triggerManager.listTrigger(triggerGetRequest1);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step2:获取state:unknown 触发器list
-        TriggerGetRequest triggerGetRequest2 = new TriggerGetRequest();
-        Map<String, Object> triggerFilter2 = new HashMap<>();
-        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UNKNOWN.value);
-        triggerGetRequest2.getParams().setFilter(triggerFilter2);
-        List<TriggerDO> triggers2 ;
-        try {
-            triggers2 = triggerManager.listTrigger(triggerGetRequest2);
-        } catch (AuthExpireException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step3:组装两类触发器得到 triggerIds
-        List<String> triggerIds = new ArrayList<>();
-        for(TriggerDO trigger : triggers1) {
-            triggerIds.add(trigger.getTriggerId());
-        }
-        for(TriggerDO trigger : triggers2) {
-            triggerIds.add(trigger.getTriggerId());
-        }
-        return triggerIds;
-    }
+
 }

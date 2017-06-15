@@ -2,9 +2,9 @@ package com.ws.stoner.manager;
 
 
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
-import com.ws.bix4j.bean.TriggerDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.model.brief.TriggerBrief;
 
 import java.util.List;
 
@@ -18,14 +18,14 @@ public interface TriggerManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<TriggerDO> listTrigger(TriggerGetRequest request) throws AuthExpireException;
+    List<TriggerBrief> listTrigger(TriggerGetRequest request) throws AuthExpireException;
 
     /**
-     * 获取监控中monitored，非维护maintenance，状态为unknown的触发器
+     * 获取所有的问题触发器ids
      * @return
      * @throws ManagerException
      */
-    List<TriggerDO> listUnknownTrigger() throws ManagerException;
+    List<String> getProblemTriggerIds() throws ManagerException;
 
     <T> List<T> listTrigger(TriggerGetRequest triggerGetRequest, Class<T> clazz);
 

@@ -1,9 +1,9 @@
 package com.ws.stoner.manager;
 
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
-import com.ws.bix4j.bean.HostGroupDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.model.brief.HostGroupBrief;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public interface GroupManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<HostGroupDO> listGroup(HostGroupGetRequest request) throws AuthExpireException;
+    List<HostGroupBrief> listGroup(HostGroupGetRequest request) throws AuthExpireException;
 
     /**
      * 根据request获取业务平台数量 hostgroup number
