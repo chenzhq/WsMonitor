@@ -1,6 +1,6 @@
 package com.ws.stoner.model.dto;
 
-import com.ws.stoner.constant.HostStatusEnum;
+import com.ws.stoner.constant.StatusEnum;
 
 import java.util.List;
 
@@ -34,8 +34,8 @@ public class StateNumDTO {
         private String name;
         private int value;
 
-        public StateNum(HostStatusEnum hostStatusEnum, int value) {
-            this.name = hostStatusEnum.getName();
+        public StateNum(StatusEnum statusEnum, int value) {
+            this.name = statusEnum.getName();
             this.value = value;
         }
 

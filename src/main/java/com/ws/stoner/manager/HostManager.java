@@ -5,7 +5,6 @@ import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.model.brief.HostBrief;
-import com.ws.stoner.model.dto.StateNumDTO;
 
 import java.util.List;
 
@@ -89,14 +88,6 @@ public interface HostManager {
      * @return the int
      */
     int countOkHost() throws ManagerException;
-
-    /**
-     * Count all host state state num dto.
-     *
-     * @return the state num dto
-     * @throws ManagerException the service exception
-     */
-    StateNumDTO countAllHostState() throws ManagerException;
 
 
     /**

@@ -5,12 +5,14 @@ import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.access.item.ItemGetRequest;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
 import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.ItemBrief;
+import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,58 @@ public class CountStateServiceImpl implements CountStateService {
 
     @Autowired
     private GroupManager groupManager;
+
+    /**
+     * 主机业务数据组合
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public StateNumDTO CountHostState() throws ServiceException {
+        StateNumDTO hostState = new StateNumDTO();
+        List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemHost());
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkHost());
+        stateNums.add(okStateNum);
+        stateNums.add(problemStateNum);
+        hostState.setTotalNum(countAllHost()).setStateNum(stateNums);
+
+        return hostState;
+    }
+
+    /**
+     * 获取业务平台业务组合数据
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public StateNumDTO CountHostGroupState() throws ServiceException {
+        StateNumDTO hostGroupState = new StateNumDTO();
+        List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemHostGroup());
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkHostGroup());
+        stateNums.add(okStateNum);
+        stateNums.add(problemStateNum);
+        hostGroupState.setTotalNum(countAllHostGroup()).setStateNum(stateNums);
+        return hostGroupState;
+    }
+
+    /**
+     * 获取监控点业务组合数据
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public StateNumDTO CountPointState() throws ServiceException {
+        StateNumDTO pointState = new StateNumDTO();
+        List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemApp());
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkApp());
+        stateNums.add(okStateNum);
+        stateNums.add(problemStateNum);
+        pointState.setTotalNum(countAllApp()).setStateNum(stateNums);
+        return pointState;
+    }
 
     /**
      * 获取主机总数量，排除停用主机，filter： status:0
@@ -185,7 +239,7 @@ public class CountStateServiceImpl implements CountStateService {
      */
     @Override
     public int countOkHostGroup() throws ServiceException {
-        int OkHostGroupNum = countAllHostGroup() - countProblemHost();
+        int OkHostGroupNum = countAllHostGroup() - countProblemHostGroup();
         return OkHostGroupNum;
     }
 

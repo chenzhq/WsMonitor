@@ -5,6 +5,7 @@ import com.ws.stoner.BootApplication;
 import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
+import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
 import org.junit.After;
@@ -56,6 +57,14 @@ public void after() throws Exception {
 */
 
 //host相关测试
+@Test
+public void testHostState() throws Exception {
+//TODO: Test goes here...
+    StateNumDTO hosts = countStateService.CountHostState();
+    System.out.println(hosts);
+
+}
+
 
 @Test
 public void testListAllHost() throws Exception {
@@ -103,6 +112,15 @@ public void testCountOKHost() throws Exception {
 
 
 //hostgroup相关测试
+
+    @Test
+    public void testHostGroupState() throws Exception {
+//TODO: Test goes here...
+        StateNumDTO hostGroup = countStateService.CountHostGroupState();
+        System.out.println(hostGroup);
+
+    }
+
     @Test
     public void testListAllHostGroup() throws Exception {
         List<HostGroupBrief> allHostGroups = fetchBriefService.listHostGroup();
