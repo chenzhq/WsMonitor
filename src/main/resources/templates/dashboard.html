@@ -211,11 +211,6 @@
 					<div class="sixteen wide tablet sixteen wide computer column">
 						<div class="ui segments">
 							<div class="ui segment">
-								<h5 class="ui  header">
-									全局图表
-								</h5>
-							</div>
-							<div class="ui segment">
 								<div class="ui pointing secondary menu">
 									<a class="item active" data-tab="first">全部</a>
 									<a class="item" data-tab="second">业务系统</a>
@@ -239,168 +234,142 @@
 									</div>
 									<div class="row">
 										<div class="sixteen wide column">
-											<div class="ui segments">
-												<div class="ui segment">
-													<h5 class="ui header">
-														<i class="bar chart icon"></i>
-														最近的20个问题
-													</h5>
-												</div>
-												<div class="ui segment">
-													<table class="ui small table">
-														<thead>
-														<tr >
-															<th>主机</th>
-															<th>问题</th>
-															<th>上次修改于</th>
-															<th>历时</th>
-															<th>确认</th>
-														</tr></thead>
-														<tbody>
-                                                        <tr th:each="problem : ${problemList}">
-                                                            <td th:text="${problem.hosts[0].visibleName}">机1</td>
-                                                            <td th:text="${problem.description}">主机1内存使用率超过90%</td>
-                                                            <td th:text="${problem.time}">2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														<tr >
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														<tr >
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														<tr >
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														<tr>
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														</tbody>
-														<tfoot>
-														<tr><th colspan="5">
-															<div class="ui mini right teal floated pagination menu">
-																<a class="icon item">
-																	<i class="left chevron icon"></i>
-																</a>
-																<a class="item">1</a>
-																<a class="item">2</a>
-																<a class="item">3</a>
-																<a class="item">4</a>
-																<a class="icon item">
-																	<i class="right chevron icon"></i>
-																</a>
-															</div>
-														</th>
-														</tr></tfoot>
-													</table>
-												</div>
-											</div>
+											<div class="ui divider"></div>
+											<h4 class="ui horizontal divider header">
+												<i class="bar chart icon"></i>
+												最近的20个问题
+											</h4>
+											<table class="ui small table">
+												<thead>
+												<tr >
+													<th>主机</th>
+													<th>问题</th>
+													<th>上次修改于</th>
+													<th>历时</th>
+													<th>确认</th>
+												</tr></thead>
+												<tbody>
+												<tr th:each="problem : ${problemList}">
+													<td th:text="${problem.hosts[0].visibleName}">机1</td>
+													<td th:text="${problem.description}">主机1内存使用率超过90%</td>
+													<td th:text="${problem.time}">2017-4-27 15:33:20</td>
+													<td><p>2天4小时50分</p></td>
+													<td><button >不</button></td>
+												</tr>
+												<tr >
+													<td>主机1</td>
+													<td>主机1内存使用率超过90%</td>
+													<td>2017-4-27 15:33:20</td>
+													<td><p>2天4小时50分</p></td>
+													<td><button >不</button></td>
+												</tr>
+												<tr >
+													<td>主机1</td>
+													<td>主机1内存使用率超过90%</td>
+													<td>2017-4-27 15:33:20</td>
+													<td><p>2天4小时50分</p></td>
+													<td><button >不</button></td>
+												</tr>
+												<tr >
+													<td>主机1</td>
+													<td>主机1内存使用率超过90%</td>
+													<td>2017-4-27 15:33:20</td>
+													<td><p>2天4小时50分</p></td>
+													<td><button >不</button></td>
+												</tr>
+												<tr>
+													<td>主机1</td>
+													<td>主机1内存使用率超过90%</td>
+													<td>2017-4-27 15:33:20</td>
+													<td><p>2天4小时50分</p></td>
+													<td><button >不</button></td>
+												</tr>
+												</tbody>
+												<tfoot>
+												<tr><th colspan="5">
+													<div class="ui mini right teal floated pagination menu">
+														<a class="icon item">
+															<i class="left chevron icon"></i>
+														</a>
+														<a class="item">1</a>
+														<a class="item">2</a>
+														<a class="item">3</a>
+														<a class="item">4</a>
+														<a class="icon item">
+															<i class="right chevron icon"></i>
+														</a>
+													</div>
+												</th>
+												</tr></tfoot>
+											</table>
 										</div>
 									</div>
 								</div>
 								<div class="ui tab segment" data-tab="second">
 									<div class="row">
 										<div class="sixteen wide column" data-tab="second">
-											<div class="ui segments">
-												<div class="ui center aligned grid">
-													<div class="column">
-														<div class="ui buttons">
-															<button class="ui button">今天</button>
-															<button class="ui button">昨天</button>
-															<button class="ui button">三天</button>
-															<button class="ui button">一周</button>
-															<button class="ui button">自定义</button>
-														</div>
-													</div>
-												</div>
-												<div class="ui segment">
-													<table class="ui small table">
-														<thead>
-														<tr >
-															<th>主机</th>
-															<th>问题</th>
-															<th>上次修改于</th>
-															<th>历时</th>
-															<th>确认</th>
-														</tr></thead>
-														<tbody>
-														<tr >
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														<tr >
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														<tr >
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														<tr >
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														<tr>
-															<td>主机1</td>
-															<td>主机1内存使用率超过90%</td>
-															<td>2017-4-27 15:33:20</td>
-															<td><p>2天4小时50分</p></td>
-															<td><button >不</button></td>
-														</tr>
-														</tbody>
-														<tfoot>
-														<tr><th colspan="5">
-															<div class="ui mini right teal floated pagination menu">
-																<a class="icon item">
-																	<i class="left chevron icon"></i>
-																</a>
-																<a class="item">1</a>
-																<a class="item">2</a>
-																<a class="item">3</a>
-																<a class="item">4</a>
-																<a class="icon item">
-																	<i class="right chevron icon"></i>
-																</a>
-															</div>
-														</th>
-														</tr></tfoot>
-													</table>
-												</div>
-											</div>
+											<table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+												<thead>
+												<tr>
+													<th>Name</th>
+													<th>availability</th>
+													<th>state</th>
+													<th>problemNum</th>
+												</tr>
+												</thead>
+												<tbody id="platform_list">
+												</tbody>
+											</table>
 										</div>
 									</div>
 								</div>
-								<div class="ui tab segment" data-tab="third"><h3 class="ui header">AJAX Tab Three</h3></div>
-								<div class="ui tab segment" data-tab="fourth"><h3 class="ui header">AJAX Tab fourth</h3></div>
+								<div class="ui tab segment" data-tab="third">
+									<div class="row">
+										<div class="sixteen wide column" data-tab="second">
+											<div class="ui center aligned grid">
+												<div class="column">
+													<div class="ui buttons">
+														<button class="ui button">今天</button>
+														<button class="ui button">昨天</button>
+														<button class="ui button">三天</button>
+														<button class="ui button">一周</button>
+														<button class="ui button">自定义</button>
+													</div>
+												</div>
+											</div>
+											<table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+												<thead>
+												<tr>
+													<th>Name</th>
+													<th>lastData</th>
+													<th>state</th>
+													<th>lastChange</th>
+												</tr>
+												</thead>
+												<tbody id="point_list">
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+								<div class="ui tab segment" data-tab="fourth">
+									<div class="row">
+										<div class="sixteen wide column" data-tab="second">
+											<table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+												<thead>
+												<tr>
+													<th>Name</th>
+													<th>ip</th>
+													<th>state</th>
+													<th>type</th>
+												</tr>
+												</thead>
+												<tbody id="host_list">
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -415,10 +384,79 @@
 <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
 <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
+<script src="../static/js/jquery.dataTables.js"></script>
+<script src="../static/js/custom-datatable.js"></script>
 <script type="text/javascript">
-$('.menu .item')
-.tab()
-;
+    //选项卡初始化
+    $('.menu .item')
+        .tab()
+    ;
+    //业务系统列表加载
+    $.ajax({
+        type: "post",
+        async: true,
+        url: "/platform/list",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            $("#platform_list").html("");
+            var data=result.data;
+            for(var i in data){
+                var availability=data[i].availability;
+                var name=data[i].name;
+                var problemNum=data[i].problemNum;
+                var state=data[i].state;
+                $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据失败!");
+        }
+    })
+    //监控点列表加载
+    $.ajax({
+        type: "post",
+        async: true,
+        url: "/point/list",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            $("#point_list").html("");
+            var data=result.data;
+            for(var i in data){
+                var lastData=data[i].lastData;
+                var name=data[i].name;
+                var lastChange=data[i].lastChange;
+                var state=data[i].state;
+                $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].lastData+"</td><td>"+data[i].state+"</td><td>"+data[i].lastChange+"</td></tr>");
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据失败!");
+        }
+    })
+    //设备列表加载
+    $.ajax({
+        type: "post",
+        async: true,
+        url: "/host/list",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            $("#host_list").html("");
+            var data=result.data;
+            for(var i in data){
+                var ip=data[i].ip;
+                var name=data[i].name;
+                var type=data[i].type;
+                var state=data[i].state;
+                $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].state+"</td><td>"+data[i].type+"</td></tr>");
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据失败!");
+        }
+    })
 </script>
 <script type="text/javascript">
     var myChart = echarts.init(document.getElementById('main0'));
@@ -468,7 +506,53 @@ $('.menu .item')
     }
 
     onemyChart.showLoading();
-
+    //业务系统饼图加载
+    $.ajax({
+        type: "post",
+        async: true,
+        url: "/platform/count",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            onemyChart.hideLoading();
+            var data = result.data;
+            var dataList = data.stateNum;
+            var total = data.totalNum + "个";
+            if (dataList) {
+                option.title.text = total;
+                option.series[0].data = dataList;
+                // 重写指定图表的配置项和数据
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据失败!");
+        }
+    })
+    //监控点饼图加载
+    $.ajax({
+        type: "post",
+        async: true,
+        url: "/point/count",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            onemyChart.hideLoading();
+            var data = result.data;
+            var dataList = data.stateNum;
+            var total = data.totalNum + "个";
+            if (dataList) {
+                option.title.text = total;
+                option.series[0].data = dataList;
+                // 重写指定图表的配置项和数据
+                onemyChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据失败!");
+        }
+    })
+    //设备饼图加载
     $.ajax({
         type: "post",
         async: true,
@@ -484,8 +568,6 @@ $('.menu .item')
                 option.title.text = total;
                 option.series[0].data = dataList;
                 // 重写指定图表的配置项和数据
-                myChart.setOption(option);
-                onemyChart.setOption(option);
                 twomyChart.setOption(option);
             }
         },
