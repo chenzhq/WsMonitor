@@ -60,7 +60,7 @@ public void after() throws Exception {
 @Test
 public void testHostState() throws Exception {
 //TODO: Test goes here...
-    StateNumDTO hosts = countStateService.CountHostState();
+    StateNumDTO hosts = countStateService.countHostState();
     System.out.println(hosts);
 
 }
@@ -114,32 +114,34 @@ public void testCountOKHost() throws Exception {
 //hostgroup相关测试
 
     @Test
-    public void testHostGroupState() throws Exception {
+    public void testPlatformState() throws Exception {
 //TODO: Test goes here...
-        StateNumDTO hostGroup = countStateService.CountHostGroupState();
+        StateNumDTO hostGroup = countStateService.countPlatformState();
         System.out.println(hostGroup);
 
     }
 
     @Test
-    public void testListAllHostGroup() throws Exception {
-        List<HostGroupBrief> allHostGroups = fetchBriefService.listHostGroup();
+    public void testListAllPlatform() throws Exception {
+        List<HostGroupBrief> allHostGroups = fetchBriefService.listPlatform();
         System.out.println(allHostGroups);
     }
     @Test
-    public void testCountAllHostGroup() throws Exception {
-        int allHostGroupNum = countStateService.countAllHostGroup();
+    public void testCountAllPlatform() throws Exception {
+        int allHostGroupNum = countStateService.countAllPlatform();
         System.out.println(allHostGroupNum);
     }
 
     @Test
-    public void testCountProblemHostGroup() throws Exception {
-        int problemHostGroupNum = countStateService.countProblemHostGroup();
+    public void testCountProblemPlatform() throws Exception {
+        int problemHostGroupNum = countStateService.countProblemPlatform();
         System.out.println(problemHostGroupNum);
     }
 
 
 //app相关测试
+
+
 @Test
 public void testListAllApp() throws Exception {
     List<ApplicationBrief> allApp = fetchBriefService.listApp();

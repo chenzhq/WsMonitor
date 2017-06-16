@@ -41,11 +41,11 @@ public interface FetchBriefService {
  */
 
     /**
-     * 获取简约hostGroup list
+     * 获取简约 platform list
      * @return
      * @throws ServiceException
      */
-    List<HostGroupBrief> listHostGroup() throws ServiceException;
+    List<HostGroupBrief> listPlatform() throws ServiceException;
 
 /*
  *application service

@@ -38,7 +38,7 @@ public class CountStateServiceImpl implements CountStateService {
     private ItemManager itemManager;
 
     @Autowired
-    private GroupManager groupManager;
+    private PlatformManager platformManager;
 
     /**
      * 主机业务数据组合
@@ -46,7 +46,7 @@ public class CountStateServiceImpl implements CountStateService {
      * @throws ServiceException
      */
     @Override
-    public StateNumDTO CountHostState() throws ServiceException {
+    public StateNumDTO countHostState() throws ServiceException {
         StateNumDTO hostState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemHost());
@@ -64,15 +64,15 @@ public class CountStateServiceImpl implements CountStateService {
      * @throws ServiceException
      */
     @Override
-    public StateNumDTO CountHostGroupState() throws ServiceException {
-        StateNumDTO hostGroupState = new StateNumDTO();
+    public StateNumDTO countPlatformState() throws ServiceException {
+        StateNumDTO platformState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
-        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemHostGroup());
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkHostGroup());
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemPlatform());
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkPlatform());
         stateNums.add(okStateNum);
         stateNums.add(problemStateNum);
-        hostGroupState.setTotalNum(countAllHostGroup()).setStateNum(stateNums);
-        return hostGroupState;
+        platformState.setTotalNum(countAllPlatform()).setStateNum(stateNums);
+        return platformState;
     }
 
     /**
@@ -81,7 +81,7 @@ public class CountStateServiceImpl implements CountStateService {
      * @throws ServiceException
      */
     @Override
-    public StateNumDTO CountPointState() throws ServiceException {
+    public StateNumDTO countPointState() throws ServiceException {
         StateNumDTO pointState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemApp());
@@ -188,13 +188,13 @@ public class CountStateServiceImpl implements CountStateService {
      * @throws ServiceException
      */
     @Override
-    public int countAllHostGroup() throws ServiceException {
+    public int countAllPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         groupRequest.getParams().setMonitoredHosts(true).setRealHosts(true);
         groupRequest.getParams().setCountOutput(true);
         int hostGroupNum ;
         try {
-            hostGroupNum = groupManager.countHostGroup(groupRequest);
+            hostGroupNum = platformManager.countPlatform(groupRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
@@ -208,7 +208,7 @@ public class CountStateServiceImpl implements CountStateService {
      * @throws ServiceException
      */
     @Override
-    public int countProblemHostGroup() throws ServiceException {
+    public int countProblemPlatform() throws ServiceException {
         //step1:获取问题触发器Ids
         List<String> triggerIds ;
         try {
@@ -224,7 +224,7 @@ public class CountStateServiceImpl implements CountStateService {
         groupRequest.getParams().setCountOutput(true);
         int problemHostGroupNum ;
         try {
-            problemHostGroupNum = groupManager.countHostGroup(groupRequest);
+            problemHostGroupNum = platformManager.countPlatform(groupRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
@@ -238,9 +238,9 @@ public class CountStateServiceImpl implements CountStateService {
      * @throws ServiceException
      */
     @Override
-    public int countOkHostGroup() throws ServiceException {
-        int OkHostGroupNum = countAllHostGroup() - countProblemHostGroup();
-        return OkHostGroupNum;
+    public int countOkPlatform() throws ServiceException {
+        int OkPlatformNum = countAllPlatform() - countProblemPlatform();
+        return OkPlatformNum;
     }
 
     /**

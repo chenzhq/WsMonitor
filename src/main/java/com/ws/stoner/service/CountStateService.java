@@ -11,16 +11,16 @@ public interface CountStateService {
 /*
  *主机业务状态组合
  */
-     StateNumDTO CountHostState() throws ServiceException;
+     StateNumDTO countHostState() throws ServiceException;
 
 /*
  *业务平台业务状态组合
  */
-    StateNumDTO CountHostGroupState() throws ServiceException;
+    StateNumDTO countPlatformState() throws ServiceException;
 /*
  *监控点业务状态组合
  */
-    StateNumDTO CountPointState() throws ServiceException;
+    StateNumDTO countPointState() throws ServiceException;
 /*
  * host service
  */
@@ -54,18 +54,18 @@ public interface CountStateService {
  * hostGroup service
  */
     /**
-     * 获取所有业务平台数量 hostgroup number all
+     * 获取所有业务平台数量 platform number all
      * @return
      * @throws ServiceException
      */
-    int countAllHostGroup() throws ServiceException;
+    int countAllPlatform() throws ServiceException;
 
     /**
      * 获取问题业务平台数量  problem
      * @return
      * @throws ServiceException
      */
-    int countProblemHostGroup() throws ServiceException;
+    int countProblemPlatform() throws ServiceException;
 
 
     /**
@@ -73,7 +73,7 @@ public interface CountStateService {
      * @return
      * @throws ServiceException
      */
-    int countOkHostGroup() throws ServiceException;
+    int countOkPlatform() throws ServiceException;
 
 /**
  * application service

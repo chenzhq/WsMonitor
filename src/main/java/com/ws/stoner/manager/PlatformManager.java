@@ -1,23 +1,30 @@
 package com.ws.stoner.manager;
 
+import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
+import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.model.dto.StateNumDTO;
-import org.springframework.stereotype.Service;
+import com.ws.stoner.model.brief.HostGroupBrief;
 
 import java.util.List;
 
 /**
- * Created by chenzheqi on 2017/5/24.
+ * Created by zkf on 2017/6/1.
  */
-@Service
 public interface PlatformManager {
-    int countUnknownPlatform();
+    /**
+     * List hostgroup list.
+     *
+     * @return the list
+     * @throws AuthExpireException the auth expire exception
+     */
+    List<HostGroupBrief> listPlatform(HostGroupGetRequest request) throws AuthExpireException;
 
-    int countMaintenancePlatform();
+    /**
+     * 根据request获取业务平台数量 hostgroup number
+     * @return
+     * @throws ManagerException
+     */
+    int countPlatform(HostGroupGetRequest request) throws ManagerException;
 
-    int countProblemPlatform() throws ManagerException;
 
-    int countOkPlatform();
-
-    List<StateNumDTO> countAllPlatform() throws ManagerException;
 }
