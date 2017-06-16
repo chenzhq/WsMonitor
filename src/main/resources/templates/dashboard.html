@@ -308,13 +308,13 @@
 								<div class="ui tab segment" data-tab="second">
 									<div class="row">
 										<div class="sixteen wide column" data-tab="second">
-											<table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+											<table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
 												<thead>
 												<tr>
-													<th>Name</th>
-													<th>availability</th>
-													<th>state</th>
-													<th>problemNum</th>
+													<th>名称</th>
+													<th>可用性</th>
+													<th>状态</th>
+													<th>问题数</th>
 												</tr>
 												</thead>
 												<tbody id="platform_list">
@@ -329,21 +329,20 @@
 											<div class="ui center aligned grid">
 												<div class="column">
 													<div class="ui buttons">
-														<button class="ui button">今天</button>
-														<button class="ui button">昨天</button>
-														<button class="ui button">三天</button>
-														<button class="ui button">一周</button>
-														<button class="ui button">自定义</button>
+														<button id="input1" class="ui button">今天</button>
+														<button id="input2" class="ui button">三天</button>
+														<button id="input3" class="ui button">一周</button>
+														<button id="input4" class="ui button">一月</button>
 													</div>
 												</div>
 											</div>
-											<table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+											<table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
 												<thead>
 												<tr>
-													<th>Name</th>
-													<th>lastData</th>
-													<th>state</th>
-													<th>lastChange</th>
+													<th>名称</th>
+													<th>最新值</th>
+													<th>状态</th>
+													<th>最新数据时间</th>
 												</tr>
 												</thead>
 												<tbody id="point_list">
@@ -355,13 +354,13 @@
 								<div class="ui tab segment" data-tab="fourth">
 									<div class="row">
 										<div class="sixteen wide column" data-tab="second">
-											<table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+											<table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
 												<thead>
 												<tr>
-													<th>Name</th>
+													<th>名称</th>
 													<th>ip</th>
-													<th>state</th>
-													<th>type</th>
+													<th>状态</th>
+													<th>类型</th>
 												</tr>
 												</thead>
 												<tbody id="host_list">
@@ -391,6 +390,15 @@
     $('.menu .item')
         .tab()
     ;
+    //给搜索按钮绑定点击事件
+    $(document).on("click","#input1",function(){
+        //自己定义的搜索框，可以是时间控件，或者checkbox 等等
+        var args1 = new Date();
+        //alert(args1);
+        //用空格隔开，达到多条件搜索的效果，相当于两个关键字
+        table.search(args1).draw();
+        //table.search(args1+" "+args2).draw(false);//保留分页，排序状态
+    });
     //业务系统列表加载
     $.ajax({
         type: "post",
@@ -407,7 +415,29 @@
                 var problemNum=data[i].problemNum;
                 var state=data[i].state;
                 $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
-            }
+            };
+            var dtable = $("#platform_table").DataTable({
+                "pagingType": "full_numbers_icon",
+                order: [0, 'desc'],
+                responsive: true,
+                "iDisplayLength" : 10,
+                "aLengthMenu" : [ [ 10, 20, -1 ], [ "10", "20", "所有" ] ],
+                "language": {
+                    "sLengthMenu" : "每页显示 _MENU_ 条记录",
+                    "sZeroRecords" : "对不起，没有匹配的数据",
+                    "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
+                    "sInfoEmpty" : "没有匹配的数据",
+                    "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
+                    "sProcessing" : "正在加载中...",
+                    "sSearch" : "全文搜索：",
+                    "oPaginate" : {
+                        "sFirst" : "第一页",
+                        "sPrevious" : " 上一页 ",
+                        "sNext" : " 下一页 ",
+                        "sLast" : " 最后一页 "
+                    }
+                },
+            });
         },
         error: function (errorMsg) {
             alert("图表请求数据失败!");
@@ -429,7 +459,29 @@
                 var lastChange=data[i].lastChange;
                 var state=data[i].state;
                 $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].lastData+"</td><td>"+data[i].state+"</td><td>"+data[i].lastChange+"</td></tr>");
-            }
+            };
+            var dtable = $("#point_table").DataTable({
+                "pagingType": "full_numbers_icon",
+                order: [0, 'desc'],
+                responsive: true,
+                "iDisplayLength" : 10,
+                "aLengthMenu" : [ [ 10, 50, -1 ], [ "10", "50", "所有" ] ],
+                "language": {
+                    "sLengthMenu" : "每页显示 _MENU_ 条记录",
+                    "sZeroRecords" : "对不起，没有匹配的数据",
+                    "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
+                    "sInfoEmpty" : "没有匹配的数据",
+                    "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
+                    "sProcessing" : "正在加载中...",
+                    "sSearch" : "全文搜索：",
+                    "oPaginate" : {
+                        "sFirst" : "第一页",
+                        "sPrevious" : " 上一页 ",
+                        "sNext" : " 下一页 ",
+                        "sLast" : " 最后一页 "
+                    }
+                },
+            });
         },
         error: function (errorMsg) {
             alert("图表请求数据失败!");
@@ -451,7 +503,29 @@
                 var type=data[i].type;
                 var state=data[i].state;
                 $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].state+"</td><td>"+data[i].type+"</td></tr>");
-            }
+            };
+            var dtable = $("#host_table").DataTable({
+                "pagingType": "full_numbers_icon",
+                order: [0, 'desc'],
+                responsive: true,
+                "iDisplayLength" : 10,
+                "aLengthMenu" : [ [ 10, 20, -1 ], [ "10", "20", "所有" ] ],
+                "language": {
+                    "sLengthMenu" : "每页显示 _MENU_ 条记录",
+                    "sZeroRecords" : "对不起，没有匹配的数据",
+                    "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
+                    "sInfoEmpty" : "没有匹配的数据",
+                    "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
+                    "sProcessing" : "正在加载中...",
+                    "sSearch" : "全文搜索：",
+                    "oPaginate" : {
+                        "sFirst" : "第一页",
+                        "sPrevious" : " 上一页 ",
+                        "sNext" : " 下一页 ",
+                        "sLast" : " 最后一页 "
+                    }
+                },
+            });
         },
         error: function (errorMsg) {
             alert("图表请求数据失败!");

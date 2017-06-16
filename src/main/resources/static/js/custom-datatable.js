@@ -148,11 +148,11 @@
     }
 })(window, document);
 
-$(document).ready(function () {
+/*$(document).ready(function () {
     var dtable = $('.table').DataTable({
         "pagingType": "full_numbers_icon",
         order: [0, 'desc'],
           responsive: true
     });
-});
+});*/
 
