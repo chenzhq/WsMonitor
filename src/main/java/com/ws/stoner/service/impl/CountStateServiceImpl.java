@@ -329,14 +329,14 @@ public class CountStateServiceImpl implements CountStateService {
     }
 
     /**
-     * 获取正常监控点
+     * 获取正常监控点 数量
      * okAppNum = allAppNum - problemAppNum
      * @return
      * @throws ServiceException
      */
     @Override
     public int countOkApp() throws ServiceException {
-        int okAppNum = countAllApp() - countProblemHost();
+        int okAppNum = countAllApp() - countProblemApp();
         return okAppNum;
 
     }
