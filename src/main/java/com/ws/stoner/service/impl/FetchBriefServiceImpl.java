@@ -42,7 +42,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     private ItemManager itemManager;
 
     @Autowired
-    private GroupManager groupManager;
+    private PlatformManager platformManager;
 
     /**
      * 获取简约所有主机list 剔除停用的
@@ -138,18 +138,18 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     }
 
     /**
-     * 获取简约hostGroup list
+     * 获取简约listPlatform list
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<HostGroupBrief> listHostGroup() throws ServiceException {
+    public List<HostGroupBrief> listPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         groupRequest.getParams().setMonitoredHosts(true).setRealHosts(true);
         groupRequest.getParams();
         List<HostGroupBrief> hostGroups ;
         try {
-            hostGroups = groupManager.listGroup(groupRequest);
+            hostGroups = platformManager.listPlatform(groupRequest);
         } catch (AuthExpireException e) {
             e.printStackTrace();
             return null;
