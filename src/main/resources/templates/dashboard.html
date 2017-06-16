@@ -232,13 +232,31 @@
 											</div>
 										</div>
 									</div>
+									<div class="ui divider"></div>
 									<div class="row">
 										<div class="sixteen wide column">
-											<div class="ui divider"></div>
-											<h4 class="ui horizontal divider header">
-												<i class="bar chart icon"></i>
-												最近的20个问题
-											</h4>
+											<div class="ui grid">
+												<div class="six wide column">
+													<div class="ui grey large header">
+														<i class="bar chart icon"></i>
+														最新问题
+													</div>
+												</div>
+												<div class="ten wide column">
+													<div class="ui grid">
+														<div class="column">
+															<div class="ui buttons">
+																<button id="input1" class="ui button">今天</button>
+																<button id="input2" class="ui button">三天</button>
+																<button id="input3" class="ui button">一周</button>
+																<button id="input4" class="ui button">一月</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+
+
 											<table class="ui small table">
 												<thead>
 												<tr >
@@ -326,23 +344,13 @@
 								<div class="ui tab segment" data-tab="third">
 									<div class="row">
 										<div class="sixteen wide column" data-tab="second">
-											<div class="ui center aligned grid">
-												<div class="column">
-													<div class="ui buttons">
-														<button id="input1" class="ui button">今天</button>
-														<button id="input2" class="ui button">三天</button>
-														<button id="input3" class="ui button">一周</button>
-														<button id="input4" class="ui button">一月</button>
-													</div>
-												</div>
-											</div>
 											<table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
 												<thead>
 												<tr>
 													<th>名称</th>
-													<th>最新值</th>
+													<th>监控点</th>
 													<th>状态</th>
-													<th>最新数据时间</th>
+													<th>监控项问题数量</th>
 												</tr>
 												</thead>
 												<tbody id="point_list">
@@ -358,9 +366,11 @@
 												<thead>
 												<tr>
 													<th>名称</th>
+													<th>主机</th>
 													<th>ip</th>
 													<th>状态</th>
 													<th>类型</th>
+													<th>监控点问题数量</th>
 												</tr>
 												</thead>
 												<tbody id="host_list">
@@ -398,11 +408,11 @@
     //给搜索按钮绑定点击事件
     $(document).on("click","#input1",function(){
         //自己定义的搜索框，可以是时间控件，或者checkbox 等等
-        var args1 = new Date();
+        var date=new Date();
+        var args1 = date.getFullYear()+"年"+(date.getMonth()+1)+"月"+date.getDate()+"日";
         //alert(args1);
-        //用空格隔开，达到多条件搜索的效果，相当于两个关键字
-        table.search(args1).draw();
-        //table.search(args1+" "+args2).draw(false);//保留分页，排序状态
+        //table.search(args1).draw();
+
     });
     //业务系统列表加载
     $.ajax({
@@ -459,11 +469,11 @@
             $("#point_list").html("");
             var data=result.data;
             for(var i in data){
-                var lastData=data[i].lastData;
+                var pointId=data[i].pointId;
                 var name=data[i].name;
-                var lastChange=data[i].lastChange;
+                var problemNum=data[i].problemNum;
                 var state=data[i].state;
-                $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].lastData+"</td><td>"+data[i].state+"</td><td>"+data[i].lastChange+"</td></tr>");
+                $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].pointId+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
             };
             var dtable = $("#point_table").DataTable({
                 "pagingType": "full_numbers_icon",
@@ -507,7 +517,9 @@
                 var name=data[i].name;
                 var type=data[i].type;
                 var state=data[i].state;
-                $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].state+"</td><td>"+data[i].type+"</td></tr>");
+                var hostId=data[i].hostId;
+                var problemNum=data[i].problemNum;
+                $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].hostId+"</td><td>"+data[i].ip+"</td><td>"+data[i].state+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"</td></tr>");
             };
             var dtable = $("#host_table").DataTable({
                 "pagingType": "full_numbers_icon",
