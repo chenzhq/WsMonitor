@@ -11,6 +11,7 @@
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
@@ -399,6 +400,7 @@
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 	</th:block>
+	<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 </th:block>
 <script type="text/javascript">
     //选项卡初始化
@@ -422,40 +424,60 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            $("#platform_list").html("");
             var data=result.data;
-            for(var i in data){
-                var availability=data[i].availability;
-                var name=data[i].name;
-                var problemNum=data[i].problemNum;
-                var state=data[i].state;
-                $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
-            };
-            var dtable = $("#platform_table").DataTable({
-                "pagingType": "full_numbers_icon",
-                order: [0, 'desc'],
-                responsive: true,
-                "iDisplayLength" : 10,
-                "aLengthMenu" : [ [ 10, 20, -1 ], [ "10", "20", "所有" ] ],
-                "language": {
-                    "sLengthMenu" : "每页显示 _MENU_ 条记录",
-                    "sZeroRecords" : "对不起，没有匹配的数据",
-                    "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
-                    "sInfoEmpty" : "没有匹配的数据",
-                    "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
-                    "sProcessing" : "正在加载中...",
-                    "sSearch" : "全文搜索：",
-                    "oPaginate" : {
-                        "sFirst" : "第一页",
-                        "sPrevious" : " 上一页 ",
-                        "sNext" : " 下一页 ",
-                        "sLast" : " 最后一页 "
-                    }
-                },
-            });
+            var success=result.success;
+            if(success){
+                $("#platform_list").html("");
+                for(var i in data){
+                    var availability=data[i].availability;
+                    var name=data[i].name;
+                    var problemNum=data[i].problemNum;
+                    var state=data[i].state;
+                    $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
+                };
+                var dtable = $("#platform_table").DataTable({
+                    "pagingType": "full_numbers_icon",
+                    order: [0, 'desc'],
+                    responsive: true,
+                    "iDisplayLength" : 10,
+                    "aLengthMenu" : [ [ 10, 20, -1 ], [ "10", "20", "所有" ] ],
+                    "language": {
+                        "sLengthMenu" : "每页显示 _MENU_ 条记录",
+                        "sZeroRecords" : "对不起，没有匹配的数据",
+                        "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
+                        "sInfoEmpty" : "没有匹配的数据",
+                        "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
+                        "sProcessing" : "正在加载中...",
+                        "sSearch" : "全文搜索：",
+                        "oPaginate" : {
+                            "sFirst" : "第一页",
+                            "sPrevious" : " 上一页 ",
+                            "sNext" : " 下一页 ",
+                            "sLast" : " 最后一页 "
+                        }
+                    },
+                });
+			}
+			else {
+                Lobibox.notify("default", {
+                    size: "normal",
+                    rounded: false,
+                    delayIndicator: true,
+                    msg: "请求数据失败!",
+                    icon: "comment icon",
+                    title: "json 数据",
+                });
+			}
         },
         error: function (errorMsg) {
-            alert("图表请求数据失败!");
+			Lobibox.notify("error", {
+				size: "normal",
+				rounded: false,
+				delayIndicator: true,
+				msg: "请求数据失败!",
+				icon: "warning icon",
+				title: "AJAX 链接",
+			});
         }
     })
     //监控点列表加载
@@ -466,40 +488,60 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            $("#point_list").html("");
             var data=result.data;
-            for(var i in data){
-                var pointId=data[i].pointId;
-                var name=data[i].name;
-                var problemNum=data[i].problemNum;
-                var state=data[i].state;
-                $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].pointId+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
-            };
-            var dtable = $("#point_table").DataTable({
-                "pagingType": "full_numbers_icon",
-                order: [0, 'desc'],
-                responsive: true,
-                "iDisplayLength" : 10,
-                "aLengthMenu" : [ [ 10, 50, -1 ], [ "10", "50", "所有" ] ],
-                "language": {
-                    "sLengthMenu" : "每页显示 _MENU_ 条记录",
-                    "sZeroRecords" : "对不起，没有匹配的数据",
-                    "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
-                    "sInfoEmpty" : "没有匹配的数据",
-                    "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
-                    "sProcessing" : "正在加载中...",
-                    "sSearch" : "全文搜索：",
-                    "oPaginate" : {
-                        "sFirst" : "第一页",
-                        "sPrevious" : " 上一页 ",
-                        "sNext" : " 下一页 ",
-                        "sLast" : " 最后一页 "
-                    }
-                },
-            });
+            var success=result.success;
+            if(success){
+                $("#point_list").html("");
+                for(var i in data){
+                    var pointId=data[i].pointId;
+                    var name=data[i].name;
+                    var problemNum=data[i].problemNum;
+                    var state=data[i].state;
+                    $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].pointId+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
+                };
+                var dtable = $("#point_table").DataTable({
+                    "pagingType": "full_numbers_icon",
+                    order: [0, 'desc'],
+                    responsive: true,
+                    "iDisplayLength" : 10,
+                    "aLengthMenu" : [ [ 10, 50, -1 ], [ "10", "50", "所有" ] ],
+                    "language": {
+                        "sLengthMenu" : "每页显示 _MENU_ 条记录",
+                        "sZeroRecords" : "对不起，没有匹配的数据",
+                        "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
+                        "sInfoEmpty" : "没有匹配的数据",
+                        "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
+                        "sProcessing" : "正在加载中...",
+                        "sSearch" : "全文搜索：",
+                        "oPaginate" : {
+                            "sFirst" : "第一页",
+                            "sPrevious" : " 上一页 ",
+                            "sNext" : " 下一页 ",
+                            "sLast" : " 最后一页 "
+                        }
+                    },
+                });
+            }
+            else {
+                Lobibox.notify("default", {
+                    size: "normal",
+                    rounded: false,
+                    delayIndicator: true,
+                    msg: "请求数据失败!",
+                    icon: "comment icon",
+                    title: "json 数据",
+                });
+            }
         },
         error: function (errorMsg) {
-            alert("图表请求数据失败!");
+            Lobibox.notify("error", {
+                size: "normal",
+                rounded: false,
+                delayIndicator: true,
+                msg: "请求数据失败!",
+                icon: "warning icon",
+                title: "AJAX 链接",
+            });
         }
     })
     //设备列表加载
@@ -510,42 +552,62 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            $("#host_list").html("");
             var data=result.data;
-            for(var i in data){
-                var ip=data[i].ip;
-                var name=data[i].name;
-                var type=data[i].type;
-                var state=data[i].state;
-                var hostId=data[i].hostId;
-                var problemNum=data[i].problemNum;
-                $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].hostId+"</td><td>"+data[i].ip+"</td><td>"+data[i].state+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"</td></tr>");
-            };
-            var dtable = $("#host_table").DataTable({
-                "pagingType": "full_numbers_icon",
-                order: [0, 'desc'],
-                responsive: true,
-                "iDisplayLength" : 10,
-                "aLengthMenu" : [ [ 10, 20, -1 ], [ "10", "20", "所有" ] ],
-                "language": {
-                    "sLengthMenu" : "每页显示 _MENU_ 条记录",
-                    "sZeroRecords" : "对不起，没有匹配的数据",
-                    "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
-                    "sInfoEmpty" : "没有匹配的数据",
-                    "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
-                    "sProcessing" : "正在加载中...",
-                    "sSearch" : "全文搜索：",
-                    "oPaginate" : {
-                        "sFirst" : "第一页",
-                        "sPrevious" : " 上一页 ",
-                        "sNext" : " 下一页 ",
-                        "sLast" : " 最后一页 "
-                    }
-                },
-            });
+            var success=result.success;
+            if(success) {
+                $("#host_list").html("");
+                for(var i in data){
+                    var ip=data[i].ip;
+                    var name=data[i].name;
+                    var type=data[i].type;
+                    var state=data[i].state;
+                    var hostId=data[i].hostId;
+                    var problemNum=data[i].problemNum;
+                    $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].hostId+"</td><td>"+data[i].ip+"</td><td>"+data[i].state+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"</td></tr>");
+                };
+                var dtable = $("#host_table").DataTable({
+                    "pagingType": "full_numbers_icon",
+                    order: [0, 'desc'],
+                    responsive: true,
+                    "iDisplayLength" : 10,
+                    "aLengthMenu" : [ [ 10, 20, -1 ], [ "10", "20", "所有" ] ],
+                    "language": {
+                        "sLengthMenu" : "每页显示 _MENU_ 条记录",
+                        "sZeroRecords" : "对不起，没有匹配的数据",
+                        "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
+                        "sInfoEmpty" : "没有匹配的数据",
+                        "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
+                        "sProcessing" : "正在加载中...",
+                        "sSearch" : "全文搜索：",
+                        "oPaginate" : {
+                            "sFirst" : "第一页",
+                            "sPrevious" : " 上一页 ",
+                            "sNext" : " 下一页 ",
+                            "sLast" : " 最后一页 "
+                        }
+                    },
+                });
+            }
+            else {
+                Lobibox.notify("default", {
+                    size: "normal",
+                    rounded: false,
+                    delayIndicator: true,
+                    msg: "请求数据失败!",
+                    icon: "comment icon",
+                    title: "json 数据",
+                });
+            }
         },
         error: function (errorMsg) {
-            alert("图表请求数据失败!");
+            Lobibox.notify("error", {
+                size: "normal",
+                rounded: false,
+                delayIndicator: true,
+                msg: "请求数据失败!",
+                icon: "warning icon",
+                title: "AJAX 链接",
+            });
         }
     })
 </script>
@@ -617,7 +679,14 @@
             }
         },
         error: function (errorMsg) {
-            alert("图表请求数据失败!");
+            Lobibox.notify("error", {
+                size: "normal",
+                rounded: false,
+                delayIndicator: true,
+                msg: "请求数据失败!",
+                icon: "warning icon",
+                title: "AJAX 链接",
+            });
         }
     })
     //监控点饼图加载
@@ -640,7 +709,14 @@
             }
         },
         error: function (errorMsg) {
-            alert("图表请求数据失败!");
+            Lobibox.notify("error", {
+                size: "normal",
+                rounded: false,
+                delayIndicator: true,
+                msg: "请求数据失败!",
+                icon: "warning icon",
+                title: "AJAX 链接",
+            });
         }
     })
     //设备饼图加载
@@ -663,7 +739,14 @@
             }
         },
         error: function (errorMsg) {
-            alert("图表请求数据失败!");
+            Lobibox.notify("error", {
+                size: "normal",
+                rounded: false,
+                delayIndicator: true,
+                msg: "请求数据失败!",
+                icon: "warning icon",
+                title: "AJAX 链接",
+            });
         }
     })
 </script>
