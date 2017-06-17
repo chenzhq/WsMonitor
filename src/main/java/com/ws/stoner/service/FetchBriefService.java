@@ -4,6 +4,7 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
+import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.view.BriefProblemVO;
 
 import java.util.List;
@@ -15,6 +16,13 @@ public interface FetchBriefService {
 /*
  *host service
  */
+
+    /**
+     * 组装业务host <BriefHostDTO>list
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefHostDTO> listAllHost() throws ServiceException;
     /**
      *  获取简约所有主机list 剔除停用的
      * @return
