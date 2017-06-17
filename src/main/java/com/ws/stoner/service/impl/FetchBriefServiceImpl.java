@@ -51,7 +51,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
      */
     @Override
     public List<BriefHostDTO> listAllHost() throws ServiceException {
-        //step1:取 hostid,name,ip,
+        //step1:取 hostid,name
+        //step2: 取ip:selectInterface [ip]
         return null;
     }
 
