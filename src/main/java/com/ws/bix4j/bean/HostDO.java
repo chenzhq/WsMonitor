@@ -31,6 +31,8 @@ public class HostDO{
     @JSONField(name = "proxy_hostid")
     private String proxyHostId;
     private int status;
+    @JSONField(name = "templateid")
+    private String templateId;
     /**
      *
      * */
@@ -378,6 +380,15 @@ public class HostDO{
 
     public HostDO setMaintenanceFrom(int maintenanceFrom) {
         this.maintenanceFrom = Instant.ofEpochSecond(maintenanceFrom);
+        return this;
+    }
+
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    public HostDO setTemplateId(String templateId) {
+        this.templateId = templateId;
         return this;
     }
 

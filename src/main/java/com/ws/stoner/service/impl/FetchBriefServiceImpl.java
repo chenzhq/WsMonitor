@@ -45,6 +45,17 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     private PlatformManager platformManager;
 
     /**
+     * 组装业务host <BriefHostDTO>list
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefHostDTO> listAllHost() throws ServiceException {
+        //step1:取 hostid,name,ip,
+        return null;
+    }
+
+    /**
      * 获取简约所有主机list 剔除停用的
      * @return
      * @throws ServiceException
