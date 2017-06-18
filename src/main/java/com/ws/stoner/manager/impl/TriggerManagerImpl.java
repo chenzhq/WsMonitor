@@ -83,7 +83,13 @@ public class TriggerManagerImpl implements TriggerManager {
 
     @Override
     public <T> List<T> listTrigger(TriggerGetRequest triggerGetRequest, Class<T> clazz) {
-        return null;
+        List<T> result = new ArrayList<>();
+        try {
+            result = zApi.Trigger().get(triggerGetRequest, clazz);
+        } catch (ZApiException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 
