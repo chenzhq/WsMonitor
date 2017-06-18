@@ -1,82 +1,121 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
+<head  th:fragment="header">
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>登录</title>
-    <link rel="stylesheet" href="plugins/layui/css/layui.css" th:href="@{/plugins/layui/css/layui.css}" media="all"/>
-    <link rel="stylesheet" href="css/login.css" th:href="@{/css/login.css}"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
+    <link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}" />
+    <link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}" />
+    <style type="text/css">
+        body {
+            background-color: #DADADA;
+        }
+        body > .grid {
+            height: 100%;
+        }
+        .image {
+            margin-top: -100px;
+        }
+        .column {
+            max-width: 450px;
+        }
+    </style>
 </head>
 
-<body class="beg-login-bg">
-<div class="beg-login-box">
-    <header>
-        <h1>监控系统登录</h1>
-    </header>
-    <div class="beg-login-main">
-        <form class="layui-form" id="form" th:action="@{/login/auth}" th:object="${loginFormQuery}" method="post" onSubmit="return check();">
-            <input
-                name="__RequestVerificationToken" type="hidden"
-                value="fkfh8D89BFqTdrE2iiSdG_L781RSRtdWOH411poVUWhxzA5MzI8es07g6KPYQh9Log-xf84pIR2RIAEkOokZL3Ee3UKmX0Jc8bW8jOdhqo81"/>
-            <div class="layui-form-item" >
-                <label class="beg-login-icon">
-                    <i class="layui-icon">&#xe612;</i>
-                </label>
-                    <input type="text" name="userName" lay-verify="username" autocomplete="off" placeholder="这里输入登录名" class="layui-input" th:field="*{username}">
-            </div>
-            <div class="layui-form-item" >
-                <label class="beg-login-icon">
-                    <i class="layui-icon">&#xe642;</i>
-                </label>
-                <input type="password" name="password" lay-verify="password" autocomplete="off" placeholder="这里输入密码" class="layui-input">
-            </div>
-            <div class="layui-form-item" >
-                <div class="beg-pull-left beg-login-remember">
-                    <label>记住帐号？</label>
-                    <input type="checkbox" name="rememberMe" value="true" lay-skin="switch" checked title="记住帐号" th:field ="*{rememberMe}">
+<body>
+    <div class="ui center aligned middle aligned grid">
+        <div class="column">
+            <h2 class="ui teal image header">
+                <img src="../static/images/logo.png" th:src="@{/images/logo.png}" class="image">
+                <div class="content">
+                    登录到账号
                 </div>
-                <div class="beg-pull-right">
-                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="login">
-                        <i class="layui-icon">&#xe650;</i> 登录
-                    </button>
+            </h2>
+            <form class="ui large form" th:classappend="${#fields.hasErrors('password')} ? error : '' " id="form" th:action="@{/login/auth}" th:object="${loginFormQuery}" method="post" onSubmit="return check();">
+                <div class="ui stacked segment">
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="user icon"></i>
+                            <input type="text" name="username" th:field="*{username}" placeholder="请输入您的账号" >
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" name="password" placeholder="密码" >
+                        </div>
+                    </div>
+                    <div class="ui fluid large teal submit button">登录</div>
                 </div>
-                <div class="beg-clear"></div>
-            </div>
-        </form>
+
+                <div class="ui error message">
+                    <ul class="list">
+                        <li th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></li>
+                    </ul>
+                </div>
+
+                <div class="ui message">
+                    <div class="ui slider checkbox " >
+                        <label>记住帐号？</label>
+                        <input type="checkbox"  name="rememberMe" th:field ="*{rememberMe}" />
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
     </div>
-    <footer>
-        <p>whstoneJK 欢迎欢迎\(^o^)/~</p>
-    </footer>
-</div>
-<script type="text/javascript" src="plugins/layui/layui.js" th:src="@{plugins/layui/layui.js}"></script>
-<script>
-    /*登陆验证*/
-    layui.use(['layer', 'form'], function () {
-        var layer = layui.layer,
-            $ = layui.jquery,
-            form = layui.form();
+    <script>
+        //登录提交验证
+        function check() {
 
-        //自定义验证规则
-        form.verify({
-            username:[/\S/, '用户名不能为空'],
-            content: function(value) {
-                layedit.sync(editIndex);
-            }
-            ,password: [/\S/, '密码不能为空'],
-            content: function(value) {
-                layedit.sync(editIndex);
-            }
-        });
-        form.on('submit(login)',function(data){
-//            console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
-//            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-//            location.href='dashboard.html';
-        });
-    });
+        }
+        //登录验证
+        $(document)
+            .ready(function() {
+                $('.ui.form')
+                    .form({
+                        fields: {
+                            email: {
+                                identifier  : 'username',
+                                rules: [
+                                    {
+                                        type   : 'empty',
+                                        prompt : '账号不能为空'
+                                    },
+                                ]
+                            },
+                            password: {
+                                identifier  : 'password',
+                                rules: [
+                                    {
+                                        type   : 'empty',
+                                        prompt : '密码不能为空'
+                                    },
+                                ]
+                            }
+                        }/*,
+                        {
+                            onSuccess: function(){
+                                alert("成功了啊");
+                            }
+                        }*/
+                    })
+                ;
+            })
+        ;
 
-</script>
+        $('.ui.form').submit(function(e){
+            return true;
+        });
+        //复选框初始化
+        $('.ui.checkbox')
+            .checkbox()
+        ;
+    </script>
+
 </body>
 
 </html>

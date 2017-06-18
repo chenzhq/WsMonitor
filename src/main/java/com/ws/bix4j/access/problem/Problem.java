@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ws.bix4j.access.ZApiMethod;
+import com.ws.bix4j.bean.ProblemDO;
 import com.ws.bix4j.exception.ZApiException;
+
+import java.util.List;
 
 /**
  * Created by chenzheqi on 2017/5/22.
@@ -14,10 +17,14 @@ public class Problem extends ZApiMethod {
         super(apiUrl, auth);
     }
 
-    public ProblemGetResponse get(ProblemGetRequest request) throws ZApiException {
+    public List<ProblemDO> get(ProblemGetRequest problemGetRequest) throws ZApiException {
+        return get(problemGetRequest, ProblemDO.class);
+    }
+
+    public <T> List<T> get(ProblemGetRequest request, Class<T> clazz) throws ZApiException {
         request.setAuth(this.auth);
         String responseJson = sendRequest(JSON.toJSONString(request, SerializerFeature.NotWriteDefaultValue));
-        ProblemGetResponse response = JSON.parseObject(responseJson, ProblemGetResponse.class);
+        List<T> response = JSON.parseArray(JSON.parseObject(responseJson).getJSONArray("result").toString(), clazz);
         return response;
     }
 

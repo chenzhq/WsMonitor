@@ -1,400 +1,387 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title></title>
-		<!-- 引入 echarts.js -->
-        <script src="js/echarts.min.js"></script>
-		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
-		<link rel="stylesheet" href="css/main.css" />
-	</head>
+<head>
+	<meta charset="UTF-8">
+	<title>监控系统</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"  />
+	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}" />
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
+	<link href="../static/css/main.css" rel="stylesheet" />
+	<link href="../static/css/pace.css" rel="stylesheet" />
+	<!-- 引入 echarts.js -->
+	<script src="../static/js/echarts.min.js"></script>
+	<!-- 引入 ajax异步请求，模拟服务器地址 -->
+	<script src="http://rapapi.org/rap.plugin.js?projectId=19544"></script>
+</head>
 
-	<body>
-		<div class="admin-main">
-			<!-- 主内容开始-
-				<ul class="layui-nav layui-inline"   style=" background:#FFF;">
-					<li class="layui-nav-item  layui-this"  >
-						<a href="javascript:;" style=" color:#000;font-size:18px;line-height:200%;">全部</a>
-					</li>
-					<li class="layui-nav-item">
-						<a href=""  style=" color:#000;font-size:18px;line-height:200%;">设备</a>
-					</li>
-					<li class="layui-nav-item">
-						<a href=""  style=" color:#000;font-size:18px;line-height:200%;">监控点</a>
-					</li>
-					<li class="layui-nav-item">
-						<a href=""  style=" color:#000;font-size:18px;line-height:200%;">业务平台</a>
-					</li>
-				</ul>-->
-				<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin-top: -20px;">
-				  <ul class="layui-tab-title">
-					<li class="layui-this">全部</li>
-					<li>设备</li>
-					<li>监控点</li>
-					<li>业务平台</li>
-				  </ul>
-				  <div class="layui-tab-content" style="margin-top: -20px;margin-bottom: -50px;">
-					<div class="layui-tab-item layui-show" style="height: 300px;">
-						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-							<div id="main0" style="float:right;width: 33%;height:100%;"></div>
-							<div id="main1" style="float:right;width: 33%;height:100%;"></div>
-							<div id="main2" style="float:right;width: 33%;height:100%;"></div>
-						<!-- 为 Table 准备一个具备样式的 DOM -->
-					</div>
-					<div class="layui-tab-item"  style="height: 300px;">
-						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-							<div id="main0" style="float:right;width: 33%;height:100%;"></div>
-						<!-- 为 Table 准备一个具备样式的 DOM -->					
-					</div>
-					<div class="layui-tab-item"  style="height: 300px;">
-						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-							<div id="main1" style="float:right;width: 33%;height:100%;"></div>
-						<!-- 为 Table 准备一个具备样式的 DOM -->
-					</div>
-					<div class="layui-tab-item"  style="height: 300px;">
-						<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-							<div id="main2" style="float:right;width: 33%;height:100%;"></div>
-						<!-- 为 Table 准备一个具备样式的 DOM -->					
-					</div>
-				  </div>
-				</div> 
-
-			    
-				<fieldset class="layui-elem-field">
-					<legend>最近20个问题</legend>
-					<div class="layui-field-box">
-						<table class="layui-table">
-							<thead>
-								<tr>
-									<th style="text-align: center;">主机</th>
-									<th style="text-align: center;">问题</th>
-									<th style="text-align: center;">上次修改于</th>
-									<th style="text-align: center;">历时</th>
-									<th style="text-align: center;">确认</th>
-								</tr>				
-							</thead>
-							<tbody id="content">							
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								<tr>
-									<td>主机1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="text-align: center;">2017-4-27 15:33:20</td>
-									<td style="text-align: center;"><p>2天4小时50分</p></td>
-									<td style="text-align: center;"><button class="layui-btn layui-btn-disabled layui-btn-mini">不</button></td>
-								</tr>
-								
-							
-							</tbody>
-						</table>
-					</div>
-				</fieldset>
-			<!-- 主内容结束-->
-			<script type="text/javascript">
-				// 基于准备好的dom，初始化echarts实例
-				var myChart = echarts.init(document.getElementById('main0'));
-				
-		
-				// 指定图表的配置项和数据
-				var option = {
-						title: {
-									text: '7台',
-									subtext: '业务设备',
-									x: 'center',
-									y: 'center',
-									itemGap: 10,
-									textStyle : {
-										color : '#01AAED',
-										fontFamily : '微软雅黑',
-										fontSize : 24,
-										fontWeight : 'bolder'
-									}
-								},
-						tooltip : {
-									trigger: 'item',
-									formatter: "{a} <br/>{b} : {c} ({d}%)"
-								},
-						series: [
-							{
-								name:'访问来源',
-								type:'pie',
-								radius: ['40%', '60%'],
-								itemStyle: {  
-									normal: {  
-									 label:{  
-											show: true,  
-											formatter: function(param) {
-												 return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
-											},
-											textStyle : {
-												fontWeight : 'bolder'
-											}
-										}   
-									},
-								 },    
-								data:[
-									{value:2, name:'危险'},
-									{value:1, name:'故障'},
-									{value:4, name:'正常'},
-									{value:0, name:'未知'},
-								], 
-								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
-							}
-						]
-					};
-		
-				// 使用刚指定的配置项和数据显示图表。
-				myChart.setOption(option);
-
-				// 基于准备好的dom，初始化echarts实例
-				var myChart = echarts.init(document.getElementById('main1'));
-		
-				// 指定图表的配置项和数据
-				var option = {
-						title: {
-									text: '1014个',
-									subtext: '监控点',
-									x: 'center',
-									y: 'center',
-									itemGap: 10,
-									textStyle : {
-										color : '#01AAED',
-										fontFamily : '微软雅黑',
-										fontSize : 24,
-										fontWeight : 'bolder'
-									}
-								},
-						tooltip : {
-									trigger: 'item',
-									formatter: "{a} <br/>{b} : {c} ({d}%)"
-								},
-						series: [
-							{
-								name:'访问来源',
-								type:'pie',
-								radius: ['40%', '60%'],
-								itemStyle: {  
-									normal: {  
-									 label:{  
-											show: true,  
-											formatter: function(param) {
-												 return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
-											},
-											textStyle : {
-												fontWeight : 'bolder'
-											}
-										}   
-									},
-								 },    
-								data:[
-									{value:335, name:'危险'},
-									{value:310, name:'故障'},
-									{value:234, name:'正常'},
-									{value:135, name:'未知'},
-								], 
-								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
-							}
-						]
-					};
-		
-				// 使用刚指定的配置项和数据显示图表。
-				myChart.setOption(option);
-
-
-				// 基于准备好的dom，初始化echarts实例
-				var myChart = echarts.init(document.getElementById('main2'));
-		
-				// 指定图表的配置项和数据
-				var option = {
-						title: {
-									text: '80台',
-									subtext: '设备',
-									x: 'center',
-									y: 'center',
-									itemGap: 10,
-									textStyle : {
-										color : '#01AAED',
-										fontFamily : '微软雅黑',
-										fontSize : 24,
-										fontWeight : 'bolder'
-									}
-								},
-						tooltip : {
-									trigger: 'item',
-									formatter: "{a} <br/>{b} : {c} ({d}%)"
-								},
-						series: [
-							{
-								name:'访问来源',
-								type:'pie',
-								radius: ['40%', '60%'],
-								itemStyle: {  
-									normal: {  
-									 label:{  
-											show: true,  
-											formatter: function(param) {
-												 return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
-											},
-											textStyle : {
-												fontWeight : 'bolder'
-											}
-										}   
-									},
-								 },    
-								data:[
-									{value:31, name:'危险'},
-									{value:10, name:'故障'},
-									{value:34, name:'正常'},
-									{value:5, name:'未知'},
-								], 
-								color:['#FF5722','#F7B824','#5FB878','#d2d2d2']
-							}
-						]
-					};
-		
-				// 使用刚指定的配置项和数据显示图表。
-				myChart.setOption(option);				
-			</script>
-			
-			<script type="text/javascript" src="plugins/layui/layui.js"></script>
-			<script>
-				layui.use('element', function() {
-					var element = layui.element(); //导航的hover效果、二级菜单等功能，需要依赖element模块
-	
-				});
-			</script>
+<body >
+<!--header start-->
+<div id="contextWrap">
+	<!--sidebar-->
+	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" style="-webkit-transition-duration: 0.1s; transition-duration: 0.1s;" data-color="grey">
+		<a class="item logo" href="index.html">
+			<img src="../static/images/logo.png" alt="stagblogo" /><img src="../static/images/thumblogo.png" alt="stagblogo" class="displaynone" />
+		</a>
+		<div class="ui accordion inverted">
+			<a class="title item" href="main.html">
+				<i class="ion-speedometer titleIcon icon"></i>仪表盘
+			</a>
+			<a class="title item" href="tab.html">
+				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
+			</a>
+			<a class="item" href="table.html">
+				<i class="ion-ios-world titleIcon  icon"></i>业务概览
+			</a>
+			<div class="title item">
+				<i class="ion-mouse titleIcon icon"></i>设备概览<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="tab.html">服务器</a>
+				<a class="item" href="table.html">网络设备</a>
+				<a class="item" href="error.html">数据库</a>
+				<a class="item" href="login.html">应用</a>
+			</div>
+			<a class="title item" href="error.html">
+				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+			</a>
+			<div class="title item">
+				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="error.html">告警日历</a>
+				<a class="item" href="error.html">告警列表</a>
+			</div>
+			<a class="title item" href="error.html">
+				<i class="ion-briefcase titleIcon icon"></i>报表统计
+			</a>
 		</div>
-	</body>
 
+		<div class="ui dropdown item displaynone scrolling">
+			<span>仪表盘1</span>
+			<i class="ion-speedometer icon"></i>
+			<div class="menu">
+				<div class="header">
+					仪表盘1
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>监控视图</span>
+			<i class="ion-ios-lightbulb icon"></i>
+			<div class="menu">
+				<div class="header">
+					监控视图
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>业务概览</span>
+			<i class="ion-ios-world icon"></i>
+			<div class="menu">
+				<div class="header">
+					业务概览
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>设备概览</span>
+			<i class="ion-mouse icon"></i>
+			<div class="menu">
+				<div class="header">
+					设备概览
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="tab.html">服务器</a>
+				<a class="item" href="table.html">网络设备</a>
+				<a class="item" href="error.html">数据库</a>
+				<a class="item" href="login.html">应用</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>视图展示</span>
+			<i class="ion-arrow-graph-up-right icon"></i>
+			<div class="menu">
+				<div class="header">
+					视图展示
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>告警展示</span>
+			<i class="ion-paintbrush icon"></i>
+			<div class="menu">
+				<div class="header">
+					告警展示
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="error.html">告警日历</a>
+				<a class="item" href="error.html">告警列表</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>报表统计</span>
+			<a href="error.html">
+				<i class="ion-briefcase icon"></i>
+			</a>
+		</div>
+
+		<div class="ui divider"></div>
+
+	</div>
+
+	<!--sidebar-->
+
+	<div class="pusher">
+		<!--navbar-->
+		<div class="navslide navwrap">
+			<div class="ui menu icon borderless grid" data-color="inverted white">
+				<a class="item labeled openbtn">
+					<i class="ion-navicon-round big icon"></i>
+				</a>
+				<div class="item ui colhidden">
+					<div class="ui icon input">
+						<input type="text" placeholder="Search...">
+						<i class="search icon"></i>
+					</div>
+				</div>
+				<div class="right menu colhidden">
+					<div class="ui dropdown item labeled icon">
+						<i class="bell icon"></i>   告警
+						<div class="ui red label mini circular">6</div>
+						<div class="menu" >
+							<div class="header">
+								紧急告警
+							</div>
+							<div class="item">
+								告警信息1……
+								<div class="ui teal left pointing label">1</div>
+							</div>
+							<div class="item">
+								告警信息2……
+								<div class="ui label">51</div>
+							</div>
+							<div class="item">
+								告警信息3……
+								<div class="ui label">1</div>
+							</div>
+							<div class="header">
+								严重告警
+							</div>
+							<div class="item">
+								<i class="dropdown icon"></i>
+								<span class="text">更多</span>
+								<div class="menu">
+									<div class="item">告警信息……</div>
+									<div class="item">告警信息……</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="ui dropdown item">
+						<img class="ui mini circular image" src="../static/images/0.jpg" alt="label-image" />
+						<div class="menu">
+							<a class="item" href="mail.html">注销</a>
+						</div>
+					</div>
+					<a class="item labeled rightsidebar computer only">
+						<i class="ion-wrench large icon"></i>工具
+					</a>
+
+				</div>
+			</div>
+		</div>
+		<!--navbar-->
+		<!--maincontent-->
+		<div class="mainWrap navslide">
+			<div class="ui equal width left aligned padded grid stackable">
+				<!--Site Content-->
+				<div class="row">
+					<div class="sixteen wide tablet sixteen wide computer column">
+						<div class="ui segments">
+							<div class="ui segment">
+								<div class="ui pointing secondary menu">
+									<a class="item active" data-tab="first">业务系统</a>
+									<a class="item" data-tab="second">监控点</a>
+									<a class="item" data-tab="third">设备</a>
+								</div>
+
+								<div class="ui tab segment active" data-tab="first">
+									<div class="row">
+										<div class="ui three column grid">
+											<div class="column">
+												<div  class="ui segment">
+													<div id="main0" style="height: 200px"></div>
+												</div>
+											</div>
+											<div class="column">
+												<div class="ui segment">
+													<div id="main1" style="height: 200px"></div>
+												</div>
+											</div>
+											<div class="column">
+												<div class="ui segment">
+													<div id="main2" style="height: 200px"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="sixteen wide column">
+											<div class="ui segments">
+												<div class="ui segment">
+													<h5 class="ui header">
+														Datatable
+													</h5>
+												</div>
+												<div class="ui segment">
+													<table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+														<thead>
+														<tr>
+															<th>Name</th>
+															<th>availability</th>
+															<th>state</th>
+															<th>problemNum</th>
+														</tr>
+														</thead>
+
+														<tbody id="platform_list">
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="ui tab segment" data-tab="second"><h3 class="ui header">AJAX Tab Two</h3></div>
+								<div class="ui tab segment" data-tab="third"><h3 class="ui header">AJAX Tab Three</h3></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!--Site Content-->
+			</div>
+		</div>
+		<!--maincontent-->
+	</div>
+</div>
+<script src="../static/js/js.cookie.js"></script>
+<script src="../static/js/jquery.nicescroll.min.js"></script>
+<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
+<script src="../static/js/jquery.dataTables.js"></script>
+<script src="../static/js/custom-datatable.js"></script>
+<script src="../static/js/main.js"></script>
+<script type="text/javascript">
+	//选项卡初始化
+    $('.menu .item')
+        .tab()
+    ;
+    //表格加载
+    $.ajax({
+        type: "post",
+        async: true,
+        url: "/platform/list",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            $("#platform_list").html("");
+            var data=result.data;
+            for(var i in data){
+                var availability=data[i].availability;
+                var name=data[i].name;
+                var problemNum=data[i].problemNum;
+                var state=data[i].state;
+                $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据失败!");
+        }
+    })
+</script>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main0'));
+    var onemyChart = echarts.init(document.getElementById('main1'));
+    var twomyChart = echarts.init(document.getElementById('main2'));
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '10个',
+            subtext: '业务系统 ',
+            x: 'center',
+            y: 'center',
+            itemGap: 10,
+            textStyle : {
+                color : '#01AAED',
+                fontFamily : '微软雅黑',
+                fontSize : 24,
+                fontWeight : 'bolder'
+            }
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        series: [
+            {
+                name:'访问来源',
+                type:'pie',
+                radius: ['52%', '82%'],
+                itemStyle: {
+                    normal: {
+                        label:{
+                            show: true,
+                            formatter: function(param) {
+                                return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
+                            },
+                            textStyle : {
+                                fontWeight : 'bolder'
+                            }
+                        }
+                    },
+                },
+                data: [
+                ],
+                color:['#FF5722','#F7B824','#5FB878','#d2d2d2','#2F4056']
+            }
+        ]
+    }
+
+    onemyChart.showLoading();
+
+    $.ajax({
+        type: "post",
+        async: true,
+        url: "/host/count",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            onemyChart.hideLoading();
+            var data=result.data;
+            var dataList=data.stateNum;
+            var total=data.totalNum+"个";
+            if(dataList){
+                option.title.text = total;
+                option.series[0].data = dataList;
+                // 重写指定图表的配置项和数据
+                myChart.setOption(option);
+                onemyChart.setOption(option);
+                twomyChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据失败!");
+        }
+    })
+</script>
+</body>
 </html>

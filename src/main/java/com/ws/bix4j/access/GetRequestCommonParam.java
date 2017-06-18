@@ -14,7 +14,7 @@ public abstract class GetRequestCommonParam {
     private boolean excludeSearch;
     private Map filter;
     private int limit;
-    private String output;
+    private String[] output;
     @JSONField(name = "preservekeys")
     private boolean preserveKeys;
     private Map search;
@@ -42,8 +42,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param countOutput output
      */
-    public void setCountOutput(boolean countOutput) {
+    public GetRequestCommonParam setCountOutput(boolean countOutput) {
         this.countOutput = countOutput;
+        return this;
     }
 
     /**
@@ -63,8 +64,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param editable
      */
-    public void setEditable(boolean editable) {
+    public GetRequestCommonParam setEditable(boolean editable) {
         this.editable = editable;
+        return this;
     }
 
     /**
@@ -81,8 +83,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param excludeSearch flag
      */
-    public void setExcludeSearch(boolean excludeSearch) {
+    public GetRequestCommonParam setExcludeSearch(boolean excludeSearch) {
         this.excludeSearch = excludeSearch;
+        return this;
     }
 
     /**
@@ -119,8 +122,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param limit 限制数
      */
-    public void setLimit(int limit) {
+    public GetRequestCommonParam setLimit(int limit) {
         this.limit = limit;
+        return this;
     }
 
     /**
@@ -128,20 +132,22 @@ public abstract class GetRequestCommonParam {
      *
      * @return the output
      */
-    public String getOutput() {
+    public String[] getOutput() {
         return output;
     }
 
     /**
      * 限制返回对象的属性 query 可以有以下几种值：<br>
-     * 1.extend 所有 <br>
-     * 2.count 检索的数量，用于确定的子查询中 <br>
-     * 3.属性名的数组 String[]
+     * 1.extend 所有 默认值 <br>
+     * 2.count 检索的数量，只用于确定的子查询中 <br>
+     * 3.属性名的数组 String[] <br>
+     * 默认就是extend，如果需要约束返回的属性，set一个数组
      *
      * @param output the output
      */
-    public void setOutput(String output) {
+    public GetRequestCommonParam setOutput(String[] output) {
         this.output = output;
+        return this;
     }
 
     /**
@@ -158,8 +164,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param preserveKeys the preserve keys
      */
-    public void setPreserveKeys(boolean preserveKeys) {
+    public GetRequestCommonParam setPreserveKeys(boolean preserveKeys) {
         this.preserveKeys = preserveKeys;
+        return this;
     }
 
     /**
@@ -177,8 +184,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param search Map key：属性名 value：查询字符串 默认"%…%"
      */
-    public void setSearch(Map search) {
+    public GetRequestCommonParam setSearch(Map search) {
         this.search = search;
+        return this;
     }
 
     /**
@@ -195,8 +203,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param searchByAny 默认false
      */
-    public void setSearchByAny(boolean searchByAny) {
+    public GetRequestCommonParam setSearchByAny(boolean searchByAny) {
         this.searchByAny = searchByAny;
+        return this;
     }
 
     /**
@@ -213,8 +222,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param searchWildcardsEnabled 默认false
      */
-    public void setSearchWildcardsEnabled(boolean searchWildcardsEnabled) {
+    public GetRequestCommonParam setSearchWildcardsEnabled(boolean searchWildcardsEnabled) {
         this.searchWildcardsEnabled = searchWildcardsEnabled;
+        return this;
     }
 
     /**
@@ -232,8 +242,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param sortField List<String> 排序字段list
      */
-    public void setSortField(List<String> sortField) {
+    public GetRequestCommonParam setSortField(List<String> sortField) {
         this.sortField = sortField;
+        return this;
     }
 
     /**
@@ -251,8 +262,9 @@ public abstract class GetRequestCommonParam {
      *
      * @param sortOrder List<String> 排序字段的顺序list
      */
-    public void setSortOrder(List<String> sortOrder) {
+    public GetRequestCommonParam setSortOrder(List<String> sortOrder) {
         this.sortOrder = sortOrder;
+        return this;
     }
 
     /**
@@ -269,7 +281,8 @@ public abstract class GetRequestCommonParam {
      *
      * @param startSearch flag
      */
-    public void setStartSearch(boolean startSearch) {
+    public GetRequestCommonParam setStartSearch(boolean startSearch) {
         this.startSearch = startSearch;
+        return this;
     }
 }

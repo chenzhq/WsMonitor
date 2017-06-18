@@ -1,43 +1,63 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title></title>
-		<!-- 引入 echarts.js -->
-        <script src="js/echarts.min.js"></script>
-		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
-		<link rel="stylesheet" href="css/main.css" />
-	</head>
+<html xmlns:th="http://www.thymeleaf.org">
 
-	<body>
-		<div class="admin-main">
-			<!-- 主内容开始-->
-			<div style="margin-left:20px;margin-top:-20px">
-				<p><i class="layui-icon" style="font-size: 120px; color: #009688;">&#xe61c;</i><a style="font-size: 60px; color: #009688;">抱歉！</a><a style=" font-size: 30px; color: #009688;">您访问的页面不存在……</a></p>	
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
+	<meta charset="utf-8">
+	<title>404</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/semantic.js" th:src="@{/js/semantic.js}"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}" />
+	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}" />
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
+	<link href="../static/css/main.css" rel="stylesheet" />
+	<link href="../static/css/pace.css" rel="stylesheet" />
+	<th:block th:fragment="supplement"></th:block>
+</head>
+<body class="error404">
+	<!--Site Content-->
+	<div class="ui container" style="padding-top:6%" >
+		<div class="ui gri；d center aligned" >
+			<div class="row">
+				<div class="sixteen wide tablet ten wide computer column">
+					<div class="ui container center aligned errorcontainer">
+						<div class="ui header inverted" style="font-size: 48px;color: white">
+							抱歉！
+							<a style="font-size: 18px;color: white;font-style: normal">您访问的页面不存在……</a>
+						</div>
+					</div>
+					<div class="ui container center aligned" style="width: 220px">
+						<a class="ui yellow fluid button" href="#" th:href="@{/dashboard}">
+							返回首页
+						</a>
+					</div>
+				</div>
 			</div>
-					
-			<fieldset class="layui-elem-field">
-			  <legend>什么问题？</legend>
-			  <div class="layui-field-box">
-					<blockquote class="layui-elem-quote">
-						<p><i class="layui-icon" style="font-size: 25px;">&#xe642;</i> 您要查看的网址可能已被删或者暂时不可用</p>
-						<p>&nbsp <i class="layui-icon">&#xe64c;</i> 您可以点击此链接继续浏览网址<a href="main.html" style="color: #01AAED;">>>返回网址首页<a></p>
-					</blockquote>
-			  </div>
-			</fieldset>
-			
-			<fieldset class="layui-elem-field">
-			  <legend>请联系我们</legend>
-			  <div class="layui-field-box">
-					<blockquote class="layui-elem-quote">
-						<p>&nbsp <i class="layui-icon">&#xe616;</i> &nbsp Mon-Fri 8:30 - 17:30</p>
-						<p>&nbsp <i class="layui-icon">&#xe612;</i> &nbsp (027) 8766 7780</p>
-						<p>&nbsp <i class="layui-icon">&#xe611;</i> &nbsp whstoneJK@whstone.com.cn</p>
-					</blockquote>
-			  </div>
-			</fieldset>
-
+			<div class="ui grid " style="padding-left:60px; padding-top: 320px">
+				<div class="row">
+				<div class="two wide column">
+					<div class="ui message"  style="background-color: transparent;margin-top: -5px;color: saddlebrown">
+						<div  style="margin-top: 2px">联系我们</div>
+					</div>
+				</div>
+				<div class="eleven wide column">
+					<div class="ui message" style="background-color: transparent;margin-top: -5px">
+						<ul class="list">
+							<p><i class="wait  icon"></i> Mon-Fri 8:30 - 17:30</p>
+							<p><i class="call icon"></i> (027) 8766 7780</p>
+							<p><i class="user icon"></i> JK@whstone.com.cn</p>
+						</ul>
+					</div>
+				</div>
+				</div>
+			</div>
 		</div>
-	</body>
-
+	</div>
+	<th:block th:replace="layout::bottom_script(~{})">
+		<script src="../static/js/js.cookie.js"></script>
+		<script src="../static/js/jquery.nicescroll.min.js"></script>
+		<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
+		<script src="../static/js/main.js"></script>
+	</th:block>
+</body>
 </html>
+

@@ -1,14 +1,14 @@
 package com.ws.stoner.controller;
 
-import com.ws.bix4j.bean.HostDO;
-import com.ws.bix4j.bean.UserDO;
+import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.HostService;
-import com.ws.stoner.service.UserService;
+import com.ws.stoner.model.view.BriefProblemVO;
+import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -20,19 +20,18 @@ import java.util.List;
 public class DashboardController {
 
     @Autowired
-    private HostService hostService;
-
-    @Autowired
-    private UserService userService;
+    private FetchBriefService fetchBriefService;
 
     @RequestMapping(value = {"/", ""})
-    public String dashboard(Model model) throws ServiceException {
-
-        List<UserDO> userDOList = userService.listUser();
-        List<HostDO> hostDOList = hostService.listHost();
-        model.addAttribute("users", userDOList);
-        model.addAttribute("hosts", hostDOList);
-
-        return "dashboard";
+    public ModelAndView dashboard(Model model) throws ManagerException {
+        ModelAndView mav = new ModelAndView("dashboard");
+        List<BriefProblemVO> problemVOList = null;
+        try {
+            problemVOList = fetchBriefService.listBriefProblems();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        mav.addObject("problemList", problemVOList);
+        return mav;
     }
 }

@@ -21,7 +21,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String uri = request.getRequestURI();
 
-        if(uri.endsWith("/login/") || uri.endsWith("/login")) {
+        if (uri.endsWith("/login/") || uri.endsWith("/login")) {
             if(request.getSession() != null && request.getSession().getAttribute(ZBX_SESSION) != null) {
                 response.sendRedirect(request.getContextPath() + "/dashboard");
                 return false;

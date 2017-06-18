@@ -12,6 +12,12 @@ public class ZApiParameter {
     private ZApiParameter() {
     }
 
+/**
+ *主机参数
+ */
+    /**
+     * 主机监控类型
+     */
     public static enum HOST_INTERFACE_TYPE {
         AGENT(1), SNMP(2), IPMI(3), JMX(4);
 
@@ -24,6 +30,9 @@ public class ZApiParameter {
 
     }
 
+    /**
+     *
+     */
     public static enum HOST_AGENT_ACCESS_INTERFACE {
         HOST_DNS(0), IP_ADDRESS(1);
 
@@ -32,6 +41,66 @@ public class ZApiParameter {
         private HOST_AGENT_ACCESS_INTERFACE(int value) {
             this.value = value;
         }
+    }
+
+    /**
+     * 主机停用 启用状态
+     */
+    public static enum HOST_MONITOR_STATUS {
+        MONITORED_HOST(0), UNMONITORED_HOST(1);
+
+        public int value;
+
+        private HOST_MONITOR_STATUS(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
+     * 适用于agent,ipmi,jmx,snmp四个类型的状态值
+     */
+    public static enum HOST_AVAILABLE {
+        UNKOWN_HOST(0), AVAILABLE_HOST(1),UNAVAILABLE_HOST(2);
+
+        public int value;
+
+        private HOST_AVAILABLE(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
+     * 主机维护状态值
+     * NO_MAINTENANCE(0) 非维护状态
+     * MAINTENANCE_IN_EFFECT(1) 维护状态
+     */
+    public static enum HOST_MAINTENANCE_STATUS  {
+        NO_MAINTENANCE(0), MAINTENANCE_IN_EFFECT(1);
+
+        public int value;
+
+        private HOST_MAINTENANCE_STATUS(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
+     * 主机维护获取数据type
+     * WITH_DATA(0) 维护状态获取数据
+     * WITHOUT_DATA(1) 维护状态不获取数据
+     */
+    public static enum HOST_MAINTENANCE_TYPE  {
+        WITH_DATA(0), WITHOUT_DATA(1);
+
+        public int value;
+
+        private HOST_MAINTENANCE_TYPE(int value) {
+            this.value = value;
+        }
+
     }
 
     /**
@@ -57,17 +126,42 @@ public class ZApiParameter {
         }
     }
 
-    public static enum HOST_MONITOR_STATUS {
-        MONITORED_HOST(0), UNMONITORED_HOST(1);
 
+/**
+ * 触发器类型
+ */
+    /**
+     * 触发器state状态
+     */
+    public static enum TRIGGER_STATE  {
+        UP_TO_DATE(0),
+        UNKNOWN(1);
         public int value;
-
-        private HOST_MONITOR_STATUS(int value) {
+        private TRIGGER_STATE(int value) {
             this.value = value;
         }
 
     }
 
+    /**
+     *
+     */
+    public static enum TRIGGER_VALUE  {
+        OK(0),
+        PROBLEM(1);
+        public int value;
+        private TRIGGER_VALUE(int value) {
+            this.value = value;
+        }
+
+    }
+
+/**
+ * 监控项类型
+ */
+    /**
+     * 监控项数据类型
+     */
     public static enum ITEM_VALUE_TYPE {
         NUMERIC_FLOAT(0), CHARACTOR(1), LOG(2), NUMERIC_UNSIGNED(3), TEXT(4);
 
@@ -78,22 +172,51 @@ public class ZApiParameter {
         }
     }
 
-    public static enum DEBUG_MODE {
-        DISABLE("0"), ENABLE("1");
 
-        public String value;
 
-        private DEBUG_MODE(String value) {
-            this.value = value;
-        }
-    }
 
+/**
+ * 用户类型
+ */
+    /**
+     * 用户状态
+     */
     public static enum USER_STATUS {
         DISABLE("1"), ENABLE("0");
 
         public String value;
 
         private USER_STATUS(String value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * 用户类型
+     */
+    public static enum USER_TYPE {
+        USER(1),
+        ADMIN(2),
+        SUPER_ADMIN(3);
+
+        public int value;
+
+        private USER_TYPE(int value) {
+            this.value = value;
+        }
+    }
+
+
+
+/**
+ * 其他
+ */
+    public static enum DEBUG_MODE {
+        DISABLE("0"), ENABLE("1");
+
+        public String value;
+
+        private DEBUG_MODE(String value) {
             this.value = value;
         }
     }
@@ -122,6 +245,9 @@ public class ZApiParameter {
         count, shorten, refer, extend;
     }
 
+    /**
+     * 事件源类型
+     */
     public static enum SOURCE {
         TRIGGER(0),
         DISCOVERY_RULE(1),
@@ -135,6 +261,9 @@ public class ZApiParameter {
         }
     }
 
+    /**
+     * 对象类型
+     */
     public static enum OBJECT {
         TRIGGER(0),
         DISCOVERED_HOST(1),
@@ -150,15 +279,5 @@ public class ZApiParameter {
         }
     }
 
-    public static enum USER_TYPE {
-        USER(1),
-        ADMIN(2),
-        SUPER_ADMIN(3);
 
-        public int value;
-
-        private USER_TYPE(int value) {
-            this.value = value;
-        }
-    }
 }

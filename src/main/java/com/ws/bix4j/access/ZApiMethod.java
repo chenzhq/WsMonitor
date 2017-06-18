@@ -51,7 +51,7 @@ public class ZApiMethod {
             responseBody = EntityUtils.toString(httpResponse.getEntity());
 
         } catch (Exception e) {
-            throw new ZApiException(ZApiExceptionEnum.HTTP_REQUSET_ERROR, "HTTP request error");
+            throw new ZApiException(ZApiExceptionEnum.HTTP_REQUEST_ERROR, "HTTP request error");
         }
 
         // HTTP 状态错误

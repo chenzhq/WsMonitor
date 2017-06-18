@@ -1,12 +1,12 @@
 package com.ws.stoner.controller;
 
 import com.ws.stoner.constant.CookieConsts;
-import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.manager.UserManager;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import com.ws.stoner.service.LoginService;
-import com.ws.stoner.service.UserService;
 import com.ws.stoner.utils.CookieUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +31,18 @@ import static com.ws.stoner.constant.CookieConsts.*;
  * Created by chenzheqi on 2017/4/26.
  */
 @Controller
-@RequestMapping(value = "/login")
+@RequestMapping(value = "/")
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
     @Autowired
     private LoginService loginService;
     @Autowired
-    private UserService userService;
+    private UserManager userManager;
     @Autowired
     private Map<String, String> sessionMap;
 
-    @RequestMapping(value = {"/", ""})
+    @RequestMapping(value = {"/login", ""})
     public String index(HttpServletRequest request, HttpServletResponse response, Model model) {
 
         String zbx_session = CookieUtils.getValue(request, ZBX_SESSION);
@@ -54,7 +54,7 @@ public class LoginController {
             request.getSession().setAttribute(ZBX_SESSION, zbx_session);
             request.getSession().setAttribute(REMEMBER_ME, true);
 
-            UserInfoDTO userInfo = userService.getUser(userId);
+            UserInfoDTO userInfo = userManager.getUser(userId);
             request.getSession().setAttribute(CookieConsts.USER_INFO, userInfo);
             sessionMap.put(request.getSession().getId(), zbx_session);
             return "redirect:/dashboard";
@@ -68,10 +68,9 @@ public class LoginController {
     }
 
 
-
-    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    @RequestMapping(value = "/login/auth", method = RequestMethod.POST)
     public String login(@Valid @ModelAttribute LoginFormQuery loginFormQuery, BindingResult bindingResult,
-                        HttpSession session, HttpServletResponse response) throws ServiceException {
+                        HttpSession session, HttpServletResponse response) throws ManagerException {
         if(bindingResult.hasErrors()) {
             return "login";
         }
