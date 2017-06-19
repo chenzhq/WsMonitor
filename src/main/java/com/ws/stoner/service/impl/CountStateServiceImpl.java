@@ -10,8 +10,8 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
-import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.ItemBrief;
+import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,7 +138,7 @@ public class CountStateServiceImpl implements CountStateService {
         hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest1.getParams().setFilter(hostFilter1);
         hostGetRequest1.getParams().setTriggerIds(triggerIds);
-        List<HostBrief> host1 ;
+        List<BriefHostDTO> host1 ;
         try {
             host1 = hostManager.listHost(hostGetRequest1);
         } catch (ManagerException e) {
@@ -154,7 +154,7 @@ public class CountStateServiceImpl implements CountStateService {
         hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostGetRequest2.getParams().setFilter(hostFilter2).setSearchByAny(true);
-        List<HostBrief> host2 ;
+        List<BriefHostDTO> host2 ;
         try {
             host2 = hostManager.listHost(hostGetRequest2);
         } catch (ManagerException e) {
@@ -162,7 +162,7 @@ public class CountStateServiceImpl implements CountStateService {
             return 0;
         }
         //step5:去掉重复的主机并求和
-        List<HostBrief> hosts = new ArrayList<>(host1);
+        List<BriefHostDTO> hosts = new ArrayList<>(host1);
         hosts.retainAll(host2);
         host1.removeAll(hosts);
         int hostNum = host1.size() + host2.size();
@@ -254,7 +254,7 @@ public class CountStateServiceImpl implements CountStateService {
         //step1:筛选所有监控中的主机monitored
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams().setMonitoredHosts(true);
-        List<HostBrief> hosts;
+        List<BriefHostDTO> hosts;
         try {
             hosts = hostManager.listHost(hostGetRequest);
         } catch (AuthExpireException e) {
@@ -266,7 +266,7 @@ public class CountStateServiceImpl implements CountStateService {
         if(hosts == null) {
             return 0;
         }
-        for(HostBrief host : hosts) {
+        for(BriefHostDTO host : hosts) {
             hostIds.add(host.getHostId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
@@ -281,6 +281,7 @@ public class CountStateServiceImpl implements CountStateService {
         }
         return appALlNum;
     }
+
 
     /**
      * 获取所有的问题监控点
@@ -339,6 +340,68 @@ public class CountStateServiceImpl implements CountStateService {
         int okAppNum = countAllApp() - countProblemApp();
         return okAppNum;
 
+    }
+
+    /**
+     * 获取指定主机的监控点数量
+     * @param hostId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countAllPointByHostId(String hostId) throws ServiceException {
+        ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
+        applicationGetRequest.getParams().setHostIds(Arrays.asList(hostId));
+        applicationGetRequest.getParams().setCountOutput(true);
+        int pointsByHostId;
+        try {
+            pointsByHostId = appManager.countAppliction(applicationGetRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return pointsByHostId;
+    }
+
+    @Override
+    public int countProblemPointByHostId(String hostId) throws ServiceException {
+        //step1:获取问题触发器Ids
+        List<String> triggerIds ;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step2:根据触发器Ids获取items
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        itemGetRequest.getParams().setTriggerIds(triggerIds);
+        itemGetRequest.getParams().setMonitored(true);
+        List<ItemBrief> items ;
+        try {
+            items = itemManager.listItem(itemGetRequest);
+        } catch (AuthExpireException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step3:根据item筛选出应用集
+        List<String> itemIds = new ArrayList<>();
+        for(ItemBrief item : items) {
+            itemIds.add(item.getItemId());
+        }
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        appRequest.getParams().setItemIds(itemIds);
+        //筛选指定主机的监控点
+        appRequest.getParams().setHostIds(Arrays.asList(hostId));
+        appRequest.getParams().setCountOutput(true);
+        int appProblemNum ;
+        try {
+            appProblemNum = appManager.countAppliction(appRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return appProblemNum;
     }
 
 

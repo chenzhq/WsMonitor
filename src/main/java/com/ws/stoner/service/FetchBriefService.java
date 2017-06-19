@@ -2,10 +2,11 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.brief.ApplicationBrief;
-import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.view.BriefProblemVO;
+import com.ws.stoner.model.view.DashboardHostVO;
 
 import java.util.List;
 
@@ -18,31 +19,44 @@ public interface FetchBriefService {
  */
 
     /**
-     * 组装业务host <BriefHostDTO>list
+     * 组装仪表板中的业务host <DashboardHostVO>list
      * @return
      * @throws ServiceException
      */
-    List<BriefHostDTO> listAllHost() throws ServiceException;
+    List<DashboardHostVO> listDashBoardHosts() throws ServiceException;
     /**
      *  获取简约所有主机list 剔除停用的
      * @return
      * @throws ServiceException
      */
-    List<HostBrief> listHost() throws ServiceException;
+    List<BriefHostDTO> listHost() throws ServiceException;
 
     /**
      * 获取问题主机 list  problem
      * @return
      * @throws ServiceException
      */
-    List<HostBrief> listProblemHost() throws ServiceException;
+    List<BriefHostDTO> listProblemHost() throws ServiceException;
 
     /**
      * 获取OK主机 list OK
      * @return
      * @throws ServiceException
      */
-    List<HostBrief> listOkHost() throws ServiceException;
+    List<BriefHostDTO> listOkHost() throws ServiceException;
+
+
+
+/*
+ * template
+ */
+
+    /**
+     * 获取所有模板 list
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefTemplateDTO> listAllTemplate() throws ServiceException;
 
 /*
  *hostgroup service

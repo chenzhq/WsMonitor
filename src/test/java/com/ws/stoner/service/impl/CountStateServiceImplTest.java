@@ -3,8 +3,8 @@ package com.ws.stoner.service.impl;
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.model.brief.ApplicationBrief;
-import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
+import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
@@ -38,9 +38,6 @@ public class CountStateServiceImplTest {
     @Autowired
     private CountStateService countStateService;
 
-    @Autowired
-    private CountStateServiceImpl countStateServiceImpl;
-
 @Before
 public void before() throws Exception {
     zApi.cacheLogin("f558f7da83dea947f7c2d0def347b4f0");
@@ -69,7 +66,7 @@ public void testHostState() throws Exception {
 @Test
 public void testListAllHost() throws Exception {
 //TODO: Test goes here...
-    List<HostBrief> hosts = fetchBriefService.listHost();
+    List<BriefHostDTO> hosts = fetchBriefService.listHost();
     System.out.println(hosts);
 
 }
@@ -77,7 +74,7 @@ public void testListAllHost() throws Exception {
     @Test
     public void testListProblemHost() throws Exception {
 //TODO: Test goes here...
-        List<HostBrief> hosts = fetchBriefService.listProblemHost();
+        List<BriefHostDTO> hosts = fetchBriefService.listProblemHost();
         System.out.println(hosts);
 
     }
@@ -85,7 +82,7 @@ public void testListAllHost() throws Exception {
 @Test
 public void testListOkHost() throws Exception {
 //TODO: Test goes here...
-    List<HostBrief> hosts = fetchBriefService.listOkHost();
+    List<BriefHostDTO> hosts = fetchBriefService.listOkHost();
     System.out.println(hosts);
 
 }
