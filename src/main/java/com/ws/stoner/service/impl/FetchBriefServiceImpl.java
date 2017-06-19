@@ -1,13 +1,12 @@
 package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApiParameter;
-import com.ws.bix4j.access.trigger.TriggerGetRequest;
-import com.ws.stoner.manager.TriggerManager;
-import com.ws.stoner.model.dto.BriefHostDTO;
-import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
+import com.ws.bix4j.access.template.TemplateGetRequest;
+import com.ws.bix4j.access.trigger.TriggerGetRequest;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
@@ -15,13 +14,18 @@ import com.ws.stoner.manager.*;
 import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
+import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
+import com.ws.stoner.model.dto.BriefTemplateDTO;
+import com.ws.stoner.model.dto.BriefTemplateGroupDTO;
+import com.ws.stoner.model.view.BriefProblemVO;
+import com.ws.stoner.model.view.DashboardHostVO;
+import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  * Created by pc on 2017/6/12.
@@ -44,16 +48,63 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     @Autowired
     private PlatformManager platformManager;
 
+    @Autowired
+    private TemplateManager templateManager;
+
+    @Autowired
+    private CountStateService countStateService;
+
     /**
-     * 组装业务host <BriefHostDTO>list
+     * 组装业务host <DashboardHostVO>list
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<BriefHostDTO> listAllHost() throws ServiceException {
-        //step1:取 hostid,name
-        //step2: 取ip:selectInterface [ip]
-        return null;
+    public List<DashboardHostVO> listDashBoardHosts() throws ServiceException {
+        //step1:取BriefHostDTO 类型所有主机allhostDTO
+        List<BriefHostDTO> allhostDTO = listHost();
+        //step2:取BriefHostDTO 类型所有问题主机 并重组成hostids （String list）
+        List<BriefHostDTO> problemHostDTO = listProblemHost();
+        List<String> problemHostIds = new ArrayList<>();
+        for(BriefHostDTO problemHost : problemHostDTO) {
+            problemHostIds.add(problemHost.getHostId());
+        }
+        //step3:获取所有模板allTemplateDTO
+        List<BriefTemplateDTO> allTemplateDTO = listAllTemplate();
+        //step4:循环给DashBoardHostVO赋值
+        List<DashboardHostVO> hostVOS = new ArrayList<>();
+        for(BriefHostDTO hostDTO : allhostDTO) {
+            DashboardHostVO hostVO = new DashboardHostVO();
+            //hostid,name赋值
+            hostVO.setHostId(hostDTO.getHostId());
+            hostVO.setName(hostDTO.getName());
+            //ip
+            hostVO.setIp(hostDTO.getInterfaces().get(0).getIp());
+            //state
+            if(problemHostIds.contains(hostDTO.getHostId())) {
+                hostVO.setState(StatusEnum.PROBLEM.getName());
+            }else {
+                hostVO.setState(StatusEnum.OK.getName());
+            }
+            //type
+            if(hostDTO.getParentTemplates().size() != 0) {
+                String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
+                for(BriefTemplateDTO template : allTemplateDTO) {
+                    if(template.getTemplateId().equals(DTOTemplateId)) {
+                        hostVO.setType(template.getTemplateGroups().get(0).getName());
+                    }
+                }
+            }
+
+            //allNum
+            hostVO.setAllNum(countStateService.countAllPointByHostId(hostDTO.getHostId()));
+            //problemNum
+            hostVO.setProblemNum(countStateService.countProblemPointByHostId(hostDTO.getHostId()));
+
+            hostVOS.add(hostVO);
+        }
+
+        return hostVOS;
     }
 
     /**
@@ -62,12 +113,13 @@ public class FetchBriefServiceImpl implements FetchBriefService {
      * @throws ServiceException
      */
     @Override
-    public List<HostBrief> listHost() throws ServiceException {
+    public List<BriefHostDTO> listHost() throws ServiceException {
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest.getParams().setFilter(statusFilter);
-        List<HostBrief> hosts ;
+        hostGetRequest.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        List<BriefHostDTO> hosts ;
         try {
             hosts = hostManager.listHost(hostGetRequest);
         } catch (AuthExpireException e) {
@@ -83,7 +135,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
      * @throws ServiceException
      */
     @Override
-    public List<HostBrief> listProblemHost() throws ServiceException {
+    public List<BriefHostDTO> listProblemHost() throws ServiceException {
         //step1:获取问题触发器ids
         List<String> triggerIds ;
         try {
@@ -98,7 +150,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest1.getParams().setFilter(hostFilter1);
         hostGetRequest1.getParams().setTriggerIds(triggerIds);
-        List<HostBrief> host1 ;
+        hostGetRequest1.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        List<BriefHostDTO> host1 ;
         try {
             host1 = hostManager.listHost(hostGetRequest1);
         } catch (ManagerException e) {
@@ -114,7 +167,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostGetRequest2.getParams().setFilter(hostFilter2).setSearchByAny(true);
-        List<HostBrief> host2 ;
+        hostGetRequest2.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        List<BriefHostDTO> host2 ;
         try {
             host2 = hostManager.listHost(hostGetRequest2);
         } catch (ManagerException e) {
@@ -122,6 +176,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             return null;
         }
         //step5:拼接host1 + host2
+        host1.removeAll(host2);
         host1.addAll(host2);
         return host1;
 
@@ -133,20 +188,35 @@ public class FetchBriefServiceImpl implements FetchBriefService {
      * @throws ServiceException
      */
     @Override
-    public List<HostBrief> listOkHost() throws ServiceException {
-        List<HostBrief> allHosts = listHost();
-        List<HostBrief> problemHosts = listProblemHost();
-        List<HostBrief> OkHosts = new ArrayList<>();
-        Map<String,HostBrief> hostKey = new HashMap<>();
-        for(HostBrief phost : problemHosts) {
+    public List<BriefHostDTO> listOkHost() throws ServiceException {
+        List<BriefHostDTO> allHosts = listHost();
+        List<BriefHostDTO> problemHosts = listProblemHost();
+        List<BriefHostDTO> OkHosts = new ArrayList<>();
+        Map<String,BriefHostDTO> hostKey = new HashMap<>();
+        for(BriefHostDTO phost : problemHosts) {
             hostKey.put(phost.getHostId(),phost);
         }
-        for(HostBrief host : allHosts) {
+        for(BriefHostDTO host : allHosts) {
             if(hostKey.get(host.getHostId()) == null) {
                 OkHosts.add(host);
             }
         }
         return OkHosts;
+    }
+
+    @Override
+    public List<BriefTemplateDTO> listAllTemplate() throws ServiceException {
+        TemplateGetRequest templateGetRequest = new TemplateGetRequest();
+        templateGetRequest.getParams().setListGroups(BriefTemplateGroupDTO.PROPERTY_NAMES).setOutput(BriefTemplateDTO.PROPERTY_NAMES);
+        List<BriefTemplateDTO> templatesDTO;
+        try {
+            templatesDTO = templateManager.listTemplate(templateGetRequest);
+        } catch (AuthExpireException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return templatesDTO;
     }
 
     /**
@@ -179,7 +249,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         //step1:获取监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams().setMonitoredHosts(true);
-        List<HostBrief> hosts;
+        List<BriefHostDTO> hosts;
         try {
             hosts = hostManager.listHost(hostGetRequest);
         } catch (AuthExpireException e) {
@@ -191,7 +261,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         if(hosts == null) {
             return null;
         }
-        for(HostBrief host : hosts) {
+        for(BriefHostDTO host : hosts) {
             hostIds.add(host.getHostId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();

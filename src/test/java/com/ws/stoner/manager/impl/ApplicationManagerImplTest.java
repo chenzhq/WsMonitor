@@ -58,42 +58,6 @@ public void testListApplication() throws Exception {
 
 }
 
-@Test
-    public void testListDisableApp() throws  Exception {
-        int disableAppNum = applicationManager.countDisableApp();
-        System.out.println(disableAppNum);
-}
 
-    @Test
-    public void testListMaintencanceApp() throws  Exception {
-        int maintencanceAppNum = applicationManager.countMaintenanceApp();
-        System.out.println(maintencanceAppNum);
-    }
-
-       @Test
-    public void testListAppByItemIds() throws  Exception {
-        List<String> itemIds = new ArrayList<String>();
-        itemIds.add("23167");
-        itemIds.add("23174");
-        itemIds.add("23181");
-        List<ApplicationDO> apps = applicationManager.listAppByItemIds(itemIds);
-        System.out.println(apps);
-    }
-
-    @Test
-    public void testCountAppByItemIds() throws  Exception {
-        List<String> itemIds = new ArrayList<String>();
-        itemIds.add("23167");
-        itemIds.add("23174");
-        itemIds.add("23181");
-        int apps = applicationManager.countAppByItemIds(itemIds);
-        System.out.println(apps);
-    }
-
-    @Test
-    public void testCountUnknownApp() throws Exception {
-        int unknownApp = applicationManager.countUnknownApp();
-        System.out.println(unknownApp);
-    }
 
 } 

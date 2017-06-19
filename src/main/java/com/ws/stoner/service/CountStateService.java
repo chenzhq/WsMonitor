@@ -3,6 +3,8 @@ package com.ws.stoner.service;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.StateNumDTO;
 
+import javax.xml.ws.Service;
+
 /**
  * Created by zkf on 2017/6/12.
  */
@@ -98,6 +100,21 @@ public interface CountStateService {
      * @throws ServiceException
      */
     int countOkApp() throws  ServiceException;
+
+    /**
+     * 获取指定主机的所有监控点数量  all point hostid number
+     * @return
+     * @throws ServiceException
+     */
+    int countAllPointByHostId(String hostId) throws ServiceException;
+
+    /**
+     * 获取指定主机的问题监控点数量  problem point hostid number
+     * @param hostId
+     * @return
+     * @throws ServiceException
+     */
+    int countProblemPointByHostId(String hostId) throws ServiceException;
 
 /*
  * item service

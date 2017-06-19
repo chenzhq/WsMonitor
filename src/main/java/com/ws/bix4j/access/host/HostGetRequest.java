@@ -4,6 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
 import com.ws.bix4j.access.ZRequest;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -113,6 +114,94 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
         private String stringTriggers;
         @JSONField(name = "selectTriggers")
         private String[] listTriggers;
+
+        @JSONField(name = "selectInterfaces")
+        private String stringInterfaces;
+        @JSONField(name = "selectInterfaces")
+        private String[] listInterfaces;
+
+        @JSONField(name = "selectParentTemplates")
+        private String stringParentTemplates;
+        @JSONField(name = "selectParentTemplates")
+        private String[] listParentTemplates;
+
+        @Override
+        public String toString() {
+            return "Params{" +
+                    "groupIds=" + groupIds +
+                    ", applications=" + applications +
+                    ", dserviceIds=" + dserviceIds +
+                    ", graphIds=" + graphIds +
+                    ", hostIds=" + hostIds +
+                    ", httpTestIds=" + httpTestIds +
+                    ", interfaceIds=" + interfaceIds +
+                    ", itemIds=" + itemIds +
+                    ", maintenanceIds=" + maintenanceIds +
+                    ", monitoredHosts=" + monitoredHosts +
+                    ", proxyHosts='" + proxyHosts + '\'' +
+                    ", proxyIds=" + proxyIds +
+                    ", templatedHosts='" + templatedHosts + '\'' +
+                    ", templateIds=" + templateIds +
+                    ", triggerIds=" + triggerIds +
+                    ", withItems=" + withItems +
+                    ", withApplications=" + withApplications +
+                    ", withGraphs=" + withGraphs +
+                    ", withHttptests=" + withHttptests +
+                    ", withMonitoredHttptests=" + withMonitoredHttptests +
+                    ", withMonitoredItems=" + withMonitoredItems +
+                    ", withMonitoredTriggers=" + withMonitoredTriggers +
+                    ", withTriggers=" + withTriggers +
+                    ", withInventory=" + withInventory +
+                    ", stringGroups='" + stringGroups + '\'' +
+                    ", listGroups=" + Arrays.toString(listGroups) +
+                    ", stringApplications='" + stringApplications + '\'' +
+                    ", listApplications=" + Arrays.toString(listApplications) +
+                    ", stringItems='" + stringItems + '\'' +
+                    ", listItems=" + Arrays.toString(listItems) +
+                    ", stringTriggers='" + stringTriggers + '\'' +
+                    ", listTriggers=" + Arrays.toString(listTriggers) +
+                    ", stringInterfaces='" + stringInterfaces + '\'' +
+                    ", listInterfaces=" + Arrays.toString(listInterfaces) +
+                    ", stringParentTemplates='" + stringParentTemplates + '\'' +
+                    ", listParentTemplates=" + Arrays.toString(listParentTemplates) +
+                    '}';
+        }
+
+        public String getStringParentTemplates() {
+            return stringParentTemplates;
+        }
+
+        public Params setStringParentTemplates(String stringParentTemplates) {
+            this.stringParentTemplates = stringParentTemplates;
+            return this;
+        }
+
+        public String[] getListParentTemplates() {
+            return listParentTemplates;
+        }
+
+        public Params setListParentTemplates(String[] listParentTemplates) {
+            this.listParentTemplates = listParentTemplates;
+            return this;
+        }
+
+        public String getStringInterfaces() {
+            return stringInterfaces;
+        }
+
+        public Params setStringInterfaces(String stringInterfaces) {
+            this.stringInterfaces = stringInterfaces;
+            return this;
+        }
+
+        public String[] getListInterfaces() {
+            return listInterfaces;
+        }
+
+        public Params setListInterfaces(String[] listInterfaces) {
+            this.listInterfaces = listInterfaces;
+            return this;
+        }
 
         public List<String> getGroupIds() {
             return groupIds;
