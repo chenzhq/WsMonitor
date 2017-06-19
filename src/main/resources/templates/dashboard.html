@@ -413,8 +413,27 @@
         var date=new Date();
         var args1 = date.getFullYear()+"年"+(date.getMonth()+1)+"月"+date.getDate()+"日";
         //alert(args1);
-        //table.search(args1).draw();
-
+        function changeDate(days) {
+            var today = new Date(); // 获取今天时间
+            var begin;
+            var end;
+            if (days == 3) {
+                today.setTime(today.getTime() - 3 * 24 * 3600 * 1000);
+                begin = today.format('yyyy-MM-dd');
+                end = new Date().format('yyyy-MM-dd');
+            } else if (days == 7) {
+                today.setTime(today.getTime() - 7 * 24 * 3600 * 1000);
+                begin = today.format('yyyy-MM-dd');
+                end = new Date().format('yyyy-MM-dd');
+            } else if (days == 30) {
+                today.setTime(today.getTime() - 30 * 24 * 3600 * 1000);
+                begin = today.format('yyyy-MM-dd');
+                end = new Date().format('yyyy-MM-dd');
+            }
+            $("#begintime").val(begin);
+            $("#endtime").val(end);
+            document.location.href = "#?" + "&begintime=" + begin + "&endtime=" + end;
+        }
     });
     //业务系统列表加载
     $.ajax({
