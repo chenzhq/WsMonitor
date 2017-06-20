@@ -4,6 +4,7 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
+import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.access.template.TemplateGetRequest;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.constant.StatusEnum;
@@ -14,10 +15,12 @@ import com.ws.stoner.manager.*;
 import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
+import com.ws.stoner.model.brief.ItemBrief;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.model.view.DashboardHostVO;
 import com.ws.stoner.model.view.DashboardPlatformVO;
+import com.ws.stoner.model.view.DashboardPointVO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -306,13 +309,49 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         return problemPlatforms;
     }
 
+
+    /**
+     * 组装仪表板中的监控点 point <DashboardPointVO>list
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<DashboardPointVO> listDashboardPoint() throws ServiceException {
+        //step1:获取BriefPointDTO 类型的所有启用的主机的监控点point allPointDTO
+        List<BriefPointDTO> allPointDTO = listPoint();
+        //step2:获取BriefPointDTO 类型的所有启用的主机的问题监控点point problemPointDTO，并形成ids
+        List<BriefPointDTO> problemPointDTO = listProblemPoint();
+        List<String> problemPointIds = new ArrayList<>();
+        for(BriefPointDTO problemPoint : problemPointDTO) {
+            problemPointIds.add(problemPoint.getPointId());
+        }
+        //step3:新建List<DashboardPointVO>，循环allPointDTO，新建DashboardPointVO，分别赋值
+        List<DashboardPointVO> pointVOS = new ArrayList<>();
+        for(BriefPointDTO point :allPointDTO) {
+            DashboardPointVO pointVO = new DashboardPointVO();
+            //赋值 id,name,hostid,hostname
+            pointVO.setPointId(point.getPointId());
+            pointVO.setName(point.getName());
+            pointVO.setHostId(point.getHostId());
+            pointVO.setHostName(point.getHost().getName());
+            //state
+            if(problemPointIds.contains(point.getPointId())) {
+                pointVO.setState(StatusEnum.PROBLEM.getName());
+            }else {
+                pointVO.setState(StatusEnum.OK.getName());
+            }
+            pointVOS.add(pointVO);
+        }
+        return pointVOS;
+    }
+
     /**
      * 获取简约监控点application list
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<ApplicationBrief> listApp() throws ServiceException {
+    public List<BriefPointDTO> listPoint() throws ServiceException {
         //step1:获取监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams().setMonitoredHosts(true);
@@ -332,15 +371,61 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             hostIds.add(host.getHostId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
-        appRequest.getParams().setHostIds(hostIds);
-        List<ApplicationBrief> apps;
+        appRequest.getParams().setHostIds(hostIds).setListHost(BriefHostDTO.PROPERTY_NAMES).setOutput(BriefPointDTO.PROPERTY_NAMES);
+        List<BriefPointDTO> points;
         try {
-            apps = appManager.listApplication(appRequest);
+            points = appManager.listApplication(appRequest);
         } catch (AuthExpireException e) {
             e.printStackTrace();
             return null;
         }
-        return apps;
+        return points;
+    }
+
+    /**
+     * 获取问题监控点 point list
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefPointDTO> listProblemPoint() throws ServiceException {
+        //step1:获取问题触发器Ids
+        List<String> triggerIds ;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //step2:根据触发器Ids获取items
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        itemGetRequest.getParams().setTriggerIds(triggerIds);
+        itemGetRequest.getParams().setMonitored(true).setOutput(BriefItemDTO.PROPERTY_NAMES);
+        List<BriefItemDTO> items ;
+        try {
+            items = itemManager.listItem(itemGetRequest);
+        } catch (AuthExpireException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //step3:根据item筛选出应用集
+        List<String> itemIds = new ArrayList<>();
+        for(BriefItemDTO item : items) {
+            itemIds.add(item.getItemId());
+        }
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        appRequest.getParams().setListHost(BriefHostDTO.PROPERTY_NAMES);
+        appRequest.getParams().setItemIds(itemIds);
+        appRequest.getParams().setOutput(BriefPointDTO.PROPERTY_NAMES);
+        List<BriefPointDTO> problemPoints ;
+        try {
+            problemPoints = appManager.listApplication(appRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return problemPoints;
     }
 
     @Override

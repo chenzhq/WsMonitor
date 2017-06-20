@@ -28,7 +28,7 @@ public interface ApplicationManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<ApplicationBrief> listApplication(ApplicationGetRequest request) throws AuthExpireException;
+    List<BriefPointDTO> listApplication(ApplicationGetRequest request) throws AuthExpireException;
 
 
 }

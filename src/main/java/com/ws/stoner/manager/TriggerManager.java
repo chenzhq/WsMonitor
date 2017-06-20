@@ -5,6 +5,7 @@ import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.model.brief.TriggerBrief;
+import com.ws.stoner.model.dto.BriefTriggerDTO;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface TriggerManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<TriggerBrief> listTrigger(TriggerGetRequest request) throws AuthExpireException;
+    List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws AuthExpireException;
 
     /**
      * 获取所有的问题触发器ids

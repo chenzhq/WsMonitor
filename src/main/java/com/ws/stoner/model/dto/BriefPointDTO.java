@@ -9,10 +9,21 @@ public class BriefPointDTO {
     @JSONField(name = "applicationid")
     private String pointId;
     private String name;
-    private Integer problemNum;
-    private String state;
+    @JSONField(name = "hostid")
+    private String hostId;
+    private BriefHostDTO host;
 
-    public static final String[] PROPERTY_NAMES = {"applicationid","name"};
+    public static final String[] PROPERTY_NAMES = {"applicationid","name","hostid"};
+
+    @Override
+    public String toString() {
+        return "BriefPointDTO{" +
+                "pointId='" + pointId + '\'' +
+                ", name='" + name + '\'' +
+                ", hostId='" + hostId + '\'' +
+                ", host=" + host +
+                '}';
+    }
 
     public String getPointId() {
         return pointId;
@@ -32,36 +43,25 @@ public class BriefPointDTO {
         return this;
     }
 
-    public Integer getProblemNum() {
-        return problemNum;
+    public String getHostId() {
+        return hostId;
     }
 
-    public BriefPointDTO setProblemNum(Integer problemNum) {
-        this.problemNum = problemNum;
+    public BriefPointDTO setHostId(String hostId) {
+        this.hostId = hostId;
         return this;
     }
 
-    public String getState() {
-        return state;
+    public BriefHostDTO getHost() {
+        return host;
     }
 
-    public BriefPointDTO setState(String state) {
-        this.state = state;
+    public BriefPointDTO setHost(BriefHostDTO host) {
+        this.host = host;
         return this;
     }
 
     public static String[] getPropertyNames() {
         return PROPERTY_NAMES;
-    }
-
-
-    @Override
-    public String toString() {
-        return "BriefPointDTO{" +
-                "pointId='" + pointId + '\'' +
-                ", name='" + name + '\'' +
-                ", problemNum=" + problemNum +
-                ", state='" + state + '\'' +
-                '}';
     }
 }

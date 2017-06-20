@@ -6,6 +6,7 @@ import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
+import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
@@ -155,11 +156,6 @@ public void testcountProblemHostByPlatformId() throws Exception {
 //app相关测试
 
 
-@Test
-public void testListAllApp() throws Exception {
-    List<ApplicationBrief> allApp = fetchBriefService.listApp();
-    System.out.println(allApp);
-}
 
 
 

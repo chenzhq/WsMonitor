@@ -5,10 +5,12 @@ import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
+import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.model.view.DashboardHostVO;
 import com.ws.stoner.model.view.DashboardPlatformVO;
+import com.ws.stoner.model.view.DashboardPointVO;
 
 import java.util.List;
 
@@ -65,7 +67,7 @@ public interface FetchBriefService {
  */
 
     /**
-     * 组装仪表板中的业务hostgroup <DashboardPlatformVO>list
+     * 组装仪表板中的业务平台 platform <DashboardPlatformVO>list
      * @return
      * @throws ServiceException
      */
@@ -90,11 +92,25 @@ public interface FetchBriefService {
  */
 
     /**
+     * 组装仪表板中的监控点 point <DashboardPointVO>list
+     * @return
+     * @throws ServiceException
+     */
+    List<DashboardPointVO> listDashboardPoint() throws ServiceException;
+
+    /**
      * 获取简约监控点application list
      * @return
      * @throws ServiceException
      */
-    List<ApplicationBrief> listApp() throws ServiceException;
+    List<BriefPointDTO> listPoint() throws ServiceException;
+
+    /**
+     * 获取问题监控点 point list
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefPointDTO> listProblemPoint() throws ServiceException;
 /*
  *item service
  */

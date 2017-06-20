@@ -12,6 +12,7 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
 import com.ws.stoner.model.brief.ItemBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -376,7 +377,7 @@ public class CountStateServiceImpl implements CountStateService {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         itemGetRequest.getParams().setTriggerIds(triggerIds);
         itemGetRequest.getParams().setMonitored(true);
-        List<ItemBrief> items ;
+        List<BriefItemDTO> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
         } catch (AuthExpireException e) {
@@ -385,7 +386,7 @@ public class CountStateServiceImpl implements CountStateService {
         }
         //step3:根据item筛选出应用集
         List<String> itemIds = new ArrayList<>();
-        for(ItemBrief item : items) {
+        for(BriefItemDTO item : items) {
             itemIds.add(item.getItemId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
@@ -450,7 +451,7 @@ public class CountStateServiceImpl implements CountStateService {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         itemGetRequest.getParams().setTriggerIds(triggerIds);
         itemGetRequest.getParams().setMonitored(true);
-        List<ItemBrief> items ;
+        List<BriefItemDTO> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
         } catch (AuthExpireException e) {
@@ -459,7 +460,7 @@ public class CountStateServiceImpl implements CountStateService {
         }
         //step3:根据item筛选出应用集
         List<String> itemIds = new ArrayList<>();
-        for(ItemBrief item : items) {
+        for(BriefItemDTO item : items) {
             itemIds.add(item.getItemId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();

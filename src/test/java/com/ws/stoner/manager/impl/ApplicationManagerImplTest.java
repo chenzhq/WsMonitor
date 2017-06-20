@@ -6,6 +6,7 @@ import com.ws.bix4j.bean.ApplicationDO;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.ApplicationManager;
 import com.ws.stoner.model.brief.ApplicationBrief;
+import com.ws.stoner.model.dto.BriefPointDTO;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
@@ -53,7 +54,7 @@ public void after() throws Exception {
 public void testListApplication() throws Exception { 
 //TODO: Test goes here...
     ApplicationGetRequest apprequest = new ApplicationGetRequest();
-    List<ApplicationBrief> listApp = applicationManager.listApplication(apprequest);
+    List<BriefPointDTO> listApp = applicationManager.listApplication(apprequest);
     System.out.println(listApp.toString());
 
 }
