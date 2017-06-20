@@ -4,6 +4,7 @@ import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.model.view.DashboardHostVO;
+import com.ws.stoner.model.view.DashboardPlatformVO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
 import com.ws.stoner.utils.RestResultGenerator;
@@ -69,5 +70,16 @@ public class DashboardRestController {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
         return RestResultGenerator.genResult(hostVOS, REST_RESPONSE_SUCCESS).toString();
+    }
+
+    @RequestMapping(value = "platform/list", method = RequestMethod.GET)
+    public String listPlatform() {
+        List<DashboardPlatformVO> platformVOS;
+        try {
+            platformVOS = fetchBriefService.listDashboardPlatform();
+        } catch (ServiceException e) {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+        return RestResultGenerator.genResult(platformVOS, REST_RESPONSE_SUCCESS).toString();
     }
 }

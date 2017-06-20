@@ -3,8 +3,10 @@ package com.ws.stoner.service.impl;
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.view.DashboardHostVO;
+import com.ws.stoner.model.view.DashboardPlatformVO;
 import com.ws.stoner.service.FetchBriefService;
 import org.junit.After;
 import org.junit.Before;
@@ -102,16 +104,32 @@ public void testListOkHost() throws Exception {
         List<BriefTemplateDTO> templates = fetchBriefService.listAllTemplate();
         System.out.println(templates);
     }
-
     /**
 * 
 * Method: listPlatform() 
 * 
-*/ 
+*/
+
+    @Test
+    public void testlistDashboardPlatform() throws Exception {
+//TODO: Test goes here...
+        List<DashboardPlatformVO> platformVOS = fetchBriefService.listDashboardPlatform();
+        System.out.println(platformVOS);
+    }
+
+
 @Test
 public void testListPlatform() throws Exception { 
-//TODO: Test goes here... 
-} 
+//TODO: Test goes here...
+    List<BriefPlatformDTO> platforms = fetchBriefService.listPlatform();
+    System.out.println(platforms);
+}
+
+@Test
+public void testlistProblemPlatform() throws Exception {
+    List<BriefPlatformDTO> platformDTOS = fetchBriefService.listProblemPlatform();
+    System.out.println(platformDTOS);
+}
 
 /** 
 * 

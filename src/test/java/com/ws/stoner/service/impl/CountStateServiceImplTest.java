@@ -5,6 +5,7 @@ import com.ws.stoner.BootApplication;
 import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -107,6 +109,20 @@ public void testCountOKHost() throws Exception {
     System.out.println(okhostNum);
 }
 
+@Test
+    public void testcountAllHostByPlatformId() throws Exception {
+        List<String> pIds = new ArrayList<>();
+        pIds.add("27");
+        int allhost  = countStateService.countAllHostByPlatformIds(pIds);
+        System.out.println(allhost);
+    }
+@Test
+public void testcountProblemHostByPlatformId() throws Exception {
+    List<String> pIds = new ArrayList<>();
+    pIds.add("27");
+    int problemhost  = countStateService.countProblemHostByPlatformIds(pIds);
+    System.out.println(problemhost);
+}
 
 //hostgroup相关测试
 
@@ -120,7 +136,7 @@ public void testCountOKHost() throws Exception {
 
     @Test
     public void testListAllPlatform() throws Exception {
-        List<HostGroupBrief> allHostGroups = fetchBriefService.listPlatform();
+        List<BriefPlatformDTO> allHostGroups = fetchBriefService.listPlatform();
         System.out.println(allHostGroups);
     }
     @Test

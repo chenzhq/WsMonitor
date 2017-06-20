@@ -8,6 +8,7 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.PlatformManager;
 import com.ws.stoner.model.brief.HostGroupBrief;
+import com.ws.stoner.model.dto.BriefPlatformDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +25,16 @@ public class PlatformManagerImpl implements PlatformManager {
     @Autowired
     private ZApi zApi;
     @Override
-    public List<HostGroupBrief> listPlatform(HostGroupGetRequest request) throws AuthExpireException {
-        List<HostGroupBrief> groups;
+    public List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws AuthExpireException {
+        List<BriefPlatformDTO> groups;
         try {
-            groups = zApi.Group().get(request, HostGroupBrief.class);
+            groups = zApi.Group().get(request, BriefPlatformDTO.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");
             }
             e.printStackTrace();
-            logger.error("查询主机组错误！{}", e.getMessage());
+            logger.error("查询业务平台错误！{}", e.getMessage());
             return null;
         }
         return groups;

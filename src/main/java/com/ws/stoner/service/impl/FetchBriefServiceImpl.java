@@ -14,12 +14,10 @@ import com.ws.stoner.manager.*;
 import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.brief.HostGroupBrief;
-import com.ws.stoner.model.dto.BriefHostDTO;
-import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
-import com.ws.stoner.model.dto.BriefTemplateDTO;
-import com.ws.stoner.model.dto.BriefTemplateGroupDTO;
+import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.model.view.DashboardHostVO;
+import com.ws.stoner.model.view.DashboardPlatformVO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,9 +95,9 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             }
 
             //allNum
-            hostVO.setAllNum(countStateService.countAllPointByHostId(hostDTO.getHostId()));
+            hostVO.setAllNum(countStateService.countAllPointByHostIds(Arrays.asList(hostDTO.getHostId())));
             //problemNum
-            hostVO.setProblemNum(countStateService.countProblemPointByHostId(hostDTO.getHostId()));
+            hostVO.setProblemNum(countStateService.countProblemPointByHostIds(Arrays.asList(hostDTO.getHostId())));
 
             hostVOS.add(hostVO);
         }
@@ -220,23 +218,92 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     }
 
     /**
-     * 获取简约listPlatform list
+     * 组装仪表板中的业务 platform <DashboardPlatformVO> list
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<HostGroupBrief> listPlatform() throws ServiceException {
+    public List<DashboardPlatformVO> listDashboardPlatform() throws ServiceException {
+        //step1:获取BriefPlatformDTO 类型的所有业务平台 allPlatformDTO
+        List<BriefPlatformDTO> allPlatformDTO = listPlatform();
+        //step2:获取BriefPlatformDTO 类型的问题业务平台 problemPaltformDTO
+        List<BriefPlatformDTO> problemPlatformDTO = listProblemPlatform();
+        List<String> platformIds = new ArrayList<>();
+        for(BriefPlatformDTO problemPlatform : problemPlatformDTO) {
+            platformIds.add(problemPlatform.getPlatformId());
+        }
+        //step3:新建List<DashboardPlatformVO>，循环allplatformDTO，新建DashboardPlatformVO，分别赋值
+        List<DashboardPlatformVO> platformVOS = new ArrayList<>();
+        for(BriefPlatformDTO platform : allPlatformDTO) {
+            DashboardPlatformVO platformVO = new DashboardPlatformVO();
+            //赋值 id,name,availability
+            platformVO.setPlatformId(platform.getPlatformId());
+            platformVO.setName(platform.getName());
+            platformVO.setAvailability(100);
+            //state
+            if(platformIds.contains(platform.getPlatformId())) {
+                platformVO.setState(StatusEnum.PROBLEM.getName());
+            }else {
+                platformVO.setState(StatusEnum.OK.getName());
+            }
+            //allNum
+            platformVO.setAllNum(countStateService.countAllHostByPlatformIds(Arrays.asList(platform.getPlatformId())));
+            //problemNum
+            platformVO.setProblemNum(countStateService.countProblemHostByPlatformIds(Arrays.asList(platform.getPlatformId())));
+
+            platformVOS.add(platformVO);
+        }
+        return platformVOS;
+    }
+
+    /**
+     * 获取简约listPlatform list all
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefPlatformDTO> listPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         groupRequest.getParams().setMonitoredHosts(true).setRealHosts(true);
-        groupRequest.getParams();
-        List<HostGroupBrief> hostGroups ;
+        groupRequest.getParams().setOutput(BriefPlatformDTO.PROPERTY_NAMES);
+        List<BriefPlatformDTO> platforms ;
         try {
-            hostGroups = platformManager.listPlatform(groupRequest);
+            platforms = platformManager.listPlatform(groupRequest);
         } catch (AuthExpireException e) {
             e.printStackTrace();
             return null;
         }
-        return hostGroups;
+        return platforms;
+    }
+
+    /**
+     * 获取问题的 platform list problem
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefPlatformDTO> listProblemPlatform() throws ServiceException {
+        //step1:获取问题触发器Ids
+        List<String> triggerIds ;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //step2:根据触发器Ids获取业务平台数量
+        HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        groupRequest.getParams().setTriggerIds(triggerIds);
+        groupRequest.getParams().setMonitoredHosts(true).setRealHosts(true);
+        groupRequest.getParams().setOutput(BriefPlatformDTO.PROPERTY_NAMES);
+        List<BriefPlatformDTO> problemPlatforms ;
+        try {
+            problemPlatforms = platformManager.listPlatform(groupRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return problemPlatforms;
     }
 
     /**

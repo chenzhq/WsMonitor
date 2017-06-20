@@ -4,6 +4,7 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.StateNumDTO;
 
 import javax.xml.ws.Service;
+import java.util.List;
 
 /**
  * Created by zkf on 2017/6/12.
@@ -52,6 +53,19 @@ public interface CountStateService {
      */
     int countOkHost() throws ServiceException;
 
+    /**
+     * 获取指定业务平台的所有主机数量 all host number by platformId
+     */
+    int countAllHostByPlatformIds(List<String> platformIds) throws ServiceException;
+
+    /**
+     * 获取指定业务平台的问题主机数量 problem host number by platformId
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    int countProblemHostByPlatformIds(List<String> platformIds) throws ServiceException;
+
 /*
  * hostGroup service
  */
@@ -77,7 +91,9 @@ public interface CountStateService {
      */
     int countOkPlatform() throws ServiceException;
 
-/**
+
+
+/*
  * application service
  */
     /**
@@ -102,19 +118,19 @@ public interface CountStateService {
     int countOkApp() throws  ServiceException;
 
     /**
-     * 获取指定主机的所有监控点数量  all point hostid number
+     * 获取指定主机的所有监控点数量  all point hostids number
      * @return
      * @throws ServiceException
      */
-    int countAllPointByHostId(String hostId) throws ServiceException;
+    int countAllPointByHostIds(List<String> hostIds) throws ServiceException;
 
     /**
-     * 获取指定主机的问题监控点数量  problem point hostid number
-     * @param hostId
+     * 获取指定主机的问题监控点数量  problem point hostids number
+     * @param hostIds
      * @return
      * @throws ServiceException
      */
-    int countProblemPointByHostId(String hostId) throws ServiceException;
+    int countProblemPointByHostIds(List<String> hostIds) throws ServiceException;
 
 /*
  * item service
