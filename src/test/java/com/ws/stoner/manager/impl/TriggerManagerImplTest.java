@@ -5,6 +5,7 @@ import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.TriggerManager;
 import com.ws.stoner.model.brief.TriggerBrief;
+import com.ws.stoner.model.dto.BriefTriggerDTO;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public void after() throws Exception {
 public void testListTrigger() throws Exception { 
 //TODO: Test goes here...
     TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
-    List<TriggerBrief> triggerDOList = triggerManager.listTrigger(triggerGetRequest);
+    List<BriefTriggerDTO> triggerDOList = triggerManager.listTrigger(triggerGetRequest);
     System.out.println(triggerDOList.toString());
 } 
 

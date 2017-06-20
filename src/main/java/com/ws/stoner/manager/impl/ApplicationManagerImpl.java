@@ -65,10 +65,10 @@ public class ApplicationManagerImpl implements ApplicationManager {
      * @throws AuthExpireException
      */
     @Override
-    public List<ApplicationBrief> listApplication(ApplicationGetRequest request) throws AuthExpireException {
-        List<ApplicationBrief> listApplication ;
+    public List<BriefPointDTO> listApplication(ApplicationGetRequest request) throws AuthExpireException {
+        List<BriefPointDTO> listApplication ;
         try {
-            listApplication = zApi.Application().get(request,ApplicationBrief.class);
+            listApplication = zApi.Application().get(request,BriefPointDTO.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
                 throw new AuthExpireException("");
