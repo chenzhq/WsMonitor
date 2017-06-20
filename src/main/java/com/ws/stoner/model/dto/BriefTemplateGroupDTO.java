@@ -11,10 +11,6 @@ public class BriefTemplateGroupDTO {
 
     private String name;
 
-    public static String[] getPropertyNames() {
-        return PROPERTY_NAMES;
-    }
-
     public static final String[] PROPERTY_NAMES = {"groupid", "name"};
 
 
