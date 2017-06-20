@@ -237,8 +237,8 @@
 									<div class="row">
 										<div class="sixteen wide column">
 											<div class="ui grid">
-												<div class="six wide column">
-													<div class="ui grey large header">
+												<div class="six wide column"  id="mytoolbox">
+													<div class="ui grey large header" >
 														<i class="bar chart icon"></i>
 														最新问题
 													</div>
@@ -247,10 +247,10 @@
 													<div class="ui grid">
 														<div class="column">
 															<div class="ui buttons">
-																<button id="input1" class="ui button">今天</button>
-																<button id="input2" class="ui button">三天</button>
-																<button id="input3" class="ui button">一周</button>
-																<button id="input4" class="ui button">一月</button>
+																<button id="input1" class="ui button" value="1">今天</button>
+																<button id="input2" class="ui button" value="3">三天</button>
+																<button id="input3" class="ui button" value="7">一周</button>
+																<button id="input4" class="ui button" value="30">一月</button>
 															</div>
 														</div>
 													</div>
@@ -258,7 +258,7 @@
 											</div>
 
 
-											<table class="ui small table">
+											<table id="example" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
 												<thead>
 												<tr >
 													<th>主机</th>
@@ -267,59 +267,43 @@
 													<th>历时</th>
 													<th>确认</th>
 												</tr></thead>
-												<tbody>
+												<tbody >
 												<tr th:each="problem : ${problemList}">
 													<td th:text="${problem.hosts[0].name}">机1</td>
 													<td th:text="${problem.description}">主机1内存使用率超过90%</td>
-													<td th:text="${problem.time}">2017-4-27 15:33:20</td>
+													<td th:text="${problem.time}">2017-6-16 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
 												<tr >
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-4-27 15:33:20</td>
+													<td>2017-6-20 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
 												<tr >
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-4-27 15:33:20</td>
+													<td>2017-6-17 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
 												<tr >
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-4-27 15:33:20</td>
+													<td>2017-6-18 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
 												<tr>
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-4-27 15:33:20</td>
+													<td>2017-6-19 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
 												</tbody>
-												<tfoot>
-												<tr><th colspan="5">
-													<div class="ui mini right teal floated pagination menu">
-														<a class="icon item">
-															<i class="left chevron icon"></i>
-														</a>
-														<a class="item">1</a>
-														<a class="item">2</a>
-														<a class="item">3</a>
-														<a class="item">4</a>
-														<a class="icon item">
-															<i class="right chevron icon"></i>
-														</a>
-													</div>
-												</th>
-												</tr></tfoot>
 											</table>
 										</div>
 									</div>
@@ -375,6 +359,7 @@
 												</tr>
 												</thead>
 												<tbody id="host_list">
+
 												</tbody>
 											</table>
 										</div>
@@ -410,31 +395,67 @@
     //给搜索按钮绑定点击事件
     $(document).on("click","#input1",function(){
         //自己定义的搜索框，可以是时间控件，或者checkbox 等等
-        var date=new Date();
-        var args1 = date.getFullYear()+"年"+(date.getMonth()+1)+"月"+date.getDate()+"日";
-        //alert(args1);
-        function changeDate(days) {
-            var today = new Date(); // 获取今天时间
-            var begin;
-            var end;
-            if (days == 3) {
-                today.setTime(today.getTime() - 3 * 24 * 3600 * 1000);
-                begin = today.format('yyyy-MM-dd');
-                end = new Date().format('yyyy-MM-dd');
-            } else if (days == 7) {
-                today.setTime(today.getTime() - 7 * 24 * 3600 * 1000);
-                begin = today.format('yyyy-MM-dd');
-                end = new Date().format('yyyy-MM-dd');
-            } else if (days == 30) {
-                today.setTime(today.getTime() - 30 * 24 * 3600 * 1000);
-                begin = today.format('yyyy-MM-dd');
-                end = new Date().format('yyyy-MM-dd');
-            }
-            $("#begintime").val(begin);
-            $("#endtime").val(end);
-            document.location.href = "#?" + "&begintime=" + begin + "&endtime=" + end;
-        }
+        changeDate(1);
     });
+    $(document).on("click","#input2",function(){
+        //自己定义的搜索框，可以是时间控件，或者checkbox 等等
+        changeDate(3);
+    });
+    $(document).on("click","#input3",function(){
+        //自己定义的搜索框，可以是时间控件，或者checkbox 等等
+        changeDate(7);
+    });
+    $(document).on("click","#input4",function(){
+        //自己定义的搜索框，可以是时间控件，或者checkbox 等等
+        changeDate(30);
+    });
+    function changeDate(days) {
+        var today = new Date();
+        var nowdate = new Date();
+        var y = nowdate.getFullYear();
+        var m = nowdate.getMonth()+1;
+        var d = nowdate.getDate();
+        var end = y+'-'+m+'-'+d;// 获取今天时间
+
+        if (days == 1) {
+            var begin = end;// 获取今天时间
+        } else if (days == 3) {
+            today.setTime(today.getTime() - 3 * 24 * 3600 * 1000);
+            var y = today.getFullYear();
+            var m = today.getMonth()+1;
+            var d = today.getDate();
+            var begin = y+'-'+m+'-'+d;// 获取今天时间
+        } else if (days == 7) {
+            today.setTime(today.getTime() - 7 * 24 * 3600 * 1000);
+            var y = today.getFullYear();
+            var m = today.getMonth()+1;
+            var d = today.getDate();
+            var begin = y+'-'+m+'-'+d;// 获取今天时间
+        } else if (days == 30) {
+            today.setTime(today.getTime() - 30 * 24 * 3600 * 1000);
+            var y = today.getFullYear();
+            var m = today.getMonth()+1;
+            var d = today.getDate();
+            var begin = y+'-'+m+'-'+d;// 获取今天时间
+        }
+        alert("begintime=" + begin + "endtime=" + end);
+        var dtable = $("#example").DataTable();
+        /*dtable.search(begin+" "+end).draw();*/
+        dtable.search(begin).draw();
+        /*dtable.search(end).draw();*/
+    }
+    //问题列表
+/*    $(document).ready(function () {
+        var dtable = $("#example").DataTable({
+            "processing": true,
+            "serverSide": true,
+                "oAria": {
+                    "sSortAscending": ": 以升序排列此列",
+                    "sSortDescending": ": 以降序排列此列"
+                }
+        });
+    });*/
+
     //业务系统列表加载
     $.ajax({
         type: "post",
