@@ -3,7 +3,6 @@ package com.ws.stoner.manager;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 
 import java.util.List;

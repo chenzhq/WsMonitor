@@ -2,11 +2,8 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.model.brief.ApplicationBrief;
-import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
-import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
@@ -161,13 +158,13 @@ public void testcountProblemHostByPlatformId() throws Exception {
 
 @Test
 public void testCountAllApp() throws Exception {
-    int allAppNum = countStateService.countAllApp();
+    int allAppNum = countStateService.countAllPoint();
     System.out.println(allAppNum);
 }
 
 @Test
 public void testCountProbelmApp() throws Exception {
-    int problemAppNum = countStateService.countProblemApp();
+    int problemAppNum = countStateService.countProblemPoint();
     System.out.println(problemAppNum);
 }
 

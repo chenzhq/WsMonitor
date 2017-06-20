@@ -10,7 +10,6 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
-import com.ws.stoner.model.brief.ItemBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
@@ -33,7 +32,7 @@ public class CountStateServiceImpl implements CountStateService {
     private TriggerManager triggerManager;
 
     @Autowired
-    private ApplicationManager appManager;
+    private PointManager pointManager;
 
     @Autowired
     private ItemManager itemManager;
@@ -85,11 +84,11 @@ public class CountStateServiceImpl implements CountStateService {
     public StateNumDTO countPointState() throws ServiceException {
         StateNumDTO pointState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
-        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemApp());
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkApp());
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemPoint());
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkPoint());
         stateNums.add(okStateNum);
         stateNums.add(problemStateNum);
-        pointState.setTotalNum(countAllApp()).setStateNum(stateNums);
+        pointState.setTotalNum(countAllPoint()).setStateNum(stateNums);
         return pointState;
     }
 
@@ -320,11 +319,10 @@ public class CountStateServiceImpl implements CountStateService {
     /**
      * 获取所有的监控点
      * 根据筛选监控中的主机得到所有的监控点
-     * @return
      * @throws ServiceException
      */
     @Override
-    public int countAllApp() throws ServiceException {
+    public int countAllPoint() throws ServiceException {
         //step1:筛选所有监控中的主机monitored
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams().setMonitoredHosts(true);
@@ -348,7 +346,7 @@ public class CountStateServiceImpl implements CountStateService {
         appRequest.getParams().setCountOutput(true);
         int appALlNum ;
         try {
-            appALlNum = appManager.countAppliction(appRequest);
+            appALlNum = pointManager.countPoint(appRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
@@ -360,11 +358,11 @@ public class CountStateServiceImpl implements CountStateService {
     /**
      * 获取所有的问题监控点
      * 根据触发器获取监控点
-     * @return
+     * @return int
      * @throws ServiceException
      */
     @Override
-    public int countProblemApp() throws ServiceException {
+    public int countProblemPoint() throws ServiceException {
         //step1:获取问题触发器Ids
         List<String> triggerIds ;
         try {
@@ -394,7 +392,7 @@ public class CountStateServiceImpl implements CountStateService {
         appRequest.getParams().setCountOutput(true);
         int appProblemNum ;
         try {
-            appProblemNum = appManager.countAppliction(appRequest);
+            appProblemNum = pointManager.countPoint(appRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
@@ -410,8 +408,8 @@ public class CountStateServiceImpl implements CountStateService {
      * @throws ServiceException
      */
     @Override
-    public int countOkApp() throws ServiceException {
-        int okAppNum = countAllApp() - countProblemApp();
+    public int countOkPoint() throws ServiceException {
+        int okAppNum = countAllPoint() - countProblemPoint();
         return okAppNum;
 
     }
@@ -429,7 +427,7 @@ public class CountStateServiceImpl implements CountStateService {
         applicationGetRequest.getParams().setCountOutput(true);
         int pointsByHostId;
         try {
-            pointsByHostId = appManager.countAppliction(applicationGetRequest);
+            pointsByHostId = pointManager.countPoint(applicationGetRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
@@ -470,7 +468,7 @@ public class CountStateServiceImpl implements CountStateService {
         appRequest.getParams().setCountOutput(true);
         int appProblemNum ;
         try {
-            appProblemNum = appManager.countAppliction(appRequest);
+            appProblemNum = pointManager.countPoint(appRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;

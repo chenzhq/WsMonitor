@@ -1,8 +1,6 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.brief.ApplicationBrief;
-import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
@@ -88,7 +86,7 @@ public interface FetchBriefService {
     List<BriefPlatformDTO> listProblemPlatform() throws ServiceException;
 
 /*
- *application service
+ *point service
  */
 
     /**

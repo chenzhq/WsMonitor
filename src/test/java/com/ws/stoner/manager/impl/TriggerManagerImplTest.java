@@ -4,7 +4,6 @@ import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.TriggerManager;
-import com.ws.stoner.model.brief.TriggerBrief;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
 import org.junit.After;
 import org.junit.Before;

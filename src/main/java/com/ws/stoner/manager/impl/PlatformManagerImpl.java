@@ -7,7 +7,6 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.PlatformManager;
-import com.ws.stoner.model.brief.HostGroupBrief;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

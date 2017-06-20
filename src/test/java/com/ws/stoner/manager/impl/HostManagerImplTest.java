@@ -2,10 +2,8 @@ package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.host.HostGetRequest;
-import com.ws.bix4j.bean.HostDO;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.HostManager;
-import com.ws.stoner.model.brief.HostBrief;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import org.junit.Test;
 import org.junit.Before; 

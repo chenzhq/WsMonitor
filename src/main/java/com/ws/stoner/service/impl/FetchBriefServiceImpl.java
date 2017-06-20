@@ -12,10 +12,6 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
-import com.ws.stoner.model.brief.ApplicationBrief;
-import com.ws.stoner.model.brief.HostBrief;
-import com.ws.stoner.model.brief.HostGroupBrief;
-import com.ws.stoner.model.brief.ItemBrief;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.model.view.DashboardHostVO;
@@ -41,7 +37,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     private TriggerManager triggerManager;
 
     @Autowired
-    private ApplicationManager appManager;
+    private PointManager pointManager;
 
     @Autowired
     private ItemManager itemManager;
@@ -346,7 +342,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     }
 
     /**
-     * 获取简约监控点application list
+     * 获取简约监控点 point list
      * @return
      * @throws ServiceException
      */
@@ -374,7 +370,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         appRequest.getParams().setHostIds(hostIds).setListHost(BriefHostDTO.PROPERTY_NAMES).setOutput(BriefPointDTO.PROPERTY_NAMES);
         List<BriefPointDTO> points;
         try {
-            points = appManager.listApplication(appRequest);
+            points = pointManager.listPoint(appRequest);
         } catch (AuthExpireException e) {
             e.printStackTrace();
             return null;
@@ -419,7 +415,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         appRequest.getParams().setOutput(BriefPointDTO.PROPERTY_NAMES);
         List<BriefPointDTO> problemPoints ;
         try {
-            problemPoints = appManager.listApplication(appRequest);
+            problemPoints = pointManager.listPoint(appRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;

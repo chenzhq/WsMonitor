@@ -4,7 +4,6 @@ package com.ws.stoner.manager;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.model.brief.TriggerBrief;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
 
 import java.util.List;

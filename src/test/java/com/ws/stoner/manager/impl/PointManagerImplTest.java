@@ -2,10 +2,8 @@ package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
-import com.ws.bix4j.bean.ApplicationDO;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.manager.ApplicationManager;
-import com.ws.stoner.model.brief.ApplicationBrief;
+import com.ws.stoner.manager.PointManager;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import org.junit.Test;
 import org.junit.Before; 
@@ -14,12 +12,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /** 
-* ApplicationManagerImpl Tester.
+* PointManagerImpl Tester.
 * 
 * @author <Authors name> 
 * @since <pre>六月 8, 2017</pre> 
@@ -27,10 +23,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class ApplicationManagerImplTest {
+public class PointManagerImplTest {
 
     @Autowired
-    private ApplicationManager applicationManager;
+    private PointManager pointManager;
 
     @Autowired
     private ZApi zApi;
@@ -54,7 +50,7 @@ public void after() throws Exception {
 public void testListApplication() throws Exception { 
 //TODO: Test goes here...
     ApplicationGetRequest apprequest = new ApplicationGetRequest();
-    List<BriefPointDTO> listApp = applicationManager.listApplication(apprequest);
+    List<BriefPointDTO> listApp = pointManager.listPoint(apprequest);
     System.out.println(listApp.toString());
 
 }

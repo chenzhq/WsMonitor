@@ -2,42 +2,29 @@ package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
-import com.ws.bix4j.bean.ApplicationDO;
-import com.ws.bix4j.bean.HostDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.manager.ApplicationManager;
+import com.ws.stoner.manager.PointManager;
 import com.ws.stoner.manager.HostManager;
 import com.ws.stoner.manager.ItemManager;
 import com.ws.stoner.manager.TriggerManager;
-import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by zkf on 2017/6/8.
  */
 @Service
-public class ApplicationManagerImpl implements ApplicationManager {
+public class PointManagerImpl implements PointManager {
 
     private static final Logger logger = LoggerFactory.getLogger(HostManagerImpl.class);
-    @Autowired
-    private HostManager hostManager;
-
-    @Autowired
-    private TriggerManager triggerManager;
-
-    @Autowired
-    private ItemManager itemManager;
-
     @Autowired
     private ZApi zApi;
 
@@ -48,7 +35,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
      * @throws ManagerException
      */
     @Override
-    public int countAppliction(ApplicationGetRequest request) throws ManagerException {
+    public int countPoint(ApplicationGetRequest request) throws ManagerException {
         int appNum ;
         try {
             appNum = zApi.Application().count(request);
@@ -65,7 +52,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
      * @throws AuthExpireException
      */
     @Override
-    public List<BriefPointDTO> listApplication(ApplicationGetRequest request) throws AuthExpireException {
+    public List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws AuthExpireException {
         List<BriefPointDTO> listApplication ;
         try {
             listApplication = zApi.Application().get(request,BriefPointDTO.class);

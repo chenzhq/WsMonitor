@@ -1,10 +1,8 @@
 package com.ws.stoner.manager;
 
 import com.ws.bix4j.access.application.ApplicationGetRequest;
-import com.ws.bix4j.bean.ApplicationDO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.model.brief.ApplicationBrief;
 import com.ws.stoner.model.dto.BriefPointDTO;
 
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.List;
 /**
  * Created by zkf on 2017/6/1.
  */
-public interface ApplicationManager {
+public interface PointManager {
 
     /**
      * 根据 request 获取监控点数量
@@ -20,7 +18,7 @@ public interface ApplicationManager {
      * @return
      * @throws ManagerException
      */
-    int countAppliction(ApplicationGetRequest request) throws ManagerException;
+    int countPoint(ApplicationGetRequest request) throws ManagerException;
 
     /**
      * List applications list.
@@ -28,7 +26,7 @@ public interface ApplicationManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<BriefPointDTO> listApplication(ApplicationGetRequest request) throws AuthExpireException;
+    List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws AuthExpireException;
 
 
 }

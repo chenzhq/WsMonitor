@@ -2,8 +2,6 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.StateNumDTO;
-
-import javax.xml.ws.Service;
 import java.util.List;
 
 /**
@@ -14,7 +12,7 @@ public interface CountStateService {
 /*
  *主机业务状态组合
  */
-     StateNumDTO countHostState() throws ServiceException;
+    StateNumDTO countHostState() throws ServiceException;
 
 /*
  *业务平台业务状态组合
@@ -54,12 +52,12 @@ public interface CountStateService {
     int countOkHost() throws ServiceException;
 
     /**
-     * 获取指定业务平台的所有主机数量 all host number by platformId
+     * 获取指定业务平台的所有主机数量 all host number by platformIds
      */
     int countAllHostByPlatformIds(List<String> platformIds) throws ServiceException;
 
     /**
-     * 获取指定业务平台的问题主机数量 problem host number by platformId
+     * 获取指定业务平台的问题主机数量 problem host number by platformIds
      * @param platformIds
      * @return
      * @throws ServiceException
@@ -77,7 +75,7 @@ public interface CountStateService {
     int countAllPlatform() throws ServiceException;
 
     /**
-     * 获取问题业务平台数量  problem
+     * 获取问题业务平台数量  problem number
      * @return
      * @throws ServiceException
      */
@@ -85,7 +83,7 @@ public interface CountStateService {
 
 
     /**
-     * 获取正常的业务平台数量 OK
+     * 获取正常的业务平台数量 OK number
      * @return
      * @throws ServiceException
      */
@@ -94,28 +92,28 @@ public interface CountStateService {
 
 
 /*
- * application service
+ * point service
  */
     /**
      * 获取所有的监控点
      * @return
      * @throws ServiceException
      */
-    int countAllApp() throws ServiceException;
+    int countAllPoint() throws ServiceException;
 
     /**
      * 获取所有的问题监控点
      * @return
      * @throws ServiceException
      */
-    int countProblemApp() throws ServiceException;
+    int countProblemPoint() throws ServiceException;
 
     /**
      * 获取正常监控点
      * @return
      * @throws ServiceException
      */
-    int countOkApp() throws  ServiceException;
+    int countOkPoint() throws  ServiceException;
 
     /**
      * 获取指定主机的所有监控点数量  all point hostids number
