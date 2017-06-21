@@ -8,7 +8,6 @@ import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.access.template.TemplateGetRequest;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
@@ -119,7 +118,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefHostDTO> hosts ;
         try {
             hosts = hostManager.listHost(hostGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -208,7 +207,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefTemplateDTO> templatesDTO;
         try {
             templatesDTO = templateManager.listTemplate(templateGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -268,7 +267,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefPlatformDTO> platforms ;
         try {
             platforms = platformManager.listPlatform(groupRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -354,7 +353,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefHostDTO> hosts;
         try {
             hosts = hostManager.listHost(hostGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -371,7 +370,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefPointDTO> points;
         try {
             points = pointManager.listPoint(appRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -400,7 +399,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefItemDTO> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }

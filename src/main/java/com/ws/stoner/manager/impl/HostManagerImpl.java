@@ -32,7 +32,7 @@ public class HostManagerImpl implements HostManager {
             allHost = zApi.Host().count(request);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new AuthExpireException("");
+                throw new ManagerException("");
             }
             e.printStackTrace();
             logger.error("查询主机错误！{}", e.getMessage());
@@ -44,16 +44,16 @@ public class HostManagerImpl implements HostManager {
     /**
      * 获取所有的主机列表
      * @return
-     * @throws AuthExpireException
+     * @throws ManagerException
      */
     @Override
-    public List<BriefHostDTO> listHost(HostGetRequest request) throws AuthExpireException {
+    public List<BriefHostDTO> listHost(HostGetRequest request) throws ManagerException {
         List<BriefHostDTO> hosts;
         try {
             hosts = zApi.Host().get(request,BriefHostDTO.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new AuthExpireException("");
+                throw new ManagerException("");
             }
             e.printStackTrace();
             logger.error("查询主机错误！{}", e.getMessage());

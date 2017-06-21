@@ -30,7 +30,7 @@ public class TemplateManagerImpl implements TemplateManager {
     }
 
     @Override
-    public List<BriefTemplateDTO> listTemplate(TemplateGetRequest request) throws AuthExpireException {
+    public List<BriefTemplateDTO> listTemplate(TemplateGetRequest request) throws ManagerException {
         List<BriefTemplateDTO> templates;
         try {
             templates = zApi.Template().get(request,BriefTemplateDTO.class);

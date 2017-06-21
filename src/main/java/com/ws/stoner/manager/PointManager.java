@@ -24,9 +24,9 @@ public interface PointManager {
      * List applications list.
      *
      * @return the list
-     * @throws AuthExpireException the auth expire exception
+     * @throws ManagerException the auth expire exception
      */
-    List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws AuthExpireException;
+    List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws ManagerException;
 
 
 }

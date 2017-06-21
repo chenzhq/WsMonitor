@@ -30,7 +30,7 @@ public class TriggerManagerImpl implements TriggerManager {
     private ZApi zApi;
 
     @Override
-    public List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws AuthExpireException {
+    public List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ManagerException {
         List<BriefTriggerDTO> triggers;
         try {
             triggers = zApi.Trigger().get(request,BriefTriggerDTO.class);
@@ -100,7 +100,7 @@ public class TriggerManagerImpl implements TriggerManager {
             triggerNum = zApi.Trigger().count(request);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new AuthExpireException("");
+                throw new ManagerException("");
             }
             e.printStackTrace();
             logger.error("查询触发器错误！{}", e.getMessage());

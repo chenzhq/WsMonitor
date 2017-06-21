@@ -24,8 +24,8 @@ public interface HostManager {
      * List host list.
      *
      * @return the list
-     * @throws AuthExpireException the auth expire exception
+     * @throws ManagerException the auth expire exception
      */
-    List<BriefHostDTO> listHost(HostGetRequest request) throws AuthExpireException;
+    List<BriefHostDTO> listHost(HostGetRequest request) throws ManagerException;
 
 }

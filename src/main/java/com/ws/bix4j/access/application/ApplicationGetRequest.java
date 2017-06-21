@@ -46,7 +46,7 @@ public class ApplicationGetRequest  extends ZRequest<ApplicationGetRequest.Param
         //在host属性中返回应用程序所属的主机
         @JSONField(name = "selectHost")
         private String[] listHost;
-        @JSONField(name = "selectHost")
+        //@JSONField(name = "selectHost")
         private String stringHost;
 
         //返回属性中应用程序中包含的项目items
