@@ -458,7 +458,7 @@
 
     //业务系统列表加载
     $.ajax({
-        type: "post",
+        type: "get",
         async: true,
         url: "/platform/list",
         data: {},
@@ -522,7 +522,7 @@
     })
     //监控点列表加载
     $.ajax({
-        type: "post",
+        type: "get",
         async: true,
         url: "/point/list",
         data: {},
@@ -586,7 +586,7 @@
     })
     //设备列表加载
     $.ajax({
-        type: "post",
+        type: "get",
         async: true,
         url: "/host/list",
         data: {},
@@ -701,7 +701,7 @@
     onemyChart.showLoading();
     //业务系统饼图加载
     $.ajax({
-        type: "post",
+        type: "get",
         async: true,
         url: "/platform/count",
         data: {},
@@ -731,7 +731,7 @@
     })
     //监控点饼图加载
     $.ajax({
-        type: "post",
+        type: "get",
         async: true,
         url: "/point/count",
         data: {},
@@ -761,7 +761,7 @@
     })
     //设备饼图加载
     $.ajax({
-        type: "post",
+        type: "get",
         async: true,
         url: "/host/count",
         data: {},
