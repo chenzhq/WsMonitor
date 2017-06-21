@@ -15,7 +15,7 @@
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+    <script src="http://rapapi.org/rap.plugin.js?projectId=19544"></script>
 </head>
 
 <body>
@@ -215,21 +215,21 @@
 								<div class="ui pointing secondary menu">
 									<a class="item active" data-tab="first">全部</a>
 									<a class="item" data-tab="second">业务系统</a>
-									<a class="item" data-tab="third">监控点</a>
-									<a class="item" data-tab="fourth">设备</a>
+									<a class="item" data-tab="third">设备</a>
+									<a class="item" data-tab="fourth">监控点</a>
 								</div>
 
 								<div class="ui tab segment active" data-tab="first">
 									<div class="row">
 										<div class="ui three column grid">
 											<div class="column">
-												<div id="main0" style="height: 200px"></div>
+												<div id="platform_pie" style="height: 200px"></div>
 											</div>
 											<div class="column">
-												<div id="main1" style="height: 200px"></div>
+												<div id="host_pie" style="height: 200px"></div>
 											</div>
 											<div class="column">
-												<div id="main2" style="height: 200px"></div>
+												<div id="point_pie" style="height: 200px"></div>
 											</div>
 										</div>
 									</div>
@@ -271,7 +271,7 @@
 												<tr th:each="problem : ${problemList}">
 													<td th:text="${problem.hosts[0].name}">机1</td>
 													<td th:text="${problem.description}">主机1内存使用率超过90%</td>
-													<td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:css')}">2017-6-16 15:33:20</td>
+													<td th:text="${problem.time}">2017-6-21 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
@@ -285,21 +285,21 @@
 												<tr >
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-17 15:33:20</td>
+													<td>2017-6-3 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
 												<tr >
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-18 15:33:20</td>
+													<td>2017-6-9 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
 												<tr>
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-19 15:33:20</td>
+													<td>2017-6-15 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
@@ -310,58 +310,81 @@
 								</div>
 								<div class="ui tab segment" data-tab="second">
 									<div class="row">
-										<div class="sixteen wide column" data-tab="second">
-											<table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-												<thead>
-												<tr>
-													<th>名称</th>
-													<th>可用性</th>
-													<th>状态</th>
-													<th>问题数</th>
-												</tr>
-												</thead>
-												<tbody id="platform_list">
-												</tbody>
-											</table>
+										<div class="sixteen wide column">
+                                            <div class="ui grid">
+                                                <div class="six wide column">
+                                                    <div id="platform_pie_copy" style="height: 300px"></div>
+                                                </div>
+                                                <div class="ten wide column">
+                                                    <table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                                        <thead>
+                                                        <tr class="center aligned">
+                                                            <th>名称</th>
+                                                            <th>可用性</th>
+                                                            <th>设备问题数/设备总数</th>
+                                                            <th>状态</th>
+                                                        </tr>
+                                                        </thead >
+                                                        <tbody id="platform_list" class="center aligned">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
 										</div>
 									</div>
 								</div>
-								<div class="ui tab segment" data-tab="third">
+								<div class="ui tab segment" data-tab="third" >
 									<div class="row">
-										<div class="sixteen wide column" data-tab="second">
-											<table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-												<thead>
-												<tr>
-													<th>名称</th>
-													<th>监控点</th>
-													<th>状态</th>
-													<th>监控项问题数量</th>
-												</tr>
-												</thead>
-												<tbody id="point_list">
-												</tbody>
-											</table>
+                                        <div class="sixteen wide column">
+                                            <div class="ui grid">
+                                                <div class="six wide column">
+                                                    <div id="host_pie_copy" style="height: 300px"></div>
+                                                </div>
+                                                <div class="ten wide column">
+                                                    <table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                                        <thead>
+                                                        <tr class="center aligned">
+                                                            <th>名称</th>
+                                                            <th>ip</th>
+                                                            <th>类型</th>
+                                                            <th>监控点问题数／监控点总数</th>
+                                                            <th>状态</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="host_list" class="center aligned">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
 										</div>
 									</div>
 								</div>
 								<div class="ui tab segment" data-tab="fourth">
 									<div class="row">
-										<div class="sixteen wide column" data-tab="second">
-											<table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-												<thead>
-												<tr>
-													<th>名称</th>
-													<th>主机</th>
-													<th>ip</th>
-													<th>状态</th>
-													<th>类型</th>
-													<th>监控点问题数量</th>
-												</tr>
-												</thead>
-												<tbody id="host_list">
-
-												</tbody>
-											</table>
+										<div class="sixteen wide column">
+                                            <div class="ui grid">
+                                                <div class="six wide column">
+                                                    <div id="point_pie_copy" style="height: 300px"></div>
+                                                </div>
+                                                <div class="ten wide column">
+                                                    <div class="ui buttons">
+                                                        <button class="ui button" id="ok" value="ok">正常</button>
+                                                        <div class="or" data-text="ou"></div>
+                                                        <button class="ui positive button" id="nook">问题</button>
+                                                    </div>
+                                                    <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                                        <thead>
+                                                        <tr class="center aligned">
+                                                            <th>名称</th>
+                                                            <th>所属设备</th>
+                                                            <th>状态</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="point_list" class="center aligned">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
 										</div>
 									</div>
 								</div>
@@ -384,78 +407,50 @@
 	<th:block th:fragment="specialScript">
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
-		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 	</th:block>
+	<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 </th:block>
 <script type="text/javascript">
-    //选项卡初始化
-    $('.menu .item')
-        .tab()
-    ;
     //给搜索按钮绑定点击事件
     $(document).on("click","#input1",function(){
-        //自己定义的搜索框，可以是时间控件，或者checkbox 等等
-        changeDate(1);
+        //自己定义的搜索框，"今天"按钮
+        var dtable = $('#example').DataTable();
+        var filteredData = dtable
+            .column( 2 )
+            .data()
+            .filter( function ( value, index ) {
+                var value = new Date(Date.parse(value));
+                var today = new Date();
+                today.setTime(today.getTime() - 1 * 24 * 3600 * 1000);
+                var endTime = new Date(Date.parse(today));
+                return value > endTime ? true : false;
+            } );
+        dtable.search("2017-6-9").draw();
     });
-    $(document).on("click","#input2",function(){
-        //自己定义的搜索框，可以是时间控件，或者checkbox 等等
-        changeDate(3);
-    });
-    $(document).on("click","#input3",function(){
-        //自己定义的搜索框，可以是时间控件，或者checkbox 等等
-        changeDate(7);
-    });
-    $(document).on("click","#input4",function(){
-        //自己定义的搜索框，可以是时间控件，或者checkbox 等等
-        changeDate(30);
-    });
-    function changeDate(days) {
-        var today = new Date();
-        var nowdate = new Date();
-        var y = nowdate.getFullYear();
-        var m = nowdate.getMonth()+1;
-        var d = nowdate.getDate();
-        var end = y+'-'+m+'-'+d;// 获取今天时间
 
-        if (days == 1) {
-            var begin = end;// 获取今天时间
-        } else if (days == 3) {
-            today.setTime(today.getTime() - 3 * 24 * 3600 * 1000);
-            var y = today.getFullYear();
-            var m = today.getMonth()+1;
-            var d = today.getDate();
-            var begin = y+'-'+m+'-'+d;// 获取今天时间
-        } else if (days == 7) {
-            today.setTime(today.getTime() - 7 * 24 * 3600 * 1000);
-            var y = today.getFullYear();
-            var m = today.getMonth()+1;
-            var d = today.getDate();
-            var begin = y+'-'+m+'-'+d;// 获取今天时间
-        } else if (days == 30) {
-            today.setTime(today.getTime() - 30 * 24 * 3600 * 1000);
-            var y = today.getFullYear();
-            var m = today.getMonth()+1;
-            var d = today.getDate();
-            var begin = y+'-'+m+'-'+d;// 获取今天时间
-        }
-        alert("begintime=" + begin + "endtime=" + end);
-        var dtable = $("#example").DataTable();
-        /*dtable.search(begin+" "+end).draw();*/
-        dtable.search(begin).draw();
-        /*dtable.search(end).draw();*/
-    }
-    //问题列表
-/*    $(document).ready(function () {
-        var dtable = $("#example").DataTable({
-            "processing": true,
-            "serverSide": true,
-                "oAria": {
-                    "sSortAscending": ": 以升序排列此列",
-                    "sSortDescending": ": 以降序排列此列"
-                }
-        });
-    });*/
-
+    // datatable默认禁用搜索和汉化
+    $.extend( $.fn.dataTable.defaults, {
+        "pagingType": "full_numbers_icon",
+        "iDisplayLength" : 11,
+        "bLengthChange": false,
+        searching: false,
+        order: [0, 'asc'],
+        "language": {
+            "sLengthMenu" : "每页显示 _MENU_ 条记录",
+            "sZeroRecords" : "对不起，没有匹配的数据",
+            "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
+            "sInfoEmpty" : "没有匹配的数据",
+            "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
+            "sProcessing" : "正在加载中...",
+            "sSearch" : "全文搜索：",
+            "oPaginate" : {
+                "sFirst" : "第一页",
+                "sPrevious" : " 上一页 ",
+                "sNext" : " 下一页 ",
+                "sLast" : " 最后一页 "
+            }
+        },
+    } );
     //业务系统列表加载
     $.ajax({
         type: "get",
@@ -469,33 +464,19 @@
             if(success){
                 $("#platform_list").html("");
                 for(var i in data){
-                    var availability=data[i].availability;
-                    var name=data[i].name;
-                    var problemNum=data[i].problemNum;
-                    var state=data[i].state;
-                    $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
+                    var color_state=new Array();
+                    if(data[i].state=="ok"){
+                        color_state[i]="positive";
+                    }else {
+                        color_state[i]="negative";
+                    }
+                    $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
                 };
                 var dtable = $("#platform_table").DataTable({
-                    "pagingType": "full_numbers_icon",
-                    order: [0, 'desc'],
-                    responsive: true,
-                    "iDisplayLength" : 10,
-                    "aLengthMenu" : [ [ 10, 20, -1 ], [ "10", "20", "所有" ] ],
-                    "language": {
-                        "sLengthMenu" : "每页显示 _MENU_ 条记录",
-                        "sZeroRecords" : "对不起，没有匹配的数据",
-                        "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
-                        "sInfoEmpty" : "没有匹配的数据",
-                        "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
-                        "sProcessing" : "正在加载中...",
-                        "sSearch" : "全文搜索：",
-                        "oPaginate" : {
-                            "sFirst" : "第一页",
-                            "sPrevious" : " 上一页 ",
-                            "sNext" : " 下一页 ",
-                            "sLast" : " 最后一页 "
-                        }
-                    },
+                    "columnDefs":[{
+                        "orderable":false,
+                        "targets":[3],
+                    }],
                 });
 			}
 			else {
@@ -505,7 +486,7 @@
                     delayIndicator: true,
                     msg: "请求数据失败!",
                     icon: "comment icon",
-                    title: "json 数据",
+                    title: "业务系统 Table",
                 });
 			}
         },
@@ -514,74 +495,10 @@
 				size: "normal",
 				rounded: false,
 				delayIndicator: true,
-				msg: "请求数据失败!",
+				msg: "请求链接失败!",
 				icon: "warning icon",
-				title: "AJAX 链接",
+				title: "业务系统 Table",
 			});
-        }
-    })
-    //监控点列表加载
-    $.ajax({
-        type: "get",
-        async: true,
-        url: "/point/list",
-        data: {},
-        dataType: "json",
-        success: function (result) {
-            var data=result.data;
-            var success=result.success;
-            if(success){
-                $("#point_list").html("");
-                for(var i in data){
-                    var pointId=data[i].pointId;
-                    var name=data[i].name;
-                    var problemNum=data[i].problemNum;
-                    var state=data[i].state;
-                    $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].pointId+"</td><td>"+data[i].state+"</td><td>"+data[i].problemNum+"</td></tr>");
-                };
-                var dtable = $("#point_table").DataTable({
-                    "pagingType": "full_numbers_icon",
-                    order: [0, 'desc'],
-                    responsive: true,
-                    "iDisplayLength" : 10,
-                    "aLengthMenu" : [ [ 10, 50, -1 ], [ "10", "50", "所有" ] ],
-                    "language": {
-                        "sLengthMenu" : "每页显示 _MENU_ 条记录",
-                        "sZeroRecords" : "对不起，没有匹配的数据",
-                        "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
-                        "sInfoEmpty" : "没有匹配的数据",
-                        "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
-                        "sProcessing" : "正在加载中...",
-                        "sSearch" : "全文搜索：",
-                        "oPaginate" : {
-                            "sFirst" : "第一页",
-                            "sPrevious" : " 上一页 ",
-                            "sNext" : " 下一页 ",
-                            "sLast" : " 最后一页 "
-                        }
-                    },
-                });
-            }
-            else {
-                Lobibox.notify("default", {
-                    size: "normal",
-                    rounded: false,
-                    delayIndicator: true,
-                    msg: "请求数据失败!",
-                    icon: "comment icon",
-                    title: "json 数据",
-                });
-            }
-        },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "请求数据失败!",
-                icon: "warning icon",
-                title: "AJAX 链接",
-            });
         }
     })
     //设备列表加载
@@ -597,35 +514,19 @@
             if(success) {
                 $("#host_list").html("");
                 for(var i in data){
-                    var ip=data[i].ip;
-                    var name=data[i].name;
-                    var type=data[i].type;
-                    var state=data[i].state;
-                    var hostId=data[i].hostId;
-                    var problemNum=data[i].problemNum;
-                    $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].hostId+"</td><td>"+data[i].ip+"</td><td>"+data[i].state+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"</td></tr>");
+                    var color_state=new Array();
+                    if(data[i].state=="ok"){
+                        color_state[i]="positive";
+                    }else {
+                        color_state[i]="negative";
+                    }
+                    $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
                 };
                 var dtable = $("#host_table").DataTable({
-                    "pagingType": "full_numbers_icon",
-                    order: [0, 'desc'],
-                    responsive: true,
-                    "iDisplayLength" : 10,
-                    "aLengthMenu" : [ [ 10, 20, -1 ], [ "10", "20", "所有" ] ],
-                    "language": {
-                        "sLengthMenu" : "每页显示 _MENU_ 条记录",
-                        "sZeroRecords" : "对不起，没有匹配的数据",
-                        "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
-                        "sInfoEmpty" : "没有匹配的数据",
-                        "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
-                        "sProcessing" : "正在加载中...",
-                        "sSearch" : "全文搜索：",
-                        "oPaginate" : {
-                            "sFirst" : "第一页",
-                            "sPrevious" : " 上一页 ",
-                            "sNext" : " 下一页 ",
-                            "sLast" : " 最后一页 "
-                        }
-                    },
+                    "columnDefs":[{
+                        "orderable":false,
+                        "targets":[1,2,4],
+                    }],
                 });
             }
             else {
@@ -635,7 +536,7 @@
                     delayIndicator: true,
                     msg: "请求数据失败!",
                     icon: "comment icon",
-                    title: "json 数据",
+                    title: "设备 Table",
                 });
             }
         },
@@ -644,22 +545,79 @@
                 size: "normal",
                 rounded: false,
                 delayIndicator: true,
-                msg: "请求数据失败!",
+                msg: "请求链接失败!",
                 icon: "warning icon",
-                title: "AJAX 链接",
+                title: "设备 Table",
+            });
+        }
+    })
+    //监控点列表加载
+    $.ajax({
+        type: "get",
+        async: true,
+        url: "/point/list",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            var data=result.data;
+            var success=result.success;
+            if(success){
+                $("#point_list").html("");
+                for(var i in data){
+                    var color_state=new Array();
+                    if(data[i].state=="ok"){
+                        color_state[i]="positive";
+                    }else {
+                        color_state[i]="negative";
+                    }
+                    $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].hostName+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
+                };
+                var dtable = $("#point_table").DataTable({
+                    "columnDefs":[{
+                        "orderable":false,
+                        "targets":[1,2],
+                    }],
+                });
+            }
+            else {
+                Lobibox.notify("default", {
+                    size: "normal",
+                    rounded: false,
+                    delayIndicator: true,
+                    msg: "请求数据失败!",
+                    icon: "comment icon",
+                    title: "监控点 Table",
+                });
+            }
+        },
+        error: function (errorMsg) {
+            Lobibox.notify("error", {
+                size: "normal",
+                rounded: false,
+                delayIndicator: true,
+                msg: "请求链接失败!",
+                icon: "warning icon",
+                title: "监控点 Table",
             });
         }
     })
 </script>
 <script type="text/javascript">
-    var myChart = echarts.init(document.getElementById('main0'));
-    var onemyChart = echarts.init(document.getElementById('main1'));
-    var twomyChart = echarts.init(document.getElementById('main2'));
+    //选项卡初始化
+    $('.menu .item')
+        .tab();
+    var platform_myChart = echarts.init(document.getElementById('platform_pie'));
+    var host_myChart = echarts.init(document.getElementById('host_pie'));
+    var point_myChart = echarts.init(document.getElementById('point_pie'));
+    var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
+    var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
+    var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
+
     // 指定图表的配置项和数据
     var option = {
         title: {
-            text: '10个',
-            subtext: '业务系统 ',
+            text: '',
+            subtext: '',
             x: 'center',
             y: 'center',
             itemGap: 10,
@@ -693,12 +651,17 @@
                     },
                 },
                 data: [],
-                color: ['#FF5722', '#F7B824', '#5FB878', '#d2d2d2', '#2F4056']
+                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
             }
         ]
     }
 
-    onemyChart.showLoading();
+    platform_myChart.showLoading();
+    host_myChart.showLoading();
+    point_myChart.showLoading();
+    platform_copy_myChart.showLoading();
+    host_copy_myChart.showLoading();
+    point_copy_myChart.showLoading();
     //业务系统饼图加载
     $.ajax({
         type: "get",
@@ -707,15 +670,18 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            onemyChart.hideLoading();
+            platform_myChart.hideLoading();
+            platform_copy_myChart.hideLoading();
             var data = result.data;
             var dataList = data.stateNum;
             var total = data.totalNum + "个";
             if (dataList) {
+                option.title.subtext="业务系统";
                 option.title.text = total;
                 option.series[0].data = dataList;
                 // 重写指定图表的配置项和数据
-                myChart.setOption(option);
+                platform_myChart.setOption(option);
+                platform_copy_myChart.setOption(option);
             }
         },
         error: function (errorMsg) {
@@ -723,39 +689,9 @@
                 size: "normal",
                 rounded: false,
                 delayIndicator: true,
-                msg: "请求数据失败!",
+                msg: "请求链接失败!",
                 icon: "warning icon",
-                title: "AJAX 链接",
-            });
-        }
-    })
-    //监控点饼图加载
-    $.ajax({
-        type: "get",
-        async: true,
-        url: "/point/count",
-        data: {},
-        dataType: "json",
-        success: function (result) {
-            onemyChart.hideLoading();
-            var data = result.data;
-            var dataList = data.stateNum;
-            var total = data.totalNum + "个";
-            if (dataList) {
-                option.title.text = total;
-                option.series[0].data = dataList;
-                // 重写指定图表的配置项和数据
-                onemyChart.setOption(option);
-            }
-        },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "请求数据失败!",
-                icon: "warning icon",
-                title: "AJAX 链接",
+                title: "业务系统 Pie",
             });
         }
     })
@@ -767,15 +703,18 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            onemyChart.hideLoading();
+            host_myChart.hideLoading();
+            host_copy_myChart.hideLoading();
             var data = result.data;
             var dataList = data.stateNum;
-            var total = data.totalNum + "个";
+            var total = data.totalNum + "台";
             if (dataList) {
+                option.title.subtext="设备";
                 option.title.text = total;
                 option.series[0].data = dataList;
                 // 重写指定图表的配置项和数据
-                twomyChart.setOption(option);
+                host_myChart.setOption(option);
+                host_copy_myChart.setOption(option);
             }
         },
         error: function (errorMsg) {
@@ -783,9 +722,42 @@
                 size: "normal",
                 rounded: false,
                 delayIndicator: true,
-                msg: "请求数据失败!",
+                msg: "请求链接失败!",
                 icon: "warning icon",
-                title: "AJAX 链接",
+                title: "设备 Pie",
+            });
+        }
+    })
+    //监控点饼图加载
+    $.ajax({
+        type: "get",
+        async: true,
+        url: "/point/count",
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            point_myChart.hideLoading();
+            point_copy_myChart.hideLoading();
+            var data = result.data;
+            var dataList = data.stateNum;
+            var total = data.totalNum + "个";
+            if (dataList) {
+                option.title.subtext="监控点";
+                option.title.text = total;
+                option.series[0].data = dataList;
+                // 重写指定图表的配置项和数据
+                point_myChart.setOption(option);
+                point_copy_myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            Lobibox.notify("error", {
+                size: "normal",
+                rounded: false,
+                delayIndicator: true,
+                msg: "请求链接失败!",
+                icon: "warning icon",
+                title: "监控点 Pie",
             });
         }
     })
