@@ -1,5 +1,9 @@
 package com.ws.stoner.model.view;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
+import java.time.Instant;
+
 /**
  * Created by zkf on 2017/6/19.
  */
@@ -10,6 +14,7 @@ public class DashboardPointVO {
     private String state;
     private String hostId;
     private String hostName;
+    private Instant lastTime;
 
     @Override
     public String toString() {
@@ -19,7 +24,17 @@ public class DashboardPointVO {
                 ", state='" + state + '\'' +
                 ", hostId='" + hostId + '\'' +
                 ", hostName='" + hostName + '\'' +
+                ", lastTime=" + lastTime +
                 '}';
+    }
+
+    public Instant getLastTime() {
+        return lastTime;
+    }
+
+    public DashboardPointVO setLastTime(Instant lastTime) {
+        this.lastTime = lastTime;
+        return this;
     }
 
     public String getPointId() {

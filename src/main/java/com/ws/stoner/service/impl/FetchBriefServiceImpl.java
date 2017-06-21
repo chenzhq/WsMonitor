@@ -21,6 +21,7 @@ import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -335,6 +336,17 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             }else {
                 pointVO.setState(StatusEnum.OK.getName());
             }
+            //lastTime
+            List<BriefItemDTO> items = point.getItems();
+            if(items.size() != 0) {
+                Instant lastTime = items.get(0).getLastTime();
+                for(BriefItemDTO item : items) {
+                    if(lastTime.compareTo(item.getLastTime()) < 0) {
+                        lastTime = item.getLastTime();
+                    }
+                }
+                pointVO.setLastTime(lastTime);
+            }
             pointVOS.add(pointVO);
         }
         return pointVOS;
@@ -366,7 +378,11 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             hostIds.add(host.getHostId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
-        appRequest.getParams().setHostIds(hostIds).setListHost(BriefHostDTO.PROPERTY_NAMES).setOutput(BriefPointDTO.PROPERTY_NAMES);
+        appRequest.getParams()
+                .setHostIds(hostIds)
+                .setListHost(BriefHostDTO.PROPERTY_NAMES)
+                .setListItems(BriefItemDTO.PROPERTY_NAMES)
+                .setOutput(BriefPointDTO.PROPERTY_NAMES);
         List<BriefPointDTO> points;
         try {
             points = pointManager.listPoint(appRequest);
