@@ -5,14 +5,16 @@ import com.ws.stoner.model.dto.BriefHostDTO;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 /**
  * Created by chenzheqi on 2017/6/12.
  */
 public class BriefProblemVO {
-    @JSONField(name = "lastchange")
-    private Instant time;
+    @JSONField(name = "lastchange", format = "yyyy/MM/dd HH:mm:ss")
+    private LocalDateTime time;
     private String priority;
     private List<BriefHostDTO> hosts;
     private String description;
@@ -21,12 +23,12 @@ public class BriefProblemVO {
     public final static String[] PROPERTY_NAMES = {"lastchange",
             "time", "priority", "description", "duration"};
 
-    public Instant getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
     public BriefProblemVO setTime(int time) {
-        this.time = Instant.ofEpochSecond(time);
+        this.time = LocalDateTime.ofInstant(Instant.ofEpochMilli(time*1000L), ZoneId.systemDefault());
         return this;
     }
 

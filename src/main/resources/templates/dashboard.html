@@ -15,7 +15,7 @@
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-    <script src="http://rapapi.org/rap.plugin.js?projectId=19544"></script>
+    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 </head>
 
 <body>
@@ -271,7 +271,7 @@
 												<tr th:each="problem : ${problemList}">
 													<td th:text="${problem.hosts[0].name}">机1</td>
 													<td th:text="${problem.description}">主机1内存使用率超过90%</td>
-													<td th:text="${problem.time}">2017-6-16 15:33:20</td>
+													<td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:css')}">2017-6-16 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
 												</tr>
@@ -384,8 +384,8 @@
 	<th:block th:fragment="specialScript">
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 	</th:block>
-	<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 </th:block>
 <script type="text/javascript">
     //选项卡初始化
