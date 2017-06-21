@@ -29,10 +29,10 @@ public class ItemManagerImpl implements ItemManager {
     /**
      * 根据request 获取 所有的item
      * @return
-     * @throws AuthExpireException
+     * @throws ManagerException
      */
     @Override
-    public List<BriefItemDTO> listItem(ItemGetRequest request) throws AuthExpireException {
+    public List<BriefItemDTO> listItem(ItemGetRequest request) throws ManagerException {
         List<BriefItemDTO> items ;
         try {
             items = zApi.Item().get(request,BriefItemDTO.class);

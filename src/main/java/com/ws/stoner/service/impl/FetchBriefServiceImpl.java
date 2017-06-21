@@ -8,7 +8,6 @@ import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.access.template.TemplateGetRequest;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
@@ -22,6 +21,7 @@ import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -119,7 +119,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefHostDTO> hosts ;
         try {
             hosts = hostManager.listHost(hostGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -208,7 +208,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefTemplateDTO> templatesDTO;
         try {
             templatesDTO = templateManager.listTemplate(templateGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -268,7 +268,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefPlatformDTO> platforms ;
         try {
             platforms = platformManager.listPlatform(groupRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -336,6 +336,17 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             }else {
                 pointVO.setState(StatusEnum.OK.getName());
             }
+            //lastTime
+            List<BriefItemDTO> items = point.getItems();
+            if(items.size() != 0) {
+                Instant lastTime = items.get(0).getLastTime();
+                for(BriefItemDTO item : items) {
+                    if(lastTime.compareTo(item.getLastTime()) < 0) {
+                        lastTime = item.getLastTime();
+                    }
+                }
+                pointVO.setLastTime(lastTime);
+            }
             pointVOS.add(pointVO);
         }
         return pointVOS;
@@ -354,7 +365,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefHostDTO> hosts;
         try {
             hosts = hostManager.listHost(hostGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -367,11 +378,15 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             hostIds.add(host.getHostId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
-        appRequest.getParams().setHostIds(hostIds).setListHost(BriefHostDTO.PROPERTY_NAMES).setOutput(BriefPointDTO.PROPERTY_NAMES);
+        appRequest.getParams()
+                .setHostIds(hostIds)
+                .setListHost(BriefHostDTO.PROPERTY_NAMES)
+                .setListItems(BriefItemDTO.PROPERTY_NAMES)
+                .setOutput(BriefPointDTO.PROPERTY_NAMES);
         List<BriefPointDTO> points;
         try {
             points = pointManager.listPoint(appRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
@@ -400,7 +415,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         List<BriefItemDTO> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }

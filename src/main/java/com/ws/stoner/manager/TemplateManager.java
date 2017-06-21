@@ -24,8 +24,8 @@ public interface TemplateManager {
      * List template list.
      *
      * @return the list
-     * @throws AuthExpireException the auth expire exception
+     * @throws ManagerException the auth expire exception
      */
-    List<BriefTemplateDTO> listTemplate(TemplateGetRequest request) throws AuthExpireException;
+    List<BriefTemplateDTO> listTemplate(TemplateGetRequest request) throws ManagerException;
 
 }

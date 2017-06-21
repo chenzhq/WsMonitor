@@ -24,13 +24,13 @@ public class PlatformManagerImpl implements PlatformManager {
     @Autowired
     private ZApi zApi;
     @Override
-    public List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws AuthExpireException {
+    public List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ManagerException {
         List<BriefPlatformDTO> groups;
         try {
             groups = zApi.Group().get(request, BriefPlatformDTO.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new AuthExpireException("");
+                throw new ManagerException("");
             }
             e.printStackTrace();
             logger.error("查询业务平台错误！{}", e.getMessage());

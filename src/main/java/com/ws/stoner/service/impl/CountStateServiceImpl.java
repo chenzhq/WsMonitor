@@ -6,7 +6,6 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
@@ -329,7 +328,7 @@ public class CountStateServiceImpl implements CountStateService {
         List<BriefHostDTO> hosts;
         try {
             hosts = hostManager.listHost(hostGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
         }
@@ -378,7 +377,7 @@ public class CountStateServiceImpl implements CountStateService {
         List<BriefItemDTO> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
         }
@@ -452,7 +451,7 @@ public class CountStateServiceImpl implements CountStateService {
         List<BriefItemDTO> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
         }

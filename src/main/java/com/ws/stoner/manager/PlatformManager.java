@@ -17,7 +17,7 @@ public interface PlatformManager {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws AuthExpireException;
+    List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ManagerException;
 
     /**
      * 根据request获取业务平台数量 hostgroup number

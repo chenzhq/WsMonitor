@@ -16,9 +16,9 @@ public interface TriggerManager {
      * 根据 request 获取触发器 list
      *
      * @return the list
-     * @throws AuthExpireException the auth expire exception
+     * @throws ManagerException the auth expire exception
      */
-    List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws AuthExpireException;
+    List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ManagerException;
 
     /**
      * 获取所有的问题触发器ids

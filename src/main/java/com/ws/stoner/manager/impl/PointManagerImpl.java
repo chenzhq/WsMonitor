@@ -49,16 +49,16 @@ public class PointManagerImpl implements PointManager {
     /**
      *
      * @return 获取监控点列表
-     * @throws AuthExpireException
+     * @throws ManagerException
      */
     @Override
-    public List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws AuthExpireException {
+    public List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws ManagerException {
         List<BriefPointDTO> listApplication ;
         try {
             listApplication = zApi.Application().get(request,BriefPointDTO.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new AuthExpireException("");
+                throw new ManagerException("");
             }
             e.printStackTrace();
             logger.error("查询监控点错误！{}", e.getMessage());

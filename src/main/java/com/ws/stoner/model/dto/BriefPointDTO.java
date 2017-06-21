@@ -2,6 +2,8 @@ package com.ws.stoner.model.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.List;
+
 /**
  * Created by pc on 2017/6/16.
  */
@@ -12,6 +14,7 @@ public class BriefPointDTO {
     @JSONField(name = "hostid")
     private String hostId;
     private BriefHostDTO host;
+    private List<BriefItemDTO> items;
 
     public static final String[] PROPERTY_NAMES = {"applicationid","name","hostid"};
 
@@ -23,6 +26,15 @@ public class BriefPointDTO {
                 ", hostId='" + hostId + '\'' +
                 ", host=" + host +
                 '}';
+    }
+
+    public List<BriefItemDTO> getItems() {
+        return items;
+    }
+
+    public BriefPointDTO setItems(List<BriefItemDTO> items) {
+        this.items = items;
+        return this;
     }
 
     public String getPointId() {
@@ -61,7 +73,5 @@ public class BriefPointDTO {
         return this;
     }
 
-    public static String[] getPropertyNames() {
-        return PROPERTY_NAMES;
-    }
+
 }
