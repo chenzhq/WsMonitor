@@ -3,6 +3,8 @@ package com.ws.stoner.model.dto;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * Created by pc on 2017/6/20.
@@ -11,8 +13,8 @@ public class BriefItemDTO {
     @JSONField(name = "itemid")
     private String itemId;
     private String name;
-    @JSONField(name = "lastclock")
-    private Instant lastTime;
+    @JSONField(name = "lastclock",format = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastTime;
 
     public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock"};
 
@@ -43,12 +45,13 @@ public class BriefItemDTO {
         return this;
     }
 
-    public Instant getLastTime() {
+    public LocalDateTime getLastTime() {
         return lastTime;
     }
 
     public BriefItemDTO setLastTime(int lastTime) {
-        this.lastTime = Instant.ofEpochSecond(lastTime);
+        Instant instant = Instant.ofEpochSecond(lastTime);
+        this.lastTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         return this;
     }
 }

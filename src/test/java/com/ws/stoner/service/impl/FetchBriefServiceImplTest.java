@@ -1,11 +1,13 @@
 package com.ws.stoner.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
+import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.model.view.DashboardHostVO;
 import com.ws.stoner.model.view.DashboardPlatformVO;
 import com.ws.stoner.model.view.DashboardPointVO;
@@ -142,7 +144,7 @@ public void testlistProblemPlatform() throws Exception {
 @Test
 public void testlistDashboardPoint() throws Exception {
     List<DashboardPointVO> pointVOS = fetchBriefService.listDashboardPoint();
-    System.out.println(pointVOS);
+    System.out.println(JSON.toJSONString(pointVOS));
 }
 
 @Test
@@ -165,7 +167,9 @@ public void testListProblemPoint() throws Exception {
 */ 
 @Test
 public void testListBriefProblems() throws Exception { 
-//TODO: Test goes here... 
+//TODO: Test goes here...
+    List<BriefProblemVO> platformDTOS = fetchBriefService.listBriefProblems();
+    System.out.println(platformDTOS);
 } 
 
 

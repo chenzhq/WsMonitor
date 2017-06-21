@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -340,7 +341,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             //lastTime
             List<BriefItemDTO> items = point.getItems();
             if(items.size() != 0) {
-                Instant lastTime = items.get(0).getLastTime();
+                LocalDateTime lastTime = items.get(0).getLastTime();
                 for(BriefItemDTO item : items) {
                     if(lastTime.compareTo(item.getLastTime()) < 0) {
                         lastTime = item.getLastTime();

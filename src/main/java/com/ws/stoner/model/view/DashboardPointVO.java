@@ -2,7 +2,11 @@ package com.ws.stoner.model.view;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * Created by zkf on 2017/6/19.
@@ -14,7 +18,8 @@ public class DashboardPointVO {
     private String state;
     private String hostId;
     private String hostName;
-    private Instant lastTime;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastTime;
 
     @Override
     public String toString() {
@@ -28,12 +33,12 @@ public class DashboardPointVO {
                 '}';
     }
 
-    public Instant getLastTime() {
+    public LocalDateTime getLastTime() {
         return lastTime;
     }
 
-    public DashboardPointVO setLastTime(Instant lastTime) {
-        this.lastTime = lastTime;
+    public DashboardPointVO setLastTime(LocalDateTime lastTime) {
+       this.lastTime = lastTime;
         return this;
     }
 
