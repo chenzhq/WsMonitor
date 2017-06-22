@@ -254,6 +254,11 @@
 															</div>
 														</div>
 													</div>
+													<p class="searchTime">
+														<span>查询日期</span>
+														<input type="text" id="min" class="start"> -
+														<input type="text" id="max" class="end">
+													</p>
 												</div>
 											</div>
 
@@ -406,9 +411,45 @@
 	</th:block>
 </th:block>
 <script type="text/javascript">
+    function tableDraw() {
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                alert("1");
+                var rx = /^\d{4}(\/\d{1,2}){2}$/;//日期正则，只判断格式，是否输入正确不加判断
+
+                var min = $('#min').val();
+                var max = $('#max').val();
+                var date = new Date(data[2]).getTime();//日期列，Date对象参数可以为----/--/--格式，其他格式需要自己转为此种格式，获取时间戳
+                if (rx.test(min) && rx.test(max)) {
+                    min = new Date(min).getTime();
+                    max = new Date(max).getTime();
+                    alert(min + ",");
+                    return (date >= min && date <= max) ||
+                        (date >= max && date <= min)//先后时间填写反，如果按照字段说明，那么去掉这个判断
+                }
+
+                return true;
+            }
+        );
+    }
+    $(document).ready(function () {
+        var table = $('#example').DataTable();
+        //给2个输入框添加blur事件调用draw方法执行自定义过滤函数
+        $('#min, #max').change(function () {
+            alert($('#max').val());
+            table.draw();
+        });
+    });
     //给搜索按钮绑定点击事件
     $(document).on("click","#input1",function(){
-        //自己定义的搜索框，"今天"按钮
+        var today = new Date();
+        document.getElementById("max").value = today;
+        today.setTime(today.getTime() - 1 * 24 * 3600 * 1000);
+        document.getElementById("min").value = today;
+        var table = $('#example').DataTable();
+        tableDraw();
+        table.draw();
+/*        //自己定义的搜索框，"今天"按钮
         var dtable = $('#example').DataTable();
         var filteredData = dtable
             .column( 2 )
@@ -420,7 +461,7 @@
                 var endTime = new Date(Date.parse(today));
                 return value > endTime ? true : false;
             } );
-        dtable.search("2017-6-9").draw();
+        dtable.draw();*/
     });
 
     // datatable默认禁用搜索和汉化
@@ -428,7 +469,7 @@
         "pagingType": "full_numbers_icon",
         "iDisplayLength" : 11,
         "bLengthChange": false,
-        searching: false,
+        /*searching: false,*/
         order: [0, 'asc'],
         "language": {
             "sLengthMenu" : "每页显示 _MENU_ 条记录",
@@ -446,165 +487,15 @@
             }
         },
     } );
-    //业务系统列表加载
-    $.ajax({
-        type: "get",
-        async: true,
-        url: "/platform/list",
-        data: {},
-        dataType: "json",
-        success: function (result) {
-            var data=result.data;
-            var success=result.success;
-            if(success){
-                $("#platform_list").html("");
-                for(var i in data){
-                    var color_state=new Array();
-                    if(data[i].state=="ok"){
-                        color_state[i]="positive";
-                    }else {
-                        color_state[i]="negative";
-                    }
-                    $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
-                };
-                var dtable = $("#platform_table").DataTable({
-                    "columnDefs":[{
-                        "orderable":false,
-                        "targets":[3],
-                    }],
-                });
-			}
-			else {
-                Lobibox.notify("default", {
-                    size: "normal",
-                    rounded: false,
-                    delayIndicator: true,
-                    msg: "请求数据失败!",
-                    icon: "comment icon",
-                    title: "业务系统 Table",
-                });
-			}
-        },
-        error: function (errorMsg) {
-			Lobibox.notify("error", {
-				size: "normal",
-				rounded: false,
-				delayIndicator: true,
-				msg: "请求链接失败!",
-				icon: "warning icon",
-				title: "业务系统 Table",
-			});
-        }
-    })
-    //设备列表加载
-    $.ajax({
-        type: "get",
-        async: true,
-        url: "/host/list",
-        data: {},
-        dataType: "json",
-        success: function (result) {
-            var data=result.data;
-            var success=result.success;
-            if(success) {
-                $("#host_list").html("");
-                for(var i in data){
-                    var color_state=new Array();
-                    if(data[i].state=="ok"){
-                        color_state[i]="positive";
-                    }else {
-                        color_state[i]="negative";
-                    }
-                    $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
-                };
-                var dtable = $("#host_table").DataTable({
-                    "columnDefs":[{
-                        "orderable":false,
-                        "targets":[1,2,4],
-                    }],
-                });
-            }
-            else {
-                Lobibox.notify("default", {
-                    size: "normal",
-                    rounded: false,
-                    delayIndicator: true,
-                    msg: "请求数据失败!",
-                    icon: "comment icon",
-                    title: "设备 Table",
-                });
-            }
-        },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "请求链接失败!",
-                icon: "warning icon",
-                title: "设备 Table",
-            });
-        }
-    })
-    //监控点列表加载
-    $.ajax({
-        type: "get",
-        async: true,
-        url: "/point/list",
-        data: {},
-        dataType: "json",
-        success: function (result) {
-            var data=result.data;
-            var success=result.success;
-            if(success){
-                $("#point_list").html("");
-                for(var i in data){
-                    var color_state=new Array();
-                    if(data[i].state=="ok"){
-                        color_state[i]="positive";
-                    }else {
-                        color_state[i]="negative";
-                    }
-                    $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].hostName+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
-                };
-                var dtable = $("#point_table").DataTable({
-                    "columnDefs":[{
-                        "orderable":false,
-                        "targets":[1,2],
-                    }],
-                });
-            }
-            else {
-                Lobibox.notify("default", {
-                    size: "normal",
-                    rounded: false,
-                    delayIndicator: true,
-                    msg: "请求数据失败!",
-                    icon: "comment icon",
-                    title: "监控点 Table",
-                });
-            }
-        },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "请求链接失败!",
-                icon: "warning icon",
-                title: "监控点 Table",
-            });
-        }
-    })
 </script>
 <script type="text/javascript">
 	//饼状图
-    //业务系统
+    //业务系统pie
     var platform_myChart = echarts.init(document.getElementById('platform_pie'));
     var platform_option={
         title: {
-            text: '业务系统',
-            subtext: '',
+            text: '',
+            subtext: '业务系统',
             x: 'center',
             y: 'center',
             itemGap: 10,
@@ -672,7 +563,7 @@
             });
         }
     })
-    //设备
+    //设备pie
     var host_myChart = echarts.init(document.getElementById('host_pie'));
     var host_option={
         title: {
@@ -744,7 +635,7 @@
             });
         }
     })
-    //监控点
+    //监控点pie
     var point_myChart = echarts.init(document.getElementById('point_pie'));
     var point_option = {
         title: {
@@ -816,21 +707,205 @@
             });
         }
     })
-	//tabdata切换时饼状图显示
+	//tabdata切换加载Pei和datatable
     $('.menu .item')
         .tab({
             'onFirstLoad': function(path){
 				if(path === 'platform_datatab') {
 					var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
                     platform_copy_myChart.setOption(platform_option);
-				}
+                    //业务系统datatable
+                    $.ajax({
+                        type: "get",
+                        async: true,
+                        url: "/platform/list",
+                        data: {},
+                        dataType: "json",
+                        success: function (result) {
+                            var data=result.data;
+                            var success=result.success;
+                            if(success){
+                                $("#platform_list").html("");
+                                for(var i in data){
+                                    var color_state=new Array();
+                                    if(data[i].state=="ok"){
+                                        color_state[i]="positive";
+                                    }else {
+                                        color_state[i]="negative";
+                                    }
+                                    $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
+                                };
+                                var platform_table = $("#platform_table").DataTable({
+                                    "columnDefs":[{
+                                        "orderable":false,
+                                        "targets":[3],
+                                    }],
+                                });
+                                platform_copy_myChart.on('click', function (param) {
+                                    var index = param.dataIndex;
+                                    if(index==0)
+                                    {
+                                        platform_table.search( "ok" ).draw();
+                                    }
+                                    else
+                                    {
+                                        platform_table.search( "problem" ).draw();
+                                    }
+                                });
+                            }
+                            else {
+                                Lobibox.notify("default", {
+                                    size: "normal",
+                                    rounded: false,
+                                    delayIndicator: true,
+                                    msg: "请求数据失败!",
+                                    icon: "comment icon",
+                                    title: "业务系统 Table",
+                                });
+                            }
+                        },
+                        error: function (errorMsg) {
+                            Lobibox.notify("error", {
+                                size: "normal",
+                                rounded: false,
+                                delayIndicator: true,
+                                msg: "请求链接失败!",
+                                icon: "warning icon",
+                                title: "业务系统 Table",
+                            });
+                        }
+                    })
+
+                }
                 if(path === 'host_datatab') {
 					var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
                     host_copy_myChart.setOption(host_option);
+                    //设备datatable
+                    $.ajax({
+                        type: "get",
+                        async: true,
+                        url: "/host/list",
+                        data: {},
+                        dataType: "json",
+                        success: function (result) {
+                            var data=result.data;
+                            var success=result.success;
+                            if(success) {
+                                $("#host_list").html("");
+                                for(var i in data){
+                                    var color_state=new Array();
+                                    if(data[i].state=="ok"){
+                                        color_state[i]="positive";
+                                    }else {
+                                        color_state[i]="negative";
+                                    }
+                                    $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
+                                };
+                                var host_table = $("#host_table").DataTable({
+                                    "columnDefs":[{
+                                        "orderable":false,
+                                        "targets":[1,2,4],
+                                    }],
+                                });
+                                host_copy_myChart.on('click', function (param) {
+                                    var index = param.dataIndex;
+                                    if(index==0)
+                                    {
+                                        host_table.search( "ok" ).draw();
+                                    }
+                                    else
+                                    {
+                                        host_table.search( "problem" ).draw();
+                                    }
+                                });
+                            }
+                            else {
+                                Lobibox.notify("default", {
+                                    size: "normal",
+                                    rounded: false,
+                                    delayIndicator: true,
+                                    msg: "请求数据失败!",
+                                    icon: "comment icon",
+                                    title: "设备 Table",
+                                });
+                            }
+                        },
+                        error: function (errorMsg) {
+                            Lobibox.notify("error", {
+                                size: "normal",
+                                rounded: false,
+                                delayIndicator: true,
+                                msg: "请求链接失败!",
+                                icon: "warning icon",
+                                title: "设备 Table",
+                            });
+                        }
+                    })
                 }
                 if(path === 'point_datatab') {
 					var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
                     point_copy_myChart.setOption(point_option);
+                    //监控点datatable
+                    $.ajax({
+                        type: "get",
+                        async: true,
+                        url: "/point/list",
+                        data: {},
+                        dataType: "json",
+                        success: function (result) {
+                            var data=result.data;
+                            var success=result.success;
+                            if(success){
+                                $("#point_list").html("");
+                                for(var i in data){
+                                    var color_state=new Array();
+                                    if(data[i].state=="ok"){
+                                        color_state[i]="positive";
+                                    }else {
+                                        color_state[i]="negative";
+                                    }
+                                    $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].hostName+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
+                                };
+                                var point_table = $("#point_table").DataTable({
+                                    "columnDefs":[{
+                                        "orderable":false,
+                                        "targets":[1,2],
+                                    }],
+                                });
+                                point_copy_myChart.on('click', function (param) {
+                                    var index = param.dataIndex;
+                                    if(index==0)
+                                    {
+                                        point_table.search( "ok" ).draw();
+                                    }
+                                    else
+                                    {
+                                        point_table.search( "problem" ).draw();
+                                    }
+                                });
+                            }
+                            else {
+                                Lobibox.notify("default", {
+                                    size: "normal",
+                                    rounded: false,
+                                    delayIndicator: true,
+                                    msg: "请求数据失败!",
+                                    icon: "comment icon",
+                                    title: "监控点 Table",
+                                });
+                            }
+                        },
+                        error: function (errorMsg) {
+                            Lobibox.notify("error", {
+                                size: "normal",
+                                rounded: false,
+                                delayIndicator: true,
+                                msg: "请求链接失败!",
+                                icon: "warning icon",
+                                title: "监控点 Table",
+                            });
+                        }
+                    })
                 }
             }
         });
