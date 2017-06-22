@@ -733,7 +733,7 @@
                                     }else {
                                         color_state[i]="negative";
                                     }
-                                    $("#platform_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
+                                    $("#platform_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td>"+data[i].state+"</td></tr>");
                                 };
                                 var platform_table = $("#platform_table").DataTable({
                                     "columnDefs":[{
@@ -799,7 +799,7 @@
                                     }else {
                                         color_state[i]="negative";
                                     }
-                                    $("#host_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
+                                    $("#host_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td>"+data[i].state+"</td></tr>");
                                 };
                                 var host_table = $("#host_table").DataTable({
                                     "columnDefs":[{
@@ -864,7 +864,7 @@
                                     }else {
                                         color_state[i]="negative";
                                     }
-                                    $("#point_list").append("<tr><td>"+data[i].name+"</td><td>"+data[i].hostName+"</td><td class="+color_state[i]+">"+data[i].state+"</td></tr>");
+                                    $("#point_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].hostName+"</td><td>"+data[i].state+"</td></tr>");
                                 };
                                 var point_table = $("#point_table").DataTable({
                                     "columnDefs":[{
