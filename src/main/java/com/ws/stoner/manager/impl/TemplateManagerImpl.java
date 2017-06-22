@@ -3,7 +3,6 @@ package com.ws.stoner.manager.impl;
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.template.TemplateGetRequest;
 import com.ws.bix4j.exception.ZApiException;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.TemplateManager;
 import com.ws.stoner.model.dto.BriefTemplateDTO;

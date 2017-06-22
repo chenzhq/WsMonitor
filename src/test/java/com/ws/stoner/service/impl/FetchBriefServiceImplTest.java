@@ -94,7 +94,9 @@ public void testListProblemHost() throws Exception {
 */ 
 @Test
 public void testListOkHost() throws Exception {
-//TODO: Test goes here... 
+//TODO: Test goes here...
+    List<BriefHostDTO> hosts = fetchBriefService.listOkHost();
+    System.out.println(hosts);
 }
 
     /**

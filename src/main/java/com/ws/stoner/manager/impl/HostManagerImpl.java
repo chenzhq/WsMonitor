@@ -4,7 +4,6 @@ import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.HostManager;
 import com.ws.stoner.model.dto.BriefHostDTO;
