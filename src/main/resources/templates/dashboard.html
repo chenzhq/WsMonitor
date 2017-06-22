@@ -213,13 +213,13 @@
 						<div class="ui segments">
 							<div class="ui segment">
 								<div class="ui pointing secondary menu">
-									<a class="item active" data-tab="first">全部</a>
-									<a class="item" data-tab="second">业务系统</a>
-									<a class="item" data-tab="third">设备</a>
-									<a class="item" data-tab="fourth">监控点</a>
+									<a class="item active" data-tab="all_datatab">全部</a>
+									<a class="item" data-tab="platform_datatab">业务系统</a>
+									<a class="item" data-tab="host_datatab">设备</a>
+									<a class="item" data-tab="point_datatab">监控点</a>
 								</div>
 
-								<div class="ui tab segment active" data-tab="first">
+								<div class="ui tab segment active" data-tab="all_datatab">
 									<div class="row">
 										<div class="ui three column grid">
 											<div class="column">
@@ -308,7 +308,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="ui tab segment" data-tab="second">
+								<div class="ui tab segment" data-tab="platform_datatab">
 									<div class="row">
 										<div class="sixteen wide column">
                                             <div class="ui grid">
@@ -333,7 +333,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="ui tab segment" data-tab="third" >
+								<div class="ui tab segment" data-tab="host_datatab" >
 									<div class="row">
                                         <div class="sixteen wide column">
                                             <div class="ui grid">
@@ -359,7 +359,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="ui tab segment" data-tab="fourth">
+								<div class="ui tab segment" data-tab="point_datatab">
 									<div class="row">
 										<div class="sixteen wide column">
                                             <div class="ui grid">
@@ -367,11 +367,6 @@
                                                     <div id="point_pie_copy" style="height: 300px"></div>
                                                 </div>
                                                 <div class="ten wide column">
-                                                    <div class="ui buttons">
-                                                        <button class="ui button" id="ok" value="ok">正常</button>
-                                                        <div class="or" data-text="ou"></div>
-                                                        <button class="ui positive button" id="nook">问题</button>
-                                                    </div>
                                                     <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
                                                         <thead>
                                                         <tr class="center aligned">
@@ -603,17 +598,12 @@
     })
 </script>
 <script type="text/javascript">
-    //选项卡初始化
+	//饼状图
+    //业务系统
     var platform_myChart = echarts.init(document.getElementById('platform_pie'));
-    var host_myChart = echarts.init(document.getElementById('host_pie'));
-    var point_myChart = echarts.init(document.getElementById('point_pie'));
-    var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
-    var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
-
-    // 指定图表的配置项和数据
-    var option = {
+    var platform_option={
         title: {
-            text: '',
+            text: '业务系统',
             subtext: '',
             x: 'center',
             y: 'center',
@@ -651,15 +641,8 @@
                 color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
             }
         ]
-    }
-
+    };
     platform_myChart.showLoading();
-    host_myChart.showLoading();
-    point_myChart.showLoading();
-//    platform_copy_myChart.showLoading();
-    host_copy_myChart.showLoading();
-    point_copy_myChart.showLoading();
-    //业务系统饼图加载
     $.ajax({
         type: "get",
         async: true,
@@ -668,16 +651,14 @@
         dataType: "json",
         success: function (result) {
             platform_myChart.hideLoading();
-//            platform_copy_myChart.hideLoading();
             var data = result.data;
             var dataList = data.stateNum;
             var total = data.totalNum + "个";
             if (dataList) {
-                option.title.subtext="业务系统";
-                option.title.text = total;
-                option.series[0].data = dataList;
+                platform_option.title.text = total;
+                platform_option.series[0].data = dataList;
                 // 重写指定图表的配置项和数据
-                platform_myChart.setOption(option);
+                platform_myChart.setOption(platform_option);
             }
         },
         error: function (errorMsg) {
@@ -691,7 +672,50 @@
             });
         }
     })
-    //设备饼图加载
+    //设备
+    var host_myChart = echarts.init(document.getElementById('host_pie'));
+    var host_option={
+        title: {
+            text: '',
+            subtext: '设备',
+            x: 'center',
+            y: 'center',
+            itemGap: 10,
+            textStyle: {
+                color: '#01AAED',
+                fontFamily: '微软雅黑',
+                fontSize: 24,
+                fontWeight: 'bolder'
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        series: [
+            {
+                name: '访问来源',
+                type: 'pie',
+                radius: ['52%', '82%'],
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,
+                            formatter: function (param) {
+                                return param.name + param.value + "台" + ':\n' + Math.round(param.percent) + '%';
+                            },
+                            textStyle: {
+                                fontWeight: 'bolder'
+                            }
+                        }
+                    },
+                },
+                data: [],
+                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
+            }
+        ]
+    };
+    host_myChart.showLoading();
     $.ajax({
         type: "get",
         async: true,
@@ -700,17 +724,13 @@
         dataType: "json",
         success: function (result) {
             host_myChart.hideLoading();
-            host_copy_myChart.hideLoading();
             var data = result.data;
             var dataList = data.stateNum;
             var total = data.totalNum + "台";
             if (dataList) {
-                option.title.subtext="设备";
-                option.title.text = total;
-                option.series[0].data = dataList;
-                // 重写指定图表的配置项和数据
-                host_myChart.setOption(option);
-                host_copy_myChart.setOption(option);
+                host_option.title.text = total;
+                host_option.series[0].data = dataList;
+                host_myChart.setOption(host_option);
             }
         },
         error: function (errorMsg) {
@@ -724,7 +744,50 @@
             });
         }
     })
-    //监控点饼图加载
+    //监控点
+    var point_myChart = echarts.init(document.getElementById('point_pie'));
+    var point_option = {
+        title: {
+            text: '',
+            subtext: '监控点',
+            x: 'center',
+            y: 'center',
+            itemGap: 10,
+            textStyle: {
+                color: '#01AAED',
+                fontFamily: '微软雅黑',
+                fontSize: 24,
+                fontWeight: 'bolder'
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        series: [
+            {
+                name: '访问来源',
+                type: 'pie',
+                radius: ['52%', '82%'],
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: true,
+                            formatter: function (param) {
+                                return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
+                            },
+                            textStyle: {
+                                fontWeight: 'bolder'
+                            }
+                        }
+                    },
+                },
+                data: [],
+                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
+            }
+        ]
+    }
+    point_myChart.showLoading();
     $.ajax({
         type: "get",
         async: true,
@@ -733,17 +796,13 @@
         dataType: "json",
         success: function (result) {
             point_myChart.hideLoading();
-            point_copy_myChart.hideLoading();
             var data = result.data;
             var dataList = data.stateNum;
             var total = data.totalNum + "个";
             if (dataList) {
-                option.title.subtext="监控点";
-                option.title.text = total;
-                option.series[0].data = dataList;
-                // 重写指定图表的配置项和数据
-                point_myChart.setOption(option);
-                point_copy_myChart.setOption(option);
+                point_option.title.text = total;
+                point_option.series[0].data = dataList;
+                point_myChart.setOption(point_option);
             }
         },
         error: function (errorMsg) {
@@ -757,19 +816,22 @@
             });
         }
     })
-    var platform_copy_myChart
+	//tabdata切换时饼状图显示
     $('.menu .item')
         .tab({
             'onFirstLoad': function(path){
-				if(path === 'second') {
-                    if(platform_copy_myChart == null) {
-                        console.log('init')
-                        platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
-                    }
-				    console.log(option)
-                    platform_copy_myChart.setOption(option);
-				    console.log(path);
+				if(path === 'platform_datatab') {
+					var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
+                    platform_copy_myChart.setOption(platform_option);
 				}
+                if(path === 'host_datatab') {
+					var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
+                    host_copy_myChart.setOption(host_option);
+                }
+                if(path === 'point_datatab') {
+					var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
+                    point_copy_myChart.setOption(point_option);
+                }
             }
         });
 </script>
