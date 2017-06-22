@@ -1,6 +1,5 @@
 package com.ws.stoner.model.view;
 
-import com.ws.stoner.constant.StatusEnum;
 
 /**
  * Created by pc on 2017/6/19.
