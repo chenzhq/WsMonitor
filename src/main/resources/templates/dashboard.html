@@ -407,8 +407,8 @@
 	<th:block th:fragment="specialScript">
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 	</th:block>
-	<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 </th:block>
 <script type="text/javascript">
     //给搜索按钮绑定点击事件
@@ -604,12 +604,9 @@
 </script>
 <script type="text/javascript">
     //选项卡初始化
-    $('.menu .item')
-        .tab();
     var platform_myChart = echarts.init(document.getElementById('platform_pie'));
     var host_myChart = echarts.init(document.getElementById('host_pie'));
     var point_myChart = echarts.init(document.getElementById('point_pie'));
-    var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
     var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
     var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
 
@@ -659,7 +656,7 @@
     platform_myChart.showLoading();
     host_myChart.showLoading();
     point_myChart.showLoading();
-    platform_copy_myChart.showLoading();
+//    platform_copy_myChart.showLoading();
     host_copy_myChart.showLoading();
     point_copy_myChart.showLoading();
     //业务系统饼图加载
@@ -671,7 +668,7 @@
         dataType: "json",
         success: function (result) {
             platform_myChart.hideLoading();
-            platform_copy_myChart.hideLoading();
+//            platform_copy_myChart.hideLoading();
             var data = result.data;
             var dataList = data.stateNum;
             var total = data.totalNum + "个";
@@ -681,7 +678,6 @@
                 option.series[0].data = dataList;
                 // 重写指定图表的配置项和数据
                 platform_myChart.setOption(option);
-                platform_copy_myChart.setOption(option);
             }
         },
         error: function (errorMsg) {
@@ -761,6 +757,21 @@
             });
         }
     })
+    var platform_copy_myChart
+    $('.menu .item')
+        .tab({
+            'onFirstLoad': function(path){
+				if(path === 'second') {
+                    if(platform_copy_myChart == null) {
+                        console.log('init')
+                        platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
+                    }
+				    console.log(option)
+                    platform_copy_myChart.setOption(option);
+				    console.log(path);
+				}
+            }
+        });
 </script>
 </body>
 </html>
