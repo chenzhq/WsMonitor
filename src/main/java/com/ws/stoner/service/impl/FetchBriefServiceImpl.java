@@ -187,17 +187,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     public List<BriefHostDTO> listOkHost() throws ServiceException {
         List<BriefHostDTO> allHosts = listHost();
         List<BriefHostDTO> problemHosts = listProblemHost();
-        List<BriefHostDTO> OkHosts = new ArrayList<>();
-        Map<String,BriefHostDTO> hostKey = new HashMap<>();
-        for(BriefHostDTO phost : problemHosts) {
-            hostKey.put(phost.getHostId(),phost);
-        }
-        for(BriefHostDTO host : allHosts) {
-            if(hostKey.get(host.getHostId()) == null) {
-                OkHosts.add(host);
-            }
-        }
-        return OkHosts;
+        allHosts.removeAll(problemHosts);
+        return allHosts;
     }
 
     @Override
