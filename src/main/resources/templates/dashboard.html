@@ -15,7 +15,7 @@
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-    <script src="http://rapapi.org/rap.plugin.js?projectId=19544"></script>
+    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
 </head>
 
 <body>
@@ -237,7 +237,7 @@
 									<div class="row">
 										<div class="sixteen wide column">
 											<div class="ui grid">
-												<div class="six wide column"  id="mytoolbox">
+												<div class="six wide column">
 													<div class="ui grey large header" >
 														<i class="bar chart icon"></i>
 														最新问题
@@ -247,23 +247,18 @@
 													<div class="ui grid">
 														<div class="column">
 															<div class="ui buttons">
-																<button id="input1" class="ui button" value="1">今天</button>
-																<button id="input2" class="ui button" value="3">三天</button>
-																<button id="input3" class="ui button" value="7">一周</button>
-																<button id="input4" class="ui button" value="30">一月</button>
+																<button id="time_today" class="ui button">今天</button>
+																<button id="time_days" class="ui button">三天</button>
+																<button id="time_week" class="ui button">一周</button>
+																<button id="time_month" class="ui button">一月</button>
 															</div>
 														</div>
 													</div>
-													<p class="searchTime">
-														<span>查询日期</span>
-														<input type="text" id="min" class="start"> -
-														<input type="text" id="max" class="end">
-													</p>
 												</div>
 											</div>
 
 
-											<table id="example" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+											<table id="problem_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
 												<thead>
 												<tr >
 													<th>主机</th>
@@ -271,6 +266,7 @@
 													<th>上次修改于</th>
 													<th>历时</th>
 													<th>确认</th>
+													<th>备注</th>
 												</tr></thead>
 												<tbody >
 												<tr th:each="problem : ${problemList}">
@@ -279,6 +275,7 @@
 													<td th:text="${problem.time}">2017-6-21 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
+													<td>434</td>
 												</tr>
 												<tr >
 													<td>主机1</td>
@@ -286,27 +283,31 @@
 													<td>2017-6-20 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
+													<td>44</td>
 												</tr>
 												<tr >
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-3 15:33:20</td>
+													<td>2017-5-19 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
+													<td>64</td>
 												</tr>
 												<tr >
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-9 15:33:20</td>
+													<td>2017-6-17 15:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
+													<td>134</td>
 												</tr>
 												<tr>
 													<td>主机1</td>
 													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-15 15:33:20</td>
+													<td>2017-6-23 05:33:20</td>
 													<td><p>2天4小时50分</p></td>
 													<td><button >不</button></td>
+													<td>334</td>
 												</tr>
 												</tbody>
 											</table>
@@ -317,10 +318,10 @@
 									<div class="row">
 										<div class="sixteen wide column">
                                             <div class="ui grid">
-                                                <div class="six wide column">
-                                                    <div id="platform_pie_copy" style="height: 300px"></div>
+                                                <div class="five wide column">
+                                                    <div id="platform_pie_copy" style="height: 200px;margin-top: 100px;"></div>
                                                 </div>
-                                                <div class="ten wide column">
+                                                <div class="eleven wide column">
                                                     <table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
                                                         <thead>
                                                         <tr class="center aligned">
@@ -342,10 +343,10 @@
 									<div class="row">
                                         <div class="sixteen wide column">
                                             <div class="ui grid">
-                                                <div class="six wide column">
-                                                    <div id="host_pie_copy" style="height: 300px"></div>
+                                                <div class="five wide column">
+                                                    <div id="host_pie_copy" style="height: 200px;margin-top: 100px;"></div>
                                                 </div>
-                                                <div class="ten wide column">
+                                                <div class="eleven wide column">
                                                     <table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
                                                         <thead>
                                                         <tr class="center aligned">
@@ -368,10 +369,10 @@
 									<div class="row">
 										<div class="sixteen wide column">
                                             <div class="ui grid">
-                                                <div class="six wide column">
-                                                    <div id="point_pie_copy" style="height: 300px"></div>
+                                                <div class="five wide column">
+                                                    <div id="point_pie_copy" style="height: 200px;margin-top: 100px;"></div>
                                                 </div>
-                                                <div class="ten wide column">
+                                                <div class="eleven wide column">
                                                     <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
                                                         <thead>
                                                         <tr class="center aligned">
@@ -411,60 +412,49 @@
 	</th:block>
 </th:block>
 <script type="text/javascript">
-    function tableDraw() {
+    //给搜索按钮绑定点击事件
+    $(document).ready(function () {
+        var table = $('#problem_table').DataTable();
+        $('#time_today').click(function(){
+            drawsearch(1);
+            table.draw();
+            $.fn.dataTable.ext.search.pop();
+        } );
+        $('#time_days').click(function(){
+            drawsearch(3);
+            table.draw();
+            $.fn.dataTable.ext.search.pop();
+        } );
+        $('#time_week').click(function(){
+            drawsearch(7);
+            table.draw();
+            $.fn.dataTable.ext.search.pop();
+        } );
+        $('#time_month').click(function(){
+            drawsearch(30);
+            table.draw();
+            $.fn.dataTable.ext.search.pop();
+        } );
+    });
+    function drawsearch(days) {
         $.fn.dataTable.ext.search.push(
             function (settings, data, dataIndex) {
-                alert("1");
-                var rx = /^\d{4}(\/\d{1,2}){2}$/;//日期正则，只判断格式，是否输入正确不加判断
-
-                var min = $('#min').val();
-                var max = $('#max').val();
-                var date = new Date(data[2]).getTime();//日期列，Date对象参数可以为----/--/--格式，其他格式需要自己转为此种格式，获取时间戳
-                if (rx.test(min) && rx.test(max)) {
-                    min = new Date(min).getTime();
-                    max = new Date(max).getTime();
-                    alert(min + ",");
-                    return (date >= min && date <= max) ||
-                        (date >= max && date <= min)//先后时间填写反，如果按照字段说明，那么去掉这个判断
-                }
-
-                return true;
+                var today = new Date();
+                var max = new Date();
+                if (days==30){
+                    var min = today.setMonth(today.getMonth()-1);
+                }else {
+                    var min = new Date(today-days*24*3600*1000);
+				}
+                var date = new Date(data[2]);
+                    if (date >= min && date <= max) {
+                        return true;
+                    }
+                return false;
             }
         );
     }
-    $(document).ready(function () {
-        var table = $('#example').DataTable();
-        //给2个输入框添加blur事件调用draw方法执行自定义过滤函数
-        $('#min, #max').change(function () {
-            alert($('#max').val());
-            table.draw();
-        });
-    });
-    //给搜索按钮绑定点击事件
-    $(document).on("click","#input1",function(){
-        var today = new Date();
-        document.getElementById("max").value = today;
-        today.setTime(today.getTime() - 1 * 24 * 3600 * 1000);
-        document.getElementById("min").value = today;
-        var table = $('#example').DataTable();
-        tableDraw();
-        table.draw();
-/*        //自己定义的搜索框，"今天"按钮
-        var dtable = $('#example').DataTable();
-        var filteredData = dtable
-            .column( 2 )
-            .data()
-            .filter( function ( value, index ) {
-                var value = new Date(Date.parse(value));
-                var today = new Date();
-                today.setTime(today.getTime() - 1 * 24 * 3600 * 1000);
-                var endTime = new Date(Date.parse(today));
-                return value > endTime ? true : false;
-            } );
-        dtable.draw();*/
-    });
-
-    // datatable默认禁用搜索和汉化
+    // 将datatable汉化并修改默认设置
     $.extend( $.fn.dataTable.defaults, {
         "pagingType": "full_numbers_icon",
         "iDisplayLength" : 11,
@@ -480,10 +470,10 @@
             "sProcessing" : "正在加载中...",
             "sSearch" : "全文搜索：",
             "oPaginate" : {
-                "sFirst" : "第一页",
+                "sFirst" : "首页",
                 "sPrevious" : " 上一页 ",
                 "sNext" : " 下一页 ",
-                "sLast" : " 最后一页 "
+                "sLast" : " 末页 "
             }
         },
     } );
@@ -728,7 +718,7 @@
                                 $("#platform_list").html("");
                                 for(var i in data){
                                     var color_state=new Array();
-                                    if(data[i].state=="ok"){
+                                    if(data[i].state=="正常"){
                                         color_state[i]="positive";
                                     }else {
                                         color_state[i]="negative";
@@ -745,11 +735,11 @@
                                     var index = param.dataIndex;
                                     if(index==0)
                                     {
-                                        platform_table.search( "ok" ).draw();
+                                        platform_table.search( "正常" ).draw();
                                     }
                                     else
                                     {
-                                        platform_table.search( "problem" ).draw();
+                                        platform_table.search( "问题" ).draw();
                                     }
                                 });
                             }
@@ -794,7 +784,7 @@
                                 $("#host_list").html("");
                                 for(var i in data){
                                     var color_state=new Array();
-                                    if(data[i].state=="ok"){
+                                    if(data[i].state=="正常"){
                                         color_state[i]="positive";
                                     }else {
                                         color_state[i]="negative";
@@ -811,11 +801,11 @@
                                     var index = param.dataIndex;
                                     if(index==0)
                                     {
-                                        host_table.search( "ok" ).draw();
+                                        host_table.search( "正常" ).draw();
                                     }
                                     else
                                     {
-                                        host_table.search( "problem" ).draw();
+                                        host_table.search( "问题" ).draw();
                                     }
                                 });
                             }
@@ -859,7 +849,7 @@
                                 $("#point_list").html("");
                                 for(var i in data){
                                     var color_state=new Array();
-                                    if(data[i].state=="ok"){
+                                    if(data[i].state=="正常"){
                                         color_state[i]="positive";
                                     }else {
                                         color_state[i]="negative";
@@ -876,11 +866,11 @@
                                     var index = param.dataIndex;
                                     if(index==0)
                                     {
-                                        point_table.search( "ok" ).draw();
+                                        point_table.search( "正常" ).draw();
                                     }
                                     else
                                     {
-                                        point_table.search( "problem" ).draw();
+                                        point_table.search( "问题" ).draw();
                                     }
                                 });
                             }
