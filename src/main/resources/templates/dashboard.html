@@ -16,6 +16,9 @@
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
     <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+    <style type="text/css">
+        .dataTables_wrapper .dataTables_filter{display:none;}
+    </style>
 </head>
 
 <body>
@@ -208,191 +211,184 @@
 		<div class="mainWrap navslide">
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
-				<div class="row">
-					<div class="sixteen wide tablet sixteen wide computer column">
-						<div class="ui segments">
-							<div class="ui segment">
-								<div class="ui pointing secondary menu">
-									<a class="item active" data-tab="all_datatab">全部</a>
-									<a class="item" data-tab="platform_datatab">业务系统</a>
-									<a class="item" data-tab="host_datatab">设备</a>
-									<a class="item" data-tab="point_datatab">监控点</a>
-								</div>
+                <div class="sixteen wide tablet sixteen wide computer column">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <div class="ui pointing secondary menu">
+                                <a class="item active" data-tab="all_datatab">全部</a>
+                                <a class="item" data-tab="platform_datatab">业务系统</a>
+                                <a class="item" data-tab="host_datatab">设备</a>
+                                <a class="item" data-tab="point_datatab">监控点</a>
+                            </div>
 
-								<div class="ui tab segment active" data-tab="all_datatab">
-									<div class="row">
-										<div class="ui three column grid">
-											<div class="column">
-												<div id="platform_pie" style="height: 200px"></div>
-											</div>
-											<div class="column">
-												<div id="host_pie" style="height: 200px"></div>
-											</div>
-											<div class="column">
-												<div id="point_pie" style="height: 200px"></div>
-											</div>
-										</div>
-									</div>
-									<div class="ui divider"></div>
-									<div class="row">
-										<div class="sixteen wide column">
-											<div class="ui grid">
-												<div class="six wide column">
-													<div class="ui grey large header" >
-														<i class="bar chart icon"></i>
-														最新问题
-													</div>
-												</div>
-												<div class="ten wide column">
-													<div class="ui grid">
-														<div class="column">
-															<div class="ui buttons">
-																<button id="time_today" class="ui button">今天</button>
-																<button id="time_days" class="ui button">三天</button>
-																<button id="time_week" class="ui button">一周</button>
-																<button id="time_month" class="ui button">一月</button>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-
-
-											<table id="problem_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-												<thead>
-												<tr >
-													<th>主机</th>
-													<th>问题</th>
-													<th>上次修改于</th>
-													<th>历时</th>
-													<th>确认</th>
-													<th>备注</th>
-												</tr></thead>
-												<tbody >
-												<tr th:each="problem : ${problemList}">
-													<td th:text="${problem.hosts[0].name}">机1</td>
-													<td th:text="${problem.description}">主机1内存使用率超过90%</td>
-													<td th:text="${problem.time}">2017-6-21 15:33:20</td>
-													<td><p>2天4小时50分</p></td>
-													<td><button >不</button></td>
-													<td>434</td>
-												</tr>
-												<tr >
-													<td>主机1</td>
-													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-20 15:33:20</td>
-													<td><p>2天4小时50分</p></td>
-													<td><button >不</button></td>
-													<td>44</td>
-												</tr>
-												<tr >
-													<td>主机1</td>
-													<td>主机1内存使用率超过90%</td>
-													<td>2017-5-19 15:33:20</td>
-													<td><p>2天4小时50分</p></td>
-													<td><button >不</button></td>
-													<td>64</td>
-												</tr>
-												<tr >
-													<td>主机1</td>
-													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-17 15:33:20</td>
-													<td><p>2天4小时50分</p></td>
-													<td><button >不</button></td>
-													<td>134</td>
-												</tr>
-												<tr>
-													<td>主机1</td>
-													<td>主机1内存使用率超过90%</td>
-													<td>2017-6-23 05:33:20</td>
-													<td><p>2天4小时50分</p></td>
-													<td><button >不</button></td>
-													<td>334</td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-								<div class="ui tab segment" data-tab="platform_datatab">
-									<div class="row">
-										<div class="sixteen wide column">
-                                            <div class="ui grid">
-                                                <div class="five wide column">
-                                                    <div id="platform_pie_copy" style="height: 200px;margin-top: 100px;"></div>
-                                                </div>
-                                                <div class="eleven wide column">
-                                                    <table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                        <thead>
-                                                        <tr class="center aligned">
-                                                            <th>名称</th>
-                                                            <th>可用性</th>
-                                                            <th>设备问题数/设备总数</th>
-                                                            <th>状态</th>
-                                                        </tr>
-                                                        </thead >
-                                                        <tbody id="platform_list" class="center aligned">
-                                                        </tbody>
-                                                    </table>
+                            <div class="ui tab segment active" data-tab="all_datatab">
+                                <div class="row">
+                                    <div class="ui three column grid">
+                                        <div class="column">
+                                            <div id="platform_pie" style="height: 200px"></div>
+                                        </div>
+                                        <div class="column">
+                                            <div id="host_pie" style="height: 200px"></div>
+                                        </div>
+                                        <div class="column">
+                                            <div id="point_pie" style="height: 200px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui divider"></div>
+                                <div class="row">
+                                    <div class="sixteen wide column">
+                                        <div class="ui grid">
+                                            <div class="six wide column">
+                                                <div class="ui grey large header" >
+                                                    <i class="bar chart icon"></i>
+                                                    最新问题
                                                 </div>
                                             </div>
-										</div>
-									</div>
-								</div>
-								<div class="ui tab segment" data-tab="host_datatab" >
-									<div class="row">
-                                        <div class="sixteen wide column">
-                                            <div class="ui grid">
-                                                <div class="five wide column">
-                                                    <div id="host_pie_copy" style="height: 200px;margin-top: 100px;"></div>
-                                                </div>
-                                                <div class="eleven wide column">
-                                                    <table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                        <thead>
-                                                        <tr class="center aligned">
-                                                            <th>名称</th>
-                                                            <th>ip</th>
-                                                            <th>类型</th>
-                                                            <th>监控点问题数／监控点总数</th>
-                                                            <th>状态</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody id="host_list" class="center aligned">
-                                                        </tbody>
-                                                    </table>
+                                            <div class="ten wide column">
+                                                <div class="ui buttons">
+                                                    <button id="time_today" class="ui button">今天</button>
+                                                    <button id="time_days" class="ui button">三天</button>
+                                                    <button id="time_week" class="ui button">一周</button>
+                                                    <button id="time_month" class="ui button">一月</button>
                                                 </div>
                                             </div>
-										</div>
-									</div>
-								</div>
-								<div class="ui tab segment" data-tab="point_datatab">
-									<div class="row">
-										<div class="sixteen wide column">
-                                            <div class="ui grid">
-                                                <div class="five wide column">
-                                                    <div id="point_pie_copy" style="height: 200px;margin-top: 100px;"></div>
-                                                </div>
-                                                <div class="eleven wide column">
-                                                    <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                        <thead>
-                                                        <tr class="center aligned">
-                                                            <th>名称</th>
-                                                            <th>所属设备</th>
-                                                            <th>状态</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody id="point_list" class="center aligned">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                        </div>
+
+                                        <table id="problem_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%" style="margin-top: -30px">
+                                            <thead>
+                                            <tr >
+                                                <th>主机</th>
+                                                <th>问题</th>
+                                                <th>上次修改于</th>
+                                                <th>历时</th>
+                                                <th>确认</th>
+                                                <th>备注</th>
+                                            </tr></thead>
+                                            <tbody >
+                                            <tr th:each="problem : ${problemList}">
+                                                <td th:text="${problem.hosts[0].name}">机1</td>
+                                                <td th:text="${problem.description}">主机1内存使用率超过90%</td>
+                                                <td th:text="${problem.time}">2017-6-21 15:33:20</td>
+                                                <td><p>2天4小时50分</p></td>
+                                                <td><button >不</button></td>
+                                                <td>434</td>
+                                            </tr>
+                                            <tr >
+                                                <td>主机1</td>
+                                                <td>主机1内存使用率超过90%</td>
+                                                <td>2017-6-20 15:33:20</td>
+                                                <td><p>2天4小时50分</p></td>
+                                                <td><button >不</button></td>
+                                                <td>44</td>
+                                            </tr>
+                                            <tr >
+                                                <td>主机1</td>
+                                                <td>主机1内存使用率超过90%</td>
+                                                <td>2017-5-19 15:33:20</td>
+                                                <td><p>2天4小时50分</p></td>
+                                                <td><button >不</button></td>
+                                                <td>64</td>
+                                            </tr>
+                                            <tr >
+                                                <td>主机1</td>
+                                                <td>主机1内存使用率超过90%</td>
+                                                <td>2017-6-17 15:33:20</td>
+                                                <td><p>2天4小时50分</p></td>
+                                                <td><button >不</button></td>
+                                                <td>134</td>
+                                            </tr>
+                                            <tr>
+                                                <td>主机1</td>
+                                                <td>主机1内存使用率超过90%</td>
+                                                <td>2017-6-23 05:33:20</td>
+                                                <td><p>2天4小时50分</p></td>
+                                                <td><button >不</button></td>
+                                                <td>334</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui tab segment" data-tab="platform_datatab">
+                                <div class="row">
+                                    <div class="sixteen wide column">
+                                        <div class="ui grid">
+                                            <div class="five wide column">
+                                                <div id="platform_pie_copy" style="height: 200px;margin-top: 100px;"></div>
                                             </div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+                                            <div class="eleven wide column">
+                                                <table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                                    <thead>
+                                                    <tr class="center aligned">
+                                                        <th>名称</th>
+                                                        <th>可用性</th>
+                                                        <th>设备问题数/设备总数</th>
+                                                        <th>状态</th>
+                                                    </tr>
+                                                    </thead >
+                                                    <tbody id="platform_list" class="center aligned">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui tab segment" data-tab="host_datatab" >
+                                <div class="row">
+                                    <div class="sixteen wide column">
+                                        <div class="ui grid">
+                                            <div class="five wide column">
+                                                <div id="host_pie_copy" style="height: 200px;margin-top: 100px;"></div>
+                                            </div>
+                                            <div class="eleven wide column">
+                                                <table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                                    <thead>
+                                                    <tr class="center aligned">
+                                                        <th>名称</th>
+                                                        <th>ip</th>
+                                                        <th>类型</th>
+                                                        <th>监控点问题数／监控点总数</th>
+                                                        <th>状态</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="host_list" class="center aligned">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui tab segment" data-tab="point_datatab">
+                                <div class="row">
+                                    <div class="sixteen wide column">
+                                        <div class="ui grid">
+                                            <div class="five wide column">
+                                                <div id="point_pie_copy" style="height: 200px;margin-top: 100px;"></div>
+                                            </div>
+                                            <div class="eleven wide column">
+                                                <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                                    <thead>
+                                                    <tr class="center aligned">
+                                                        <th>名称</th>
+                                                        <th>所属设备</th>
+                                                        <th>状态</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="point_list" class="center aligned">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 				<!--Site Content-->
 			</div>
 		</div>
