@@ -28,7 +28,7 @@ public class BriefProblemVO {
     }
 
     public BriefProblemVO setTime(int time) {
-        this.time = LocalDateTime.ofInstant(Instant.ofEpochMilli(time*1000L), ZoneId.systemDefault());
+        this.time = LocalDateTime.ofInstant(Instant.ofEpochSecond(time), ZoneId.systemDefault());
         return this;
     }
 
