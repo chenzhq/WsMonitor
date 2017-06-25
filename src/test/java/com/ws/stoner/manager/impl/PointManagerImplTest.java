@@ -1,22 +1,21 @@
 package com.ws.stoner.manager.impl;
 
 import com.ws.bix4j.ZApi;
-import com.ws.bix4j.access.trigger.TriggerGetRequest;
+import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.manager.TriggerManager;
-import com.ws.stoner.model.dto.BriefTriggerDTO;
-import org.junit.After;
-import org.junit.Before;
+import com.ws.stoner.manager.PointManager;
+import com.ws.stoner.model.dto.BriefPointDTO;
 import org.junit.Test;
+import org.junit.Before; 
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import java.util.List;
 
 /** 
-* TriggerManagerImpl Tester.
+* PointManagerImpl Tester.
 * 
 * @author <Authors name> 
 * @since <pre>六月 8, 2017</pre> 
@@ -24,13 +23,14 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class TriggerManagerImplTest {
+public class PointManagerImplTest {
 
     @Autowired
-    private TriggerManager triggerManager;
+    private PointManager pointManager;
 
     @Autowired
     private ZApi zApi;
+
 
 @Before
 public void before() throws Exception {
@@ -43,21 +43,18 @@ public void after() throws Exception {
 
 /** 
 * 
-* Method: listTrigger() 
+* Method: listApplication() 
 * 
 */ 
 @Test
-public void testListTrigger() throws Exception { 
+public void testListApplication() throws Exception { 
 //TODO: Test goes here...
-    TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
-    List<BriefTriggerDTO> triggerDOList = triggerManager.listTrigger(triggerGetRequest);
-    System.out.println(triggerDOList.toString());
-} 
+    ApplicationGetRequest apprequest = new ApplicationGetRequest();
+    List<BriefPointDTO> listApp = pointManager.listPoint(apprequest);
+    System.out.println(listApp.toString());
 
-@Test
-    public void testListUnknownTrigger() throws Exception {
-//    List<TriggerDO> unknownTriggers = triggerManager.listUnknownTrigger();
-//    System.out.println(unknownTriggers);
 }
+
+
 
 } 

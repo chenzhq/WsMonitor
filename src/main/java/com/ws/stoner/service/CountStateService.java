@@ -2,6 +2,7 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.StateNumDTO;
+import java.util.List;
 
 /**
  * Created by zkf on 2017/6/12.
@@ -11,7 +12,7 @@ public interface CountStateService {
 /*
  *主机业务状态组合
  */
-     StateNumDTO countHostState() throws ServiceException;
+    StateNumDTO countHostState() throws ServiceException;
 
 /*
  *业务平台业务状态组合
@@ -50,6 +51,19 @@ public interface CountStateService {
      */
     int countOkHost() throws ServiceException;
 
+    /**
+     * 获取指定业务平台的所有主机数量 all host number by platformIds
+     */
+    int countAllHostByPlatformIds(List<String> platformIds) throws ServiceException;
+
+    /**
+     * 获取指定业务平台的问题主机数量 problem host number by platformIds
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    int countProblemHostByPlatformIds(List<String> platformIds) throws ServiceException;
+
 /*
  * hostGroup service
  */
@@ -61,7 +75,7 @@ public interface CountStateService {
     int countAllPlatform() throws ServiceException;
 
     /**
-     * 获取问题业务平台数量  problem
+     * 获取问题业务平台数量  problem number
      * @return
      * @throws ServiceException
      */
@@ -69,35 +83,52 @@ public interface CountStateService {
 
 
     /**
-     * 获取正常的业务平台数量 OK
+     * 获取正常的业务平台数量 OK number
      * @return
      * @throws ServiceException
      */
     int countOkPlatform() throws ServiceException;
 
-/**
- * application service
+
+
+/*
+ * point service
  */
     /**
      * 获取所有的监控点
      * @return
      * @throws ServiceException
      */
-    int countAllApp() throws ServiceException;
+    int countAllPoint() throws ServiceException;
 
     /**
      * 获取所有的问题监控点
      * @return
      * @throws ServiceException
      */
-    int countProblemApp() throws ServiceException;
+    int countProblemPoint() throws ServiceException;
 
     /**
      * 获取正常监控点
      * @return
      * @throws ServiceException
      */
-    int countOkApp() throws  ServiceException;
+    int countOkPoint() throws  ServiceException;
+
+    /**
+     * 获取指定主机的所有监控点数量  all point hostids number
+     * @return
+     * @throws ServiceException
+     */
+    int countAllPointByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
+     * 获取指定主机的问题监控点数量  problem point hostids number
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    int countProblemPointByHostIds(List<String> hostIds) throws ServiceException;
 
 /*
  * item service

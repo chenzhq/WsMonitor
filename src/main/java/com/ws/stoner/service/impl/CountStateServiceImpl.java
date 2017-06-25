@@ -6,17 +6,15 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
-import com.ws.stoner.model.brief.HostBrief;
-import com.ws.stoner.model.brief.ItemBrief;
+import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 /**
@@ -32,7 +30,7 @@ public class CountStateServiceImpl implements CountStateService {
     private TriggerManager triggerManager;
 
     @Autowired
-    private ApplicationManager appManager;
+    private PointManager pointManager;
 
     @Autowired
     private ItemManager itemManager;
@@ -84,11 +82,11 @@ public class CountStateServiceImpl implements CountStateService {
     public StateNumDTO countPointState() throws ServiceException {
         StateNumDTO pointState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
-        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemApp());
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkApp());
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemPoint());
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkPoint());
         stateNums.add(okStateNum);
         stateNums.add(problemStateNum);
-        pointState.setTotalNum(countAllApp()).setStateNum(stateNums);
+        pointState.setTotalNum(countAllPoint()).setStateNum(stateNums);
         return pointState;
     }
 
@@ -138,7 +136,7 @@ public class CountStateServiceImpl implements CountStateService {
         hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest1.getParams().setFilter(hostFilter1);
         hostGetRequest1.getParams().setTriggerIds(triggerIds);
-        List<HostBrief> host1 ;
+        List<BriefHostDTO> host1 ;
         try {
             host1 = hostManager.listHost(hostGetRequest1);
         } catch (ManagerException e) {
@@ -154,7 +152,7 @@ public class CountStateServiceImpl implements CountStateService {
         hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostGetRequest2.getParams().setFilter(hostFilter2).setSearchByAny(true);
-        List<HostBrief> host2 ;
+        List<BriefHostDTO> host2 ;
         try {
             host2 = hostManager.listHost(hostGetRequest2);
         } catch (ManagerException e) {
@@ -162,7 +160,7 @@ public class CountStateServiceImpl implements CountStateService {
             return 0;
         }
         //step5:去掉重复的主机并求和
-        List<HostBrief> hosts = new ArrayList<>(host1);
+        List<BriefHostDTO> hosts = new ArrayList<>(host1);
         hosts.retainAll(host2);
         host1.removeAll(hosts);
         int hostNum = host1.size() + host2.size();
@@ -179,6 +177,79 @@ public class CountStateServiceImpl implements CountStateService {
     public int countOkHost() throws ServiceException {
         int okHostNum = countAllHost() - countProblemHost();
         return okHostNum;
+    }
+
+    /**
+     * 获取指定业务平台的所有主机数量 all host number by platformIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countAllHostByPlatformIds(List<String> platformIds) throws ServiceException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String, Integer> statusFilter = new HashMap<>();
+        statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
+        hostGetRequest.getParams().setGroupIds(platformIds).setFilter(statusFilter).setCountOutput(true);
+        int allHostNum;
+        try {
+            allHostNum = hostManager.countHost(hostGetRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return allHostNum;
+    }
+
+    /**
+     * 获取指定业务平台的问题主机数量 problem host number by platformIds
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countProblemHostByPlatformIds(List<String> platformIds) throws ServiceException {
+        //step1:获取问题触发器ids
+        List<String> triggerIds ;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step2:根据两个触发器的ids得到主机数量 hosts1
+        HostGetRequest hostGetRequest1 = new HostGetRequest();
+        Map<String,Object> hostFilter1 = new HashMap<>();
+        hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
+        hostGetRequest1.getParams().setFilter(hostFilter1);
+        hostGetRequest1.getParams().setTriggerIds(triggerIds).setGroupIds(platformIds);
+        List<BriefHostDTO> host1 ;
+        try {
+            host1 = hostManager.listHost(hostGetRequest1);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step4:筛选四种监控接口中至少一个有问题的主机数量 host2
+        HostGetRequest hostGetRequest2 = new HostGetRequest();
+        Map<String, Object> hostFilter2 = new HashMap<>();
+        hostFilter2.put("monitored_hosts",true);
+        hostFilter2.put("available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
+        hostFilter2.put("ipmi_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
+        hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
+        hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
+        hostGetRequest2.getParams().setGroupIds(platformIds).setFilter(hostFilter2).setSearchByAny(true);
+        List<BriefHostDTO> host2 ;
+        try {
+            host2 = hostManager.listHost(hostGetRequest2);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step5:去掉重复的主机并求和
+        Set<BriefHostDTO> hosts = new HashSet<>();
+        hosts.addAll(host1);
+        hosts.addAll(host2);
+        return hosts.size();
     }
 
 
@@ -246,18 +317,17 @@ public class CountStateServiceImpl implements CountStateService {
     /**
      * 获取所有的监控点
      * 根据筛选监控中的主机得到所有的监控点
-     * @return
      * @throws ServiceException
      */
     @Override
-    public int countAllApp() throws ServiceException {
+    public int countAllPoint() throws ServiceException {
         //step1:筛选所有监控中的主机monitored
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams().setMonitoredHosts(true);
-        List<HostBrief> hosts;
+        List<BriefHostDTO> hosts;
         try {
             hosts = hostManager.listHost(hostGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
         }
@@ -266,7 +336,7 @@ public class CountStateServiceImpl implements CountStateService {
         if(hosts == null) {
             return 0;
         }
-        for(HostBrief host : hosts) {
+        for(BriefHostDTO host : hosts) {
             hostIds.add(host.getHostId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
@@ -274,7 +344,7 @@ public class CountStateServiceImpl implements CountStateService {
         appRequest.getParams().setCountOutput(true);
         int appALlNum ;
         try {
-            appALlNum = appManager.countAppliction(appRequest);
+            appALlNum = pointManager.countPoint(appRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
@@ -282,14 +352,15 @@ public class CountStateServiceImpl implements CountStateService {
         return appALlNum;
     }
 
+
     /**
      * 获取所有的问题监控点
      * 根据触发器获取监控点
-     * @return
+     * @return int
      * @throws ServiceException
      */
     @Override
-    public int countProblemApp() throws ServiceException {
+    public int countProblemPoint() throws ServiceException {
         //step1:获取问题触发器Ids
         List<String> triggerIds ;
         try {
@@ -302,16 +373,16 @@ public class CountStateServiceImpl implements CountStateService {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         itemGetRequest.getParams().setTriggerIds(triggerIds);
         itemGetRequest.getParams().setMonitored(true);
-        List<ItemBrief> items ;
+        List<BriefItemDTO> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
-        } catch (AuthExpireException e) {
+        } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
         }
         //step3:根据item筛选出应用集
         List<String> itemIds = new ArrayList<>();
-        for(ItemBrief item : items) {
+        for(BriefItemDTO item : items) {
             itemIds.add(item.getItemId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
@@ -319,7 +390,7 @@ public class CountStateServiceImpl implements CountStateService {
         appRequest.getParams().setCountOutput(true);
         int appProblemNum ;
         try {
-            appProblemNum = appManager.countAppliction(appRequest);
+            appProblemNum = pointManager.countPoint(appRequest);
         } catch (ManagerException e) {
             e.printStackTrace();
             return 0;
@@ -335,10 +406,72 @@ public class CountStateServiceImpl implements CountStateService {
      * @throws ServiceException
      */
     @Override
-    public int countOkApp() throws ServiceException {
-        int okAppNum = countAllApp() - countProblemApp();
+    public int countOkPoint() throws ServiceException {
+        int okAppNum = countAllPoint() - countProblemPoint();
         return okAppNum;
 
+    }
+
+    /**
+     * 获取指定主机的监控点数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countAllPointByHostIds(List<String> hostIds) throws ServiceException {
+        ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
+        applicationGetRequest.getParams().setHostIds(hostIds);
+        applicationGetRequest.getParams().setCountOutput(true);
+        int pointsByHostId;
+        try {
+            pointsByHostId = pointManager.countPoint(applicationGetRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return pointsByHostId;
+    }
+
+    @Override
+    public int countProblemPointByHostIds(List<String> hostIds) throws ServiceException {
+        //step1:获取问题触发器Ids
+        List<String> triggerIds ;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step2:根据触发器Ids获取items
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        itemGetRequest.getParams().setTriggerIds(triggerIds);
+        itemGetRequest.getParams().setMonitored(true);
+        List<BriefItemDTO> items ;
+        try {
+            items = itemManager.listItem(itemGetRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        //step3:根据item筛选出应用集
+        List<String> itemIds = new ArrayList<>();
+        for(BriefItemDTO item : items) {
+            itemIds.add(item.getItemId());
+        }
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        appRequest.getParams().setItemIds(itemIds);
+        //筛选指定主机的监控点
+        appRequest.getParams().setHostIds(hostIds);
+        appRequest.getParams().setCountOutput(true);
+        int appProblemNum ;
+        try {
+            appProblemNum = pointManager.countPoint(appRequest);
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return appProblemNum;
     }
 
 

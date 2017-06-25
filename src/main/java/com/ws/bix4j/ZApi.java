@@ -2,9 +2,11 @@ package com.ws.bix4j;
 
 import com.ws.bix4j.access.application.Application;
 import com.ws.bix4j.access.host.Host;
+import com.ws.bix4j.access.hostInterface.HostInterface;
 import com.ws.bix4j.access.hostgroup.HostGroup;
 import com.ws.bix4j.access.item.Item;
 import com.ws.bix4j.access.problem.Problem;
+import com.ws.bix4j.access.template.Template;
 import com.ws.bix4j.access.trigger.Trigger;
 import com.ws.bix4j.access.user.*;
 import com.ws.bix4j.exception.ZApiException;
@@ -88,4 +90,11 @@ public class ZApi {
     public Problem Problems() {
         return new Problem(uri.toString(), auth);
     }
+    public Template Template() {
+        return new Template(uri.toString(), auth);
+    }
+    public HostInterface HostInterface() {
+        return new HostInterface(uri.toString(), auth);
+    }
+
 }

@@ -44,10 +44,10 @@ public class ApplicationGetRequest  extends ZRequest<ApplicationGetRequest.Param
          * select 参数
          */
         //在host属性中返回应用程序所属的主机
-        @JSONField(name = "selectHosts")
-        private String[] listHosts;
-        @JSONField(name = "selectHosts")
-        private String stringHosts;
+        @JSONField(name = "selectHost")
+        private String[] listHost;
+        //@JSONField(name = "selectHost")
+        private String stringHost;
 
         //返回属性中应用程序中包含的项目items
         @JSONField(name = "selectItems")
@@ -130,14 +130,7 @@ public class ApplicationGetRequest  extends ZRequest<ApplicationGetRequest.Param
             return this;
         }
 
-        public String[] getListHosts() {
-            return listHosts;
-        }
 
-        public Params setListHosts(String[] listHosts) {
-            this.listHosts = listHosts;
-            return this;
-        }
 
         public String[] getListItems() {
             return listItems;
@@ -166,12 +159,21 @@ public class ApplicationGetRequest  extends ZRequest<ApplicationGetRequest.Param
             return this;
         }
 
-        public String getStringHosts() {
-            return stringHosts;
+        public String[] getListHost() {
+            return listHost;
         }
 
-        public Params setStringHosts(String stringHosts) {
-            this.stringHosts = stringHosts;
+        public Params setListHost(String[] listHost) {
+            this.listHost = listHost;
+            return this;
+        }
+
+        public String getStringHost() {
+            return stringHost;
+        }
+
+        public Params setStringHost(String stringHost) {
+            this.stringHost = stringHost;
             return this;
         }
 

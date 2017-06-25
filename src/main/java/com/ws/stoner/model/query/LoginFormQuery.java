@@ -2,7 +2,6 @@ package com.ws.stoner.model.query;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * Created by chenzheqi on 2017/4/27.

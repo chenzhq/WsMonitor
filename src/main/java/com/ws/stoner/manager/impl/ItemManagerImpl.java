@@ -4,10 +4,9 @@ import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.bix4j.exception.ZApiException;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.ItemManager;
-import com.ws.stoner.model.brief.ItemBrief;
+import com.ws.stoner.model.dto.BriefItemDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +28,13 @@ public class ItemManagerImpl implements ItemManager {
     /**
      * 根据request 获取 所有的item
      * @return
-     * @throws AuthExpireException
+     * @throws ManagerException
      */
     @Override
-    public List<ItemBrief> listItem(ItemGetRequest request) throws AuthExpireException {
-        List<ItemBrief> items ;
+    public List<BriefItemDTO> listItem(ItemGetRequest request) throws ManagerException {
+        List<BriefItemDTO> items ;
         try {
-            items = zApi.Item().get(request,ItemBrief.class);
+            items = zApi.Item().get(request,BriefItemDTO.class);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;

@@ -5,7 +5,7 @@ import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.manager.ItemManager;
-import com.ws.stoner.model.brief.ItemBrief;
+import com.ws.stoner.model.dto.BriefItemDTO;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
@@ -52,7 +52,7 @@ public void after() throws Exception {
 public void testListItem() throws Exception { 
 //TODO: Test goes here...
     ItemGetRequest itemGetRequest = new ItemGetRequest();
-    List<ItemBrief> items = itemManager.listItem(itemGetRequest);
+    List<BriefItemDTO> items = itemManager.listItem(itemGetRequest);
     System.out.println(items.toString());
 
 }

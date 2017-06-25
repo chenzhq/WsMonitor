@@ -2,9 +2,8 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.model.brief.ApplicationBrief;
-import com.ws.stoner.model.brief.HostBrief;
-import com.ws.stoner.model.brief.HostGroupBrief;
+import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -37,9 +37,6 @@ public class CountStateServiceImplTest {
 
     @Autowired
     private CountStateService countStateService;
-
-    @Autowired
-    private CountStateServiceImpl countStateServiceImpl;
 
 @Before
 public void before() throws Exception {
@@ -69,7 +66,7 @@ public void testHostState() throws Exception {
 @Test
 public void testListAllHost() throws Exception {
 //TODO: Test goes here...
-    List<HostBrief> hosts = fetchBriefService.listHost();
+    List<BriefHostDTO> hosts = fetchBriefService.listHost();
     System.out.println(hosts);
 
 }
@@ -77,7 +74,7 @@ public void testListAllHost() throws Exception {
     @Test
     public void testListProblemHost() throws Exception {
 //TODO: Test goes here...
-        List<HostBrief> hosts = fetchBriefService.listProblemHost();
+        List<BriefHostDTO> hosts = fetchBriefService.listProblemHost();
         System.out.println(hosts);
 
     }
@@ -85,7 +82,7 @@ public void testListAllHost() throws Exception {
 @Test
 public void testListOkHost() throws Exception {
 //TODO: Test goes here...
-    List<HostBrief> hosts = fetchBriefService.listOkHost();
+    List<BriefHostDTO> hosts = fetchBriefService.listOkHost();
     System.out.println(hosts);
 
 }
@@ -110,6 +107,20 @@ public void testCountOKHost() throws Exception {
     System.out.println(okhostNum);
 }
 
+@Test
+    public void testcountAllHostByPlatformId() throws Exception {
+        List<String> pIds = new ArrayList<>();
+        pIds.add("27");
+        int allhost  = countStateService.countAllHostByPlatformIds(pIds);
+        System.out.println(allhost);
+    }
+@Test
+public void testcountProblemHostByPlatformId() throws Exception {
+    List<String> pIds = new ArrayList<>();
+    pIds.add("27");
+    int problemhost  = countStateService.countProblemHostByPlatformIds(pIds);
+    System.out.println(problemhost);
+}
 
 //hostgroup相关测试
 
@@ -123,7 +134,7 @@ public void testCountOKHost() throws Exception {
 
     @Test
     public void testListAllPlatform() throws Exception {
-        List<HostGroupBrief> allHostGroups = fetchBriefService.listPlatform();
+        List<BriefPlatformDTO> allHostGroups = fetchBriefService.listPlatform();
         System.out.println(allHostGroups);
     }
     @Test
@@ -142,23 +153,18 @@ public void testCountOKHost() throws Exception {
 //app相关测试
 
 
-@Test
-public void testListAllApp() throws Exception {
-    List<ApplicationBrief> allApp = fetchBriefService.listApp();
-    System.out.println(allApp);
-}
 
 
 
 @Test
 public void testCountAllApp() throws Exception {
-    int allAppNum = countStateService.countAllApp();
+    int allAppNum = countStateService.countAllPoint();
     System.out.println(allAppNum);
 }
 
 @Test
 public void testCountProbelmApp() throws Exception {
-    int problemAppNum = countStateService.countProblemApp();
+    int problemAppNum = countStateService.countProblemPoint();
     System.out.println(problemAppNum);
 }
 

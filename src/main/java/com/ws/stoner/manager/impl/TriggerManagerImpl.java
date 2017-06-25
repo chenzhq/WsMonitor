@@ -8,7 +8,7 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.TriggerManager;
-import com.ws.stoner.model.brief.TriggerBrief;
+import com.ws.stoner.model.dto.BriefTriggerDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +30,10 @@ public class TriggerManagerImpl implements TriggerManager {
     private ZApi zApi;
 
     @Override
-    public List<TriggerBrief> listTrigger(TriggerGetRequest request) throws AuthExpireException {
-        List<TriggerBrief> triggers;
+    public List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ManagerException {
+        List<BriefTriggerDTO> triggers;
         try {
-            triggers = zApi.Trigger().get(request,TriggerBrief.class);
+            triggers = zApi.Trigger().get(request,BriefTriggerDTO.class);
         } catch (ZApiException e) {
             e.printStackTrace();
             return null;
@@ -46,12 +46,12 @@ public class TriggerManagerImpl implements TriggerManager {
     public List<String> getProblemTriggerIds() throws ManagerException {
         //step1:获取state:up to date 触发器list
         TriggerGetRequest triggerGetRequest1 = new TriggerGetRequest();
-        Map<String, Object> triggerFilter = new HashMap<>();
-        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
-        triggerFilter.put("value",ZApiParameter.TRIGGER_VALUE.PROBLEM.value);
-        triggerFilter.put("only_true",true);
-        triggerGetRequest1.getParams().setFilter(triggerFilter);
-        List<TriggerBrief> triggers1 ;
+        Map<String, Object> triggerFilter1 = new HashMap<>();
+        triggerFilter1.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
+        triggerFilter1.put("value",ZApiParameter.TRIGGER_VALUE.PROBLEM.value);
+        triggerFilter1.put("only_true",true);
+        triggerGetRequest1.getParams().setFilter(triggerFilter1);
+        List<BriefTriggerDTO> triggers1 ;
         try {
             triggers1 = listTrigger(triggerGetRequest1);
         } catch (ManagerException e) {
@@ -61,9 +61,9 @@ public class TriggerManagerImpl implements TriggerManager {
         //step2:获取state:unknown 触发器list
         TriggerGetRequest triggerGetRequest2 = new TriggerGetRequest();
         Map<String, Object> triggerFilter2 = new HashMap<>();
-        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UNKNOWN.value);
+        triggerFilter2.put("state", ZApiParameter.TRIGGER_STATE.UNKNOWN.value);
         triggerGetRequest2.getParams().setFilter(triggerFilter2);
-        List<TriggerBrief> triggers2 ;
+        List<BriefTriggerDTO> triggers2 ;
         try {
             triggers2 = listTrigger(triggerGetRequest2);
         } catch (AuthExpireException e) {
@@ -72,10 +72,10 @@ public class TriggerManagerImpl implements TriggerManager {
         }
         //step3:组装两类触发器得到 triggerIds
         List<String> triggerIds = new ArrayList<>();
-        for(TriggerBrief trigger : triggers1) {
+        for(BriefTriggerDTO trigger : triggers1) {
             triggerIds.add(trigger.getTriggerId());
         }
-        for(TriggerBrief trigger : triggers2) {
+        for(BriefTriggerDTO trigger : triggers2) {
             triggerIds.add(trigger.getTriggerId());
         }
         return triggerIds;
@@ -100,7 +100,7 @@ public class TriggerManagerImpl implements TriggerManager {
             triggerNum = zApi.Trigger().count(request);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new AuthExpireException("");
+                throw new ManagerException("");
             }
             e.printStackTrace();
             logger.error("查询触发器错误！{}", e.getMessage());

@@ -2,29 +2,30 @@ package com.ws.stoner.model.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.List;
+
 /**
  * Created by chenzheqi on 2017/6/13.
  */
 public class BriefHostDTO {
-    private String ip;
     @JSONField(name = "hostid")
     private String hostId;
     private String host;
     private String name;
-    private String state;
-    private String type;
-    private Integer problemNum;//主机下监控点问题数
+    private List<BriefTemplateDTO> parentTemplates; //通过模板映射类型
+    private List<BriefHostInterfaceDTO> interfaces; //通过接口获取ip
 
+    public static final String[] PROPERTY_NAMES = {"hostid", "name"};
 
-    public static final String[] PROPERTY_NAMES = {"hostid", "host","name"};
-
-    public String getIp() {
-        return ip;
-    }
-
-    public BriefHostDTO setIp(String ip) {
-        this.ip = ip;
-        return this;
+    @Override
+    public String toString() {
+        return "BriefHostDTO{" +
+                "hostId='" + hostId + '\'' +
+                ", host='" + host + '\'' +
+                ", name='" + name + '\'' +
+                ", parentTemplates=" + parentTemplates +
+                ", interfaces=" + interfaces +
+                '}';
     }
 
     public String getHostId() {
@@ -54,30 +55,21 @@ public class BriefHostDTO {
         return this;
     }
 
-    public String getState() {
-        return state;
+    public List<BriefTemplateDTO> getParentTemplates() {
+        return parentTemplates;
     }
 
-    public BriefHostDTO setState(String state) {
-        this.state = state;
+    public BriefHostDTO setParentTemplates(List<BriefTemplateDTO> parentTemplates) {
+        this.parentTemplates = parentTemplates;
         return this;
     }
 
-    public String getType() {
-        return type;
+    public List<BriefHostInterfaceDTO> getInterfaces() {
+        return interfaces;
     }
 
-    public BriefHostDTO setType(String type) {
-        this.type = type;
-        return this;
-    }
-
-    public Integer getProblemNum() {
-        return problemNum;
-    }
-
-    public BriefHostDTO setProblemNum(Integer problemNum) {
-        this.problemNum = problemNum;
+    public BriefHostDTO setInterfaces(List<BriefHostInterfaceDTO> interfaces) {
+        this.interfaces = interfaces;
         return this;
     }
 
@@ -85,17 +77,28 @@ public class BriefHostDTO {
         return PROPERTY_NAMES;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BriefHostDTO that = (BriefHostDTO) o;
+
+        if (hostId != null ? !hostId.equals(that.hostId) : that.hostId != null) return false;
+        if (host != null ? !host.equals(that.host) : that.host != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (parentTemplates != null ? !parentTemplates.equals(that.parentTemplates) : that.parentTemplates != null)
+            return false;
+        return interfaces != null ? interfaces.equals(that.interfaces) : that.interfaces == null;
+    }
 
     @Override
-    public String toString() {
-        return "BriefHostDTO{" +
-                "ip='" + ip + '\'' +
-                ", hostId='" + hostId + '\'' +
-                ", host='" + host + '\'' +
-                ", name='" + name + '\'' +
-                ", state='" + state + '\'' +
-                ", type='" + type + '\'' +
-                ", problemNum=" + problemNum +
-                '}';
+    public int hashCode() {
+        int result = hostId != null ? hostId.hashCode() : 0;
+        result = 31 * result + (host != null ? host.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (parentTemplates != null ? parentTemplates.hashCode() : 0);
+        result = 31 * result + (interfaces != null ? interfaces.hashCode() : 0);
+        return result;
     }
 }
