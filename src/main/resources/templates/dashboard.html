@@ -15,7 +15,8 @@
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+    <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+    <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
     <style type="text/css">
         .dataTables_wrapper .dataTables_filter{display:none;}
     </style>
@@ -274,7 +275,7 @@
                                                 <td><button >不</button></td>
                                                 <td>434</td>
                                             </tr>
-                                            <tr >
+                                            <tr th:remove="all">
                                                 <td>主机1</td>
                                                 <td>主机1内存使用率超过90%</td>
                                                 <td>2017-6-20 15:33:20</td>
@@ -282,7 +283,7 @@
                                                 <td><button >不</button></td>
                                                 <td>44</td>
                                             </tr>
-                                            <tr >
+                                            <tr th:remove="all">
                                                 <td>主机1</td>
                                                 <td>主机1内存使用率超过90%</td>
                                                 <td>2017-5-19 15:33:20</td>
@@ -290,7 +291,7 @@
                                                 <td><button >不</button></td>
                                                 <td>64</td>
                                             </tr>
-                                            <tr >
+                                            <tr th:remove="all">
                                                 <td>主机1</td>
                                                 <td>主机1内存使用率超过90%</td>
                                                 <td>2017-6-17 15:33:20</td>
@@ -298,7 +299,7 @@
                                                 <td><button >不</button></td>
                                                 <td>134</td>
                                             </tr>
-                                            <tr>
+                                            <tr th:remove="all">
                                                 <td>主机1</td>
                                                 <td>主机1内存使用率超过90%</td>
                                                 <td>2017-6-23 05:33:20</td>

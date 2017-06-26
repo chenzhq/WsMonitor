@@ -67,7 +67,9 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         }
         //step3:获取所有模板allTemplateDTO
         List<BriefTemplateDTO> allTemplateDTO = listAllTemplate();
-        //step4:循环给DashBoardHostVO赋值
+        //step4:获取所有问题监控点
+        List<BriefPointDTO> problemPointDTO = listProblemPoint();
+        //step5:循环给DashBoardHostVO赋值
         List<DashboardHostVO> hostVOS = new ArrayList<>();
         for(BriefHostDTO hostDTO : allhostDTO) {
             DashboardHostVO hostVO = new DashboardHostVO();
@@ -93,9 +95,15 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             }
 
             //allNum
-            hostVO.setAllNum(countStateService.countAllPointByHostIds(Arrays.asList(hostDTO.getHostId())));
+            hostVO.setAllNum(hostDTO.getPoints().size());
             //problemNum
-            hostVO.setProblemNum(countStateService.countProblemPointByHostIds(Arrays.asList(hostDTO.getHostId())));
+            int prblemNum = 0;
+            for(BriefPointDTO problemPoint : problemPointDTO) {
+                if(problemPoint.getHostId().equals(hostDTO.getHostId())) {
+                    prblemNum++;
+                }
+            }
+            hostVO.setProblemNum(prblemNum);
 
             hostVOS.add(hostVO);
         }
@@ -114,7 +122,11 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest.getParams().setFilter(statusFilter);
-        hostGetRequest.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        hostGetRequest.getParams()
+                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
+                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> hosts ;
         try {
             hosts = hostManager.listHost(hostGetRequest);
@@ -140,13 +152,16 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             e.printStackTrace();
             return null;
         }
-        //step2:根据两个触发器的ids得到主机数量 hosts1
+        //step2:根据两个触发器的ids得到主机list hosts1
         HostGetRequest hostGetRequest1 = new HostGetRequest();
         Map<String,Object> hostFilter1 = new HashMap<>();
         hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest1.getParams().setFilter(hostFilter1);
-        hostGetRequest1.getParams().setTriggerIds(triggerIds);
-        hostGetRequest1.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        hostGetRequest1.getParams()
+                .setTriggerIds(triggerIds)
+                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
+                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
+                .setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> host1 ;
         try {
             host1 = hostManager.listHost(hostGetRequest1);
@@ -162,8 +177,12 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         hostFilter2.put("ipmi_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
-        hostGetRequest2.getParams().setFilter(hostFilter2).setSearchByAny(true);
-        hostGetRequest2.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        hostGetRequest2.getParams()
+                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
+                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
+                .setOutput(BriefHostDTO.PROPERTY_NAMES)
+                .setFilter(hostFilter2)
+                .setSearchByAny(true);
         List<BriefHostDTO> host2 ;
         try {
             host2 = hostManager.listHost(hostGetRequest2);
@@ -194,7 +213,9 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     @Override
     public List<BriefTemplateDTO> listAllTemplate() throws ServiceException {
         TemplateGetRequest templateGetRequest = new TemplateGetRequest();
-        templateGetRequest.getParams().setListGroups(BriefTemplateGroupDTO.PROPERTY_NAMES).setOutput(BriefTemplateDTO.PROPERTY_NAMES);
+        templateGetRequest.getParams()
+                .setSelectGroups(BriefTemplateGroupDTO.PROPERTY_NAMES)
+                .setOutput(BriefTemplateDTO.PROPERTY_NAMES);
         List<BriefTemplateDTO> templatesDTO;
         try {
             templatesDTO = templateManager.listTemplate(templateGetRequest);
@@ -221,7 +242,19 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         for(BriefPlatformDTO problemPlatform : problemPlatformDTO) {
             platformIds.add(problemPlatform.getPlatformId());
         }
-        //step3:新建List<DashboardPlatformVO>，循环allplatformDTO，新建DashboardPlatformVO，分别赋值
+        //step3:取所有监控中的主机，组装hostIds
+        List<BriefHostDTO> hostDTOS = listHost();
+        List<String> hostIds = new ArrayList<>();
+        for(BriefHostDTO host : hostDTOS) {
+            hostIds.add(host.getHostId());
+        }
+        //step4:取所有问题主机,组装problemHostIds
+        List<BriefHostDTO> problemHostDTOS = listProblemHost();
+        List<String> problemHostIds = new ArrayList<>();
+        for(BriefHostDTO problemHost : problemHostDTOS) {
+            problemHostIds.add(problemHost.getHostId());
+        }
+        //step5:新建List<DashboardPlatformVO>，循环allplatformDTO，新建DashboardPlatformVO，分别赋值
         List<DashboardPlatformVO> platformVOS = new ArrayList<>();
         for(BriefPlatformDTO platform : allPlatformDTO) {
             DashboardPlatformVO platformVO = new DashboardPlatformVO();
@@ -236,9 +269,21 @@ public class FetchBriefServiceImpl implements FetchBriefService {
                 platformVO.setState(StatusEnum.OK.getName());
             }
             //allNum
-            platformVO.setAllNum(countStateService.countAllHostByPlatformIds(Arrays.asList(platform.getPlatformId())));
+            int allNum = 0;
+            for(BriefHostDTO host : platform.getHosts()) {
+                if(hostIds.contains(host.getHostId())) {
+                    allNum++;
+                }
+            }
+            platformVO.setAllNum(allNum);
             //problemNum
-            platformVO.setProblemNum(countStateService.countProblemHostByPlatformIds(Arrays.asList(platform.getPlatformId())));
+            int problemNum = 0;
+            for(BriefHostDTO host : platform.getHosts()) {
+                if(problemHostIds.contains(host.getHostId())) {
+                    problemNum++;
+                }
+            }
+            platformVO.setProblemNum(problemNum);
 
             platformVOS.add(platformVO);
         }
@@ -253,8 +298,11 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     @Override
     public List<BriefPlatformDTO> listPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
-        groupRequest.getParams().setMonitoredHosts(true).setRealHosts(true);
-        groupRequest.getParams().setOutput(BriefPlatformDTO.PROPERTY_NAMES);
+        groupRequest.getParams()
+                .setMonitoredHosts(true)
+                .setRealHosts(true)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setOutput(BriefPlatformDTO.PROPERTY_NAMES);
         List<BriefPlatformDTO> platforms ;
         try {
             platforms = platformManager.listPlatform(groupRequest);
@@ -282,9 +330,11 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         }
         //step2:根据触发器Ids获取业务平台数量
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
-        groupRequest.getParams().setTriggerIds(triggerIds);
-        groupRequest.getParams().setMonitoredHosts(true).setRealHosts(true);
-        groupRequest.getParams().setOutput(BriefPlatformDTO.PROPERTY_NAMES);
+        groupRequest.getParams()
+                .setTriggerIds(triggerIds)
+                .setMonitoredHosts(true)
+                .setRealHosts(true)
+                .setOutput(BriefPlatformDTO.PROPERTY_NAMES);
         List<BriefPlatformDTO> problemPlatforms ;
         try {
             problemPlatforms = platformManager.listPlatform(groupRequest);
@@ -351,7 +401,9 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     public List<BriefPointDTO> listPoint() throws ServiceException {
         //step1:获取监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
-        hostGetRequest.getParams().setMonitoredHosts(true);
+        hostGetRequest.getParams()
+                .setMonitoredHosts(true)
+                .setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> hosts;
         try {
             hosts = hostManager.listHost(hostGetRequest);
@@ -370,8 +422,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
         appRequest.getParams()
                 .setHostIds(hostIds)
-                .setListHost(BriefHostDTO.PROPERTY_NAMES)
-                .setListItems(BriefItemDTO.PROPERTY_NAMES)
+                .setSelectHost(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
                 .setOutput(BriefPointDTO.PROPERTY_NAMES);
         List<BriefPointDTO> points;
         try {
@@ -400,8 +452,10 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         }
         //step2:根据触发器Ids获取items
         ItemGetRequest itemGetRequest = new ItemGetRequest();
-        itemGetRequest.getParams().setTriggerIds(triggerIds);
-        itemGetRequest.getParams().setMonitored(true).setOutput(BriefItemDTO.PROPERTY_NAMES);
+        itemGetRequest.getParams()
+                .setTriggerIds(triggerIds)
+                .setMonitored(true)
+                .setOutput(BriefItemDTO.PROPERTY_NAMES);
         List<BriefItemDTO> items ;
         try {
             items = itemManager.listItem(itemGetRequest);
@@ -415,9 +469,10 @@ public class FetchBriefServiceImpl implements FetchBriefService {
             itemIds.add(item.getItemId());
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
-        appRequest.getParams().setListHost(BriefHostDTO.PROPERTY_NAMES);
-        appRequest.getParams().setItemIds(itemIds);
-        appRequest.getParams().setOutput(BriefPointDTO.PROPERTY_NAMES);
+        appRequest.getParams()
+                .setSelectHost(BriefHostDTO.PROPERTY_NAMES)
+                .setItemIds(itemIds)
+                .setOutput(BriefPointDTO.PROPERTY_NAMES);
         List<BriefPointDTO> problemPoints ;
         try {
             problemPoints = pointManager.listPoint(appRequest);
@@ -437,7 +492,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         request.getParams()
                 .setMonitored(true)
                 .setOnlyTrue(true)
-                .setListHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setOutput(BriefProblemVO.PROPERTY_NAMES)
                 .setFilter(triggerFilter);
         return triggerManager.listTrigger(request, BriefProblemVO.class);

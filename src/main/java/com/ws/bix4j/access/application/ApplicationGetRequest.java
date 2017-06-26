@@ -2,8 +2,10 @@ package com.ws.bix4j.access.application;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.SelectParamSerializer;
 import com.ws.bix4j.access.ZRequest;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,28 +46,37 @@ public class ApplicationGetRequest  extends ZRequest<ApplicationGetRequest.Param
          * select 参数
          */
         //在host属性中返回应用程序所属的主机
-        @JSONField(name = "selectHost")
-        private String[] listHost;
-        //@JSONField(name = "selectHost")
-        private String stringHost;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectHost;
 
         //返回属性中应用程序中包含的项目items
-        @JSONField(name = "selectItems")
-        private String[] listItems;
-        @JSONField(name = "selectItems")
-        private String stringItems;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectItems;
 
         //返回在属性中创建监控点的LLD规则discoveryRule
-        @JSONField(name = "selectDiscoveryRule")
-        private String[] listDiscoveryRule;
-        @JSONField(name = "selectDiscoveryRule")
-        private String stringDiscoveryRule;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectDiscoveryRule;
 
         //返回在属性中创建监控点的自动发现监控点对象discoveryRule
-        @JSONField(name = "selectApplicationDiscovery")
-        private String[] listApplicationDiscovery;
-        @JSONField(name = "selectApplicationDiscovery")
-        private String stringApplicationDiscovery;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectApplicationDiscovery;
+
+        @Override
+        public String toString() {
+            return "Params{" +
+                    "applicationIds=" + applicationIds +
+                    ", groupIds=" + groupIds +
+                    ", hostIds=" + hostIds +
+                    ", inherited=" + inherited +
+                    ", itemIds=" + itemIds +
+                    ", templated=" + templated +
+                    ", templateIds=" + templateIds +
+                    ", selectHost='" + selectHost + '\'' +
+                    ", selectItems=" + Arrays.toString(selectItems) +
+                    ", selectDiscoveryRule=" + Arrays.toString(selectDiscoveryRule) +
+                    ", selectApplicationDiscovery=" + Arrays.toString(selectApplicationDiscovery) +
+                    '}';
+        }
 
         public List<String> getApplicationIds() {
             return applicationIds;
@@ -130,77 +141,39 @@ public class ApplicationGetRequest  extends ZRequest<ApplicationGetRequest.Param
             return this;
         }
 
-
-
-        public String[] getListItems() {
-            return listItems;
+        public String[] getSelectHost() {
+            return selectHost;
         }
 
-        public Params setListItems(String[] listItems) {
-            this.listItems = listItems;
+        public Params setSelectHost(String[] selectHost) {
+            this.selectHost = selectHost;
             return this;
         }
 
-        public String[] getListDiscoveryRule() {
-            return listDiscoveryRule;
+        public String[] getSelectItems() {
+            return selectItems;
         }
 
-        public Params setListDiscoveryRule(String[] listDiscoveryRule) {
-            this.listDiscoveryRule = listDiscoveryRule;
+        public Params setSelectItems(String[] selectItems) {
+            this.selectItems = selectItems;
             return this;
         }
 
-        public String[] getListApplicationDiscovery() {
-            return listApplicationDiscovery;
+        public String[] getSelectDiscoveryRule() {
+            return selectDiscoveryRule;
         }
 
-        public Params setListApplicationDiscovery(String[] listApplicationDiscovery) {
-            this.listApplicationDiscovery = listApplicationDiscovery;
+        public Params setSelectDiscoveryRule(String[] selectDiscoveryRule) {
+            this.selectDiscoveryRule = selectDiscoveryRule;
             return this;
         }
 
-        public String[] getListHost() {
-            return listHost;
+        public String[] getSelectApplicationDiscovery() {
+            return selectApplicationDiscovery;
         }
 
-        public Params setListHost(String[] listHost) {
-            this.listHost = listHost;
-            return this;
-        }
-
-        public String getStringHost() {
-            return stringHost;
-        }
-
-        public Params setStringHost(String stringHost) {
-            this.stringHost = stringHost;
-            return this;
-        }
-
-        public String getStringItems() {
-            return stringItems;
-        }
-
-        public Params setStringItems(String stringItems) {
-            this.stringItems = stringItems;
-            return this;
-        }
-
-        public String getStringDiscoveryRule() {
-            return stringDiscoveryRule;
-        }
-
-        public Params setStringDiscoveryRule(String stringDiscoveryRule) {
-            this.stringDiscoveryRule = stringDiscoveryRule;
-            return this;
-        }
-
-        public String getStringApplicationDiscovery() {
-            return stringApplicationDiscovery;
-        }
-
-        public Params setStringApplicationDiscovery(String stringApplicationDiscovery) {
-            this.stringApplicationDiscovery = stringApplicationDiscovery;
+        public Params setSelectApplicationDiscovery(String[] selectApplicationDiscovery) {
+            this.selectApplicationDiscovery = selectApplicationDiscovery;
             return this;
         }
     }

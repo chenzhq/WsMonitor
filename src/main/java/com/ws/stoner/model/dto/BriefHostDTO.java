@@ -14,6 +14,8 @@ public class BriefHostDTO {
     private String name;
     private List<BriefTemplateDTO> parentTemplates; //通过模板映射类型
     private List<BriefHostInterfaceDTO> interfaces; //通过接口获取ip
+    @JSONField(name = "applications")
+    private List<BriefPointDTO> points;
 
     public static final String[] PROPERTY_NAMES = {"hostid", "name"};
 
@@ -25,7 +27,17 @@ public class BriefHostDTO {
                 ", name='" + name + '\'' +
                 ", parentTemplates=" + parentTemplates +
                 ", interfaces=" + interfaces +
+                ", points=" + points +
                 '}';
+    }
+
+    public List<BriefPointDTO> getPoints() {
+        return points;
+    }
+
+    public BriefHostDTO setPoints(List<BriefPointDTO> points) {
+        this.points = points;
+        return this;
     }
 
     public String getHostId() {
@@ -71,10 +83,6 @@ public class BriefHostDTO {
     public BriefHostDTO setInterfaces(List<BriefHostInterfaceDTO> interfaces) {
         this.interfaces = interfaces;
         return this;
-    }
-
-    public static String[] getPropertyNames() {
-        return PROPERTY_NAMES;
     }
 
     @Override

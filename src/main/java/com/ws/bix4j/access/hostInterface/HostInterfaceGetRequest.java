@@ -2,6 +2,7 @@ package com.ws.bix4j.access.hostInterface;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.SelectParamSerializer;
 import com.ws.bix4j.access.ZRequest;
 
 import java.util.Arrays;
@@ -40,15 +41,11 @@ public class HostInterfaceGetRequest extends ZRequest<HostInterfaceGetRequest.Pa
         /**
          * select 参数
          */
-        @JSONField(name = "selectItems")
-        private String stringItems;
-        @JSONField(name = "selectItems")
-        private String[] listItems;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectItems;
 
-        @JSONField(name = "selectHosts")
-        private String stringHosts;
-        @JSONField(name = "selectHosts")
-        private String[] listHosts;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectHosts;
 
         @Override
         public String toString() {
@@ -57,10 +54,8 @@ public class HostInterfaceGetRequest extends ZRequest<HostInterfaceGetRequest.Pa
                     ", interfaceIds=" + interfaceIds +
                     ", itemIds=" + itemIds +
                     ", triggerIds=" + triggerIds +
-                    ", stringItems='" + stringItems + '\'' +
-                    ", listItems=" + Arrays.toString(listItems) +
-                    ", stringHosts='" + stringHosts + '\'' +
-                    ", listHosts=" + Arrays.toString(listHosts) +
+                    ", selectItems=" + Arrays.toString(selectItems) +
+                    ", selectHosts=" + Arrays.toString(selectHosts) +
                     '}';
         }
 
@@ -100,39 +95,21 @@ public class HostInterfaceGetRequest extends ZRequest<HostInterfaceGetRequest.Pa
             return this;
         }
 
-        public String getStringItems() {
-            return stringItems;
+        public String[] getSelectItems() {
+            return selectItems;
         }
 
-        public Params setStringItems(String stringItems) {
-            this.stringItems = stringItems;
+        public Params setSelectItems(String[] selectItems) {
+            this.selectItems = selectItems;
             return this;
         }
 
-        public String[] getListItems() {
-            return listItems;
+        public String[] getSelectHosts() {
+            return selectHosts;
         }
 
-        public Params setListItems(String[] listItems) {
-            this.listItems = listItems;
-            return this;
-        }
-
-        public String getStringHosts() {
-            return stringHosts;
-        }
-
-        public Params setStringHosts(String stringHosts) {
-            this.stringHosts = stringHosts;
-            return this;
-        }
-
-        public String[] getListHosts() {
-            return listHosts;
-        }
-
-        public Params setListHosts(String[] listHosts) {
-            this.listHosts = listHosts;
+        public Params setSelectHosts(String[] selectHosts) {
+            this.selectHosts = selectHosts;
             return this;
         }
     }

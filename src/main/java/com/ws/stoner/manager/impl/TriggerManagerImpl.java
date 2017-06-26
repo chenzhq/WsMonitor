@@ -50,7 +50,9 @@ public class TriggerManagerImpl implements TriggerManager {
         triggerFilter1.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
         triggerFilter1.put("value",ZApiParameter.TRIGGER_VALUE.PROBLEM.value);
         triggerFilter1.put("only_true",true);
-        triggerGetRequest1.getParams().setFilter(triggerFilter1);
+        triggerGetRequest1.getParams()
+                .setOutput(BriefTriggerDTO.PROPERTY_NAMES)
+                .setFilter(triggerFilter1);
         List<BriefTriggerDTO> triggers1 ;
         try {
             triggers1 = listTrigger(triggerGetRequest1);
@@ -62,7 +64,9 @@ public class TriggerManagerImpl implements TriggerManager {
         TriggerGetRequest triggerGetRequest2 = new TriggerGetRequest();
         Map<String, Object> triggerFilter2 = new HashMap<>();
         triggerFilter2.put("state", ZApiParameter.TRIGGER_STATE.UNKNOWN.value);
-        triggerGetRequest2.getParams().setFilter(triggerFilter2);
+        triggerGetRequest2.getParams()
+                .setOutput(BriefTriggerDTO.PROPERTY_NAMES)
+                .setFilter(triggerFilter2);
         List<BriefTriggerDTO> triggers2 ;
         try {
             triggers2 = listTrigger(triggerGetRequest2);
