@@ -11,7 +11,6 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.manager.*;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
-import com.ws.stoner.model.dto.BriefTriggerDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
 import com.ws.stoner.service.CountStateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +47,13 @@ public class CountStateServiceImpl implements CountStateService {
     public StateNumDTO countHostState() throws ServiceException {
         StateNumDTO hostState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
-        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemHost());
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkHost());
+        int allHostNum = countAllHost();
+        int problemhostNum = countProblemHost();
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,problemhostNum);
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allHostNum-problemhostNum);
         stateNums.add(okStateNum);
         stateNums.add(problemStateNum);
-        hostState.setTotalNum(countAllHost()).setStateNum(stateNums);
+        hostState.setTotalNum(allHostNum).setStateNum(stateNums);
 
         return hostState;
     }
@@ -66,11 +67,13 @@ public class CountStateServiceImpl implements CountStateService {
     public StateNumDTO countPlatformState() throws ServiceException {
         StateNumDTO platformState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
-        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemPlatform());
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkPlatform());
+        int allPlarformNum = countAllPlatform();
+        int problemPlatformNum = countProblemPlatform();
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,problemPlatformNum);
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPlarformNum-problemPlatformNum);
         stateNums.add(okStateNum);
         stateNums.add(problemStateNum);
-        platformState.setTotalNum(countAllPlatform()).setStateNum(stateNums);
+        platformState.setTotalNum(allPlarformNum).setStateNum(stateNums);
         return platformState;
     }
 
@@ -83,11 +86,13 @@ public class CountStateServiceImpl implements CountStateService {
     public StateNumDTO countPointState() throws ServiceException {
         StateNumDTO pointState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
-        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,countProblemPoint());
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,countOkPoint());
+        int allPointNum = countAllPoint();
+        int problemPointNum = countProblemPoint();
+        StateNumDTO.StateNum problemStateNum = new StateNumDTO.StateNum(StatusEnum.PROBLEM,problemPointNum);
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPointNum-problemPointNum);
         stateNums.add(okStateNum);
         stateNums.add(problemStateNum);
-        pointState.setTotalNum(countAllPoint()).setStateNum(stateNums);
+        pointState.setTotalNum(allPointNum).setStateNum(stateNums);
         return pointState;
     }
 
