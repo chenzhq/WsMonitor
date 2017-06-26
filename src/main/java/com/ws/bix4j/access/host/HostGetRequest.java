@@ -2,6 +2,7 @@ package com.ws.bix4j.access.host;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.SelectParamSerializer;
 import com.ws.bix4j.access.ZRequest;
 
 import java.util.Arrays;
@@ -95,79 +96,59 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
          * select参数 string类型的可能值为 "extend" "count"
          * list类型的值是返回对象的属性列表
          */
-        @JSONField(name = "selectGroups")
-        private String stringGroups;
-        @JSONField(name = "selectGroups")
-        private String[] listGroups;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectGroups;
 
-//        @JSONField(name = "selectApplications")
-//        private String stringApplications;
-        @JSONField(name = "selectApplications")
-        private String[] listApplications;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectApplications;
 
-        public String[] getListApplications() {
-            return listApplications;
-        }
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectItems;
 
-        public Params setListApplications(String[] listApplications) {
-            this.listApplications = listApplications;
-            return this;
-        }
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectTriggers;
 
-        @JSONField(name = "selectItems")
-        private String stringItems;
-        @JSONField(name = "selectItems")
-        private String[] listItems;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectInterfaces;
 
-        @JSONField(name = "selectTriggers")
-        private String stringTriggers;
-        @JSONField(name = "selectTriggers")
-        private String[] listTriggers;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectParentTemplates;
 
-        @JSONField(name = "selectInterfaces")
-        private String stringInterfaces;
-        @JSONField(name = "selectInterfaces")
-        private String[] listInterfaces;
 
-        @JSONField(name = "selectParentTemplates")
-        private String stringParentTemplates;
-        @JSONField(name = "selectParentTemplates")
-        private String[] listParentTemplates;
-
-        public String getStringParentTemplates() {
-            return stringParentTemplates;
-        }
-
-        public Params setStringParentTemplates(String stringParentTemplates) {
-            this.stringParentTemplates = stringParentTemplates;
-            return this;
-        }
-
-        public String[] getListParentTemplates() {
-            return listParentTemplates;
-        }
-
-        public Params setListParentTemplates(String[] listParentTemplates) {
-            this.listParentTemplates = listParentTemplates;
-            return this;
-        }
-
-        public String getStringInterfaces() {
-            return stringInterfaces;
-        }
-
-        public Params setStringInterfaces(String stringInterfaces) {
-            this.stringInterfaces = stringInterfaces;
-            return this;
-        }
-
-        public String[] getListInterfaces() {
-            return listInterfaces;
-        }
-
-        public Params setListInterfaces(String[] listInterfaces) {
-            this.listInterfaces = listInterfaces;
-            return this;
+        @Override
+        public String toString() {
+            return "Params{" +
+                    "groupIds=" + groupIds +
+                    ", applications=" + applications +
+                    ", dserviceIds=" + dserviceIds +
+                    ", graphIds=" + graphIds +
+                    ", hostIds=" + hostIds +
+                    ", httpTestIds=" + httpTestIds +
+                    ", interfaceIds=" + interfaceIds +
+                    ", itemIds=" + itemIds +
+                    ", maintenanceIds=" + maintenanceIds +
+                    ", monitoredHosts=" + monitoredHosts +
+                    ", proxyHosts='" + proxyHosts + '\'' +
+                    ", proxyIds=" + proxyIds +
+                    ", templatedHosts='" + templatedHosts + '\'' +
+                    ", templateIds=" + templateIds +
+                    ", triggerIds=" + triggerIds +
+                    ", withItems=" + withItems +
+                    ", withApplications=" + withApplications +
+                    ", withGraphs=" + withGraphs +
+                    ", withHttptests=" + withHttptests +
+                    ", withMonitoredHttptests=" + withMonitoredHttptests +
+                    ", withMonitoredItems=" + withMonitoredItems +
+                    ", withMonitoredTriggers=" + withMonitoredTriggers +
+                    ", withTriggers=" + withTriggers +
+                    ", withInventory=" + withInventory +
+                    ", selectGroups=" + Arrays.toString(selectGroups) +
+                    ", selectApplications=" + Arrays.toString(selectApplications) +
+                    ", selectItems=" + Arrays.toString(selectItems) +
+                    ", selectTriggers=" + Arrays.toString(selectTriggers) +
+                    ", selectInterfaces=" + Arrays.toString(selectInterfaces) +
+                    ", selectParentTemplates=" + Arrays.toString(selectParentTemplates) +
+                    '}';
         }
 
         public List<String> getGroupIds() {
@@ -251,7 +232,7 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public boolean getMonitoredHosts() {
+        public boolean isMonitoredHosts() {
             return monitoredHosts;
         }
 
@@ -303,10 +284,6 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
         public Params setTriggerIds(List<String> triggerIds) {
             this.triggerIds = triggerIds;
             return this;
-        }
-
-        public boolean isMonitoredHosts() {
-            return monitoredHosts;
         }
 
         public boolean isWithItems() {
@@ -390,131 +367,58 @@ public class HostGetRequest extends ZRequest<HostGetRequest.Params>{
             return this;
         }
 
-        public String getStringGroups() {
-            return stringGroups;
+        public String[] getSelectGroups() {
+            return selectGroups;
         }
 
-        public Params setStringGroups(String stringGroups) {
-            this.stringGroups = stringGroups;
+        public Params setSelectGroups(String[] selectGroups) {
+            this.selectGroups = selectGroups;
             return this;
         }
 
-        public String[] getListGroups() {
-            return listGroups;
+        public String[] getSelectApplications() {
+            return selectApplications;
         }
 
-        public Params setListGroups(String[] listGroups) {
-            this.listGroups = listGroups;
+        public Params setSelectApplications(String[] selectApplications) {
+            this.selectApplications = selectApplications;
             return this;
         }
 
-        public String getStringItems() {
-            return stringItems;
+        public String[] getSelectItems() {
+            return selectItems;
         }
 
-        public Params setStringItems(String stringItems) {
-            this.stringItems = stringItems;
+        public Params setSelectItems(String[] selectItems) {
+            this.selectItems = selectItems;
             return this;
         }
 
-        public String[] getListItems() {
-            return listItems;
+        public String[] getSelectTriggers() {
+            return selectTriggers;
         }
 
-        public Params setListItems(String[] listItems) {
-            this.listItems = listItems;
+        public Params setSelectTriggers(String[] selectTriggers) {
+            this.selectTriggers = selectTriggers;
             return this;
         }
 
-        public String getStringTriggers() {
-            return stringTriggers;
+        public String[] getSelectInterfaces() {
+            return selectInterfaces;
         }
 
-        public Params setStringTriggers(String stringTriggers) {
-            this.stringTriggers = stringTriggers;
+        public Params setSelectInterfaces(String[] selectInterfaces) {
+            this.selectInterfaces = selectInterfaces;
             return this;
         }
 
-        public String[] getListTriggers() {
-            return listTriggers;
+        public String[] getSelectParentTemplates() {
+            return selectParentTemplates;
         }
-//以下为select参数设置
 
-        /**
-         *
-         * @param queryString
-         * @return
-         */
-        public Params setSelectGroups(String queryString) {
-            this.stringGroups = queryString;
+        public Params setSelectParentTemplates(String[] selectParentTemplates) {
+            this.selectParentTemplates = selectParentTemplates;
             return this;
-        }
-
-        public Params setSelectGroups(String[] groupProps) {
-            this.listGroups = groupProps;
-            return this;
-        }
-
-
-        public Params setSelectItems(String queryString) {
-            this.stringItems = queryString;
-            return this;
-        }
-
-        public Params setSelectItems(String[] itemProps) {
-            this.listItems = listItems;
-            return this;
-        }
-
-        public Params setSelectTriggers(String queryString) {
-            this.stringTriggers = queryString;
-            return this;
-        }
-
-        public Params setListTriggers(String[] triggerProps) {
-            this.listTriggers = triggerProps;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return "Params{" +
-                    "groupIds=" + groupIds +
-                    ", applications=" + applications +
-                    ", dserviceIds=" + dserviceIds +
-                    ", graphIds=" + graphIds +
-                    ", hostIds=" + hostIds +
-                    ", httpTestIds=" + httpTestIds +
-                    ", interfaceIds=" + interfaceIds +
-                    ", itemIds=" + itemIds +
-                    ", maintenanceIds=" + maintenanceIds +
-                    ", monitoredHosts=" + monitoredHosts +
-                    ", proxyHosts='" + proxyHosts + '\'' +
-                    ", proxyIds=" + proxyIds +
-                    ", templatedHosts='" + templatedHosts + '\'' +
-                    ", templateIds=" + templateIds +
-                    ", triggerIds=" + triggerIds +
-                    ", withItems=" + withItems +
-                    ", withApplications=" + withApplications +
-                    ", withGraphs=" + withGraphs +
-                    ", withHttptests=" + withHttptests +
-                    ", withMonitoredHttptests=" + withMonitoredHttptests +
-                    ", withMonitoredItems=" + withMonitoredItems +
-                    ", withMonitoredTriggers=" + withMonitoredTriggers +
-                    ", withTriggers=" + withTriggers +
-                    ", withInventory=" + withInventory +
-                    ", stringGroups='" + stringGroups + '\'' +
-                    ", listGroups=" + Arrays.toString(listGroups) +
-                    ", listApplications=" + Arrays.toString(listApplications) +
-                    ", stringItems='" + stringItems + '\'' +
-                    ", listItems=" + Arrays.toString(listItems) +
-                    ", stringTriggers='" + stringTriggers + '\'' +
-                    ", listTriggers=" + Arrays.toString(listTriggers) +
-                    ", stringInterfaces='" + stringInterfaces + '\'' +
-                    ", listInterfaces=" + Arrays.toString(listInterfaces) +
-                    ", stringParentTemplates='" + stringParentTemplates + '\'' +
-                    ", listParentTemplates=" + Arrays.toString(listParentTemplates) +
-                    '}';
         }
     }
 }

@@ -2,9 +2,11 @@ package com.ws.bix4j.access.trigger;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.SelectParamSerializer;
 import com.ws.bix4j.access.ZRequest;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -64,40 +66,26 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
         /**
          * select
          */
-        @JSONField(name = "selectGroups")
-        private String stringGroups;
-        @JSONField(name = "selectGroups")
-        private String[] listGroups;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectGroups;
 
-        @JSONField(name = "selectHosts")
-        private String stringHosts;
-        @JSONField(name = "selectHosts")
-        private String[] listHosts;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectHosts;
 
-        @JSONField(name = "selectItems")
-        private String stringItems;
-        @JSONField(name = "selectItems")
-        private String[] listItems;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectItems;
 
-        @JSONField(name = "selectFunctions")
-        private String stringFunctions;
-        @JSONField(name = "selectFunctions")
-        private String[] listFunctions;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectFunctions;
 
-        @JSONField(name = "selectDiscoveryRule")
-        private String stringDiscoveryRule;
-        @JSONField(name = "selectDiscoveryRule")
-        private String[] listDiscoveryRule;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectDiscoveryRule;
 
-        @JSONField(name = "selectLastEvent")
-        private String stringLastEvent;
-        @JSONField(name = "selectLastEvent")
-        private String[] listLastEvent;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectLastEvent;
 
-        @JSONField(name = "selectTags")
-        private String stringTags;
-        @JSONField(name = "selectTags")
-        private String[] listTags;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectTags;
 
         @Override
         public String toString() {
@@ -109,7 +97,7 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
                     ", itemIds=" + itemIds +
                     ", applicationIds=" + applicationIds +
                     ", functions=" + functions +
-                    ", hostgroup='" + group + '\'' +
+                    ", group='" + group + '\'' +
                     ", host='" + host + '\'' +
                     ", inherited=" + inherited +
                     ", templated=" + templated +
@@ -127,20 +115,13 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
                     ", expandComment=" + expandComment +
                     ", expandDescription=" + expandDescription +
                     ", expandExpression=" + expandExpression +
-                    ", stringGroups='" + stringGroups + '\'' +
-                    ", listGroups=" + listGroups +
-                    ", stringHosts='" + stringHosts + '\'' +
-                    ", listHosts=" + listHosts +
-                    ", stringItems='" + stringItems + '\'' +
-                    ", listItems=" + listItems +
-                    ", stringFunctions='" + stringFunctions + '\'' +
-                    ", listFunctions=" + listFunctions +
-                    ", stringDiscoveryRule='" + stringDiscoveryRule + '\'' +
-                    ", listDiscoveryRule=" + listDiscoveryRule +
-                    ", stringLastEvent='" + stringLastEvent + '\'' +
-                    ", listLastEvent=" + listLastEvent +
-                    ", stringTags='" + stringTags + '\'' +
-                    ", listTags=" + listTags +
+                    ", selectGroups=" + Arrays.toString(selectGroups) +
+                    ", selectHosts=" + Arrays.toString(selectHosts) +
+                    ", selectItems=" + Arrays.toString(selectItems) +
+                    ", selectFunctions=" + Arrays.toString(selectFunctions) +
+                    ", selectDiscoveryRule=" + Arrays.toString(selectDiscoveryRule) +
+                    ", selectLastEvent=" + Arrays.toString(selectLastEvent) +
+                    ", selectTags=" + Arrays.toString(selectTags) +
                     '}';
         }
 
@@ -328,8 +309,8 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return onlyTrue;
         }
 
-        public Params setOnlyTrue(boolean only_true) {
-            this.onlyTrue = only_true;
+        public Params setOnlyTrue(boolean onlyTrue) {
+            this.onlyTrue = onlyTrue;
             return this;
         }
 
@@ -369,129 +350,66 @@ public class TriggerGetRequest extends ZRequest<TriggerGetRequest.Params>{
             return this;
         }
 
-        public String getStringGroups() {
-            return stringGroups;
+        public String[] getSelectGroups() {
+            return selectGroups;
         }
 
-        public Params setStringGroups(String stringGroups) {
-            this.stringGroups = stringGroups;
+        public Params setSelectGroups(String[] selectGroups) {
+            this.selectGroups = selectGroups;
             return this;
         }
 
-        public String[] getListGroups() {
-            return listGroups;
+        public String[] getSelectHosts() {
+            return selectHosts;
         }
 
-        public Params setListGroups(String[] listGroups) {
-            this.listGroups = listGroups;
+        public Params setSelectHosts(String[] selectHosts) {
+            this.selectHosts = selectHosts;
             return this;
         }
 
-        public String getStringHosts() {
-            return stringHosts;
+        public String[] getSelectItems() {
+            return selectItems;
         }
 
-        public Params setStringHosts(String stringHosts) {
-            this.stringHosts = stringHosts;
+        public Params setSelectItems(String[] selectItems) {
+            this.selectItems = selectItems;
             return this;
         }
 
-        public String[] getListHosts() {
-            return listHosts;
+        public String[] getSelectFunctions() {
+            return selectFunctions;
         }
 
-        public Params setListHosts(String[] listHosts) {
-            this.listHosts = listHosts;
+        public Params setSelectFunctions(String[] selectFunctions) {
+            this.selectFunctions = selectFunctions;
             return this;
         }
 
-        public String getStringItems() {
-            return stringItems;
+        public String[] getSelectDiscoveryRule() {
+            return selectDiscoveryRule;
         }
 
-        public Params setStringItems(String stringItems) {
-            this.stringItems = stringItems;
+        public Params setSelectDiscoveryRule(String[] selectDiscoveryRule) {
+            this.selectDiscoveryRule = selectDiscoveryRule;
             return this;
         }
 
-        public String[] getListItems() {
-            return listItems;
+        public String[] getSelectLastEvent() {
+            return selectLastEvent;
         }
 
-        public Params setListItems(String[] listItems) {
-            this.listItems = listItems;
+        public Params setSelectLastEvent(String[] selectLastEvent) {
+            this.selectLastEvent = selectLastEvent;
             return this;
         }
 
-        public String getStringFunctions() {
-            return stringFunctions;
+        public String[] getSelectTags() {
+            return selectTags;
         }
 
-        public Params setStringFunctions(String stringFunctions) {
-            this.stringFunctions = stringFunctions;
-            return this;
-        }
-
-        public String[] getListFunctions() {
-            return listFunctions;
-        }
-
-        public Params setListFunctions(String[] listFunctions) {
-            this.listFunctions = listFunctions;
-            return this;
-        }
-
-        public String getStringDiscoveryRule() {
-            return stringDiscoveryRule;
-        }
-
-        public Params setStringDiscoveryRule(String stringDiscoveryRule) {
-            this.stringDiscoveryRule = stringDiscoveryRule;
-            return this;
-        }
-
-        public String[] getListDiscoveryRule() {
-            return listDiscoveryRule;
-        }
-
-        public Params setListDiscoveryRule(String[] listDiscoveryRule) {
-            this.listDiscoveryRule = listDiscoveryRule;
-            return this;
-        }
-
-        public String getStringLastEvent() {
-            return stringLastEvent;
-        }
-
-        public Params setStringLastEvent(String stringLastEvent) {
-            this.stringLastEvent = stringLastEvent;
-            return this;
-        }
-
-        public String[] getListLastEvent() {
-            return listLastEvent;
-        }
-
-        public Params setListLastEvent(String[] listLastEvent) {
-            this.listLastEvent = listLastEvent;
-            return this;
-        }
-
-        public String getStringTags() {
-            return stringTags;
-        }
-
-        public Params setStringTags(String stringTags) {
-            this.stringTags = stringTags;
-            return this;
-        }
-
-        public String[] getListTags() {
-            return listTags;
-        }
-
-        public Params setListTags(String[] listTags) {
-            this.listTags = listTags;
+        public Params setSelectTags(String[] selectTags) {
+            this.selectTags = selectTags;
             return this;
         }
     }

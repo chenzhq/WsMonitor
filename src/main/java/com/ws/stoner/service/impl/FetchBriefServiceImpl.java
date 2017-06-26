@@ -123,9 +123,9 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest.getParams().setFilter(statusFilter);
         hostGetRequest.getParams()
-                .setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
-                .setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
-                .setListApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
+                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> hosts ;
         try {
@@ -159,8 +159,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         hostGetRequest1.getParams().setFilter(hostFilter1);
         hostGetRequest1.getParams()
                 .setTriggerIds(triggerIds)
-                .setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
-                .setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
+                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
+                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> host1 ;
         try {
@@ -178,8 +178,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostGetRequest2.getParams()
-                .setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
-                .setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
+                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
+                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES)
                 .setFilter(hostFilter2)
                 .setSearchByAny(true);
@@ -214,7 +214,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     public List<BriefTemplateDTO> listAllTemplate() throws ServiceException {
         TemplateGetRequest templateGetRequest = new TemplateGetRequest();
         templateGetRequest.getParams()
-                .setListGroups(BriefTemplateGroupDTO.PROPERTY_NAMES)
+                .setSelectGroups(BriefTemplateGroupDTO.PROPERTY_NAMES)
                 .setOutput(BriefTemplateDTO.PROPERTY_NAMES);
         List<BriefTemplateDTO> templatesDTO;
         try {
@@ -301,7 +301,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         groupRequest.getParams()
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
-                .setListHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setOutput(BriefPlatformDTO.PROPERTY_NAMES);
         List<BriefPlatformDTO> platforms ;
         try {
@@ -422,8 +422,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
         appRequest.getParams()
                 .setHostIds(hostIds)
-                .setListHost(BriefHostDTO.PROPERTY_NAMES)
-                .setListItems(BriefItemDTO.PROPERTY_NAMES)
+                .setSelectHost(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
                 .setOutput(BriefPointDTO.PROPERTY_NAMES);
         List<BriefPointDTO> points;
         try {
@@ -470,7 +470,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         }
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
         appRequest.getParams()
-                .setListHost(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectHost(BriefHostDTO.PROPERTY_NAMES)
                 .setItemIds(itemIds)
                 .setOutput(BriefPointDTO.PROPERTY_NAMES);
         List<BriefPointDTO> problemPoints ;
@@ -492,7 +492,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         request.getParams()
                 .setMonitored(true)
                 .setOnlyTrue(true)
-                .setListHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setOutput(BriefProblemVO.PROPERTY_NAMES)
                 .setFilter(triggerFilter);
         return triggerManager.listTrigger(request, BriefProblemVO.class);

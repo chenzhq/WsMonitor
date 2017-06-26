@@ -2,6 +2,7 @@ package com.ws.bix4j.access.hostgroup;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.SelectParamSerializer;
 import com.ws.bix4j.access.ZRequest;
 
 import java.util.Arrays;
@@ -51,42 +52,32 @@ public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
         /**
          * select 参数
          */
-        @JSONField(name = "selectDiscoveryRule")
-        private String stringDiscoveryRule;
-        @JSONField(name = "selectDiscoveryRule")
-        private String[] listDiscoveryRule;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectHosts;
 
-        @JSONField(name = "selectGroupDiscovery")
-        private String stringGroupDiscovery;
-        @JSONField(name = "selectGroupDiscovery")
-        private String[] listGroupDiscovery;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectTemplates;
 
-//        @JSONField(name = "selectHosts")
-//        private String stringHosts;
-
-        public String[] getListHosts() {
-            return listHosts;
+        @Override
+        public String toString() {
+            return "Params{" +
+                    "graphIds=" + graphIds +
+                    ", groupIds=" + groupIds +
+                    ", hostIds=" + hostIds +
+                    ", maintenanceIds=" + maintenanceIds +
+                    ", monitoredHosts=" + monitoredHosts +
+                    ", realHosts=" + realHosts +
+                    ", templatedHosts='" + templatedHosts + '\'' +
+                    ", templateIds=" + templateIds +
+                    ", triggerIds=" + triggerIds +
+                    ", selectHosts=" + Arrays.toString(selectHosts) +
+                    ", selectTemplates=" + Arrays.toString(selectTemplates) +
+                    '}';
         }
-
-        public Params setListHosts(String[] listHosts) {
-            this.listHosts = listHosts;
-            return this;
-        }
-
-        @JSONField(name = "selectHosts")
-        private String[] listHosts;
-
-        @JSONField(name = "selectTemplates")
-        private String stringTemplates;
-        @JSONField(name = "selectTemplates")
-        private String[] listTemplates;
-
 
         /**
          * 其他参数
          */
-
-
 
         public List<String> getGraphIds() {
             return graphIds;
@@ -133,7 +124,7 @@ public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
             return this;
         }
 
-        public boolean getRealHosts() {
+        public boolean isRealHosts() {
             return realHosts;
         }
 
@@ -169,83 +160,21 @@ public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
             return this;
         }
 
-        public boolean isRealHosts() {
-            return realHosts;
+        public String[] getSelectHosts() {
+            return selectHosts;
         }
 
-        public String getStringDiscoveryRule() {
-            return stringDiscoveryRule;
-        }
-
-        public Params setStringDiscoveryRule(String stringDiscoveryRule) {
-            this.stringDiscoveryRule = stringDiscoveryRule;
+        public Params setSelectHosts(String[] selectHosts) {
+            this.selectHosts = selectHosts;
             return this;
         }
 
-        public String[] getListDiscoveryRule() {
-            return listDiscoveryRule;
+        public String[] getSelectTemplates() {
+            return selectTemplates;
         }
 
-        public Params setListDiscoveryRule(String[] listDiscoveryRule) {
-            this.listDiscoveryRule = listDiscoveryRule;
-            return this;
-        }
-
-        public String getStringGroupDiscovery() {
-            return stringGroupDiscovery;
-        }
-
-        public Params setStringGroupDiscovery(String stringGroupDiscovery) {
-            this.stringGroupDiscovery = stringGroupDiscovery;
-            return this;
-        }
-
-        public String[] getListGroupDiscovery() {
-            return listGroupDiscovery;
-        }
-
-        public Params setListGroupDiscovery(String[] listGroupDiscovery) {
-            this.listGroupDiscovery = listGroupDiscovery;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return "Params{" +
-                    "graphIds=" + graphIds +
-                    ", groupIds=" + groupIds +
-                    ", hostIds=" + hostIds +
-                    ", maintenanceIds=" + maintenanceIds +
-                    ", monitoredHosts=" + monitoredHosts +
-                    ", realHosts=" + realHosts +
-                    ", templatedHosts='" + templatedHosts + '\'' +
-                    ", templateIds=" + templateIds +
-                    ", triggerIds=" + triggerIds +
-                    ", stringDiscoveryRule='" + stringDiscoveryRule + '\'' +
-                    ", listDiscoveryRule=" + Arrays.toString(listDiscoveryRule) +
-                    ", stringGroupDiscovery='" + stringGroupDiscovery + '\'' +
-                    ", listGroupDiscovery=" + Arrays.toString(listGroupDiscovery) +
-                    ", listHosts=" + Arrays.toString(listHosts) +
-                    ", stringTemplates='" + stringTemplates + '\'' +
-                    ", listTemplates=" + Arrays.toString(listTemplates) +
-                    '}';
-        }
-
-        public String getStringTemplates() {
-            return stringTemplates;
-        }
-
-        public Params setStringTemplates(String stringTemplates) {
-            this.stringTemplates = stringTemplates;
-            return this;
-        }
-
-        public String[] getListTemplates() {
-            return listTemplates;
-        }
-
-        public Params setListTemplates(String[] listTemplates) {
-            this.listTemplates = listTemplates;
+        public Params setSelectTemplates(String[] selectTemplates) {
+            this.selectTemplates = selectTemplates;
             return this;
         }
     }
