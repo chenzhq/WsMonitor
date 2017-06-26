@@ -20,6 +20,7 @@ import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -114,7 +115,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest.getParams().setFilter(statusFilter);
-        hostGetRequest.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        hostGetRequest.getParams().setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> hosts ;
         try {
             hosts = hostManager.listHost(hostGetRequest);
@@ -146,7 +147,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest1.getParams().setFilter(hostFilter1);
         hostGetRequest1.getParams().setTriggerIds(triggerIds);
-        hostGetRequest1.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        hostGetRequest1.getParams().setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> host1 ;
         try {
             host1 = hostManager.listHost(hostGetRequest1);
@@ -163,7 +164,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
         hostGetRequest2.getParams().setFilter(hostFilter2).setSearchByAny(true);
-        hostGetRequest2.getParams().setListInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setListParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
+        hostGetRequest2.getParams().setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES).setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES).setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> host2 ;
         try {
             host2 = hostManager.listHost(hostGetRequest2);
