@@ -9,7 +9,7 @@
             dom:
                 "<'left aligned eight wide column'l><'right aligned eight wide column'f>" +
                 "<'sixteen wide column'tr>" +
-                "<'left aligned four wide column'i><'right aligned twelve wide column'p>",
+                "<'left aligned five wide column'i><'right aligned eleven wide column'p>",
             renderer: 'semantic'
         });
 

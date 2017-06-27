@@ -372,6 +372,7 @@ var Lobibox = Lobibox || {};
             'class': 'lobibox-notify-info',
             'title': 'Information',
             sound: false
+           /* sound: 'sound6'*/
         },
         icons: {
             bootstrap: {

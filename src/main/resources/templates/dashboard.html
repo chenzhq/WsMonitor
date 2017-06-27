@@ -15,10 +15,13 @@
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-    <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
-    <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+<!--    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>-->
     <style type="text/css">
+		.pie{height: 200px}
+		.pie_copy{height: 200px;margin-top: 100px}
+		.icon_loading{padding: 190px 0}
         .dataTables_wrapper .dataTables_filter{display:none;}
+		.ui.tab.segment.active{margin: 12px 0 0 0;height: 540px}
     </style>
 </head>
 
@@ -210,7 +213,7 @@
 		<!--navbar-->
 		<!--maincontent-->
 		<div class="mainWrap navslide">
-			<div class="ui equal width left aligned padded grid stackable">
+			<div class="ui equal width left aligned padded grid stackable" >
 				<!--Site Content-->
                 <div class="sixteen wide tablet sixteen wide computer column">
                     <div class="ui segments">
@@ -226,13 +229,13 @@
                                 <div class="row">
                                     <div class="ui three column grid">
                                         <div class="column">
-                                            <div id="platform_pie" style="height: 200px"></div>
+                                            <div id="platform_pie" class="pie"></div>
                                         </div>
                                         <div class="column">
-                                            <div id="host_pie" style="height: 200px"></div>
+                                            <div id="host_pie" class="pie"></div>
                                         </div>
                                         <div class="column">
-                                            <div id="point_pie" style="height: 200px"></div>
+                                            <div id="point_pie" class="pie"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -264,7 +267,6 @@
                                                 <th>上次修改于</th>
                                                 <th>历时</th>
                                                 <th>确认</th>
-                                                <th>备注</th>
                                             </tr></thead>
                                             <tbody >
                                             <tr th:each="problem : ${problemList}">
@@ -273,7 +275,6 @@
                                                 <td th:text="${problem.time}">2017-6-21 15:33:20</td>
                                                 <td><p>2天4小时50分</p></td>
                                                 <td><button >不</button></td>
-                                                <td>434</td>
                                             </tr>
                                             <tr th:remove="all">
                                                 <td>主机1</td>
@@ -281,7 +282,6 @@
                                                 <td>2017-6-20 15:33:20</td>
                                                 <td><p>2天4小时50分</p></td>
                                                 <td><button >不</button></td>
-                                                <td>44</td>
                                             </tr>
                                             <tr th:remove="all">
                                                 <td>主机1</td>
@@ -289,7 +289,6 @@
                                                 <td>2017-5-19 15:33:20</td>
                                                 <td><p>2天4小时50分</p></td>
                                                 <td><button >不</button></td>
-                                                <td>64</td>
                                             </tr>
                                             <tr th:remove="all">
                                                 <td>主机1</td>
@@ -297,7 +296,6 @@
                                                 <td>2017-6-17 15:33:20</td>
                                                 <td><p>2天4小时50分</p></td>
                                                 <td><button >不</button></td>
-                                                <td>134</td>
                                             </tr>
                                             <tr th:remove="all">
                                                 <td>主机1</td>
@@ -305,7 +303,6 @@
                                                 <td>2017-6-23 05:33:20</td>
                                                 <td><p>2天4小时50分</p></td>
                                                 <td><button >不</button></td>
-                                                <td>334</td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -317,12 +314,12 @@
                                     <div class="sixteen wide column">
                                         <div class="ui grid">
                                             <div class="five wide column">
-                                                <div id="platform_pie_copy" style="height: 200px;margin-top: 100px;"></div>
+                                                <div id="platform_pie_copy" class="pie_copy"></div>
                                             </div>
                                             <div class="eleven wide column">
                                                 <table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                    <thead>
-                                                    <tr class="center aligned">
+                                                    <thead class="center aligned">
+                                                    <tr>
                                                         <th>名称</th>
                                                         <th>可用性</th>
                                                         <th>设备问题数/设备总数</th>
@@ -330,6 +327,9 @@
                                                     </tr>
                                                     </thead >
                                                     <tbody id="platform_list" class="center aligned">
+													<tr>
+														<th colspan="4" class="icon_loading"><i class="big spinner loading icon"></i></th>
+													</tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -337,49 +337,55 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="ui tab segment" data-tab="host_datatab" >
-                                <div class="row">
-                                    <div class="sixteen wide column">
-                                        <div class="ui grid">
-                                            <div class="five wide column">
-                                                <div id="host_pie_copy" style="height: 200px;margin-top: 100px;"></div>
-                                            </div>
-                                            <div class="eleven wide column">
-                                                <table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                    <thead>
-                                                    <tr class="center aligned">
-                                                        <th>名称</th>
-                                                        <th>ip</th>
-                                                        <th>类型</th>
-                                                        <th>监控点问题数／监控点总数</th>
-                                                        <th>状态</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody id="host_list" class="center aligned">
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+							<div class="ui tab segment" data-tab="host_datatab">
+								<div class="row">
+									<div class="sixteen wide column">
+										<div class="ui grid">
+											<div class="five wide column">
+												<div id="host_pie_copy" class="pie_copy"></div>
+											</div>
+											<div class="eleven wide column">
+												<table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+													<thead class="center aligned">
+													<tr>
+														<th>名称</th>
+														<th>ip</th>
+														<th>类型</th>
+														<th>监控点问题数／监控点总数</th>
+														<th>状态</th>
+													</tr>
+													</thead>
+													<tbody id="host_list" class="center aligned">
+													<tr>
+														<th colspan="5" class="icon_loading"><i class="big spinner loading icon"></i></th>
+													</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
                             <div class="ui tab segment" data-tab="point_datatab">
                                 <div class="row">
                                     <div class="sixteen wide column">
                                         <div class="ui grid">
                                             <div class="five wide column">
-                                                <div id="point_pie_copy" style="height: 200px;margin-top: 100px;"></div>
+                                                <div id="point_pie_copy" class="pie_copy"></div>
                                             </div>
                                             <div class="eleven wide column">
                                                 <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                    <thead>
-                                                    <tr class="center aligned">
+                                                    <thead class="center aligned">
+                                                    <tr>
                                                         <th>名称</th>
                                                         <th>所属设备</th>
                                                         <th>状态</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody id="point_list" class="center aligned">
+													<tr>
+														<th colspan="3" class="icon_loading"><i class="big spinner loading icon"></i></th>
+													</tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -411,7 +417,9 @@
 <script type="text/javascript">
     //给搜索按钮绑定点击事件
     $(document).ready(function () {
-        var table = $('#problem_table').DataTable();
+        var table = $('#problem_table').DataTable({
+            "iDisplayLength" : 3,
+		});
         $('#time_today').click(function(){
             drawsearch(1);
             table.draw();
@@ -463,7 +471,7 @@
             "sZeroRecords" : "对不起，没有匹配的数据",
             "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
             "sInfoEmpty" : "没有匹配的数据",
-            "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
+            "sInfoFiltered" : "(原 _MAX_ 条记录)",
             "sProcessing" : "正在加载中...",
             "sSearch" : "全文搜索：",
             "oPaginate" : {
