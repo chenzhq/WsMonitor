@@ -274,16 +274,24 @@
                 var success=result.success;
                 if(success) {
                     $("#server_list").html("");
-                    for (var i in data) {
-                        if (data[i]._parentId==0)
-                        {
-                            $("#server_list").append("<tr class=treegrid-" + data[i].hostId + "><td>" + data[i].name + "</td><td>" + data[i].type + "</td><td>" + data[i].state + "</td><td>" + data[i].button + "</td></tr>");
+                    var tmp=new Array();
+                    for(var i in data){
+                        if(data[i]._parentId==0){
+                            tmp[i]=['<tr class="treegrid-'+ data[i].hostId +'">',
+                                '<td>'+data[i].type+'</td>',
+                                '<td>'+data[i].state+'</td>',
+                                '<td>'+data[i].button+'</td>',
+                                '</tr>'].join('');
+                        }else {
+                            tmp[i]=['<tr class="treegrid-'+ data[i].hostId + ' treegrid-parent-'+ data[i]._parentId +'">',
+                                '<td>'+data[i].type+'</td>',
+                                '<td>'+data[i].state+'</td>',
+                                '<td>'+data[i].button+'</td>',
+                                '</tr>'].join('');
                         }
-                        else {
-                            $("#server_list").append("<tr class='treegrid-" + data[i].hostId + " treegrid-parent-" + data[i]._parentId +"'><td>" + data[i].name + "</td><td>" + data[i].type + "</td><td>" + data[i].state + "</td><td>" + data[i].button + "</td></tr>");
-                            $('.tree').treegrid();
-                        }
-                    }
+                    };
+                    $("#server_list").append(tmp.join(" "));
+                    $('.tree').treegrid();
                 }
                 else {
                     Lobibox.notify("default", {

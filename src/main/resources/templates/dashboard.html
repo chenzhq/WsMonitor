@@ -723,15 +723,25 @@
                             var success=result.success;
                             if(success){
                                 $("#platform_list").html("");
+                                var tmp=new Array();
                                 for(var i in data){
-                                    var color_state=new Array();
                                     if(data[i].state=="正常"){
-                                        color_state[i]="positive";
+                                        tmp[i]=['<tr class="positive">',
+                                            '<td>'+data[i].name+'</td>',
+                                            '<td>'+data[i].availability+'</td>',
+                                            '<td>'+data[i].problemNum+'/'+data[i].allNum+'</td>',
+                                            '<td>'+data[i].state+'</td>',
+                                            '</tr>'].join('');
                                     }else {
-                                        color_state[i]="negative";
+                                        tmp[i]=['<tr class="negative">',
+                                            '<td>'+data[i].name+'</td>',
+                                            '<td>'+data[i].availability+'</td>',
+                                            '<td>'+data[i].problemNum+'/'+data[i].allNum+'</td>',
+                                            '<td>'+data[i].state+'</td>',
+                                            '</tr>'].join('');
                                     }
-                                    $("#platform_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td>"+data[i].state+"</td></tr>");
                                 };
+                                $("#platform_list").append(tmp.join(" "));
                                 var platform_table = $("#platform_table").DataTable({
                                     "columnDefs":[{
                                         "orderable":false,
@@ -789,15 +799,27 @@
                             var success=result.success;
                             if(success) {
                                 $("#host_list").html("");
+                                var tmp=new Array();
                                 for(var i in data){
-                                    var color_state=new Array();
                                     if(data[i].state=="正常"){
-                                        color_state[i]="positive";
+                                        tmp[i]=['<tr class="positive">',
+                                            '<td>'+data[i].name+'</td>',
+                                            '<td>'+data[i].ip+'</td>',
+                                            '<td>'+data[i].type+'</td>',
+                                            '<td>'+data[i].problemNum+'/'+data[i].allNum+'</td>',
+                                            '<td>'+data[i].state+'</td>',
+                                            '</tr>'].join('');
                                     }else {
-                                        color_state[i]="negative";
+                                        tmp[i]=['<tr class="negative">',
+                                            '<td>'+data[i].name+'</td>',
+                                            '<td>'+data[i].ip+'</td>',
+                                            '<td>'+data[i].type+'</td>',
+                                            '<td>'+data[i].problemNum+'/'+data[i].allNum+'</td>',
+                                            '<td>'+data[i].state+'</td>',
+                                            '</tr>'].join('');
                                     }
-                                    $("#host_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td>"+data[i].state+"</td></tr>");
                                 };
+                                $("#host_list").append(tmp.join(" "));
                                 var host_table = $("#host_table").DataTable({
                                     "columnDefs":[{
                                         "orderable":false,
@@ -854,15 +876,23 @@
                             var success=result.success;
                             if(success){
                                 $("#point_list").html("");
+                                var tmp=new Array();
                                 for(var i in data){
-                                    var color_state=new Array();
                                     if(data[i].state=="正常"){
-                                        color_state[i]="positive";
+                                        tmp[i]=['<tr class="positive">',
+                                            '<td>'+data[i].name+'</td>',
+                                            '<td>'+data[i].hostName+'</td>',
+                                            '<td>'+data[i].state+'</td>',
+                                            '</tr>'].join('');
                                     }else {
-                                        color_state[i]="negative";
+                                        tmp[i]=['<tr class="negative">',
+                                            '<td>'+data[i].name+'</td>',
+                                            '<td>'+data[i].hostName+'</td>',
+                                            '<td>'+data[i].state+'</td>',
+                                            '</tr>'].join('');
                                     }
-                                    $("#point_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].hostName+"</td><td>"+data[i].state+"</td></tr>");
                                 };
+                                $("#point_list").append(tmp.join(" "));
                                 var point_table = $("#point_table").DataTable({
                                     "columnDefs":[{
                                         "orderable":false,
