@@ -15,13 +15,13 @@
 	<!-- 引入 echarts.js -->
 	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-<!--    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>-->
+    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
     <style type="text/css">
 		.pie{height: 200px}
 		.pie_copy{height: 200px;margin-top: 100px}
 		.icon_loading{padding: 190px 0}
-        .dataTables_wrapper .dataTables_filter{display:none;}
 		.ui.tab.segment.active{margin: 12px 0 0 0;height: 540px}
+		.ui.buttons { margin-bottom: 0px;  }
     </style>
 </head>
 
@@ -259,16 +259,16 @@
                                             </div>
                                         </div>
 
-                                        <table id="problem_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%" style="margin-top: -30px">
-                                            <thead>
-                                            <tr >
-                                                <th>主机</th>
-                                                <th>问题</th>
-                                                <th>上次修改于</th>
-                                                <th>历时</th>
-                                                <th>确认</th>
+                                        <table id="problem_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                            <thead class="center aligned">
+                                            <tr>
+                                                <th class="two wide">主机</th>
+                                                <th class="six wide">问题</th>
+                                                <th class="four wide">上次修改于</th>
+                                                <th class="two wide">历时</th>
+                                                <th class="two wide">确认</th>
                                             </tr></thead>
-                                            <tbody >
+                                            <tbody class="center aligned">
                                             <tr th:each="problem : ${problemList}">
                                                 <td th:text="${problem.hosts[0].name}">机1</td>
                                                 <td th:text="${problem.description}">主机1内存使用率超过90%</td>
@@ -320,10 +320,10 @@
                                                 <table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
                                                     <thead class="center aligned">
                                                     <tr>
-                                                        <th>名称</th>
-                                                        <th>可用性</th>
-                                                        <th>设备问题数/设备总数</th>
-                                                        <th>状态</th>
+                                                        <th class="four wide">名称</th>
+                                                        <th class="four wide">可用性</th>
+                                                        <th class="four wide">设备问题数/总数</th>
+                                                        <th class="four wide">状态</th>
                                                     </tr>
                                                     </thead >
                                                     <tbody id="platform_list" class="center aligned">
@@ -348,11 +348,11 @@
 												<table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
 													<thead class="center aligned">
 													<tr>
-														<th>名称</th>
-														<th>ip</th>
-														<th>类型</th>
-														<th>监控点问题数／监控点总数</th>
-														<th>状态</th>
+														<th class="four wide">名称</th>
+														<th class="four wide">ip</th>
+														<th class="two wide">类型</th>
+														<th class="four wide">监控点问题数／总数</th>
+														<th class="two wide">状态</th>
 													</tr>
 													</thead>
 													<tbody id="host_list" class="center aligned">
@@ -377,9 +377,9 @@
                                                 <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
                                                     <thead class="center aligned">
                                                     <tr>
-                                                        <th>名称</th>
-                                                        <th>所属设备</th>
-                                                        <th>状态</th>
+                                                        <th class="four wide">名称</th>
+                                                        <th class="eight wide">所属设备</th>
+                                                        <th class="four wide">状态</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody id="point_list" class="center aligned">
@@ -461,10 +461,9 @@
     }
     // 将datatable汉化并修改默认设置
     $.extend( $.fn.dataTable.defaults, {
+        /*autoWidth: false,*/
         "pagingType": "full_numbers_icon",
-        "iDisplayLength" : 11,
-        "bLengthChange": false,
-        /*searching: false,*/
+        "iDisplayLength" : 12,
         order: [0, 'asc'],
         "language": {
             "sLengthMenu" : "每页显示 _MENU_ 条记录",
@@ -481,6 +480,9 @@
                 "sLast" : " 末页 "
             }
         },
+        "dom":
+		"<'sixteen wide column'tr>" +
+        "<'left aligned five wide column'i><'right aligned eleven wide column'p>",
     } );
 </script>
 <script type="text/javascript">
