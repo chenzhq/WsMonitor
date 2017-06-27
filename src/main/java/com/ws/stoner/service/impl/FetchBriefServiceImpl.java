@@ -1,11 +1,6 @@
 package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApiParameter;
-import com.ws.bix4j.access.application.ApplicationGetRequest;
-import com.ws.bix4j.access.host.HostGetRequest;
-import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
-import com.ws.bix4j.access.item.ItemGetRequest;
-import com.ws.bix4j.access.template.TemplateGetRequest;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.ManagerException;
@@ -16,7 +11,6 @@ import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.model.view.DashboardHostVO;
 import com.ws.stoner.model.view.DashboardPlatformVO;
 import com.ws.stoner.model.view.DashboardPointVO;
-import com.ws.stoner.service.CountStateService;
 import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,17 +32,12 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     @Autowired
     private PointManager pointManager;
 
-    @Autowired
-    private ItemManager itemManager;
 
     @Autowired
     private PlatformManager platformManager;
 
     @Autowired
     private TemplateManager templateManager;
-
-    @Autowired
-    private CountStateService countStateService;
 
     /**
      * 组装业务host <DashboardHostVO>list
@@ -58,17 +47,36 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     @Override
     public List<DashboardHostVO> listDashBoardHosts() throws ServiceException {
         //step1:取BriefHostDTO 类型所有主机allhostDTO
-        List<BriefHostDTO> allhostDTO = listHost();
-        //step2:取BriefHostDTO 类型所有问题主机 并重组成hostids （String list）
-        List<BriefHostDTO> problemHostDTO = listProblemHost();
+        List<BriefHostDTO> allhostDTO = null;
+        List<BriefHostDTO> problemHostDTO = null;
+        try {
+            allhostDTO = hostManager.listAllHost();
+            //step2:取BriefHostDTO 类型所有问题主机 并重组成hostids （String list）
+            problemHostDTO = hostManager.listProblemHost();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         List<String> problemHostIds = new ArrayList<>();
         for(BriefHostDTO problemHost : problemHostDTO) {
             problemHostIds.add(problemHost.getHostId());
         }
         //step3:获取所有模板allTemplateDTO
-        List<BriefTemplateDTO> allTemplateDTO = listAllTemplate();
+        List<BriefTemplateDTO> allTemplateDTO = null;
+        try {
+            allTemplateDTO = templateManager.listAllTemplate();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         //step4:获取所有问题监控点
-        List<BriefPointDTO> problemPointDTO = listProblemPoint();
+        List<BriefPointDTO> problemPointDTO = null;
+        try {
+            problemPointDTO = pointManager.listProblemPoint();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         //step5:循环给DashBoardHostVO赋值
         List<DashboardHostVO> hostVOS = new ArrayList<>();
         for(BriefHostDTO hostDTO : allhostDTO) {
@@ -111,121 +119,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         return hostVOS;
     }
 
-    /**
-     * 获取简约所有主机list 剔除停用的
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public List<BriefHostDTO> listHost() throws ServiceException {
-        HostGetRequest hostGetRequest = new HostGetRequest();
-        Map<String, Integer> statusFilter = new HashMap<>();
-        statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
-        hostGetRequest.getParams().setFilter(statusFilter);
-        hostGetRequest.getParams()
-                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
-                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
-                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
-                .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts ;
-        try {
-            hosts = hostManager.listHost(hostGetRequest);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return hosts;
-    }
 
-    /**
-     * 获取问题主机 list  problem
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public List<BriefHostDTO> listProblemHost() throws ServiceException {
-        //step1:获取问题触发器ids
-        List<String> triggerIds ;
-        try {
-            triggerIds = triggerManager.getProblemTriggerIds();
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step2:根据两个触发器的ids得到主机list hosts1
-        HostGetRequest hostGetRequest1 = new HostGetRequest();
-        Map<String,Object> hostFilter1 = new HashMap<>();
-        hostFilter1.put("status",ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
-        hostGetRequest1.getParams().setFilter(hostFilter1);
-        hostGetRequest1.getParams()
-                .setTriggerIds(triggerIds)
-                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
-                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
-                .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> host1 ;
-        try {
-            host1 = hostManager.listHost(hostGetRequest1);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step4:筛选四种监控接口中至少一个有问题的主机数量 host2
-        HostGetRequest hostGetRequest2 = new HostGetRequest();
-        Map<String, Object> hostFilter2 = new HashMap<>();
-        hostFilter2.put("monitored_hosts",true);
-        hostFilter2.put("available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
-        hostFilter2.put("ipmi_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
-        hostFilter2.put("jmx_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
-        hostFilter2.put("snmp_available",ZApiParameter.HOST_AVAILABLE.UNAVAILABLE_HOST.value);
-        hostGetRequest2.getParams()
-                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
-                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
-                .setOutput(BriefHostDTO.PROPERTY_NAMES)
-                .setFilter(hostFilter2)
-                .setSearchByAny(true);
-        List<BriefHostDTO> host2 ;
-        try {
-            host2 = hostManager.listHost(hostGetRequest2);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step5:拼接host1 + host2
-        host1.removeAll(host2);
-        host1.addAll(host2);
-        return host1;
-
-    }
-
-    /**
-     * 获取OK主机 list OK
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public List<BriefHostDTO> listOkHost() throws ServiceException {
-        List<BriefHostDTO> allHosts = listHost();
-        List<BriefHostDTO> problemHosts = listProblemHost();
-        allHosts.removeAll(problemHosts);
-        return allHosts;
-    }
-
-    @Override
-    public List<BriefTemplateDTO> listAllTemplate() throws ServiceException {
-        TemplateGetRequest templateGetRequest = new TemplateGetRequest();
-        templateGetRequest.getParams()
-                .setSelectGroups(BriefTemplateGroupDTO.PROPERTY_NAMES)
-                .setOutput(BriefTemplateDTO.PROPERTY_NAMES);
-        List<BriefTemplateDTO> templatesDTO;
-        try {
-            templatesDTO = templateManager.listTemplate(templateGetRequest);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return templatesDTO;
-    }
 
     /**
      * 组装仪表板中的业务 platform <DashboardPlatformVO> list
@@ -235,21 +129,45 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     @Override
     public List<DashboardPlatformVO> listDashboardPlatform() throws ServiceException {
         //step1:获取BriefPlatformDTO 类型的所有业务平台 allPlatformDTO
-        List<BriefPlatformDTO> allPlatformDTO = listPlatform();
+        List<BriefPlatformDTO> allPlatformDTO = null;
+        try {
+            allPlatformDTO = platformManager.listAllPlatform();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         //step2:获取BriefPlatformDTO 类型的问题业务平台 problemPaltformDTO
-        List<BriefPlatformDTO> problemPlatformDTO = listProblemPlatform();
+        List<BriefPlatformDTO> problemPlatformDTO = null;
+        try {
+            problemPlatformDTO = platformManager.listProblemPlatform();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         List<String> platformIds = new ArrayList<>();
         for(BriefPlatformDTO problemPlatform : problemPlatformDTO) {
             platformIds.add(problemPlatform.getPlatformId());
         }
         //step3:取所有监控中的主机，组装hostIds
-        List<BriefHostDTO> hostDTOS = listHost();
+        List<BriefHostDTO> hostDTOS = null;
+        try {
+            hostDTOS = hostManager.listAllHost();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         List<String> hostIds = new ArrayList<>();
         for(BriefHostDTO host : hostDTOS) {
             hostIds.add(host.getHostId());
         }
         //step4:取所有问题主机,组装problemHostIds
-        List<BriefHostDTO> problemHostDTOS = listProblemHost();
+        List<BriefHostDTO> problemHostDTOS = null;
+        try {
+            problemHostDTOS = hostManager.listProblemHost();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         List<String> problemHostIds = new ArrayList<>();
         for(BriefHostDTO problemHost : problemHostDTOS) {
             problemHostIds.add(problemHost.getHostId());
@@ -290,60 +208,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         return platformVOS;
     }
 
-    /**
-     * 获取简约listPlatform list all
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public List<BriefPlatformDTO> listPlatform() throws ServiceException {
-        HostGroupGetRequest groupRequest = new HostGroupGetRequest();
-        groupRequest.getParams()
-                .setMonitoredHosts(true)
-                .setRealHosts(true)
-                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
-                .setOutput(BriefPlatformDTO.PROPERTY_NAMES);
-        List<BriefPlatformDTO> platforms ;
-        try {
-            platforms = platformManager.listPlatform(groupRequest);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return platforms;
-    }
 
-    /**
-     * 获取问题的 platform list problem
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public List<BriefPlatformDTO> listProblemPlatform() throws ServiceException {
-        //step1:获取问题触发器Ids
-        List<String> triggerIds ;
-        try {
-            triggerIds = triggerManager.getProblemTriggerIds();
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step2:根据触发器Ids获取业务平台数量
-        HostGroupGetRequest groupRequest = new HostGroupGetRequest();
-        groupRequest.getParams()
-                .setTriggerIds(triggerIds)
-                .setMonitoredHosts(true)
-                .setRealHosts(true)
-                .setOutput(BriefPlatformDTO.PROPERTY_NAMES);
-        List<BriefPlatformDTO> problemPlatforms ;
-        try {
-            problemPlatforms = platformManager.listPlatform(groupRequest);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return problemPlatforms;
-    }
 
 
     /**
@@ -354,9 +219,21 @@ public class FetchBriefServiceImpl implements FetchBriefService {
     @Override
     public List<DashboardPointVO> listDashboardPoint() throws ServiceException {
         //step1:获取BriefPointDTO 类型的所有启用的主机的监控点point allPointDTO
-        List<BriefPointDTO> allPointDTO = listPoint();
+        List<BriefPointDTO> allPointDTO = null;
+        try {
+            allPointDTO = pointManager.listAllPoint();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         //step2:获取BriefPointDTO 类型的所有启用的主机的问题监控点point problemPointDTO，并形成ids
-        List<BriefPointDTO> problemPointDTO = listProblemPoint();
+        List<BriefPointDTO> problemPointDTO = null;
+        try {
+            problemPointDTO = pointManager.listProblemPoint();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
         List<String> problemPointIds = new ArrayList<>();
         for(BriefPointDTO problemPoint : problemPointDTO) {
             problemPointIds.add(problemPoint.getPointId());
@@ -392,97 +269,6 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         return pointVOS;
     }
 
-    /**
-     * 获取简约监控点 point list
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public List<BriefPointDTO> listPoint() throws ServiceException {
-        //step1:获取监控中的主机
-        HostGetRequest hostGetRequest = new HostGetRequest();
-        hostGetRequest.getParams()
-                .setMonitoredHosts(true)
-                .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts;
-        try {
-            hosts = hostManager.listHost(hostGetRequest);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step2:根据主机ids获取所有的监控点
-        List<String> hostIds = new ArrayList<>();
-        if(hosts == null) {
-            return null;
-        }
-        for(BriefHostDTO host : hosts) {
-            hostIds.add(host.getHostId());
-        }
-        ApplicationGetRequest appRequest = new ApplicationGetRequest();
-        appRequest.getParams()
-                .setHostIds(hostIds)
-                .setSelectHost(BriefHostDTO.PROPERTY_NAMES)
-                .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
-                .setOutput(BriefPointDTO.PROPERTY_NAMES);
-        List<BriefPointDTO> points;
-        try {
-            points = pointManager.listPoint(appRequest);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return points;
-    }
-
-    /**
-     * 获取问题监控点 point list
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public List<BriefPointDTO> listProblemPoint() throws ServiceException {
-        //step1:获取问题触发器Ids
-        List<String> triggerIds ;
-        try {
-            triggerIds = triggerManager.getProblemTriggerIds();
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step2:根据触发器Ids获取items
-        ItemGetRequest itemGetRequest = new ItemGetRequest();
-        itemGetRequest.getParams()
-                .setTriggerIds(triggerIds)
-                .setMonitored(true)
-                .setOutput(BriefItemDTO.PROPERTY_NAMES);
-        List<BriefItemDTO> items ;
-        try {
-            items = itemManager.listItem(itemGetRequest);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-        //step3:根据item筛选出应用集
-        List<String> itemIds = new ArrayList<>();
-        for(BriefItemDTO item : items) {
-            itemIds.add(item.getItemId());
-        }
-        ApplicationGetRequest appRequest = new ApplicationGetRequest();
-        appRequest.getParams()
-                .setSelectHost(BriefHostDTO.PROPERTY_NAMES)
-                .setItemIds(itemIds)
-                .setOutput(BriefPointDTO.PROPERTY_NAMES);
-        List<BriefPointDTO> problemPoints ;
-        try {
-            problemPoints = pointManager.listPoint(appRequest);
-        } catch (ManagerException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return problemPoints;
-    }
 
     @Override
     public List<BriefProblemVO> listBriefProblems() {

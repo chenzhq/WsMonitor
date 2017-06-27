@@ -3,6 +3,7 @@ package com.ws.stoner.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
+import com.ws.stoner.manager.*;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
@@ -39,6 +40,19 @@ public class FetchBriefServiceImplTest {
     @Autowired
     private FetchBriefService fetchBriefService;
 
+    @Autowired
+    private HostManager hostManager;
+
+    @Autowired
+    private PointManager pointManager;
+
+
+    @Autowired
+    private PlatformManager platformManager;
+
+    @Autowired
+    private TemplateManager templateManager;
+
 
     @Before
 public void before() throws Exception {
@@ -70,9 +84,9 @@ public void testListDashBoardHosts() throws Exception {
 @Test
 public void testListHost() throws Exception { 
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = fetchBriefService.listHost();
+    List<BriefHostDTO> hosts = hostManager.listAllHost();
     System.out.println("11111111111111111"+hosts);
-    hosts = fetchBriefService.listHost();
+    hosts = hostManager.listAllHost();
     System.out.println("2222222222222222222222"+hosts);
 
 
@@ -86,7 +100,7 @@ public void testListHost() throws Exception {
 @Test
 public void testListProblemHost() throws Exception { 
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = fetchBriefService.listProblemHost();
+    List<BriefHostDTO> hosts = hostManager.listProblemHost();
     System.out.println(hosts);
 
 } 
@@ -99,7 +113,7 @@ public void testListProblemHost() throws Exception {
 @Test
 public void testListOkHost() throws Exception {
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = fetchBriefService.listOkHost();
+    List<BriefHostDTO> hosts = hostManager.listOkHost();
     System.out.println(hosts);
 }
 
@@ -111,7 +125,7 @@ public void testListOkHost() throws Exception {
     @Test
     public void testListTemplate() throws Exception {
 //TODO: Test goes here...
-        List<BriefTemplateDTO> templates = fetchBriefService.listAllTemplate();
+        List<BriefTemplateDTO> templates = templateManager.listAllTemplate();
         System.out.println(templates);
     }
     /**
@@ -131,13 +145,13 @@ public void testListOkHost() throws Exception {
 @Test
 public void testListPlatform() throws Exception { 
 //TODO: Test goes here...
-    List<BriefPlatformDTO> platforms = fetchBriefService.listPlatform();
+    List<BriefPlatformDTO> platforms = platformManager.listAllPlatform();
     System.out.println(platforms);
 }
 
 @Test
 public void testlistProblemPlatform() throws Exception {
-    List<BriefPlatformDTO> platformDTOS = fetchBriefService.listProblemPlatform();
+    List<BriefPlatformDTO> platformDTOS = platformManager.listProblemPlatform();
     System.out.println(platformDTOS);
 }
 
@@ -156,13 +170,13 @@ public void testlistDashboardPoint() throws Exception {
 @Test
 public void testListApp() throws Exception { 
 //TODO: Test goes here...
-    List<BriefPointDTO> points = fetchBriefService.listPoint();
+    List<BriefPointDTO> points = pointManager.listAllPoint();
     System.out.println(points);
 }
 
 @Test
 public void testListProblemPoint() throws Exception {
-    List<BriefPointDTO> ppoint = fetchBriefService.listProblemPoint();
+    List<BriefPointDTO> ppoint = pointManager.listProblemPoint();
     System.out.println(ppoint);
 }
 
