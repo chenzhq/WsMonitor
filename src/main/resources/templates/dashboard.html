@@ -270,8 +270,8 @@
                                             <tr th:each="problem : ${problemList}">
                                                 <td th:text="${problem.hosts[0].name}">机1</td>
                                                 <td th:text="${problem.description}">主机1内存使用率超过90%</td>
-                                                <td th:text="${problem.time}">2017-6-21 15:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
+                                                <td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:ss')}">2017-6-21 15:33:20</td>
+                                                <td th:text="${problem.durationString}">2天4小时50分</td>
                                                 <td><button >不</button></td>
                                                 <td>434</td>
                                             </tr>

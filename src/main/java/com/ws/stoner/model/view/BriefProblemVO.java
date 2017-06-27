@@ -18,7 +18,8 @@ public class BriefProblemVO {
     private String priority;
     private List<BriefHostDTO> hosts;
     private String description;
-    private Duration duration;
+    //持续时间的拼接字符串，格式为 **天**小时*分钟
+    private String durationString;
 
     public final static String[] PROPERTY_NAMES = {"lastchange",
             "time", "priority", "description", "duration"};
@@ -29,6 +30,17 @@ public class BriefProblemVO {
 
     public BriefProblemVO setTime(int time) {
         this.time = LocalDateTime.ofInstant(Instant.ofEpochSecond(time), ZoneId.systemDefault());
+        Duration duration = Duration.between(this.time, LocalDateTime.now());
+        Long sec = duration.getSeconds();
+
+        int days = (int) (sec / (24 * 3600));
+        int hours = (int) (sec / 300 % 24);
+        int minute = (int) (sec / 60 % 60);
+        StringBuilder timeStringBuilder = new StringBuilder();
+        timeStringBuilder.append(days == 0 ? "" : days + "天");
+        timeStringBuilder.append(hours == 0 ? "" : hours + "小时");
+        timeStringBuilder.append(minute == 0 ? "" : minute + "分钟");
+        this.durationString = timeStringBuilder.toString();
         return this;
     }
 
@@ -58,13 +70,7 @@ public class BriefProblemVO {
         this.description = description;
         return this;
     }
-
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public BriefProblemVO setDuration(Duration duration) {
-        this.duration = duration;
-        return this;
+    public String getDurationString() {
+        return durationString;
     }
 }
