@@ -2,6 +2,10 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
+import com.ws.stoner.manager.HostManager;
+import com.ws.stoner.manager.PlatformManager;
+import com.ws.stoner.manager.PointManager;
+import com.ws.stoner.manager.TemplateManager;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
@@ -38,6 +42,19 @@ public class CountStateServiceImplTest {
     @Autowired
     private CountStateService countStateService;
 
+    @Autowired
+    private HostManager hostManager;
+
+    @Autowired
+    private PointManager pointManager;
+
+
+    @Autowired
+    private PlatformManager platformManager;
+
+    @Autowired
+    private TemplateManager templateManager;
+
 @Before
 public void before() throws Exception {
     zApi.cacheLogin("f558f7da83dea947f7c2d0def347b4f0");
@@ -66,7 +83,7 @@ public void testHostState() throws Exception {
 @Test
 public void testListAllHost() throws Exception {
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = fetchBriefService.listHost();
+    List<BriefHostDTO> hosts = hostManager.listAllHost();
     System.out.println(hosts);
 
 }
@@ -74,7 +91,7 @@ public void testListAllHost() throws Exception {
     @Test
     public void testListProblemHost() throws Exception {
 //TODO: Test goes here...
-        List<BriefHostDTO> hosts = fetchBriefService.listProblemHost();
+        List<BriefHostDTO> hosts = hostManager.listProblemHost();
         System.out.println(hosts);
 
     }
@@ -82,7 +99,7 @@ public void testListAllHost() throws Exception {
 @Test
 public void testListOkHost() throws Exception {
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = fetchBriefService.listOkHost();
+    List<BriefHostDTO> hosts = hostManager.listOkHost();
     System.out.println(hosts);
 
 }
@@ -90,20 +107,20 @@ public void testListOkHost() throws Exception {
 @Test
 public void testCountAllHost() throws Exception { 
 //TODO: Test goes here...
-    int allhostNum = countStateService.countAllHost();
+    int allhostNum = hostManager.countAllHost();
     System.out.println(allhostNum);
 
 }
 
 @Test
 public void testCountProblemHost() throws Exception {
-    int phostNum = countStateService.countProblemHost();
+    int phostNum = hostManager.countProblemHost();
     System.out.println(phostNum);
 }
 
 @Test
 public void testCountOKHost() throws Exception {
-    int okhostNum = countStateService.countOkHost();
+    int okhostNum = hostManager.countOkHost();
     System.out.println(okhostNum);
 }
 
@@ -111,14 +128,14 @@ public void testCountOKHost() throws Exception {
     public void testcountAllHostByPlatformId() throws Exception {
         List<String> pIds = new ArrayList<>();
         pIds.add("27");
-        int allhost  = countStateService.countAllHostByPlatformIds(pIds);
+        int allhost  = platformManager.countAllHostByPlatformIds(pIds);
         System.out.println(allhost);
     }
 @Test
 public void testcountProblemHostByPlatformId() throws Exception {
     List<String> pIds = new ArrayList<>();
     pIds.add("27");
-    int problemhost  = countStateService.countProblemHostByPlatformIds(pIds);
+    int problemhost  = platformManager.countProblemHostByPlatformIds(pIds);
     System.out.println(problemhost);
 }
 
@@ -134,18 +151,18 @@ public void testcountProblemHostByPlatformId() throws Exception {
 
     @Test
     public void testListAllPlatform() throws Exception {
-        List<BriefPlatformDTO> allHostGroups = fetchBriefService.listPlatform();
+        List<BriefPlatformDTO> allHostGroups = platformManager.listAllPlatform();
         System.out.println(allHostGroups);
     }
     @Test
     public void testCountAllPlatform() throws Exception {
-        int allHostGroupNum = countStateService.countAllPlatform();
+        int allHostGroupNum = platformManager.countAllPlatform();
         System.out.println(allHostGroupNum);
     }
 
     @Test
     public void testCountProblemPlatform() throws Exception {
-        int problemHostGroupNum = countStateService.countProblemPlatform();
+        int problemHostGroupNum = platformManager.countProblemPlatform();
         System.out.println(problemHostGroupNum);
     }
 
@@ -158,13 +175,13 @@ public void testcountProblemHostByPlatformId() throws Exception {
 
 @Test
 public void testCountAllApp() throws Exception {
-    int allAppNum = countStateService.countAllPoint();
+    int allAppNum = pointManager.countAllPoint();
     System.out.println(allAppNum);
 }
 
 @Test
 public void testCountProbelmApp() throws Exception {
-    int problemAppNum = countStateService.countProblemPoint();
+    int problemAppNum = pointManager.countProblemPoint();
     System.out.println(problemAppNum);
 }
 

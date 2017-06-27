@@ -6,6 +6,7 @@ import com.ws.bix4j.exception.ZApiException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.manager.TemplateManager;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
+import com.ws.stoner.model.dto.BriefTemplateGroupDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +39,15 @@ public class TemplateManagerImpl implements TemplateManager {
             return null;
         }
         return templates;
+    }
+
+    @Override
+    public List<BriefTemplateDTO> listAllTemplate() throws ManagerException {
+        TemplateGetRequest templateGetRequest = new TemplateGetRequest();
+        templateGetRequest.getParams()
+                .setSelectGroups(BriefTemplateGroupDTO.PROPERTY_NAMES)
+                .setOutput(BriefTemplateDTO.PROPERTY_NAMES);
+        List<BriefTemplateDTO> templatesDTO = listTemplate(templateGetRequest);
+        return templatesDTO;
     }
 }
