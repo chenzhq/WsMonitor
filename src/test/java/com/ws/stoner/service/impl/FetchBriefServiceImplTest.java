@@ -71,7 +71,11 @@ public void testListDashBoardHosts() throws Exception {
 public void testListHost() throws Exception { 
 //TODO: Test goes here...
     List<BriefHostDTO> hosts = fetchBriefService.listHost();
-    System.out.println(hosts);
+    System.out.println("11111111111111111"+hosts);
+    hosts = fetchBriefService.listHost();
+    System.out.println("2222222222222222222222"+hosts);
+
+
 } 
 
 /** 

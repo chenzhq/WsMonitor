@@ -9,12 +9,15 @@ import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.model.view.DashboardHostVO;
 import com.ws.stoner.model.view.DashboardPlatformVO;
 import com.ws.stoner.model.view.DashboardPointVO;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
 /**
  * Created by zkf on 2017/6/12.
  */
+@CacheConfig(cacheNames = "fetchBrief")
 public interface FetchBriefService {
 /*
  *host service
@@ -31,6 +34,7 @@ public interface FetchBriefService {
      * @return
      * @throws ServiceException
      */
+    @Cacheable
     List<BriefHostDTO> listHost() throws ServiceException;
 
     /**
@@ -58,6 +62,7 @@ public interface FetchBriefService {
      * @return
      * @throws ServiceException
      */
+    @Cacheable
     List<BriefTemplateDTO> listAllTemplate() throws ServiceException;
 
 /*
@@ -76,6 +81,7 @@ public interface FetchBriefService {
      * @return
      * @throws ServiceException
      */
+    @Cacheable
     List<BriefPlatformDTO> listPlatform() throws ServiceException;
 
     /**
@@ -101,6 +107,7 @@ public interface FetchBriefService {
      * @return
      * @throws ServiceException
      */
+    @Cacheable
     List<BriefPointDTO> listPoint() throws ServiceException;
 
     /**
