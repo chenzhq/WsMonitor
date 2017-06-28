@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
-
 import javax.servlet.http.HttpServletResponse;
 
 import static com.ws.stoner.constant.CookieConsts.ZBX_SESSION;
@@ -31,6 +30,6 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(value = ManagerException.class)
     public String exception() {
-       return "404";
+       return "error";
     }
 }

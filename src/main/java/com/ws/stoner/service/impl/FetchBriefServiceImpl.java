@@ -14,8 +14,12 @@ import com.ws.stoner.model.view.DashboardPointVO;
 import com.ws.stoner.service.FetchBriefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by pc on 2017/6/12.
@@ -278,6 +282,8 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         request.getParams()
                 .setMonitored(true)
                 .setOnlyTrue(true)
+                .setExpandDescription(true)
+                .setExpandDescription(true)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setOutput(BriefProblemVO.PROPERTY_NAMES)
                 .setFilter(triggerFilter);
