@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by pc on 2017/6/12.
+ * Created by zkf on 2017/6/12.
  */
 @Service
 public class FetchBriefServiceImpl implements FetchBriefService {
