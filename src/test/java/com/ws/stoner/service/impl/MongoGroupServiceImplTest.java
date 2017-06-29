@@ -55,20 +55,23 @@ public void testFindAll() throws Exception {
 @Test
     public void testSave() throws Exception {
     MongoGroupDO groupDO1 = new MongoGroupDO(
-            "本机容器",
-            "0",
+            "root",
+            "-1",
+            null,
             new String[]{"核心交换机","应用组"},
             new String[]{"10081","10086","10087"}
     );
     MongoGroupDO groupDO2 = new MongoGroupDO(
             "核心交换机",
-            "1",
+            "0",
+            "2",
             new String[]{},
             new String[]{"10012","10011","10013"}
     );
     MongoGroupDO groupDO3 = new MongoGroupDO(
             "应用组",
-            "1",
+            "0",
+            "3",
             new String[]{},
             new String[]{"10031","10032","10033"}
     );

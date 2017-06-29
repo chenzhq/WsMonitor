@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
  * Created by pc on 2017/6/28.
  */
 @Repository
-public interface MongoGroupRepository extends MongoRepository<MongoGroupDO,Long> {
+public interface MongoGroupRepository extends MongoRepository<MongoGroupDO,String> {
 
 }

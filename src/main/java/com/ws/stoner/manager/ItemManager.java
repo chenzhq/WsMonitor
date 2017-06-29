@@ -3,7 +3,6 @@ package com.ws.stoner.manager;
 
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.model.dto.BriefItemDTO;
 

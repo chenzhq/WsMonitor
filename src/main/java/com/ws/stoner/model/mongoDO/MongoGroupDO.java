@@ -15,16 +15,22 @@ public class MongoGroupDO {
     private String id;
     private String name;
     private String flag;
+    @Field("pid")
+    private String pId;
     @Field("group_children")
     private String[] groupChildren;
     @Field("host_children")
     private String[] hostChildren;
 
-    public MongoGroupDO(String name, String flag, String[] groupChildren, String[] hostChildren) {
+    public MongoGroupDO(String name, String flag, String pId, String[] groupChildren, String[] hostChildren) {
         this.name = name;
         this.flag = flag;
+        this.pId = pId;
         this.groupChildren = groupChildren;
         this.hostChildren = hostChildren;
+    }
+
+    public MongoGroupDO() {
     }
 
     public String getName() {
@@ -42,6 +48,15 @@ public class MongoGroupDO {
 
     public MongoGroupDO setFlag(String flag) {
         this.flag = flag;
+        return this;
+    }
+
+    public String getpId() {
+        return pId;
+    }
+
+    public MongoGroupDO setpId(String pId) {
+        this.pId = pId;
         return this;
     }
 
@@ -79,6 +94,7 @@ public class MongoGroupDO {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", flag='" + flag + '\'' +
+                ", pId='" + pId + '\'' +
                 ", groupChildren=" + Arrays.toString(groupChildren) +
                 ", hostChildren=" + Arrays.toString(hostChildren) +
                 '}';
