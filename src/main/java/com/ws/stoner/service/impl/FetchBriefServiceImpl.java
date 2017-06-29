@@ -53,10 +53,12 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         //step1:取BriefHostDTO 类型所有主机allhostDTO
         List<BriefHostDTO> allhostDTO = null;
         List<BriefHostDTO> problemHostDTO = null;
+        List<String> triggerIds;
         try {
+            triggerIds = triggerManager.getProblemTriggerIds();
             allhostDTO = hostManager.listAllHost();
             //step2:取BriefHostDTO 类型所有问题主机 并重组成hostids （String list）
-            problemHostDTO = hostManager.listProblemHost();
+            problemHostDTO = hostManager.listProblemHost(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;
@@ -76,7 +78,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         //step4:获取所有问题监控点
         List<BriefPointDTO> problemPointDTO = null;
         try {
-            problemPointDTO = pointManager.listProblemPoint();
+            problemPointDTO = pointManager.listProblemPoint(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;
@@ -142,8 +144,10 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         }
         //step2:获取BriefPlatformDTO 类型的问题业务平台 problemPaltformDTO
         List<BriefPlatformDTO> problemPlatformDTO = null;
+        List<String> triggerIds ;
         try {
-            problemPlatformDTO = platformManager.listProblemPlatform();
+            triggerIds = triggerManager.getProblemTriggerIds();
+            problemPlatformDTO = platformManager.listProblemPlatform(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;
@@ -167,7 +171,7 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         //step4:取所有问题主机,组装problemHostIds
         List<BriefHostDTO> problemHostDTOS = null;
         try {
-            problemHostDTOS = hostManager.listProblemHost();
+            problemHostDTOS = hostManager.listProblemHost(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;
@@ -232,8 +236,10 @@ public class FetchBriefServiceImpl implements FetchBriefService {
         }
         //step2:获取BriefPointDTO 类型的所有启用的主机的问题监控点point problemPointDTO，并形成ids
         List<BriefPointDTO> problemPointDTO = null;
+        List<String> triggerIds ;
         try {
-            problemPointDTO = pointManager.listProblemPoint();
+            triggerIds = triggerManager.getProblemTriggerIds();
+            problemPointDTO = pointManager.listProblemPoint(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;

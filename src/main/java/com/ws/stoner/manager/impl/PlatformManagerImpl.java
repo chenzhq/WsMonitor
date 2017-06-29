@@ -149,9 +149,8 @@ public class PlatformManagerImpl implements PlatformManager {
      * @throws ManagerException
      */
     @Override
-    public int countProblemPlatform() throws ManagerException {
+    public int countProblemPlatform(List<String> triggerIds) throws ManagerException {
         //step1:获取问题触发器Ids
-        List<String> triggerIds = triggerManager.getProblemTriggerIds();
         //step2:根据触发器Ids获取业务平台数量
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         groupRequest.getParams()
@@ -169,8 +168,8 @@ public class PlatformManagerImpl implements PlatformManager {
      * @throws ManagerException
      */
     @Override
-    public int countOkPlatform() throws ManagerException {
-        int OkPlatformNum = countAllPlatform() - countProblemPlatform();
+    public int countOkPlatform(List<String> triggerIds) throws ManagerException {
+        int OkPlatformNum = countAllPlatform() - countProblemPlatform(triggerIds);
         return OkPlatformNum;
     }
 
@@ -202,9 +201,8 @@ public class PlatformManagerImpl implements PlatformManager {
      * @throws ManagerException
      */
     @Override
-    public List<BriefPlatformDTO> listProblemPlatform() throws ManagerException {
+    public List<BriefPlatformDTO> listProblemPlatform(List<String> triggerIds) throws ManagerException {
         //step1:获取问题触发器Ids
-        List<String> triggerIds  = triggerManager.getProblemTriggerIds();
         //step2:根据触发器Ids获取业务平台数量
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         groupRequest.getParams()
