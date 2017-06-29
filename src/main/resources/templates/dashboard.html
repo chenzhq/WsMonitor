@@ -259,8 +259,8 @@
                                             </div>
                                         </div>
 
-                                        <table id="problem_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                            <thead class="center aligned">
+                                        <table id="problem_table" class="ui compact celled table center aligned">
+                                            <thead>
                                             <tr>
                                                 <th class="two wide">主机</th>
                                                 <th class="six wide">问题</th>
@@ -268,7 +268,7 @@
                                                 <th class="two wide">历时</th>
                                                 <th class="two wide">确认</th>
                                             </tr></thead>
-                                            <tbody class="center aligned">
+                                            <tbody>
                                             <tr th:each="problem : ${problemList}">
                                                 <td th:text="${problem.hosts[0].name}">机1</td>
                                                 <td th:text="${problem.description}">主机1内存使用率超过90%</td>
@@ -317,7 +317,7 @@
                                                 <div id="platform_pie_copy" class="pie_copy"></div>
                                             </div>
                                             <div class="eleven wide column">
-                                                <table id="platform_table" class="ui compact selectable striped celled table tablet stackable center aligned" cellspacing="0" width="100%">
+                                                <table id="platform_table" class="ui compact celled table center aligned">
                                                 </table>
                                             </div>
                                         </div>
@@ -332,8 +332,7 @@
 												<div id="host_pie_copy" class="pie_copy"></div>
 											</div>
 											<div class="eleven wide column">
-												<i class="big spinner loading icon"></i>
-												<table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+												<table id="host_table" class="ui compact celled table center aligned">
 												</table>
 											</div>
 										</div>
@@ -348,19 +347,7 @@
                                                 <div id="point_pie_copy" class="pie_copy"></div>
                                             </div>
                                             <div class="eleven wide column">
-                                                <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                    <thead class="center aligned">
-                                                    <tr>
-                                                        <th class="four wide">名称</th>
-                                                        <th class="eight wide">所属设备</th>
-                                                        <th class="four wide">状态</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody id="point_list" class="center aligned">
-													<tr>
-														<th colspan="3" class="icon_loading"><i class="big spinner loading icon"></i></th>
-													</tr>
-                                                    </tbody>
+                                                <table id="point_table" class="ui compact celled table center aligned">
                                                 </table>
                                             </div>
                                         </div>
@@ -433,55 +420,6 @@
             }
         );
     }
-    //错误信息提示
-
-    $.fn.dataTable.ext.errMode = function (s, h, m) {
-        if (h == 1) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "业务系统 Table",
-            });
-        } else if (h == 7) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                /*msg: "返回数据错误！",*/
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "业务系统 Table",
-            });
-        }
-    };
-    // 将datatable汉化并修改默认设置
-    $.extend( $.fn.dataTable.defaults, {
-        /*autoWidth: false,*/
-        "pagingType": "full_numbers_icon",
-        "iDisplayLength" : 12,
-        order: [0, 'asc'],
-        "language": {
-            "sLengthMenu" : "每页显示 _MENU_ 条记录",
-            "sZeroRecords" : "对不起，没有匹配的数据",
-            "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
-            "sInfoEmpty" : "没有匹配的数据",
-            "sInfoFiltered" : "(原 _MAX_ 条记录)",
-            "sProcessing" : "正在加载中...",
-            "sSearch" : "全文搜索：",
-            "oPaginate" : {
-                "sFirst" : "首页",
-                "sPrevious" : " 上一页 ",
-                "sNext" : " 下一页 ",
-                "sLast" : " 末页 "
-            }
-        },
-        "dom":
-		"<'sixteen wide column'tr>" +
-        "<'left aligned five wide column'i><'right aligned eleven wide column'p>",
-    } );
 </script>
 <script type="text/javascript">
 	//饼状图
@@ -702,7 +640,7 @@
             });
         }
     })
-	//tabdata切换加载Pei和datatable
+	//tabdata切换加载
     $('.menu .item')
         .tab({
             'onFirstLoad': function(path){
@@ -716,7 +654,7 @@
                             "orderable": false,
                             "targets": [4],
                         },{
-                            "targets": [0,1],
+                            "targets": [4,5],
                             "visible": false
                         },
                         ],
@@ -732,16 +670,6 @@
                             dataSrc: 'data'
                         },
                         columns: [
-                            {
-                                "data": "problemNum",
-                                "width": "50px",
-                                "title": "问题数",
-                            },
-                            {
-                                "data": "allNum",
-                                "width": "50px",
-                                "title": "问题总数"
-                            },
                             {
                             "data": "name",
 							"width": "100px",
@@ -765,6 +693,16 @@
 								"width": "50px",
 								"title": "状态"
 							},
+                            {
+                                "data": "problemNum",
+                                "width": "50px",
+                                "title": "问题数",
+                            },
+                            {
+                                "data": "allNum",
+                                "width": "50px",
+                                "title": "问题总数"
+                            },
 						],
 					});
 					platform_copy_myChart.on('click', function (param) {
@@ -789,7 +727,7 @@
                             "orderable":false,
                             "targets":[1,2,4],
                         },{
-                            "targets": [0,1],
+                            "targets": [5,6],
                             "visible": false
                         }
                         ],
@@ -805,16 +743,6 @@
                             dataSrc: 'data'
                         },
                         columns: [
-                            {
-                                "data": "problemNum",
-                                "width": "50px",
-                                "title": "问题数",
-                            },
-                            {
-                                "data": "allNum",
-                                "width": "50px",
-                                "title": "问题总数"
-                            },
                             {
                                 "data": "name",
                                 "width": "100px",
@@ -842,6 +770,16 @@
                                 "data": "state",
                                 "width": "50px",
                                 "title": "状态"
+                            },
+							{
+                                "data": "problemNum",
+                                "width": "50px",
+                                "title": "问题数",
+                            },
+                            {
+                                "data": "allNum",
+                                "width": "50px",
+                                "title": "问题总数"
                             },
                         ],
                     });
