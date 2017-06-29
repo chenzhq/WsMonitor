@@ -1,5 +1,6 @@
 package com.ws.stoner.model.mongoDO;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -15,20 +16,14 @@ public class MongoGroupDO {
     private String id;
     private String name;
     private String flag;
+    @Field("cid")
+    private String cId;
     @Field("pid")
     private String pId;
     @Field("group_children")
     private String[] groupChildren;
     @Field("host_children")
     private String[] hostChildren;
-
-    public MongoGroupDO(String name, String flag, String pId, String[] groupChildren, String[] hostChildren) {
-        this.name = name;
-        this.flag = flag;
-        this.pId = pId;
-        this.groupChildren = groupChildren;
-        this.hostChildren = hostChildren;
-    }
 
     public MongoGroupDO() {
     }
@@ -94,9 +89,29 @@ public class MongoGroupDO {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", flag='" + flag + '\'' +
+                ", cId='" + cId + '\'' +
                 ", pId='" + pId + '\'' +
                 ", groupChildren=" + Arrays.toString(groupChildren) +
                 ", hostChildren=" + Arrays.toString(hostChildren) +
                 '}';
+    }
+
+    public MongoGroupDO(String name, String flag, String cId, String pId, String[] groupChildren, String[] hostChildren) {
+        this.name = name;
+        this.flag = flag;
+        this.cId = cId;
+        this.pId = pId;
+        this.groupChildren = groupChildren;
+        this.hostChildren = hostChildren;
+    }
+
+    public String getcId() {
+
+        return cId;
+    }
+
+    public MongoGroupDO setcId(String cId) {
+        this.cId = cId;
+        return this;
     }
 }

@@ -1,7 +1,7 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.mongoDO.MongoGroupDO;
+import com.ws.stoner.model.view.MongoGroupVO;
 
 import java.util.List;
 
@@ -10,8 +10,22 @@ import java.util.List;
  */
 public interface MongoGroupService {
 
-    List<MongoGroupDO> findAll() throws ServiceException;
 
-    void save() throws ServiceException;
+    /**
+     * 组装自定义分组 mongoGroup list
+     * @return
+     * @throws ServiceException
+     */
+    List<MongoGroupVO> listMongoGroup() throws ServiceException;
+
+    /**
+     * 递归实现组装自定义分组 mongoGroup list
+     * @return
+     * @throws ServiceException
+     */
+    List<MongoGroupVO> listMongo() throws ServiceException;
+
+    List<MongoGroupVO> getGroupTree(String name,List<MongoGroupVO> mongoGroupVOS);
+
 
 }

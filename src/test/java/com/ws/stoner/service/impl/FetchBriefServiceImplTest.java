@@ -53,6 +53,9 @@ public class FetchBriefServiceImplTest {
     @Autowired
     private TemplateManager templateManager;
 
+    @Autowired
+    private TriggerManager triggerManager;
+
 
     @Before
 public void before() throws Exception {
@@ -100,7 +103,8 @@ public void testListHost() throws Exception {
 @Test
 public void testListProblemHost() throws Exception { 
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = hostManager.listProblemHost();
+    List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    List<BriefHostDTO> hosts = hostManager.listProblemHost(triggerIds);
     System.out.println(hosts);
 
 } 
@@ -113,7 +117,8 @@ public void testListProblemHost() throws Exception {
 @Test
 public void testListOkHost() throws Exception {
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = hostManager.listOkHost();
+    List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    List<BriefHostDTO> hosts = hostManager.listOkHost(triggerIds);
     System.out.println(hosts);
 }
 
@@ -151,7 +156,8 @@ public void testListPlatform() throws Exception {
 
 @Test
 public void testlistProblemPlatform() throws Exception {
-    List<BriefPlatformDTO> platformDTOS = platformManager.listProblemPlatform();
+    List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    List<BriefPlatformDTO> platformDTOS = platformManager.listProblemPlatform(triggerIds);
     System.out.println(platformDTOS);
 }
 
@@ -176,7 +182,8 @@ public void testListApp() throws Exception {
 
 @Test
 public void testListProblemPoint() throws Exception {
-    List<BriefPointDTO> ppoint = pointManager.listProblemPoint();
+    List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    List<BriefPointDTO> ppoint = pointManager.listProblemPoint(triggerIds);
     System.out.println(ppoint);
 }
 
