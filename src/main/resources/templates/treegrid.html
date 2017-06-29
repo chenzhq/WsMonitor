@@ -211,17 +211,31 @@
 								<i class="bar chart icon"></i>实时报告</h3>
 							</h5>
 
-							<div class="right">
+							<div class="ui grid">
+								<div class="twelve wide column">
 								<p>检测总数：36个设备的222个监测点。
 									<i class="red circle icon"></i>  30
 									<i class="yellow circle icon"></i>  50
 									<i class="green circle icon"></i>  122
 									<i class="grey circle icon"></i>  20
 								</p>
+								</div>
+								<div class="one wide column">
+									类型：
+								</div>
+								<div class="three wide column">
+								<select class="ui search dropdown" name="type">
+									<option value="">所有</option>
+									<option value="1">组</option>
+									<option value="2">服务器</option>
+									<option value="3">数据库</option>
+									<option value="4">网络设备</option>
+								</select>
+								</div>
 							</div>
 						</div>
 						<div class="ui segment">
-							<table  class="tree ui very basic table">
+							<table  id="host_table" class="tree ui  compact very basic table  ">
 								<thead>
 								<tr>
 									<th>监测点名称</th>
@@ -230,22 +244,25 @@
 									<th>操作</th>
 								</tr>
 								</thead>
-								<tbody id="server_list">
+								<tbody>
+
 								<tr class="treegrid-1">
 									<td>OA系统</td><td>业务系统</td><td>正常</td><td>操作1</td>
 								</tr>
 								<tr class="treegrid-11 treegrid-parent-1">
 									<td>Node 1-1</td><td>业务系统</td><td>正常</td><td>操作1</td>
 								</tr>
+								<tr class="treegrid-21 treegrid-parent-2">
+									<td>Node 2-1</td><td>业务系统</td><td>正常</td><td>操作1</td>
+								</tr>
+
+								<tr class="treegrid-2">
+									<td>Node 2</td><td>业务系统</td><td>正常</td><td>操作1</td>
+								</tr>
 								<tr class="treegrid-12 treegrid-parent-1">
 									<td>Node 1-2</td><td>业务系统</td><td>正常</td><td>操作1</td>
 								</tr>
-								<tr class="treegrid-2">
-									<td>Node 1-2-1</td><td>业务系统</td><td>正常</td><td>操作1</td>
-								</tr>
-								<tr class="treegrid-21 treegrid-parent-2">
-									<td>Node 1-2-1</td><td>业务系统</td><td>正常</td><td>操作1</td>
-								</tr>
+
 								</tbody>
 							</table>
 						</div>
@@ -260,60 +277,61 @@
 <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
 <script src="../static/js/main.js"></script>
 <script type="text/javascript" src="../static/js/jquery.treegrid.js"></script>
+<th:block th:fragment="specialScript">
+	<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+	<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+</th:block>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('.tree').treegrid();
-        $.ajax({
-            type: "get",
-            async: true,
-            url: "/server/list",
-            data: {},
-            dataType: "json",
-            success: function (result) {
-                var data=result.data;
-                var success=result.success;
-                if(success) {
-                    $("#server_list").html("");
-                    var tmp=new Array();
-                    for(var i in data){
-                        if(data[i]._parentId==0){
-                            tmp[i]=['<tr class="treegrid-'+ data[i].hostId +'">',
-                                '<td>'+data[i].type+'</td>',
-                                '<td>'+data[i].state+'</td>',
-                                '<td>'+data[i].button+'</td>',
-                                '</tr>'].join('');
-                        }else {
-                            tmp[i]=['<tr class="treegrid-'+ data[i].hostId + ' treegrid-parent-'+ data[i]._parentId +'">',
-                                '<td>'+data[i].type+'</td>',
-                                '<td>'+data[i].state+'</td>',
-                                '<td>'+data[i].button+'</td>',
-                                '</tr>'].join('');
-                        }
-                    };
-                    $("#server_list").append(tmp.join(" "));
-                    $('.tree').treegrid();
-                }
-                else {
-                    Lobibox.notify("default", {
-                        size: "normal",
-                        rounded: false,
-                        delayIndicator: true,
-                        msg: "请求数据失败!",
-                        icon: "comment icon",
-                        title: "设备监控 List",
-                    });
-                }
+		$("#host_table").html("");
+        var host_table = $("#host_table").DataTable({
+            "ordering": false,
+            "initComplete": function () {
+                $("#host_table").treegrid();
             },
-            error: function (errorMsg) {
-                Lobibox.notify("error", {
-                    size: "normal",
-                    rounded: false,
-                    delayIndicator: true,
-                    msg: "请求链接失败!",
-                    icon: "warning icon",
-                    title: "设备监控 List",
-                });
-            }
+            "createdRow": function (row, data, dataIndex) {
+                if (data.pid== null) {
+                    var tmp=['treegrid-'+ data.cid].join('');
+                } else {
+                    var tmp=['treegrid-'+ data.cid +' treegrid-parent-'+ data.pid].join('');
+                }
+                $(row).addClass(tmp);
+                $('td', row).eq(0).addClass('left aligned');
+            },
+            ajax: {
+                url: '/host/overview',
+                dataSrc: 'data'
+            },
+            columns: [
+                {
+                    "data": "name",
+                    "width": "100px",
+                    "title": "名称",
+                },
+                {
+                    "data": "type",
+                    "width": "100px",
+                    "title": "类型"
+                },
+
+                {
+                    "data": "state",
+                    "width": "100px",
+                    "title": "状态"
+                },
+                {
+                    "data": "cid",
+                    "width": "50px",
+                    "title": "classid",
+                    "visible": false
+                },
+                {
+                    "data": "pid",
+                    "width": "50px",
+                    "title": "父节点classid",
+                    "visible": false
+                },
+            ],
         });
     });
 </script>
