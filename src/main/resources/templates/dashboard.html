@@ -448,6 +448,7 @@
                 name: '访问来源',
                 type: 'pie',
                 radius: ['52%', '82%'],
+                selectedMode: 'single',
                 itemStyle: {
                     normal: {
                         label: {
@@ -521,6 +522,7 @@
                 name: '访问来源',
                 type: 'pie',
                 radius: ['52%', '82%'],
+                selectedMode: 'single',
                 itemStyle: {
                     normal: {
                         label: {
@@ -590,9 +592,9 @@
         },
         series: [
             {
-                name: '访问来源',
                 type: 'pie',
                 radius: ['52%', '82%'],
+                selectedMode: 'single',
                 itemStyle: {
                     normal: {
                         label: {
@@ -641,6 +643,8 @@
         }
     })
 	//tabdata切换加载
+    //取消选择
+
     $('.menu .item')
         .tab({
             'onFirstLoad': function(path){
@@ -650,14 +654,6 @@
                     //业务系统datatable
 					$("#platform_table").html("");
 					var platform_table = $("#platform_table").DataTable({
-                        "columnDefs": [{
-                            "orderable": false,
-                            "targets": [4],
-                        },{
-                            "targets": [4,5],
-                            "visible": false
-                        },
-                        ],
                         "createdRow": function (row, data, dataIndex) {
                             if (data.state== "正常") {
                                 $(row).addClass('positive ');
@@ -691,20 +687,13 @@
                             {
                                 "data": "state",
 								"width": "50px",
-								"title": "状态"
-							},
-                            {
-                                "data": "problemNum",
-                                "width": "50px",
-                                "title": "问题数",
-                            },
-                            {
-                                "data": "allNum",
-                                "width": "50px",
-                                "title": "问题总数"
-                            },
+								"title": "状态",
+                                "orderable": false,
+							}
 						],
 					});
+
+
 					platform_copy_myChart.on('click', function (param) {
 						var index = param.dataIndex;
 						if(index==0)
@@ -715,7 +704,7 @@
 						{
 							platform_table.search( "问题" ).draw();
 						}
-					});
+                    });
                 }
                 if(path === 'host_datatab') {
 					var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
@@ -723,14 +712,6 @@
                     //设备datatable
                     $("#host_table").html("");
                     var host_table = $("#host_table").DataTable({
-                        "columnDefs":[{
-                            "orderable":false,
-                            "targets":[1,2,4],
-                        },{
-                            "targets": [5,6],
-                            "visible": false
-                        }
-                        ],
                         "createdRow": function (row, data, dataIndex) {
                             if (data.state== "正常") {
                                 $(row).addClass('positive ');
@@ -751,12 +732,14 @@
                             {
                                 "data": "ip",
                                 "width": "100px",
-                                "title": "IP"
+                                "title": "IP",
+                                "orderable":false,
                             },
 							{
                                 "data": "type",
                                 "width": "100px",
-                                "title": "类型"
+                                "title": "类型",
+                                "orderable":false,
                             },
                             {
                                 "data": null,
@@ -769,18 +752,9 @@
                             {
                                 "data": "state",
                                 "width": "50px",
-                                "title": "状态"
-                            },
-							{
-                                "data": "problemNum",
-                                "width": "50px",
-                                "title": "问题数",
-                            },
-                            {
-                                "data": "allNum",
-                                "width": "50px",
-                                "title": "问题总数"
-                            },
+                                "title": "状态",
+                                "orderable":false,
+                            }
                         ],
                     });
                     host_copy_myChart.on('click', function (param) {
@@ -801,10 +775,6 @@
                     //监控点datatable
                     $("#point_table").html("");
                     var point_table = $("#point_table").DataTable({
-                        "columnDefs":[{
-                            "orderable":false,
-                            "targets":[1,2],
-                        }],
                         "createdRow": function (row, data, dataIndex) {
                             if (data.state== "正常") {
                                 $(row).addClass('positive ');
@@ -825,12 +795,14 @@
                             {
                                 "data": "hostName",
                                 "width": "200px",
-                                "title": "所属设备"
+                                "title": "所属设备",
+                                "orderable":false,
                             },
                             {
                                 "data": "state",
                                 "width": "50px",
-                                "title": "状态"
+                                "title": "状态",
+                                "orderable":false,
                             },
                         ],
                     });
