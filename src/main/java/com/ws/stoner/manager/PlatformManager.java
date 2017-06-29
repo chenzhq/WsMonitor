@@ -41,7 +41,7 @@ public interface PlatformManager {
      * @return
      * @throws ManagerException
      */
-    int countProblemPlatform() throws ManagerException;
+    int countProblemPlatform(List<String> triggerIds) throws ManagerException;
 
 
     /**
@@ -49,7 +49,7 @@ public interface PlatformManager {
      * @return
      * @throws ManagerException
      */
-    int countOkPlatform() throws ManagerException;
+    int countOkPlatform(List<String> triggerIds) throws ManagerException;
 
     /**
      * 获取指定业务平台的所有主机数量 all host number by platformIds
@@ -82,6 +82,6 @@ public interface PlatformManager {
      * @return
      * @throws ManagerException
      */
-    List<BriefPlatformDTO> listProblemPlatform() throws ManagerException;
+    List<BriefPlatformDTO> listProblemPlatform(List<String> triggerIds) throws ManagerException;
 
 }
