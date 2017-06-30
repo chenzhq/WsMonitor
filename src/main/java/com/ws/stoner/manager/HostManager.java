@@ -51,7 +51,7 @@ public interface HostManager {
      * @return
      * @throws ManagerException
      */
-    int countProblemHost() throws ManagerException;
+    int countProblemHost(List<String> triggerIds) throws ManagerException;
 
     /**
      * 获取正常主机的数量
@@ -59,7 +59,7 @@ public interface HostManager {
      * @return
      * @throws ManagerException
      */
-    int countOkHost() throws ManagerException;
+    int countOkHost(List<String> triggerIds) throws ManagerException;
 
 /*
  *list host
@@ -78,14 +78,16 @@ public interface HostManager {
      * @return
      * @throws ManagerException
      */
-    List<BriefHostDTO> listProblemHost() throws ManagerException;
+    List<BriefHostDTO> listProblemHost(List<String> triggerIds) throws ManagerException;
 
     /**
      * 获取OK主机 list OK
      * @return
      * @throws ManagerException
      */
-    List<BriefHostDTO> listOkHost() throws ManagerException;
+    List<BriefHostDTO> listOkHost(List<String> triggerIds) throws ManagerException;
+
+
 
 
 

@@ -42,14 +42,14 @@ public interface PointManager {
      * @return
      * @throws ManagerException
      */
-    int countProblemPoint() throws ManagerException;
+    int countProblemPoint(List<String> triggerIds) throws ManagerException;
 
     /**
      * 获取正常监控点
      * @return
      * @throws ManagerException
      */
-    int countOkPoint() throws  ManagerException;
+    int countOkPoint(List<String> triggerIds) throws  ManagerException;
 
     /**
      * 获取指定主机的所有监控点数量  all point hostids number
@@ -83,7 +83,7 @@ public interface PointManager {
      * @return
      * @throws ManagerException
      */
-    List<BriefPointDTO> listProblemPoint() throws ManagerException;
+    List<BriefPointDTO> listProblemPoint(List<String> triggerIds) throws ManagerException;
 
 
 }

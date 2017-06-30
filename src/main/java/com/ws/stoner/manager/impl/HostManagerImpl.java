@@ -103,9 +103,8 @@ public class HostManagerImpl implements HostManager {
      * @throws ManagerException
      */
     @Override
-    public int countProblemHost() throws ManagerException {
-        //step1:获取问题触发器ids
-        List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    public int countProblemHost(List<String> triggerIds) throws ManagerException {
+        //step1:获取问题触发器ids，参数传入
         //step2:根据两个触发器的ids得到主机数量 hosts1
         HostGetRequest hostGetRequest1 = new HostGetRequest();
         Map<String,Object> hostFilter1 = new HashMap<>();
@@ -143,8 +142,8 @@ public class HostManagerImpl implements HostManager {
      * @throws ManagerException
      */
     @Override
-    public int countOkHost() throws ManagerException {
-        int okHostNum = countAllHost() - countProblemHost();
+    public int countOkHost(List<String> triggerIds) throws ManagerException {
+        int okHostNum = countAllHost() - countProblemHost(triggerIds);
         return okHostNum;
     }
 
@@ -178,9 +177,8 @@ public class HostManagerImpl implements HostManager {
      * @throws ManagerException
      */
     @Override
-    public List<BriefHostDTO> listProblemHost() throws ManagerException {
-        //step1:获取问题触发器ids
-        List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    public List<BriefHostDTO> listProblemHost(List<String> triggerIds) throws ManagerException {
+        //step1:获取问题触发器ids 参数传入
         //step2:根据两个触发器的ids得到主机list hosts1
         HostGetRequest hostGetRequest1 = new HostGetRequest();
         Map<String,Object> hostFilter1 = new HashMap<>();
@@ -220,9 +218,9 @@ public class HostManagerImpl implements HostManager {
      * @throws ManagerException
      */
     @Override
-    public List<BriefHostDTO> listOkHost() throws ManagerException {
+    public List<BriefHostDTO> listOkHost(List<String> triggerIds) throws ManagerException {
         List<BriefHostDTO> allHosts = listAllHost();
-        List<BriefHostDTO> problemHosts = listProblemHost();
+        List<BriefHostDTO> problemHosts = listProblemHost(triggerIds);
         allHosts.removeAll(problemHosts);
         return allHosts;
     }

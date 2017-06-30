@@ -25,6 +25,9 @@ public class CountStateServiceImpl implements CountStateService {
     @Autowired
     private PlatformManager platformManager;
 
+    @Autowired
+    private TriggerManager triggerManager;
+
     /**
      * 主机业务数据组合
      * @return
@@ -36,9 +39,11 @@ public class CountStateServiceImpl implements CountStateService {
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         int allHostNum = 0;
         int problemhostNum = 0;
+        List<String> triggerIds ;
         try {
+            triggerIds = triggerManager.getProblemTriggerIds();
             allHostNum = hostManager.countAllHost();
-            problemhostNum = hostManager.countProblemHost();
+            problemhostNum = hostManager.countProblemHost(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;
@@ -63,9 +68,11 @@ public class CountStateServiceImpl implements CountStateService {
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         int allPlarformNum = 0;
         int problemPlatformNum = 0;
+        List<String> triggerIds ;
         try {
+            triggerIds = triggerManager.getProblemTriggerIds();
             allPlarformNum = platformManager.countAllPlatform();
-            problemPlatformNum = platformManager.countProblemPlatform();
+            problemPlatformNum = platformManager.countProblemPlatform(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;
@@ -89,9 +96,11 @@ public class CountStateServiceImpl implements CountStateService {
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         int allPointNum = 0;
         int problemPointNum = 0;
+        List<String> triggerIds;
         try {
+            triggerIds = triggerManager.getProblemTriggerIds();
             allPointNum = pointManager.countAllPoint();
-            problemPointNum = pointManager.countProblemPoint();
+            problemPointNum = pointManager.countProblemPoint(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
         }

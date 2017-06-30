@@ -117,9 +117,8 @@ public class PointManagerImpl implements PointManager {
      * @throws ManagerException
      */
     @Override
-    public int countProblemPoint() throws ManagerException {
+    public int countProblemPoint(List<String> triggerIds) throws ManagerException {
         //step1:获取问题触发器Ids
-        List<String> triggerIds  = triggerManager.getProblemTriggerIds();
         //step2:根据触发器Ids获取items
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         itemGetRequest.getParams()
@@ -148,8 +147,8 @@ public class PointManagerImpl implements PointManager {
      * @throws ManagerException
      */
     @Override
-    public int countOkPoint() throws ManagerException {
-        int okAppNum = countAllPoint() - countProblemPoint();
+    public int countOkPoint(List<String> triggerIds) throws ManagerException {
+        int okAppNum = countAllPoint() - countProblemPoint(triggerIds);
         return okAppNum;
 
     }
@@ -237,9 +236,8 @@ public class PointManagerImpl implements PointManager {
      * @throws ManagerException
      */
     @Override
-    public List<BriefPointDTO> listProblemPoint() throws ManagerException {
-        //step1:获取问题触发器Ids
-        List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    public List<BriefPointDTO> listProblemPoint(List<String> triggerIds) throws ManagerException {
+        //step1:获取问题触发器Ids参数传入
         //step2:根据触发器Ids获取items
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         itemGetRequest.getParams()

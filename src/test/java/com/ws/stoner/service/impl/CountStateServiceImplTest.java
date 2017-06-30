@@ -2,10 +2,7 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.manager.HostManager;
-import com.ws.stoner.manager.PlatformManager;
-import com.ws.stoner.manager.PointManager;
-import com.ws.stoner.manager.TemplateManager;
+import com.ws.stoner.manager.*;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.StateNumDTO;
@@ -55,6 +52,9 @@ public class CountStateServiceImplTest {
     @Autowired
     private TemplateManager templateManager;
 
+    @Autowired
+    private TriggerManager triggerManager;
+
 @Before
 public void before() throws Exception {
     zApi.cacheLogin("f558f7da83dea947f7c2d0def347b4f0");
@@ -91,7 +91,9 @@ public void testListAllHost() throws Exception {
     @Test
     public void testListProblemHost() throws Exception {
 //TODO: Test goes here...
-        List<BriefHostDTO> hosts = hostManager.listProblemHost();
+
+        List<String> triggerIds = triggerManager.getProblemTriggerIds();
+        List<BriefHostDTO> hosts = hostManager.listProblemHost(triggerIds);
         System.out.println(hosts);
 
     }
@@ -99,7 +101,8 @@ public void testListAllHost() throws Exception {
 @Test
 public void testListOkHost() throws Exception {
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = hostManager.listOkHost();
+    List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    List<BriefHostDTO> hosts = hostManager.listOkHost(triggerIds);
     System.out.println(hosts);
 
 }
@@ -114,13 +117,15 @@ public void testCountAllHost() throws Exception {
 
 @Test
 public void testCountProblemHost() throws Exception {
-    int phostNum = hostManager.countProblemHost();
+    List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    int phostNum = hostManager.countProblemHost(triggerIds);
     System.out.println(phostNum);
 }
 
 @Test
 public void testCountOKHost() throws Exception {
-    int okhostNum = hostManager.countOkHost();
+    List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    int okhostNum = hostManager.countOkHost(triggerIds);
     System.out.println(okhostNum);
 }
 
@@ -162,7 +167,8 @@ public void testcountProblemHostByPlatformId() throws Exception {
 
     @Test
     public void testCountProblemPlatform() throws Exception {
-        int problemHostGroupNum = platformManager.countProblemPlatform();
+        List<String> triggerIds = triggerManager.getProblemTriggerIds();
+        int problemHostGroupNum = platformManager.countProblemPlatform(triggerIds);
         System.out.println(problemHostGroupNum);
     }
 
@@ -181,7 +187,8 @@ public void testCountAllApp() throws Exception {
 
 @Test
 public void testCountProbelmApp() throws Exception {
-    int problemAppNum = pointManager.countProblemPoint();
+    List<String> triggerIds = triggerManager.getProblemTriggerIds();
+    int problemAppNum = pointManager.countProblemPoint(triggerIds);
     System.out.println(problemAppNum);
 }
 
