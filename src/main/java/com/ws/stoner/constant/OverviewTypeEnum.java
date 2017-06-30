@@ -3,11 +3,11 @@ package com.ws.stoner.constant;
 /**
  * Created by pc on 2017/6/29.
  */
-public enum MongoTypeEnum {
+public enum OverviewTypeEnum {
     Group("组"),
     Point("监控点");
 
-    MongoTypeEnum(String name) {
+    OverviewTypeEnum(String name) {
         this.name = name;
     }
     private String name;
@@ -16,7 +16,7 @@ public enum MongoTypeEnum {
         return name;
     }
 
-    public MongoTypeEnum setName(String name) {
+    public OverviewTypeEnum setName(String name) {
         this.name = name;
         return this;
     }
