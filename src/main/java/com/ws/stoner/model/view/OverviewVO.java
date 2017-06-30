@@ -5,7 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 /**
  * Created by pc on 2017/6/29.
  */
-public class MongoGroupVO {
+public class OverviewVO {
 
     @JSONField(name = "cid")
     private String cId;
@@ -17,7 +17,7 @@ public class MongoGroupVO {
 
     @Override
     public String toString() {
-        return "MongoGroupVO{" +
+        return "OverviewVO{" +
                 "cId='" + cId + '\'' +
                 ", pId='" + pId + '\'' +
                 ", name='" + name + '\'' +
@@ -31,7 +31,7 @@ public class MongoGroupVO {
         return name;
     }
 
-    public MongoGroupVO setName(String name) {
+    public OverviewVO setName(String name) {
         this.name = name;
         return this;
     }
@@ -41,7 +41,7 @@ public class MongoGroupVO {
         return cId;
     }
 
-    public MongoGroupVO setcId(String cId) {
+    public OverviewVO setcId(String cId) {
         this.cId = cId;
         return this;
     }
@@ -50,7 +50,7 @@ public class MongoGroupVO {
         return pId;
     }
 
-    public MongoGroupVO setpId(String pId) {
+    public OverviewVO setpId(String pId) {
         this.pId = pId;
         return this;
     }
@@ -59,7 +59,7 @@ public class MongoGroupVO {
         return state;
     }
 
-    public MongoGroupVO setState(String state) {
+    public OverviewVO setState(String state) {
         this.state = state;
         return this;
     }
@@ -68,7 +68,7 @@ public class MongoGroupVO {
         return type;
     }
 
-    public MongoGroupVO setType(String type) {
+    public OverviewVO setType(String type) {
         this.type = type;
         return this;
     }
