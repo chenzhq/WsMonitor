@@ -2,8 +2,8 @@ package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.view.MongoGroupVO;
-import com.ws.stoner.service.MongoGroupService;
+import com.ws.stoner.model.view.OverviewVO;
+import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,19 +19,19 @@ import static com.ws.stoner.constant.MessageConsts.REST_MONGOLIST_SUCCESS;
  * Created by zkf on 2017/6/30.
  */
 @RestController
-public class MongoGroupRestController {
+public class OverviewRestController {
 
     @Autowired
-    private MongoGroupService mongoGroupService;
+    private OverviewService overviewService;
 
     @RequestMapping(value = "host/overview", method = RequestMethod.GET)
     public String listMongoGroup() {
-        List<MongoGroupVO> mongoGroupVOS;
+        List<OverviewVO> overviewVo;
         try {
-            mongoGroupVOS = mongoGroupService.listMongo();
+            overviewVo = overviewService.listOverviewGroup();
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
-        return RestResultGenerator.genResult(mongoGroupVOS, REST_MONGOLIST_SUCCESS).toString();
+        return RestResultGenerator.genResult(overviewVo, REST_MONGOLIST_SUCCESS).toString();
     }
 }

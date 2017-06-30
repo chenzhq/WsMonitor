@@ -1,6 +1,5 @@
-package com.ws.stoner.model.mongoDO;
+package com.ws.stoner.model.DO.DOMongo;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -10,8 +9,8 @@ import java.util.Arrays;
 /**
  * Created by pc on 2017/6/28.
  */
-@Document(collection = "mongo_group")
-public class MongoGroupDO {
+@Document(collection = "group")
+public class Group {
     @Id
     private String id;
     private String name;
@@ -25,14 +24,24 @@ public class MongoGroupDO {
     @Field("host_children")
     private String[] hostChildren;
 
-    public MongoGroupDO() {
+    public Group() {
+    }
+
+    public Group(String id, String name, String flag, String cId, String pId, String[] groupChildren, String[] hostChildren) {
+        this.id = id;
+        this.name = name;
+        this.flag = flag;
+        this.cId = cId;
+        this.pId = pId;
+        this.groupChildren = groupChildren;
+        this.hostChildren = hostChildren;
     }
 
     public String getName() {
         return name;
     }
 
-    public MongoGroupDO setName(String name) {
+    public Group setName(String name) {
         this.name = name;
         return this;
     }
@@ -41,7 +50,7 @@ public class MongoGroupDO {
         return flag;
     }
 
-    public MongoGroupDO setFlag(String flag) {
+    public Group setFlag(String flag) {
         this.flag = flag;
         return this;
     }
@@ -50,7 +59,7 @@ public class MongoGroupDO {
         return pId;
     }
 
-    public MongoGroupDO setpId(String pId) {
+    public Group setpId(String pId) {
         this.pId = pId;
         return this;
     }
@@ -59,7 +68,7 @@ public class MongoGroupDO {
         return groupChildren;
     }
 
-    public MongoGroupDO setGroupChildren(String[] groupChildren) {
+    public Group setGroupChildren(String[] groupChildren) {
         this.groupChildren = groupChildren;
         return this;
     }
@@ -68,7 +77,7 @@ public class MongoGroupDO {
         return hostChildren;
     }
 
-    public MongoGroupDO setHostChildren(String[] hostChildren) {
+    public Group setHostChildren(String[] hostChildren) {
         this.hostChildren = hostChildren;
         return this;
     }
@@ -78,14 +87,14 @@ public class MongoGroupDO {
         return id;
     }
 
-    public MongoGroupDO setId(String id) {
+    public Group setId(String id) {
         this.id = id;
         return this;
     }
 
     @Override
     public String toString() {
-        return "MongoGroupDO{" +
+        return "Group{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", flag='" + flag + '\'' +
@@ -96,7 +105,7 @@ public class MongoGroupDO {
                 '}';
     }
 
-    public MongoGroupDO(String name, String flag, String cId, String pId, String[] groupChildren, String[] hostChildren) {
+    public Group(String name, String flag, String cId, String pId, String[] groupChildren, String[] hostChildren) {
         this.name = name;
         this.flag = flag;
         this.cId = cId;
@@ -110,7 +119,7 @@ public class MongoGroupDO {
         return cId;
     }
 
-    public MongoGroupDO setcId(String cId) {
+    public Group setcId(String cId) {
         this.cId = cId;
         return this;
     }

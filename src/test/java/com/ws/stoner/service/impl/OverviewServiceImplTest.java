@@ -2,10 +2,10 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.dao.MongoGroupRepository;
-import com.ws.stoner.model.mongoDO.MongoGroupDO;
-import com.ws.stoner.model.view.MongoGroupVO;
-import com.ws.stoner.service.MongoGroupService;
+import com.ws.stoner.dao.OverviewGroupRepository;
+import com.ws.stoner.model.DO.DOMongo.Group;
+import com.ws.stoner.model.view.OverviewVO;
+import com.ws.stoner.service.OverviewService;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
@@ -14,12 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /** 
-* MongoGroupServiceImpl Tester. 
+* OverviewServiceImpl Tester.
 * 
 * @author <Authors name> 
 * @since <pre>六月 28, 2017</pre> 
@@ -27,16 +25,16 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class MongoGroupServiceImplTest {
+public class OverviewServiceImplTest {
 
     @Autowired
     private ZApi zApi;
 
     @Autowired
-    private MongoGroupService mongoGroupService;
+    private OverviewService overviewService;
 
     @Autowired
-    private MongoGroupRepository mongoGroupRepository;
+    private OverviewGroupRepository overviewGroupRepository;
 
 
 @Before
@@ -56,15 +54,15 @@ public void after() throws Exception {
 @Test
 public void testFindAll() throws Exception { 
 //TODO: Test goes here...
-    //List<MongoGroupDO> mongoGroupDOS = mongoGroupRepository.findAll();
-    MongoGroupDO mongoGroupDO = mongoGroupRepository.findByName("root");
-    System.out.println(mongoGroupDO);
+    //List<Group> mongoGroupDOS = mongoGroupRepository.findAll();
+    Group group = overviewGroupRepository.findByName("root");
+    System.out.println(group);
 
 }
 
 @Test
     public void testSave() throws Exception {
-    MongoGroupDO groupDO1 = new MongoGroupDO(
+    Group groupDO1 = new Group(
             "root",
             "-1",
             "01",
@@ -72,7 +70,7 @@ public void testFindAll() throws Exception {
             new String[]{"交换机","数据库","服务器"},
             new String[]{"10114","10167","10164"}
     );
-    MongoGroupDO groupDO2 = new MongoGroupDO(
+    Group groupDO2 = new Group(
             "交换机",
             "0",
             "02",
@@ -80,7 +78,7 @@ public void testFindAll() throws Exception {
             new String[]{},
             new String[]{"10234"}
     );
-    MongoGroupDO groupDO3 = new MongoGroupDO(
+    Group groupDO3 = new Group(
             "数据库",
             "0",
             "03",
@@ -89,7 +87,7 @@ public void testFindAll() throws Exception {
             new String[]{"10155","10150"}
     );
 
-    MongoGroupDO groupDO4 = new MongoGroupDO(
+    Group groupDO4 = new Group(
             "服务器",
             "0",
             "04",
@@ -99,30 +97,24 @@ public void testFindAll() throws Exception {
     );
 
 
-    System.out.println(mongoGroupRepository.save(groupDO1));
-    System.out.println(mongoGroupRepository.save(groupDO2));
-    System.out.println(mongoGroupRepository.save(groupDO3));
-    System.out.println(mongoGroupRepository.save(groupDO4));
+    System.out.println(overviewGroupRepository.save(groupDO1));
+    System.out.println(overviewGroupRepository.save(groupDO2));
+    System.out.println(overviewGroupRepository.save(groupDO3));
+    System.out.println(overviewGroupRepository.save(groupDO4));
 }
 
 
     @Test
-    public void testListMongoGroup() throws Exception{
-        List<MongoGroupVO> mongoGroupVOS = mongoGroupService.listMongoGroup();
-        System.out.println(mongoGroupVOS);
-    }
-
-    @Test
     public void testListMongoTree() throws Exception{
-//        List<MongoGroupVO> mongoGroupVOS = mongoGroupService.getGroupTree("root",new ArrayList<MongoGroupVO>());
+//        List<OverviewVO> mongoGroupVOS = overviewService.getGroupTree("root",new ArrayList<OverviewVO>());
 //        Collections.reverse(mongoGroupVOS);
 //        System.out.println(mongoGroupVOS);
     }
 
     @Test
     public void testListMongo() throws Exception {
-    List<MongoGroupVO> mongoGroupVOS = mongoGroupService.listMongo();
-    System.out.println(mongoGroupVOS);
+    List<OverviewVO> overviewVOS = overviewService.listOverviewGroup();
+    System.out.println(overviewVOS);
     }
 
 
