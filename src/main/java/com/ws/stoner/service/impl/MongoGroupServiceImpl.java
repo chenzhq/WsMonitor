@@ -150,20 +150,18 @@ public class MongoGroupServiceImpl implements MongoGroupService {
 
     @Override
     public List<MongoGroupVO> listMongo() throws ServiceException {
-
-        //step:1创建list，调用list = getGroupTree()
-        List<MongoGroupVO> mongoGroupVOS = new ArrayList<>();
-        mongoGroupVOS = getGroupTree("root",mongoGroupVOS);
-        //step2:调用  listAllHost()，listProblemHost(triggerIds) ,listAllTemplate(),组装ProblemHostIds
+        //step1:调用  listAllHost()，listProblemHost(triggerIds) ,listAllTemplate(),组装ProblemHostIds
         List<BriefHostDTO> allHosts ;
         List<String> triggerIds ;
         List<BriefHostDTO>  problemHosts;
         List<BriefTemplateDTO> allTemplates;
+        List<BriefPointDTO> problemPoints;
         try {
             triggerIds = triggerManager.getProblemTriggerIds();
             allHosts = hostManager.listAllHost();
             problemHosts = hostManager.listProblemHost(triggerIds);
             allTemplates = templateManager.listAllTemplate();
+            problemPoints = pointManager.listProblemPoint(triggerIds);
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;
@@ -174,15 +172,27 @@ public class MongoGroupServiceImpl implements MongoGroupService {
         for(BriefHostDTO host : problemHosts) {
             problemHostIds.add(host.getHostId());
         }
+        for(BriefPointDTO point : problemPoints) {
+            problemPointIds.add(point.getPointId());
+        }
+        //step:2创建list，调用list = getGroupTree()
+        List<MongoGroupVO> mongoGroupVOS = new ArrayList<>();
+        mongoGroupVOS = getGroupTree("root",mongoGroupVOS,allHosts);
         //step:3 反转list，循环 list，
         Collections.reverse(mongoGroupVOS);
         for(MongoGroupVO mongoGroupVO : mongoGroupVOS) {
-            //if name == null 则为主机，,给所有主机赋值 type，state，name
-            if(mongoGroupVO.getName() == null) {
+            //if type == "监控点"，则为point,给 point 赋值：state
+            if(MongoTypeEnum.Point.getName().equals(mongoGroupVO.getType())) {
+                if(problemHostIds.contains(mongoGroupVO.getcId())) {
+                    mongoGroupVO.setState(StatusEnum.PROBLEM.getName());
+                }else {
+                    mongoGroupVO.setState(StatusEnum.OK.getName());
+                }
+            }
+            //if type == null 则为主机，,给所有主机赋值 type，state
+            if(mongoGroupVO.getType() == null) {
                 for(BriefHostDTO host : allHosts) {
                     if(mongoGroupVO.getcId().equals(host.getHostId())) {
-                        //name
-                        mongoGroupVO.setName(host.getName());
                         //type
                         if(host.getParentTemplates().size() != 0) {
                             String templateId = host.getParentTemplates().get(0).getTemplateId();
@@ -202,7 +212,7 @@ public class MongoGroupServiceImpl implements MongoGroupService {
                 }
             }
             //if type = "组" 给group赋值，state：根据cid  = pid，找所有子节点的state ，List<String>，根据所有子节点状态做处理赋值
-            if(MongoTypeEnum.Group.getName().equals(mongoGroupVO.getType())) {
+            if(MongoTypeEnum.Group.getName().equals(mongoGroupVO.getType()) && !"root".equals(mongoGroupVO.getName())) {
                 List<String> childStates = new ArrayList<>();
                 for(MongoGroupVO childMongo : mongoGroupVOS) {
                     if(mongoGroupVO.getcId().equals(childMongo.getpId())) {
@@ -216,13 +226,14 @@ public class MongoGroupServiceImpl implements MongoGroupService {
                     mongoGroupVO.setState(StatusEnum.OK.getName());
                 }
             }
+
         }
         //step:4反转还原
         Collections.reverse(mongoGroupVOS);
         return mongoGroupVOS;
     }
 
-    private List<MongoGroupVO> getGroupTree(String name,List<MongoGroupVO> mongoGroupVOS)  {
+    private List<MongoGroupVO> getGroupTree(String name,List<MongoGroupVO> mongoGroupVOS,List<BriefHostDTO> allHosts)  {
         //step1:新建List<MongoGroupVO> list,MongoGroupVO mongoGroup,根据name查出mongoGroupDO
         MongoGroupDO mongoGroupDO = mongoGroupRepository.findByName(name);
         //step2:给vo赋值，cid，pid，name，添加vo到list中
@@ -236,15 +247,31 @@ public class MongoGroupServiceImpl implements MongoGroupService {
         if(mongoGroupDO.getGroupChildren().length != 0) {
             //是：循环 group_children ，取name，递归调用 list = getGroupTree(name,list)
             for(String groupName : mongoGroupDO.getGroupChildren()) {
-                mongoGroupVOS = getGroupTree(groupName,mongoGroupVOS);
+                mongoGroupVOS = getGroupTree(groupName,mongoGroupVOS,allHosts);
             }
         }
         //step4:取DO的 host_children,循环 add host 到 list中 return list
         for(String hostId : mongoGroupDO.getHostChildren()) {
-            MongoGroupVO mongoHost = new MongoGroupVO();
-            mongoHost.setpId(mongoGroupDO.getcId());
-            mongoHost.setcId(hostId);
-            mongoGroupVOS.add(mongoHost);
+            for(BriefHostDTO host : allHosts) {
+                if(hostId.equals(host.getHostId())) {
+                    MongoGroupVO mongoHost = new MongoGroupVO();
+                    mongoHost.setpId(mongoGroupDO.getcId());
+                    mongoHost.setcId(hostId);
+                    mongoHost.setName(host.getName());
+                    mongoGroupVOS.add(mongoHost);
+                    //循环allHosts,取监控点
+                    List<BriefPointDTO> points = host.getPoints();
+                    for(BriefPointDTO point : points) {
+                        MongoGroupVO mongoPoint = new MongoGroupVO();
+                        mongoPoint.setcId(point.getPointId());
+                        mongoPoint.setpId(hostId);
+                        mongoPoint.setName(point.getName());
+                        mongoPoint.setType(MongoTypeEnum.Point.getName());
+                        mongoGroupVOS.add(mongoPoint);
+                    }
+                }
+
+            }
         }
         return mongoGroupVOS;
     }

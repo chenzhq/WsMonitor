@@ -12,7 +12,7 @@ public interface MongoGroupService {
 
 
     /**
-     * 组装自定义分组 mongoGroup list
+     * 组装自定义分组 mongoGroup list    list实现未排序，废掉
      * @return
      * @throws ServiceException
      */
