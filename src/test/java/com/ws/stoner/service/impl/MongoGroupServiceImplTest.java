@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /** 
@@ -114,7 +115,14 @@ public void testFindAll() throws Exception {
     @Test
     public void testListMongoTree() throws Exception{
         List<MongoGroupVO> mongoGroupVOS = mongoGroupService.getGroupTree("root",new ArrayList<MongoGroupVO>());
+        Collections.reverse(mongoGroupVOS);
         System.out.println(mongoGroupVOS);
+    }
+
+    @Test
+    public void testListMongo() throws Exception {
+    List<MongoGroupVO> mongoGroupVOS = mongoGroupService.listMongo();
+    System.out.println(mongoGroupVOS);
     }
 
 
