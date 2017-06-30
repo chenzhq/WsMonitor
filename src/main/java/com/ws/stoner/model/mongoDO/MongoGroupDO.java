@@ -1,6 +1,5 @@
 package com.ws.stoner.model.mongoDO;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -26,6 +25,16 @@ public class MongoGroupDO {
     private String[] hostChildren;
 
     public MongoGroupDO() {
+    }
+
+    public MongoGroupDO(String id, String name, String flag, String cId, String pId, String[] groupChildren, String[] hostChildren) {
+        this.id = id;
+        this.name = name;
+        this.flag = flag;
+        this.cId = cId;
+        this.pId = pId;
+        this.groupChildren = groupChildren;
+        this.hostChildren = hostChildren;
     }
 
     public String getName() {

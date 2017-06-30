@@ -175,10 +175,22 @@ public class MongoGroupServiceImpl implements MongoGroupService {
         for(BriefPointDTO point : problemPoints) {
             problemPointIds.add(point.getPointId());
         }
-        //step:2创建list，调用list = getGroupTree()
+
+        //step:2初始化 root节点
+        MongoGroupDO root = mongoGroupRepository.findByName("root");
+        if(root.getHostChildren().length == 0 && root.getGroupChildren().length == 0) {
+            List<String> hostIds = new ArrayList<>();
+            for(BriefHostDTO host : allHosts) {
+                hostIds.add(host.getHostId());
+            }
+            String[] hostIdsString = hostIds.toArray(new String[hostIds.size()]);
+            root.setHostChildren(hostIdsString);
+            mongoGroupRepository.save(root);
+        }
+        //step:3 创建list，调用list = getGroupTree()
         List<MongoGroupVO> mongoGroupVOS = new ArrayList<>();
         mongoGroupVOS = getGroupTree("root",mongoGroupVOS,allHosts);
-        //step:3 反转list，循环 list，
+        //step:4 反转list，循环 list，
         Collections.reverse(mongoGroupVOS);
         for(MongoGroupVO mongoGroupVO : mongoGroupVOS) {
             //if type == "监控点"，则为point,给 point 赋值：state
@@ -228,7 +240,7 @@ public class MongoGroupServiceImpl implements MongoGroupService {
             }
 
         }
-        //step:4反转还原
+        //step:5反转还原
         Collections.reverse(mongoGroupVOS);
         return mongoGroupVOS;
     }
