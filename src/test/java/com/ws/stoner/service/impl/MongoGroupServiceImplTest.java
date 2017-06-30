@@ -114,9 +114,9 @@ public void testFindAll() throws Exception {
 
     @Test
     public void testListMongoTree() throws Exception{
-        List<MongoGroupVO> mongoGroupVOS = mongoGroupService.getGroupTree("root",new ArrayList<MongoGroupVO>());
-        Collections.reverse(mongoGroupVOS);
-        System.out.println(mongoGroupVOS);
+//        List<MongoGroupVO> mongoGroupVOS = mongoGroupService.getGroupTree("root",new ArrayList<MongoGroupVO>());
+//        Collections.reverse(mongoGroupVOS);
+//        System.out.println(mongoGroupVOS);
     }
 
     @Test
