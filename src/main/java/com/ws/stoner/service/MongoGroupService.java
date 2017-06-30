@@ -25,7 +25,5 @@ public interface MongoGroupService {
      */
     List<MongoGroupVO> listMongo() throws ServiceException;
 
-    List<MongoGroupVO> getGroupTree(String name,List<MongoGroupVO> mongoGroupVOS);
-
 
 }

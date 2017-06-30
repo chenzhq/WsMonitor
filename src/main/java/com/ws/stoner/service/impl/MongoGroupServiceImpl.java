@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -103,7 +104,7 @@ public class MongoGroupServiceImpl implements MongoGroupService {
                     String DTOTemplateId = mongoHostDTO.getParentTemplates().get(0).getTemplateId();
                     for(BriefTemplateDTO templateDTO : allTemplates) {
                         if(templateDTO.getTemplateId().equals(DTOTemplateId)) {
-                            mongoHost.setType(templateDTO.getName());
+                            mongoHost.setType(templateDTO.getTemplateGroups().get(0).getName());
                         }
                     }
                 }
@@ -151,40 +152,100 @@ public class MongoGroupServiceImpl implements MongoGroupService {
     public List<MongoGroupVO> listMongo() throws ServiceException {
 
         //step:1创建list，调用list = getGroupTree()
-        //step:2循环 list，if name == null 则为主机
-        //step:3
-        //step:4
-        //step:5
-        //step:6
-
-        return null;
-    }
-
-    public List<MongoGroupVO> getGroupTree(String name,List<MongoGroupVO> mongoGroupVOS)  {
-        //step1:新建List<MongoGroupVO> list,MongoGroupVO mongoGroup,根据name查出mongoGroupDO
-        MongoGroupDO mongoGroupDO = mongoGroupRepository.findByName(name);
-        //step2:判断DO的group_children.length != 0
-        if(mongoGroupDO.getGroupChildren().length != 0) {
-            //是：循环 group_children ，取name，递归调用 list = getGroupTree(name,list)
-            for(String groupName : mongoGroupDO.getGroupChildren()) {
-                mongoGroupVOS = getGroupTree(groupName,mongoGroupVOS);
+        List<MongoGroupVO> mongoGroupVOS = new ArrayList<>();
+        mongoGroupVOS = getGroupTree("root",mongoGroupVOS);
+        //step2:调用  listAllHost()，listProblemHost(triggerIds) ,listAllTemplate(),组装ProblemHostIds
+        List<BriefHostDTO> allHosts ;
+        List<String> triggerIds ;
+        List<BriefHostDTO>  problemHosts;
+        List<BriefTemplateDTO> allTemplates;
+        try {
+            triggerIds = triggerManager.getProblemTriggerIds();
+            allHosts = hostManager.listAllHost();
+            problemHosts = hostManager.listProblemHost(triggerIds);
+            allTemplates = templateManager.listAllTemplate();
+        } catch (ManagerException e) {
+            e.printStackTrace();
+            return null;
+        }
+        //组装ids
+        List<String> problemHostIds = new ArrayList<>();
+        List<String> problemPointIds = new ArrayList<>();
+        for(BriefHostDTO host : problemHosts) {
+            problemHostIds.add(host.getHostId());
+        }
+        //step:3 反转list，循环 list，
+        Collections.reverse(mongoGroupVOS);
+        for(MongoGroupVO mongoGroupVO : mongoGroupVOS) {
+            //if name == null 则为主机，,给所有主机赋值 type，state，name
+            if(mongoGroupVO.getName() == null) {
+                for(BriefHostDTO host : allHosts) {
+                    if(mongoGroupVO.getcId().equals(host.getHostId())) {
+                        //name
+                        mongoGroupVO.setName(host.getName());
+                        //type
+                        if(host.getParentTemplates().size() != 0) {
+                            String templateId = host.getParentTemplates().get(0).getTemplateId();
+                            for(BriefTemplateDTO templateDTO : allTemplates) {
+                                if(templateDTO.getTemplateId().equals(templateId)) {
+                                    mongoGroupVO.setType(templateDTO.getTemplateGroups().get(0).getName());
+                                }
+                            }
+                        }
+                        //state
+                        if(problemHostIds.contains(mongoGroupVO.getcId())) {
+                            mongoGroupVO.setState(StatusEnum.PROBLEM.getName());
+                        }else {
+                            mongoGroupVO.setState(StatusEnum.OK.getName());
+                        }
+                    }
+                }
+            }
+            //if type = "组" 给group赋值，state：根据cid  = pid，找所有子节点的state ，List<String>，根据所有子节点状态做处理赋值
+            if(MongoTypeEnum.Group.getName().equals(mongoGroupVO.getType())) {
+                List<String> childStates = new ArrayList<>();
+                for(MongoGroupVO childMongo : mongoGroupVOS) {
+                    if(mongoGroupVO.getcId().equals(childMongo.getpId())) {
+                        childStates.add(childMongo.getState());
+                    }
+                }
+                //state赋值
+                if(childStates.contains(StatusEnum.PROBLEM.getName())) {
+                    mongoGroupVO.setState(StatusEnum.PROBLEM.getName());
+                }else {
+                    mongoGroupVO.setState(StatusEnum.OK.getName());
+                }
             }
         }
+        //step:4反转还原
+        Collections.reverse(mongoGroupVOS);
+        return mongoGroupVOS;
+    }
 
-        //step3:取DO的 host_children,循环 add host 到 list中 return list
-        MongoGroupVO mongoHost = new MongoGroupVO();
-        for(String hostId : mongoGroupDO.getHostChildren()) {
-            mongoHost.setpId(mongoGroupDO.getcId());
-            mongoHost.setcId(hostId);
-            mongoGroupVOS.add(mongoHost);
-        }
-        //step4:给vo赋值，cid，pid，name，添加vo到list中
+    private List<MongoGroupVO> getGroupTree(String name,List<MongoGroupVO> mongoGroupVOS)  {
+        //step1:新建List<MongoGroupVO> list,MongoGroupVO mongoGroup,根据name查出mongoGroupDO
+        MongoGroupDO mongoGroupDO = mongoGroupRepository.findByName(name);
+        //step2:给vo赋值，cid，pid，name，添加vo到list中
         MongoGroupVO mongoGroup = new MongoGroupVO();
         mongoGroup.setcId(mongoGroupDO.getcId());
         mongoGroup.setpId(mongoGroupDO.getpId());
         mongoGroup.setName(mongoGroupDO.getName());
         mongoGroup.setType(MongoTypeEnum.Group.getName());
         mongoGroupVOS.add(mongoGroup);
+        //step3:判断DO的group_children.length != 0
+        if(mongoGroupDO.getGroupChildren().length != 0) {
+            //是：循环 group_children ，取name，递归调用 list = getGroupTree(name,list)
+            for(String groupName : mongoGroupDO.getGroupChildren()) {
+                mongoGroupVOS = getGroupTree(groupName,mongoGroupVOS);
+            }
+        }
+        //step4:取DO的 host_children,循环 add host 到 list中 return list
+        for(String hostId : mongoGroupDO.getHostChildren()) {
+            MongoGroupVO mongoHost = new MongoGroupVO();
+            mongoHost.setpId(mongoGroupDO.getcId());
+            mongoHost.setcId(hostId);
+            mongoGroupVOS.add(mongoHost);
+        }
         return mongoGroupVOS;
     }
 
