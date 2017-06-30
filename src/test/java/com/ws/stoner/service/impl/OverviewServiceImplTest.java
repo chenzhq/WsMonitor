@@ -4,6 +4,7 @@ import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.model.DO.DOMongo.Group;
+import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
 import com.ws.stoner.model.view.OverviewVO;
 import com.ws.stoner.service.OverviewService;
 import org.junit.Test;
@@ -65,10 +66,10 @@ public void testFindAll() throws Exception {
     Group groupDO1 = new Group(
             "root",
             "-1",
-            "01",
+            "1",
             null,
-            new String[]{"交换机","数据库","服务器"},
-            new String[]{"10114","10167","10164"}
+            new String[]{},
+            new String[]{}
     );
     Group groupDO2 = new Group(
             "交换机",
@@ -98,9 +99,9 @@ public void testFindAll() throws Exception {
 
 
     System.out.println(overviewGroupRepository.save(groupDO1));
-    System.out.println(overviewGroupRepository.save(groupDO2));
-    System.out.println(overviewGroupRepository.save(groupDO3));
-    System.out.println(overviewGroupRepository.save(groupDO4));
+//    System.out.println(overviewGroupRepository.save(groupDO2));
+//    System.out.println(overviewGroupRepository.save(groupDO3));
+//    System.out.println(overviewGroupRepository.save(groupDO4));
 }
 
 
@@ -115,6 +116,13 @@ public void testFindAll() throws Exception {
     public void testListMongo() throws Exception {
     List<OverviewVO> overviewVOS = overviewService.listOverviewGroup();
     System.out.println(overviewVOS);
+    }
+
+    @Test
+    public  void testcreateOverviewGroup() throws Exception {
+
+        OverviewCreateGroupDTO ocg = overviewService.createOverviewGroup("服务器","g0");
+        System.out.println(ocg);
     }
 
 

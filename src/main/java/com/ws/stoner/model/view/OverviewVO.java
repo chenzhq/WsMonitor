@@ -1,17 +1,19 @@
 package com.ws.stoner.model.view;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * Created by pc on 2017/6/29.
  */
 public class OverviewVO {
 
-    @JSONField(name = "cid")
+    @JSONField(name = "cid" )
     private String cId;
-    @JSONField(name = "pid")
+    @JSONField(name = "pid", serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String pId;
     private String name;
+    @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String state;
     private String type;
 

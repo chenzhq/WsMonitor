@@ -5,5 +5,5 @@ package com.ws.stoner.constant;
  */
 public class MessageConsts {
     public static final String REST_RESPONSE_SUCCESS = "查询成功";
-    public static final String REST_MONGOLIST_SUCCESS = "加载成功";
+    public static final String REST_MONGOLIST_SUCCESS = "更新成功";
 }
