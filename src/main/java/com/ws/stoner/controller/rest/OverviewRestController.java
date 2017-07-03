@@ -17,7 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.ws.stoner.constant.MessageConsts.REST_MONGOLIST_SUCCESS;
+import static com.ws.stoner.constant.MessageConsts.REST_CREATE_SUCCESS;
+import static com.ws.stoner.constant.MessageConsts.REST_DELETE_SUCCESS;
+import static com.ws.stoner.constant.MessageConsts.REST_MOVE_SUCCESS;
+import static com.ws.stoner.constant.MessageConsts.REST_UPDATE_SUCCESS;
+
 
 
 /**
@@ -41,7 +45,7 @@ public class OverviewRestController {
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
-        return RestResultGenerator.genResult(overviewVo, REST_MONGOLIST_SUCCESS).toString();
+        return RestResultGenerator.genResult(overviewVo, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
@@ -58,7 +62,7 @@ public class OverviewRestController {
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
-        return RestResultGenerator.genResult(ocg, REST_MONGOLIST_SUCCESS).toString();
+        return RestResultGenerator.genResult(ocg, REST_CREATE_SUCCESS).toString();
     }
 
     /**
@@ -74,7 +78,7 @@ public class OverviewRestController {
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
-        return RestResultGenerator.genResult(odg, REST_MONGOLIST_SUCCESS).toString();
+        return RestResultGenerator.genResult(odg, REST_DELETE_SUCCESS).toString();
     }
 
     /**
@@ -92,7 +96,7 @@ public class OverviewRestController {
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
-        return RestResultGenerator.genResult(omg, REST_MONGOLIST_SUCCESS).toString();
+        return RestResultGenerator.genResult(omg, REST_MOVE_SUCCESS).toString();
     }
 
     /**
@@ -110,7 +114,7 @@ public class OverviewRestController {
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
-        return RestResultGenerator.genResult(omh, REST_MONGOLIST_SUCCESS).toString();
+        return RestResultGenerator.genResult(omh, REST_MOVE_SUCCESS).toString();
     }
 
 
