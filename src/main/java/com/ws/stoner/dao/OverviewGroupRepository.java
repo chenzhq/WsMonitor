@@ -1,6 +1,6 @@
 package com.ws.stoner.dao;
 
-import com.ws.stoner.model.DO.DOMongo.Group;
+import com.ws.stoner.model.DO.mongo.Group;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Component;
 

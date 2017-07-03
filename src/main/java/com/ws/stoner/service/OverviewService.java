@@ -2,6 +2,7 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
+import com.ws.stoner.model.dto.OverviewDelGroupDTO;
 import com.ws.stoner.model.view.OverviewVO;
 
 import java.util.List;
@@ -25,6 +26,13 @@ public interface OverviewService {
      * @throws ServiceException
      */
     OverviewCreateGroupDTO createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException;
+
+    /**
+     * 删除指定分组，并将其下所有子节点移动到上一节点中
+     * @return
+     * @throws ServiceException
+     */
+    OverviewDelGroupDTO deleteOverviewGroup(String delGroupId) throws ServiceException;
 
 
 }
