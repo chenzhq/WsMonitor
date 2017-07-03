@@ -1,6 +1,6 @@
 ﻿
 //datatable page semantic datatable settings
-/*(function (window, document, undefined) {*/
+(function (window, document, undefined) {
     var factory = function ($, DataTable) {
         "use strict";
 
@@ -187,7 +187,7 @@
         // Otherwise simply initialise as normal, stopping multiple evaluation
         factory(jQuery, jQuery.fn.dataTable);
     }
-/*})(window, document);*/
+})(window, document);
 
 /*$(document).ready(function () {
     var dtable = $('.table').DataTable({

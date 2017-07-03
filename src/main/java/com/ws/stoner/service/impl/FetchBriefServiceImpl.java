@@ -289,7 +289,6 @@ public class FetchBriefServiceImpl implements FetchBriefService {
                 .setMonitored(true)
                 .setOnlyTrue(true)
                 .setExpandDescription(true)
-                .setExpandDescription(true)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setOutput(BriefProblemVO.PROPERTY_NAMES)
                 .setFilter(triggerFilter);

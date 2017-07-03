@@ -13,7 +13,7 @@ public interface OverviewService {
 
 
     /**
-     * 递归实现组装并获取自定义分组list Overview Group list
+     * 递归实现组装并获取自定义分组list Overview GROUP list
      * @return
      * @throws ServiceException
      */
