@@ -3,8 +3,11 @@ package com.ws.stoner.service.impl;
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.dao.OverviewGroupRepository;
-import com.ws.stoner.model.DO.DOMongo.Group;
+import com.ws.stoner.model.DO.mongo.Group;
 import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
+import com.ws.stoner.model.dto.OverviewDelGroupDTO;
+import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
+import com.ws.stoner.model.dto.OverviewMoveHostDTO;
 import com.ws.stoner.model.view.OverviewVO;
 import com.ws.stoner.service.OverviewService;
 import org.junit.Test;
@@ -66,8 +69,8 @@ public void testFindAll() throws Exception {
     Group groupDO1 = new Group(
             "root",
             "-1",
-            "1",
-            null,
+            "0",
+            "null",
             new String[]{},
             new String[]{}
     );
@@ -121,9 +124,42 @@ public void testFindAll() throws Exception {
     @Test
     public  void testcreateOverviewGroup() throws Exception {
 
-        OverviewCreateGroupDTO ocg = overviewService.createOverviewGroup("服务器","g0");
-        System.out.println(ocg);
+        OverviewCreateGroupDTO ocg1 = overviewService.createOverviewGroup("OA平台","g0");
+        OverviewCreateGroupDTO ocg2 = overviewService.createOverviewGroup("MAC","g0");
+        OverviewCreateGroupDTO ocg3 = overviewService.createOverviewGroup("PAS","g0");
+        OverviewCreateGroupDTO ocg4 = overviewService.createOverviewGroup("HIS","g0");
+
+        System.out.println(ocg1);
+        System.out.println(ocg2);
+        System.out.println(ocg3);
+        System.out.println(ocg4);
+
+          OverviewCreateGroupDTO ocg5 = overviewService.createOverviewGroup("服务器","g1");
+
     }
 
+    @Test
+    public void testDelOverviewGroup() throws Exception {
+        OverviewDelGroupDTO odg = overviewService.deleteOverviewGroup("1");
+        System.out.println(odg);
+    }
+
+    @Test
+    public void testMoveOverviewGroup() throws Exception {
+        OverviewMoveGroupDTO omg = overviewService.moveOverviewGroup("g5","g1","g2");
+    }
+
+    @Test
+    public void testMoveOverviewHost() throws Exception {
+        OverviewMoveHostDTO omh = overviewService.moveOverviewHost("h10084","g1","g2");
+    }
+
+    @Test
+    public void testInit() throws Exception {
+        testSave();
+        testListMongo();
+        testcreateOverviewGroup();
+
+    }
 
 } 
