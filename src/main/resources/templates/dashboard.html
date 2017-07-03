@@ -693,7 +693,8 @@
 						],
 					});
 
-
+					var last_param;//上一次点击状态
+					var num;//点击次数
 					platform_copy_myChart.on('click', function (param) {
 					    console.log(param)
 						var index = param.dataIndex;
@@ -704,6 +705,15 @@
 						else
 						{
 							platform_table.search( "问题" ).draw();
+						}
+                        if (last_param==index){
+                            num++;
+                            if(num%2 == 0){
+                                platform_table.search("").draw();
+							}
+                        }else {
+                            last_param=index;
+                            num=1;
 						}
                     });
                 }
