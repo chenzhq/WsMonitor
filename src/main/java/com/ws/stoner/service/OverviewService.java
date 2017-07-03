@@ -5,7 +5,7 @@ import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
 import com.ws.stoner.model.dto.OverviewDelGroupDTO;
 import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
 import com.ws.stoner.model.dto.OverviewMoveHostDTO;
-import com.ws.stoner.model.view.OverviewVO;
+import com.ws.stoner.model.dto.OverviewListGroupDTO;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public interface OverviewService {
      * @return
      * @throws ServiceException
      */
-    List<OverviewVO> listOverviewGroup() throws ServiceException;
+    List<OverviewListGroupDTO> listOverviewGroup() throws ServiceException;
 
     /**
      * 创建分组，overview group create

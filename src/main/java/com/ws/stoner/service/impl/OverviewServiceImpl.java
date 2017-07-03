@@ -14,7 +14,7 @@ import com.ws.stoner.manager.TemplateManager;
 import com.ws.stoner.manager.TriggerManager;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.DO.mongo.Group;
-import com.ws.stoner.model.view.OverviewVO;
+import com.ws.stoner.model.dto.OverviewListGroupDTO;
 import com.ws.stoner.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -54,7 +54,7 @@ public class OverviewServiceImpl implements OverviewService {
 
 
     @Override
-    public List<OverviewVO> listOverviewGroup() throws ServiceException {
+    public List<OverviewListGroupDTO> listOverviewGroup() throws ServiceException {
         //step1:调用  listAllHost()，listProblemHost(triggerIds) ,listAllTemplate(),组装ProblemHostIds
         List<BriefHostDTO> allHosts ;
         List<String> triggerIds ;
@@ -93,61 +93,61 @@ public class OverviewServiceImpl implements OverviewService {
             overviewGroupRepository.save(root);
         }
         //step:3 创建list，调用list = getGroupTree()
-        List<OverviewVO> overviewVOS = new ArrayList<>();
-        overviewVOS = getGroupTree("root", overviewVOS,allHosts);
+        List<OverviewListGroupDTO> overviewListGroupDTOS = new ArrayList<>();
+        overviewListGroupDTOS = getGroupTree("root", overviewListGroupDTOS,allHosts);
         //step:4 反转list，循环 list，
-        Collections.reverse(overviewVOS);
-        for(OverviewVO overviewVO : overviewVOS) {
+        Collections.reverse(overviewListGroupDTOS);
+        for(OverviewListGroupDTO overviewListGroupDTO : overviewListGroupDTOS) {
             //if type == "监控点"，则为point,给 point 赋值：state
-            if(OverviewTypeEnum.POINT.getName().equals(overviewVO.getType())) {
-                if(problemHostIds.contains(overviewVO.getcId())) {
-                    overviewVO.setState(StatusEnum.PROBLEM.getName());
+            if(OverviewTypeEnum.POINT.getName().equals(overviewListGroupDTO.getType())) {
+                if(problemHostIds.contains(overviewListGroupDTO.getcId())) {
+                    overviewListGroupDTO.setState(StatusEnum.PROBLEM.getName());
                 }else {
-                    overviewVO.setState(StatusEnum.OK.getName());
+                    overviewListGroupDTO.setState(StatusEnum.OK.getName());
                 }
             }
             //if type == null 则为主机，,给所有主机赋值 type，state
-            if(overviewVO.getType() == null) {
+            if(overviewListGroupDTO.getType() == null) {
                 for(BriefHostDTO host : allHosts) {
-                    if(overviewVO.getcId().equals(host.getHostId())) {
+                    if(overviewListGroupDTO.getcId().equals(host.getHostId())) {
                         //type
                         if(host.getParentTemplates().size() != 0) {
                             String templateId = host.getParentTemplates().get(0).getTemplateId();
                             for(BriefTemplateDTO templateDTO : allTemplates) {
                                 if(templateDTO.getTemplateId().equals(templateId)) {
-                                    overviewVO.setType(templateDTO.getTemplateGroups().get(0).getName());
+                                    overviewListGroupDTO.setType(templateDTO.getTemplateGroups().get(0).getName());
                                 }
                             }
                         }
                         //state
-                        if(problemHostIds.contains(overviewVO.getcId())) {
-                            overviewVO.setState(StatusEnum.PROBLEM.getName());
+                        if(problemHostIds.contains(overviewListGroupDTO.getcId())) {
+                            overviewListGroupDTO.setState(StatusEnum.PROBLEM.getName());
                         }else {
-                            overviewVO.setState(StatusEnum.OK.getName());
+                            overviewListGroupDTO.setState(StatusEnum.OK.getName());
                         }
                     }
                 }
             }
             //if type = "组" 给group赋值，state：根据cid  = pid，找所有子节点的state ，List<String>，根据所有子节点状态做处理赋值
-            if(OverviewTypeEnum.GROUP.getName().equals(overviewVO.getType()) && !"root".equals(overviewVO.getName())) {
+            if(OverviewTypeEnum.GROUP.getName().equals(overviewListGroupDTO.getType()) && !"root".equals(overviewListGroupDTO.getName())) {
                 List<String> childStates = new ArrayList<>();
-                for(OverviewVO childMongo : overviewVOS) {
-                    if(overviewVO.getcId().equals(childMongo.getpId())) {
+                for(OverviewListGroupDTO childMongo : overviewListGroupDTOS) {
+                    if(overviewListGroupDTO.getcId().equals(childMongo.getpId())) {
                         childStates.add(childMongo.getState());
                     }
                 }
                 //state赋值
                 if(childStates.contains(StatusEnum.PROBLEM.getName())) {
-                    overviewVO.setState(StatusEnum.PROBLEM.getName());
+                    overviewListGroupDTO.setState(StatusEnum.PROBLEM.getName());
                 }else {
-                    overviewVO.setState(StatusEnum.OK.getName());
+                    overviewListGroupDTO.setState(StatusEnum.OK.getName());
                 }
             }
 
         }
         //step:5反转还原
-        Collections.reverse(overviewVOS);
-        return overviewVOS;
+        Collections.reverse(overviewListGroupDTOS);
+        return overviewListGroupDTOS;
     }
 
     @Override
@@ -198,7 +198,7 @@ public class OverviewServiceImpl implements OverviewService {
 
     /**
      * 删除指定分组，并将其下所有子节点移动到上一节点中
-     * @param delGroupId
+     * @param delGroupVOId
      * @return
      * @throws ServiceException
      */
@@ -252,9 +252,9 @@ public class OverviewServiceImpl implements OverviewService {
 
     /**
      * 移动组 操作 move group
-     * @param groupId
-     * @param fromGroupId
-     * @param toGroupId
+     * @param groupVOId
+     * @param fromGroupVOId
+     * @param toGroupVOId
      * @return
      * @throws ServiceException
      */
@@ -360,47 +360,47 @@ public class OverviewServiceImpl implements OverviewService {
         return omh;
     }
 
-    private List<OverviewVO> getGroupTree(String name, List<OverviewVO> overviewVOS, List<BriefHostDTO> allHosts)  {
-        //step1:新建List<OverviewVO> list,OverviewVO mongoGroup,根据name查出mongoGroupDO
+    private List<OverviewListGroupDTO> getGroupTree(String name, List<OverviewListGroupDTO> overviewListGroupDTOS, List<BriefHostDTO> allHosts)  {
+        //step1:新建List<OverviewListGroupDTO> list,OverviewListGroupDTO mongoGroup,根据name查出mongoGroupDO
         Group group = overviewGroupRepository.findByName(name);
         //step2:给vo赋值，cid，pid，name，添加vo到list中
-        OverviewVO mongoGroup = new OverviewVO();
+        OverviewListGroupDTO mongoGroup = new OverviewListGroupDTO();
         mongoGroup.setcId("g" + group.getcId());
         mongoGroup.setpId(group.getpId());
         mongoGroup.setName(group.getName());
         mongoGroup.setType(OverviewTypeEnum.GROUP.getName());
-        overviewVOS.add(mongoGroup);
+        overviewListGroupDTOS.add(mongoGroup);
         //step3:判断DO的group_children.length != 0
         if(group.getGroupChildren().length != 0) {
             //是：循环 group_children ，取name，递归调用 list = getGroupTree(name,list)
             for(String groupName : group.getGroupChildren()) {
-                overviewVOS = getGroupTree(groupName, overviewVOS,allHosts);
+                overviewListGroupDTOS = getGroupTree(groupName, overviewListGroupDTOS,allHosts);
             }
         }
         //step4:取DO的 host_children,循环 add host 到 list中 return list
         for(String hostId : group.getHostChildren()) {
             for(BriefHostDTO host : allHosts) {
                 if(hostId.equals(host.getHostId())) {
-                    OverviewVO mongoHost = new OverviewVO();
+                    OverviewListGroupDTO mongoHost = new OverviewListGroupDTO();
                     mongoHost.setpId(group.getcId());
                     mongoHost.setcId("h" + hostId);
                     mongoHost.setName(host.getName());
-                    overviewVOS.add(mongoHost);
+                    overviewListGroupDTOS.add(mongoHost);
                     //循环allHosts,取监控点
                     List<BriefPointDTO> points = host.getPoints();
                     for(BriefPointDTO point : points) {
-                        OverviewVO mongoPoint = new OverviewVO();
+                        OverviewListGroupDTO mongoPoint = new OverviewListGroupDTO();
                         mongoPoint.setcId("p" + point.getPointId());
                         mongoPoint.setpId(hostId);
                         mongoPoint.setName(point.getName());
                         mongoPoint.setType(OverviewTypeEnum.POINT.getName());
-                        overviewVOS.add(mongoPoint);
+                        overviewListGroupDTOS.add(mongoPoint);
                     }
                 }
 
             }
         }
-        return overviewVOS;
+        return overviewListGroupDTOS;
     }
 
 

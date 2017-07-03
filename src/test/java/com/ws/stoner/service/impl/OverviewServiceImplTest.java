@@ -8,7 +8,7 @@ import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
 import com.ws.stoner.model.dto.OverviewDelGroupDTO;
 import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
 import com.ws.stoner.model.dto.OverviewMoveHostDTO;
-import com.ws.stoner.model.view.OverviewVO;
+import com.ws.stoner.model.dto.OverviewListGroupDTO;
 import com.ws.stoner.service.OverviewService;
 import org.junit.Test;
 import org.junit.Before; 
@@ -110,15 +110,15 @@ public void testFindAll() throws Exception {
 
     @Test
     public void testListMongoTree() throws Exception{
-//        List<OverviewVO> mongoGroupVOS = overviewService.getGroupTree("root",new ArrayList<OverviewVO>());
+//        List<OverviewListGroupDTO> mongoGroupVOS = overviewService.getGroupTree("root",new ArrayList<OverviewListGroupDTO>());
 //        Collections.reverse(mongoGroupVOS);
 //        System.out.println(mongoGroupVOS);
     }
 
     @Test
     public void testListMongo() throws Exception {
-    List<OverviewVO> overviewVOS = overviewService.listOverviewGroup();
-    System.out.println(overviewVOS);
+    List<OverviewListGroupDTO> overviewListGroupDTOS = overviewService.listOverviewGroup();
+    System.out.println(overviewListGroupDTOS);
     }
 
     @Test

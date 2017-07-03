@@ -1,4 +1,4 @@
-package com.ws.stoner.model.view;
+package com.ws.stoner.model.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -6,7 +6,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 /**
  * Created by pc on 2017/6/29.
  */
-public class OverviewVO {
+public class OverviewListGroupDTO {
 
     @JSONField(name = "cid" )
     private String cId;
@@ -19,7 +19,7 @@ public class OverviewVO {
 
     @Override
     public String toString() {
-        return "OverviewVO{" +
+        return "OverviewListGroupDTO{" +
                 "cId='" + cId + '\'' +
                 ", pId='" + pId + '\'' +
                 ", name='" + name + '\'' +
@@ -33,7 +33,7 @@ public class OverviewVO {
         return name;
     }
 
-    public OverviewVO setName(String name) {
+    public OverviewListGroupDTO setName(String name) {
         this.name = name;
         return this;
     }
@@ -43,7 +43,7 @@ public class OverviewVO {
         return cId;
     }
 
-    public OverviewVO setcId(String cId) {
+    public OverviewListGroupDTO setcId(String cId) {
         this.cId = cId;
         return this;
     }
@@ -52,7 +52,7 @@ public class OverviewVO {
         return pId;
     }
 
-    public OverviewVO setpId(String pId) {
+    public OverviewListGroupDTO setpId(String pId) {
         this.pId = pId;
         return this;
     }
@@ -61,7 +61,7 @@ public class OverviewVO {
         return state;
     }
 
-    public OverviewVO setState(String state) {
+    public OverviewListGroupDTO setState(String state) {
         this.state = state;
         return this;
     }
@@ -70,7 +70,7 @@ public class OverviewVO {
         return type;
     }
 
-    public OverviewVO setType(String type) {
+    public OverviewListGroupDTO setType(String type) {
         this.type = type;
         return this;
     }

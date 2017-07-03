@@ -6,7 +6,7 @@ import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
 import com.ws.stoner.model.dto.OverviewDelGroupDTO;
 import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
 import com.ws.stoner.model.dto.OverviewMoveHostDTO;
-import com.ws.stoner.model.view.OverviewVO;
+import com.ws.stoner.model.dto.OverviewListGroupDTO;
 import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +39,13 @@ public class OverviewRestController {
      */
     @RequestMapping(value = "host/overview", method = RequestMethod.GET)
     public String listOverviewGroup() {
-        List<OverviewVO> overviewVo;
+        List<OverviewListGroupDTO> overviewListGroupDTO;
         try {
-            overviewVo = overviewService.listOverviewGroup();
+            overviewListGroupDTO = overviewService.listOverviewGroup();
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
-        return RestResultGenerator.genResult(overviewVo, REST_UPDATE_SUCCESS).toString();
+        return RestResultGenerator.genResult(overviewListGroupDTO, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
