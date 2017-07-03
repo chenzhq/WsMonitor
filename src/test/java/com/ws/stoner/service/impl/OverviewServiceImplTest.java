@@ -6,6 +6,7 @@ import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.model.DO.mongo.Group;
 import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
 import com.ws.stoner.model.dto.OverviewDelGroupDTO;
+import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
 import com.ws.stoner.model.view.OverviewVO;
 import com.ws.stoner.service.OverviewService;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public void testFindAll() throws Exception {
             "root",
             "-1",
             "0",
-            null,
+            "null",
             new String[]{},
             new String[]{}
     );
@@ -140,6 +141,19 @@ public void testFindAll() throws Exception {
     public void testDelOverviewGroup() throws Exception {
         OverviewDelGroupDTO odg = overviewService.deleteOverviewGroup("1");
         System.out.println(odg);
+    }
+
+    @Test
+    public void testMoveOverviewGroup() throws Exception {
+        OverviewMoveGroupDTO omg = overviewService.moveOverviewGroup("g5","g1","g2");
+    }
+
+    @Test
+    public void testInit() throws Exception {
+        testSave();
+        testListMongo();
+        testcreateOverviewGroup();
+
     }
 
 } 

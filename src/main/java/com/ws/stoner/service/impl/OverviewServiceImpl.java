@@ -203,7 +203,8 @@ public class OverviewServiceImpl implements OverviewService {
      * @throws ServiceException
      */
     @Override
-    public OverviewDelGroupDTO deleteOverviewGroup(String delGroupId) throws ServiceException {
+    public OverviewDelGroupDTO deleteOverviewGroup(String delGroupVOId) throws ServiceException {
+        String delGroupId = delGroupVOId.substring(1);
         Group delGroup;
         Group supGroup;
         try {
@@ -244,9 +245,72 @@ public class OverviewServiceImpl implements OverviewService {
         //step5:删除指定组
         overviewGroupRepository.delete(delGroup);
         OverviewDelGroupDTO odg = new OverviewDelGroupDTO();
-        odg.setDelGroupId(delGroupId);
-        odg.setToGroupId(supGroup.getcId());
+        odg.setDelGroupId(delGroupVOId);
+        odg.setToGroupId("g" + supGroup.getcId());
         return odg;
+    }
+
+    /**
+     * 移动组 操作 move group
+     * @param groupId
+     * @param fromGroupId
+     * @param toGroupId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public OverviewMoveGroupDTO moveOverviewGroup(String groupVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+        String groupId = groupVOId.substring(1);
+        String fromGroupId = fromGroupVOId.substring(1);
+        String toGroupId = toGroupVOId.substring(1);
+        //step1:Group组的pid更新为toGroupId
+        Group targetGroup;
+        try {
+            targetGroup = overviewDAO.findGroupByCId(groupId);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        targetGroup.setpId(toGroupId);
+        if("0".equals(toGroupId)) {
+            targetGroup.setFlag("0");
+        }else {
+            targetGroup.setFlag("1");
+        }
+        overviewGroupRepository.save(targetGroup);
+        //step2:from_group组的group_children去掉group的name；
+        Group fromGroup;
+        try {
+            fromGroup = overviewDAO.findGroupByCId(fromGroupId);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        List<String> fromGroupChildrenTemp = Arrays.asList(fromGroup.getGroupChildren());
+        List<String> fromGroupChildren = new ArrayList<>(fromGroupChildrenTemp);
+        fromGroupChildren.remove(targetGroup.getName());
+        fromGroup.setGroupChildren((String[])fromGroupChildren.toArray(new String[0]));
+        overviewGroupRepository.save(fromGroup);
+        //step3:to_group组的group_children添加group的name
+        Group toGroup;
+        try {
+            toGroup = overviewDAO.findGroupByCId(toGroupId);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        List<String> toGroupChildrenTemp = Arrays.asList(toGroup.getGroupChildren());
+        List<String> toGroupChildren = new ArrayList<>(toGroupChildrenTemp);
+        toGroupChildren.add(targetGroup.getName());
+        toGroup.setGroupChildren((String[])toGroupChildren.toArray(new String[0]));
+        overviewGroupRepository.save(toGroup);
+        //组装返回数据对象
+        OverviewMoveGroupDTO omg = new OverviewMoveGroupDTO();
+        omg.setGroupId(groupId);
+        omg.setFromGroupId(fromGroupId);
+        omg.setToGroupId(toGroupId);
+        return omg;
+
     }
 
     private List<OverviewVO> getGroupTree(String name, List<OverviewVO> overviewVOS, List<BriefHostDTO> allHosts)  {

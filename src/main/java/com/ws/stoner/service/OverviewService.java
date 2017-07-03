@@ -3,6 +3,7 @@ package com.ws.stoner.service;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
 import com.ws.stoner.model.dto.OverviewDelGroupDTO;
+import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
 import com.ws.stoner.model.view.OverviewVO;
 
 import java.util.List;
@@ -32,7 +33,17 @@ public interface OverviewService {
      * @return
      * @throws ServiceException
      */
-    OverviewDelGroupDTO deleteOverviewGroup(String delGroupId) throws ServiceException;
+    OverviewDelGroupDTO deleteOverviewGroup(String delGroupVOId) throws ServiceException;
+
+    /**
+     * 移动组 操作 move group
+     * @param groupVOId
+     * @param fromGroupVOId
+     * @param toGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    OverviewMoveGroupDTO moveOverviewGroup(String groupVOId,String fromGroupVOId, String toGroupVOId) throws ServiceException;
 
 
 }
