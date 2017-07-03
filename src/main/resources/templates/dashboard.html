@@ -19,9 +19,8 @@
     <style type="text/css">
 		.pie{height: 200px}
 		.pie_copy{height: 200px;margin-top: 100px}
-		.icon_loading{padding: 190px 0}
-		.ui.tab.segment.active{margin: 12px 0 0 0;height: 540px}
-		.ui.buttons { margin-bottom: 0px;  }
+		.ui.tab.segment.active{margin: 12px 0 0 0;}
+		.tab_height{height: 540px;}
     </style>
 </head>
 
@@ -224,8 +223,7 @@
                                 <a class="item" data-tab="host_datatab">设备</a>
                                 <a class="item" data-tab="point_datatab">监控点</a>
                             </div>
-
-                            <div class="ui tab segment active" data-tab="all_datatab">
+                            <div id="all_page" class="ui tab segment active" data-tab="all_datatab">
                                 <div class="row">
                                     <div class="ui three column grid">
                                         <div class="column">
@@ -241,75 +239,69 @@
                                 </div>
                                 <div class="ui divider"></div>
                                 <div class="row">
-                                    <div class="sixteen wide column">
-                                        <div class="ui grid">
-                                            <div class="six wide column">
-                                                <div class="ui grey large header" >
-                                                    <i class="bar chart icon"></i>
-                                                    最新问题
-                                                </div>
-                                            </div>
-                                            <div class="ten wide column">
-                                                <div class="ui buttons">
-                                                    <button id="time_today" class="ui button">今天</button>
-                                                    <button id="time_days" class="ui button">三天</button>
-                                                    <button id="time_week" class="ui button">一周</button>
-                                                    <button id="time_month" class="ui button">一月</button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <table id="problem_table" class="ui compact celled table center aligned">
-                                            <thead>
-                                            <tr>
-                                                <th class="two wide">主机</th>
-                                                <th class="six wide">问题</th>
-                                                <th class="four wide">上次修改于</th>
-                                                <th class="two wide">历时</th>
-                                                <th class="two wide">确认</th>
-                                            </tr></thead>
-                                            <tbody>
-                                            <tr th:each="problem : ${problemList}">
-                                                <td th:text="${problem.hosts[0].name}">机1</td>
-                                                <td th:text="${problem.description}">主机1内存使用率超过90%</td>
-                                                <td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:ss')}">2017-6-21 15:33:20</td>
-                                                <td th:text="${problem.durationString}">2天4小时50分</td>
-                                                <td><button >不</button></td>
-                                            </tr>
-                                            <tr th:remove="all">
-                                                <td>主机1</td>
-                                                <td>主机1内存使用率超过90%</td>
-                                                <td>2017-6-20 15:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                            </tr>
-                                            <tr th:remove="all">
-                                                <td>主机1</td>
-                                                <td>主机1内存使用率超过90%</td>
-                                                <td>2017-5-19 15:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                            </tr>
-                                            <tr th:remove="all">
-                                                <td>主机1</td>
-                                                <td>主机1内存使用率超过90%</td>
-                                                <td>2017-6-17 15:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                            </tr>
-                                            <tr th:remove="all">
-                                                <td>主机1</td>
-                                                <td>主机1内存使用率超过90%</td>
-                                                <td>2017-6-23 05:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+									<div class="ui secondary menu">
+										<a class="header item">
+											<h3><i class="bar large chart icon"></i>最新问题：</h3>
+										</a>
+										<a class="right item">
+											<div class="ui top attached buttons">
+												<button id="time_today" class="ui button">今天</button>
+												<button id="time_days" class="ui button">三天</button>
+												<button id="time_week" class="ui button">一周</button>
+												<button id="time_month" class="ui button">一月</button>
+											</div>
+										</a>
+									</div>
+									<table id="problem_table" class="ui compact celled table center aligned">
+										<thead>
+										<tr>
+											<th class="two wide">主机</th>
+											<th class="six wide">问题</th>
+											<th class="four wide">上次修改于</th>
+											<th class="two wide">历时</th>
+											<th class="two wide">确认</th>
+										</tr></thead>
+										<tbody>
+										<tr th:each="problem : ${problemList}">
+											<td th:text="${problem.hosts[0].name}">机1</td>
+											<td th:text="${problem.description}">主机1内存使用率超过90%</td>
+											<td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:ss')}">2017-6-21 15:33:20</td>
+											<td th:text="${problem.durationString}">2天4小时50分</td>
+											<td>不</td>
+										</tr>
+										<tr th:remove="all">
+											<td>主机1</td>
+											<td>主机1内存使用率超过90%</td>
+											<td>2017-6-20 15:33:20</td>
+											<td><p>2天4小时50分</p></td>
+											<td>不</td>
+										</tr>
+										<tr th:remove="all">
+											<td>主机1</td>
+											<td>主机1内存使用率超过90%</td>
+											<td>2017-5-19 15:33:20</td>
+											<td><p>2天4小时50分</p></td>
+											<td>不</td>
+										</tr>
+										<tr th:remove="all">
+											<td>主机1</td>
+											<td>主机1内存使用率超过90%</td>
+											<td>2017-6-17 15:33:20</td>
+											<td><p>2天4小时50分</p></td>
+											<td><a class="item">不</a></td>
+										</tr>
+										<tr th:remove="all">
+											<td>主机1</td>
+											<td>主机1内存使用率超过90%</td>
+											<td>2017-6-23 05:33:20</td>
+											<td><p>2天4小时50分</p></td>
+											<td>不</td>
+										</tr>
+										</tbody>
+									</table>
                                 </div>
                             </div>
-                            <div class="ui tab segment" data-tab="platform_datatab">
+                            <div id="platform_page" class="tab_height ui tab segment" data-tab="platform_datatab">
                                 <div class="row">
                                     <div class="sixteen wide column">
                                         <div class="ui grid">
@@ -324,7 +316,7 @@
                                     </div>
                                 </div>
                             </div>
-							<div class="ui tab segment" data-tab="host_datatab">
+							<div class="tab_height ui tab segment" data-tab="host_datatab">
 								<div class="row">
 									<div class="sixteen wide column">
 										<div class="ui grid">
@@ -339,7 +331,7 @@
 									</div>
 								</div>
 							</div>
-                            <div class="ui tab segment" data-tab="point_datatab">
+                            <div class="tab_height ui tab segment" data-tab="point_datatab">
                                 <div class="row">
                                     <div class="sixteen wide column">
                                         <div class="ui grid">
@@ -379,7 +371,7 @@
     //给搜索按钮绑定点击事件
     $(document).ready(function () {
         var table = $('#problem_table').DataTable({
-            "iDisplayLength" : 3,
+            "iDisplayLength" : 10,
 		});
         $('#time_today').click(function(){
             drawsearch(1);
@@ -431,7 +423,7 @@
             subtext: '业务系统',
             x: 'center',
             y: 'center',
-            itemGap: 10,
+            itemGap: 1,
             textStyle: {
                 color: '#01AAED',
                 fontFamily: '微软雅黑',
@@ -447,7 +439,7 @@
             {
                 name: '访问来源',
                 type: 'pie',
-                radius: ['52%', '82%'],
+                radius: ['40%', '65%'],
                 selectedMode: 'single',
                 itemStyle: {
                     normal: {
@@ -462,7 +454,7 @@
                         }
                     },
                 },
-                data: [],
+                data: [ ],
                 color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
             }
         ]
@@ -497,6 +489,10 @@
             });
         }
     })
+    platform_myChart.on('click', function (param) {
+        /*$("#all_page").removeClass('active');
+        $("#platform_page").addClass('active');*/
+    });
     //设备pie
     var host_myChart = echarts.init(document.getElementById('host_pie'));
     var host_option={
@@ -505,7 +501,7 @@
             subtext: '设备',
             x: 'center',
             y: 'center',
-            itemGap: 10,
+            itemGap: 1,
             textStyle: {
                 color: '#01AAED',
                 fontFamily: '微软雅黑',
@@ -521,7 +517,7 @@
             {
                 name: '访问来源',
                 type: 'pie',
-                radius: ['52%', '82%'],
+                radius: ['40%', '65%'],
                 selectedMode: 'single',
                 itemStyle: {
                     normal: {
@@ -578,7 +574,7 @@
             subtext: '监控点',
             x: 'center',
             y: 'center',
-            itemGap: 10,
+            itemGap: 1,
             textStyle: {
                 color: '#01AAED',
                 fontFamily: '微软雅黑',
@@ -592,8 +588,9 @@
         },
         series: [
             {
+                name: '访问来源',
                 type: 'pie',
-                radius: ['52%', '82%'],
+                radius: ['40%', '65%'],
                 selectedMode: 'single',
                 itemStyle: {
                     normal: {
@@ -643,8 +640,6 @@
         }
     })
 	//tabdata切换加载
-    //取消选择
-
     $('.menu .item')
         .tab({
             'onFirstLoad': function(path){
@@ -679,9 +674,9 @@
                             {
                                 "data": null,
                                 "width": "50px",
-                                "title": "问题数/问题总数",
+                                "title": "设备问题数／设备总数",
                                 render: function(data, type, row, meta) {
-                                    return  row.problemNum + '个/' + row.allNum + '个';
+                                    return  row.problemNum + '/' + row.allNum ;
                                 }
                             },
                             {
@@ -696,7 +691,6 @@
 					var last_param;//上一次点击状态
 					var num;//点击次数
 					platform_copy_myChart.on('click', function (param) {
-					    console.log(param)
 						var index = param.dataIndex;
 						if(index==0)
 						{
@@ -755,9 +749,9 @@
                             {
                                 "data": null,
                                 "width": "50px",
-                                "title": "问题数/问题总数",
+                                "title": "监控点问题数／监控点总数",
                                 render: function(data, type, row, meta) {
-                                    return  row.problemNum + '个/' + row.allNum + '个';
+                                    return  row.problemNum + '/' + row.allNum ;
                                 }
                             },
                             {
@@ -768,6 +762,8 @@
                             }
                         ],
                     });
+                    var last_param;//上一次点击状态
+                    var num;//点击次数
                     host_copy_myChart.on('click', function (param) {
                         var index = param.dataIndex;
                         if(index==0)
@@ -777,6 +773,15 @@
                         else
                         {
                             host_table.search( "问题" ).draw();
+                        }
+                        if (last_param==index){
+                            num++;
+                            if(num%2 == 0){
+                                host_table.search("").draw();
+                            }
+                        }else {
+                            last_param=index;
+                            num=1;
                         }
                     });
                 }
@@ -817,6 +822,8 @@
                             },
                         ],
                     });
+                    var last_param;//上一次点击状态
+                    var num;//点击次数
                     point_copy_myChart.on('click', function (param) {
                         var index = param.dataIndex;
                         if(index==0)
@@ -826,6 +833,15 @@
                         else
                         {
                             point_table.search( "问题" ).draw();
+                        }
+                        if (last_param==index){
+                            num++;
+                            if(num%2 == 0){
+                                point_table.search("").draw();
+                            }
+                        }else {
+                            last_param=index;
+                            num=1;
                         }
                     });
                 }
