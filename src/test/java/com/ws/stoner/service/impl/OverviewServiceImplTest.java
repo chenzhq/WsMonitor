@@ -7,6 +7,7 @@ import com.ws.stoner.model.DO.mongo.Group;
 import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
 import com.ws.stoner.model.dto.OverviewDelGroupDTO;
 import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
+import com.ws.stoner.model.dto.OverviewMoveHostDTO;
 import com.ws.stoner.model.view.OverviewVO;
 import com.ws.stoner.service.OverviewService;
 import org.junit.Test;
@@ -146,6 +147,11 @@ public void testFindAll() throws Exception {
     @Test
     public void testMoveOverviewGroup() throws Exception {
         OverviewMoveGroupDTO omg = overviewService.moveOverviewGroup("g5","g1","g2");
+    }
+
+    @Test
+    public void testMoveOverviewHost() throws Exception {
+        OverviewMoveHostDTO omh = overviewService.moveOverviewHost("h10084","g1","g2");
     }
 
     @Test

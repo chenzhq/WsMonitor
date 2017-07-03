@@ -313,6 +313,53 @@ public class OverviewServiceImpl implements OverviewService {
 
     }
 
+    /**
+     * 移动设备 操作 move host
+     * @param hostVOId
+     * @param fromGroupVOId
+     * @param toGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public OverviewMoveHostDTO moveOverviewHost(String hostVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+        String hostId = hostVOId.substring(1);
+        String fromGroupId = fromGroupVOId.substring(1);
+        String toGroupId = toGroupVOId.substring(1);
+        //step1:from_group组的host_children去掉host原设备的id；
+        Group fromGroup ;
+        try {
+            fromGroup = overviewDAO.findGroupByCId(fromGroupId);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        List<String> fromHostChildrenTemp = Arrays.asList(fromGroup.getHostChildren());
+        List<String> fromHostChildren = new ArrayList<>(fromHostChildrenTemp);
+        fromHostChildren.remove(hostId);
+        fromGroup.setHostChildren((String[])fromHostChildren.toArray(new String[0]));
+        overviewGroupRepository.save(fromGroup);
+        //step2:to_group组的host_children添加host原设备的id
+        Group toGroup ;
+        try {
+            toGroup= overviewDAO.findGroupByCId(toGroupId);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        List<String> toHostChildrenTemp = Arrays.asList(toGroup.getHostChildren());
+        List<String> toHostChildren = new ArrayList<>(toHostChildrenTemp);
+        toHostChildren.add(hostId);
+        toGroup.setHostChildren((String[])toHostChildren.toArray(new String[0]));
+        overviewGroupRepository.save(toGroup);
+        //step3:组装返回数据
+        OverviewMoveHostDTO omh = new OverviewMoveHostDTO();
+        omh.setHostId(hostVOId);
+        omh.setFromGroupId(fromGroupVOId);
+        omh.setToGroupId(toGroupVOId);
+        return omh;
+    }
+
     private List<OverviewVO> getGroupTree(String name, List<OverviewVO> overviewVOS, List<BriefHostDTO> allHosts)  {
         //step1:新建List<OverviewVO> list,OverviewVO mongoGroup,根据name查出mongoGroupDO
         Group group = overviewGroupRepository.findByName(name);

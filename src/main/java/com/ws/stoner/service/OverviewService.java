@@ -4,6 +4,7 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
 import com.ws.stoner.model.dto.OverviewDelGroupDTO;
 import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
+import com.ws.stoner.model.dto.OverviewMoveHostDTO;
 import com.ws.stoner.model.view.OverviewVO;
 
 import java.util.List;
@@ -44,6 +45,16 @@ public interface OverviewService {
      * @throws ServiceException
      */
     OverviewMoveGroupDTO moveOverviewGroup(String groupVOId,String fromGroupVOId, String toGroupVOId) throws ServiceException;
+
+    /**
+     * 移动设备 操作 move host
+     * @param hostVOId
+     * @param fromGroupVOId
+     * @param toGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    OverviewMoveHostDTO moveOverviewHost(String hostVOId,String fromGroupVOId,String toGroupVOId) throws ServiceException;
 
 
 }
