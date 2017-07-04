@@ -19,6 +19,7 @@ import com.ws.stoner.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import java.util.List;
  * Created by pc on 2017/6/28.
  */
 @Service
+@Transactional
 public class OverviewServiceImpl implements OverviewService {
 
     @Autowired
