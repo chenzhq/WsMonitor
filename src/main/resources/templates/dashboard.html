@@ -415,6 +415,7 @@
 </script>
 <script type="text/javascript">
 	//饼状图
+    var all_index;//记录切换页面时饼状图点击状态
     //业务系统pie
     var platform_myChart = echarts.init(document.getElementById('platform_pie'));
     var platform_option={
@@ -490,8 +491,8 @@
         }
     })
     platform_myChart.on('click', function (param) {
-        /*$("#all_page").removeClass('active');
-        $("#platform_page").addClass('active');*/
+		all_index =param.dataIndex;
+        $('.menu .item').tab('change tab','platform_datatab',all_index);
     });
     //设备pie
     var host_myChart = echarts.init(document.getElementById('host_pie'));
@@ -566,6 +567,10 @@
             });
         }
     })
+    host_myChart.on('click', function (param) {
+        all_index =param.dataIndex;
+        $('.menu .item').tab('change tab','host_datatab',all_index);
+    });
     //监控点pie
     var point_myChart = echarts.init(document.getElementById('point_pie'));
     var point_option = {
@@ -639,19 +644,21 @@
             });
         }
     })
+    point_myChart.on('click', function (param) {
+        all_index =param.dataIndex;
+        $('.menu .item').tab('change tab','point_datatab',all_index);
+    });
 	//tabdata切换加载
     $('.menu .item')
         .tab({
             'onFirstLoad': function(path){
 				if(path === 'platform_datatab') {
-					var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
+                    var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
                     platform_copy_myChart.setOption(platform_option);
-                    //业务系统datatable
-					$("#platform_table").html("");
-					var platform_table = $("#platform_table").DataTable({
+                    var platform_table = $("#platform_table").DataTable({
                         "createdRow": function (row, data, dataIndex) {
                             if (data.state== "正常") {
-                                $(row).addClass('positive ');
+                                $(row).addClass('positive');
                             } else {
                                 $(row).addClass('negative');
                             }
@@ -662,15 +669,15 @@
                         },
                         columns: [
                             {
-                            "data": "name",
-							"width": "100px",
-							"title": "名称"
-							},
-							{
-							    "data": "availability",
-								"width": "100px",
-								"title": "可能性"
-							},
+                                "data": "name",
+                                "width": "100px",
+                                "title": "名称"
+                            },
+                            {
+                                "data": "availability",
+                                "width": "100px",
+                                "title": "可能性"
+                            },
                             {
                                 "data": null,
                                 "width": "50px",
@@ -681,45 +688,51 @@
                             },
                             {
                                 "data": "state",
-								"width": "50px",
-								"title": "状态",
+                                "width": "50px",
+                                "title": "状态",
                                 "orderable": false,
-							}
-						],
-					});
-
-					var last_param;//上一次点击状态
-					var num;//点击次数
-					platform_copy_myChart.on('click', function (param) {
-						var index = param.dataIndex;
-						if(index==0)
-						{
-							platform_table.search( "正常" ).draw();
-						}
-						else
-						{
-							platform_table.search( "问题" ).draw();
-						}
+                            }
+                        ],
+                    });
+                    if(all_index==0)
+					{
+                        platform_table.search("正常").draw();
+					}
+					if(all_index==1)
+					{
+                        platform_table.search("问题").draw();
+					}
+                    var last_param;//上一次点击状态
+                    var num;//点击次数
+                    platform_copy_myChart.on('click', function (param) {
+                        var index = param.dataIndex;
+                        if(index==0)
+                        {
+                            platform_table.search( "正常" ).draw();
+                        }
+                        else
+                        {
+                            platform_table.search( "问题" ).draw();
+                        }
                         if (last_param==index){
                             num++;
                             if(num%2 == 0){
                                 platform_table.search("").draw();
-							}
+                            }
                         }else {
                             last_param=index;
                             num=1;
-						}
+                        }
                     });
                 }
                 if(path === 'host_datatab') {
 					var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
                     host_copy_myChart.setOption(host_option);
                     //设备datatable
-                    $("#host_table").html("");
                     var host_table = $("#host_table").DataTable({
                         "createdRow": function (row, data, dataIndex) {
                             if (data.state== "正常") {
-                                $(row).addClass('positive ');
+                                $(row).addClass('positive');
                             } else {
                                 $(row).addClass('negative');
                             }
@@ -762,6 +775,14 @@
                             }
                         ],
                     });
+                    if(all_index==0)
+                    {
+                        host_table.search("正常").draw();
+                    }
+                    if(all_index==1)
+                    {
+                        host_table.search("问题").draw();
+                    }
                     var last_param;//上一次点击状态
                     var num;//点击次数
                     host_copy_myChart.on('click', function (param) {
@@ -789,7 +810,6 @@
 					var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
                     point_copy_myChart.setOption(point_option);
                     //监控点datatable
-                    $("#point_table").html("");
                     var point_table = $("#point_table").DataTable({
                         "createdRow": function (row, data, dataIndex) {
                             if (data.state== "正常") {
@@ -822,6 +842,14 @@
                             },
                         ],
                     });
+                    if(all_index==0)
+                    {
+                        point_table.search("正常").draw();
+                    }
+                    if(all_index==1)
+                    {
+                        point_table.search("问题").draw();
+                    }
                     var last_param;//上一次点击状态
                     var num;//点击次数
                     point_copy_myChart.on('click', function (param) {
