@@ -216,14 +216,14 @@
 				<!--Site Content-->
                 <div class="sixteen wide tablet sixteen wide computer column">
                     <div class="ui segments">
-                        <div class="ui segment">
-                            <div class="ui pointing secondary menu">
+                        <div class="ui segment" >
+                            <div class="ui pointing secondary menu tab_content">
                                 <a class="item active" data-tab="all_datatab">全部</a>
                                 <a class="item" data-tab="platform_datatab">业务系统</a>
                                 <a class="item" data-tab="host_datatab">设备</a>
                                 <a class="item" data-tab="point_datatab">监控点</a>
                             </div>
-                            <div id="all_page" class="ui tab segment active" data-tab="all_datatab">
+                            <div class="ui tab segment active" data-tab="all_datatab">
                                 <div class="row">
                                     <div class="ui three column grid">
                                         <div class="column">
@@ -301,7 +301,7 @@
 									</table>
                                 </div>
                             </div>
-                            <div id="platform_page" class="tab_height ui tab segment" data-tab="platform_datatab">
+                            <div class="tab_height ui tab segment" data-tab="platform_datatab">
                                 <div class="row">
                                     <div class="sixteen wide column">
                                         <div class="ui grid">
@@ -494,7 +494,7 @@
     })
     platform_myChart.on('click', function (param) {
         platform_index =param.dataIndex;
-        $('.menu .item').tab('change tab','platform_datatab',platform_index);
+        $('.tab_content.menu .item').tab('change tab','platform_datatab',platform_index);
     });
     //设备pie
     var host_myChart = echarts.init(document.getElementById('host_pie'));
@@ -571,7 +571,7 @@
     })
     host_myChart.on('click', function (param) {
         host_index =param.dataIndex;
-        $('.menu .item').tab('change tab','host_datatab',host_index);
+        $('.tab_content.menu .item').tab('change tab','host_datatab',host_index);
     });
     //监控点pie
     var point_myChart = echarts.init(document.getElementById('point_pie'));
@@ -648,7 +648,7 @@
     })
     point_myChart.on('click', function (param) {
      point_index =param.dataIndex;
-        $('.menu .item').tab('change tab','point_datatab',point_index);
+        $('.tab_content.menu .item').tab('change tab','point_datatab',point_index);
     });
 	//tabdata切换加载
     var platform_table = $("#platform_table").DataTable({
@@ -770,7 +770,7 @@
             },
         ],
     });
-    $('.menu .item')
+    $('.tab_content.menu .item')
         .tab({
             'onFirstLoad': function(path){
 				if(path === 'platform_datatab') {
