@@ -249,14 +249,13 @@
 					<div class="content">
 						<div class="ui form">
 							<h4 class="ui dividing header">新建组</h4>
-							<div class="field">
-								<input type="text" name="shipping[first-name]" placeholder="请输入新组名">
+							<div id="new_content" class="field">
 							</div>
 						</div>
 					</div>
 					<div class="actions">
 						<div class="ui button deny">取消</div>
-						<div class="ui green button deny" id="new">确认</div>
+						<div class="ui green button deny" id="new_submit">确认</div>
 					</div>
 				</div>
 
@@ -281,8 +280,8 @@
 						</div>
 					</div>
 					<div class="actions">
-						<div class="ui button deny">Cancel</div>
-						<div class="ui green button deny">Send</div>
+						<div class="ui button deny">取消</div>
+						<div class="ui green button deny" id="delete_submit">确认</div>
 					</div>
 				</div>
 			</div>
@@ -300,7 +299,6 @@
 </th:block>
 <script type="text/javascript">
     $(document).ready(function() {
-
         var host_table = $("#host_table").DataTable({
             "paging": false,
             "ordering": false,
@@ -309,17 +307,15 @@
                 $(".item").click(function(){
                     var arr = this.id.split("_");
                     if (arr[0]=="new"){
-                        $("#new_modal")
-                            .modal('show')
+                        var sup_group=arr[1];//父分组id"
+                        $("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
+                        $("#new_modal").modal('show')
 					}if (arr[0]=="edit"){
-                        $('.ui.modal')
-                            .modal('show')
+                        $('.ui.modal').modal('show')
                     }if (arr[0]=="delete"){
-                        $("#delete_modal")
-                            .modal('show')
+                        $("#delete_modal").modal('show')
                     }if (arr[0]=="move"){
-                        $('.ui.modal')
-                            .modal('show')
+                        $('.ui.modal').modal('show')
                     }
                 });
             },
@@ -373,12 +369,40 @@
                 },
             ],
         });
+
+        //点击事件
+        $('#new_submit').click(function(){
+            var sup_group = $("#new_content input[type='text']").attr("id");
+            var new_group_name = $("#new_content input[type='text']").val();
+            $.ajax({
+                type: "post",
+                url: "/ov/group",
+                data: {sup_group: sup_group, new_group_name: new_group_name},
+                dataType: "json",
+                success: function (result) {
+                    var data = result.data;
+                    var sup_group=data.sup_group;
+                    var new_group=data.new_group;
+                    var new_group_name=data.new_group_name;
+                    //单独添加一行
+                    var singlerow = {"name":new_group_name, "type":'组',"cid":new_group,"pid":sup_group
+                    };
+                    host_table.row.add(singlerow).draw();
+                },
+                error: function () {
+                    alert("失败");
+                }
+            })
+        });
     });
 
-    //点击事件
-    $('#new').click(function(){
 
-	});
+    $('#delete_submit').click(function(){
+        $("#new_content input[type='text']").each(function(){
+            var id = $("#new_content input[type='text']").attr("id");
+            alert("id:"+id+"val"+$(this).val());
+        });
+    });
 </script>
 </body>
 </html>
