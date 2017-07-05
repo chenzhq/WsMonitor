@@ -1,7 +1,11 @@
 package com.ws.stoner.interceptor;
 
+import com.ws.bix4j.ZApi;
 import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.utils.CookieUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -17,9 +21,16 @@ import static com.ws.stoner.constant.CookieConsts.ZBX_SESSION;
 @Component
 public class LoginInterceptor extends HandlerInterceptorAdapter{
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginInterceptor.class);
+    @Autowired
+    private ZApi zApi;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String uri = request.getRequestURI();
+        /*if (request.getHeader("Postman-Token") != null) {
+            LOGGER.debug("request from postman");
+            request.getSession().setAttribute(ZBX_SESSION, "0f9158f4b1e5afbe05f9c1339530df0a");
+        }*/
 
         if (uri.endsWith("/login/") || uri.endsWith("/login")) {
             if(request.getSession() != null && request.getSession().getAttribute(ZBX_SESSION) != null) {

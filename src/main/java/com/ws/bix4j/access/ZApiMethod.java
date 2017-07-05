@@ -35,6 +35,9 @@ public class ZApiMethod {
 
     protected String sendRequest(String requestJson) throws ZApiException {
 
+        if (!requestJson.contains("auth")) {
+            throw new ZApiException(ZApiExceptionEnum.NO_AUTH_ASSIGN, "请求中没有auth");
+        }
         logger.debug("api request json：\n" + requestJson);
 
         // HTTP POST
