@@ -309,7 +309,7 @@
                                                 <div id="platform_pie_copy" class="pie_copy"></div>
                                             </div>
                                             <div class="eleven wide column">
-                                                <table id="platform_table" class="ui compact celled table center aligned">
+                                                <table id="platform_table" class="ui compact celled table center aligned" width="100%">
                                                 </table>
                                             </div>
                                         </div>
@@ -324,7 +324,7 @@
 												<div id="host_pie_copy" class="pie_copy"></div>
 											</div>
 											<div class="eleven wide column">
-												<table id="host_table" class="ui compact celled table center aligned">
+												<table id="host_table" class="ui compact celled table center aligned" width="100%">
 												</table>
 											</div>
 										</div>
@@ -339,7 +339,7 @@
                                                 <div id="point_pie_copy" class="pie_copy"></div>
                                             </div>
                                             <div class="eleven wide column">
-                                                <table id="point_table" class="ui compact celled table center aligned">
+                                                <table id="point_table" class="ui compact celled table center aligned" width="100%">
                                                 </table>
                                             </div>
                                         </div>
@@ -415,7 +415,9 @@
 </script>
 <script type="text/javascript">
 	//饼状图
-    var all_index;//记录切换页面时饼状图点击状态
+    var platform_index;//记录切换页面时饼状图点击状态
+    var host_index;
+    var point_index;
     //业务系统pie
     var platform_myChart = echarts.init(document.getElementById('platform_pie'));
     var platform_option={
@@ -491,8 +493,8 @@
         }
     })
     platform_myChart.on('click', function (param) {
-		all_index =param.dataIndex;
-        $('.menu .item').tab('change tab','platform_datatab',all_index);
+        platform_index =param.dataIndex;
+        $('.menu .item').tab('change tab','platform_datatab',platform_index);
     });
     //设备pie
     var host_myChart = echarts.init(document.getElementById('host_pie'));
@@ -568,8 +570,8 @@
         }
     })
     host_myChart.on('click', function (param) {
-        all_index =param.dataIndex;
-        $('.menu .item').tab('change tab','host_datatab',all_index);
+        host_index =param.dataIndex;
+        $('.menu .item').tab('change tab','host_datatab',host_index);
     });
     //监控点pie
     var point_myChart = echarts.init(document.getElementById('point_pie'));
@@ -645,10 +647,129 @@
         }
     })
     point_myChart.on('click', function (param) {
-        all_index =param.dataIndex;
-        $('.menu .item').tab('change tab','point_datatab',all_index);
+     point_index =param.dataIndex;
+        $('.menu .item').tab('change tab','point_datatab',point_index);
     });
 	//tabdata切换加载
+    var platform_table = $("#platform_table").DataTable({
+        "createdRow": function (row, data, dataIndex) {
+            if (data.state== "正常") {
+                $(row).addClass('positive');
+            } else {
+                $(row).addClass('negative');
+            }
+        },
+        ajax: {
+            url: '/platform/list',
+            dataSrc: 'data'
+        },
+        columns: [
+            {
+                "data": "name",
+                "width": "100px",
+                "title": "名称"
+            },
+            {
+                "data": "availability",
+                "width": "100px",
+                "title": "可能性"
+            },
+            {
+                "data": null,
+                "width": "50px",
+                "title": "设备问题数／设备总数",
+                render: function(data, type, row, meta) {
+                    return  row.problemNum + '/' + row.allNum ;
+                }
+            },
+            {
+                "data": "state",
+                "width": "50px",
+                "title": "状态",
+                "orderable": false,
+            }
+        ],
+    });
+    //设备datatable
+    var host_table = $("#host_table").DataTable({
+        "createdRow": function (row, data, dataIndex) {
+            if (data.state== "正常") {
+                $(row).addClass('positive');
+            } else {
+                $(row).addClass('negative');
+            }
+        },
+        ajax: {
+            url: '/host/list',
+            dataSrc: 'data'
+        },
+        columns: [
+            {
+                "data": "name",
+                "width": "100px",
+                "title": "名称"
+            },
+            {
+                "data": "ip",
+                "width": "100px",
+                "title": "IP",
+                "orderable":false,
+            },
+            {
+                "data": "type",
+                "width": "200px",
+                "title": "类型",
+                "orderable":false,
+            },
+            {
+                "data": null,
+                "width": "200px",
+                "title": "监控点问题数／监控点总数",
+                render: function(data, type, row, meta) {
+                    return  row.problemNum + '/' + row.allNum ;
+                }
+            },
+            {
+                "data": "state",
+                "width": "50px",
+                "title": "状态",
+                "orderable":false,
+            }
+        ],
+    });
+    //监控点datatable
+    var point_table = $("#point_table").DataTable({
+        "createdRow": function (row, data, dataIndex) {
+            if (data.state== "正常") {
+                $(row).addClass('positive ');
+            } else {
+                $(row).addClass('negative');
+            }
+        },
+        ajax: {
+            url: '/point/list',
+            dataSrc: 'data'
+        },
+        columns: [
+            {
+                "data": "name",
+                "width": "30%",
+                "title": "名称"
+            },
+            {
+                "data": "hostName",
+                "width": "40%",
+                "title": "所属设备",
+                "orderable":false,
+            },
+            {
+                "data": "state",
+                "width": "30%",
+                "title": "状态",
+                "orderable":false,
+            },
+        ],
+    });
     $('.menu .item')
         .tab({
             'onFirstLoad': function(path){
@@ -656,53 +777,6 @@
                     var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
                     platform_option.series[0].selectedMode = 'single';
                     platform_copy_myChart.setOption(platform_option);
-                    var platform_table = $("#platform_table").DataTable({
-                        "createdRow": function (row, data, dataIndex) {
-                            if (data.state== "正常") {
-                                $(row).addClass('positive');
-                            } else {
-                                $(row).addClass('negative');
-                            }
-                        },
-                        ajax: {
-                            url: '/platform/list',
-                            dataSrc: 'data'
-                        },
-                        columns: [
-                            {
-                                "data": "name",
-                                "width": "100px",
-                                "title": "名称"
-                            },
-                            {
-                                "data": "availability",
-                                "width": "100px",
-                                "title": "可能性"
-                            },
-                            {
-                                "data": null,
-                                "width": "50px",
-                                "title": "设备问题数／设备总数",
-                                render: function(data, type, row, meta) {
-                                    return  row.problemNum + '/' + row.allNum ;
-                                }
-                            },
-                            {
-                                "data": "state",
-                                "width": "50px",
-                                "title": "状态",
-                                "orderable": false,
-                            }
-                        ],
-                    });
-                    if(all_index==0)
-					{
-                        platform_table.search("正常").draw();
-					}
-					if(all_index==1)
-					{
-                        platform_table.search("问题").draw();
-					}
                     var last_param;//上一次点击状态
                     var num;//点击次数
                     platform_copy_myChart.on('click', function (param) {
@@ -730,61 +804,6 @@
 					var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
                     host_option.series[0].selectedMode = 'single';
 					host_copy_myChart.setOption(host_option);
-                    //设备datatable
-                    var host_table = $("#host_table").DataTable({
-                        "createdRow": function (row, data, dataIndex) {
-                            if (data.state== "正常") {
-                                $(row).addClass('positive');
-                            } else {
-                                $(row).addClass('negative');
-                            }
-                        },
-                        ajax: {
-                            url: '/host/list',
-                            dataSrc: 'data'
-                        },
-                        columns: [
-                            {
-                                "data": "name",
-                                "width": "100px",
-                                "title": "名称"
-                            },
-                            {
-                                "data": "ip",
-                                "width": "100px",
-                                "title": "IP",
-                                "orderable":false,
-                            },
-							{
-                                "data": "type",
-                                "width": "100px",
-                                "title": "类型",
-                                "orderable":false,
-                            },
-                            {
-                                "data": null,
-                                "width": "50px",
-                                "title": "监控点问题数／监控点总数",
-                                render: function(data, type, row, meta) {
-                                    return  row.problemNum + '/' + row.allNum ;
-                                }
-                            },
-                            {
-                                "data": "state",
-                                "width": "50px",
-                                "title": "状态",
-                                "orderable":false,
-                            }
-                        ],
-                    });
-                    if(all_index==0)
-                    {
-                        host_table.search("正常").draw();
-                    }
-                    if(all_index==1)
-                    {
-                        host_table.search("问题").draw();
-                    }
                     var last_param;//上一次点击状态
                     var num;//点击次数
                     host_copy_myChart.on('click', function (param) {
@@ -812,47 +831,6 @@
 					var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
                     point_option.series[0].selectedMode = 'single';
 					point_copy_myChart.setOption(point_option);
-                    //监控点datatable
-                    var point_table = $("#point_table").DataTable({
-                        "createdRow": function (row, data, dataIndex) {
-                            if (data.state== "正常") {
-                                $(row).addClass('positive ');
-                            } else {
-                                $(row).addClass('negative');
-                            }
-                        },
-                        ajax: {
-                            url: '/point/list',
-                            dataSrc: 'data'
-                        },
-                        columns: [
-                            {
-                                "data": "name",
-                                "width": "100px",
-                                "title": "名称"
-                            },
-                            {
-                                "data": "hostName",
-                                "width": "200px",
-                                "title": "所属设备",
-                                "orderable":false,
-                            },
-                            {
-                                "data": "state",
-                                "width": "50px",
-                                "title": "状态",
-                                "orderable":false,
-                            },
-                        ],
-                    });
-                    if(all_index==0)
-                    {
-                        point_table.search("正常").draw();
-                    }
-                    if(all_index==1)
-                    {
-                        point_table.search("问题").draw();
-                    }
                     var last_param;//上一次点击状态
                     var num;//点击次数
                     point_copy_myChart.on('click', function (param) {
@@ -875,6 +853,32 @@
                             num=1;
                         }
                     });
+                }
+            },
+            'onVisible': function(path){
+                if(path === 'platform_datatab') {
+                    if (platform_index == 0) {
+                        platform_table.search("正常").draw();
+                    }
+                    if (platform_index == 1) {
+                        platform_table.search("问题").draw();
+                    }
+                }
+                if(path === 'host_datatab') {
+                    if (host_index == 0) {
+                        host_table.search("正常").draw();
+                    }
+                    if (host_index == 1) {
+                        host_table.search("问题").draw();
+                    }
+                }
+                if(path === 'point_datatab') {
+                    if (point_index == 0) {
+                        point_table.search("正常").draw();
+                    }
+                    if (point_index == 1) {
+                        point_table.search("问题").draw();
+                    }
                 }
             }
         });
