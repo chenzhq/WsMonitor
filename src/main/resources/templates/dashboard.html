@@ -441,7 +441,7 @@
                 name: '访问来源',
                 type: 'pie',
                 radius: ['40%', '65%'],
-                selectedMode: 'single',
+                selectedMode: '',
                 itemStyle: {
                     normal: {
                         label: {
@@ -519,7 +519,7 @@
                 name: '访问来源',
                 type: 'pie',
                 radius: ['40%', '65%'],
-                selectedMode: 'single',
+                selectedMode: '',
                 itemStyle: {
                     normal: {
                         label: {
@@ -596,7 +596,7 @@
                 name: '访问来源',
                 type: 'pie',
                 radius: ['40%', '65%'],
-                selectedMode: 'single',
+                selectedMode: '',
                 itemStyle: {
                     normal: {
                         label: {
@@ -654,6 +654,7 @@
             'onFirstLoad': function(path){
 				if(path === 'platform_datatab') {
                     var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
+                    platform_option.series[0].selectedMode = 'single';
                     platform_copy_myChart.setOption(platform_option);
                     var platform_table = $("#platform_table").DataTable({
                         "createdRow": function (row, data, dataIndex) {
@@ -727,7 +728,8 @@
                 }
                 if(path === 'host_datatab') {
 					var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
-                    host_copy_myChart.setOption(host_option);
+                    host_option.series[0].selectedMode = 'single';
+					host_copy_myChart.setOption(host_option);
                     //设备datatable
                     var host_table = $("#host_table").DataTable({
                         "createdRow": function (row, data, dataIndex) {
@@ -808,7 +810,8 @@
                 }
                 if(path === 'point_datatab') {
 					var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
-                    point_copy_myChart.setOption(point_option);
+                    point_option.series[0].selectedMode = 'single';
+					point_copy_myChart.setOption(point_option);
                     //监控点datatable
                     var point_table = $("#point_table").DataTable({
                         "createdRow": function (row, data, dataIndex) {
