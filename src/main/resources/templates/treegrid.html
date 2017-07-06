@@ -13,7 +13,7 @@
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 	<link rel="stylesheet" href="../static/css/jquery.treegrid.css">
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
 	<style type="text/css">
 	.ui.table.dataTable thead th {
 	border-left: 0px;
@@ -308,6 +308,7 @@
                     var arr = this.id.split("_");
                     if (arr[0]=="new"){
                         var sup_group=arr[1];//父分组id"
+                        $("#new_content").empty();
                         $("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
                         $("#new_modal").modal('show')
 					}if (arr[0]=="edit"){
@@ -384,10 +385,19 @@
                     var sup_group=data.sup_group;
                     var new_group=data.new_group;
                     var new_group_name=data.new_group_name;
-                    //单独添加一行
-                    var singlerow = {"name":new_group_name, "type":'组',"cid":new_group,"pid":sup_group
-                    };
-                    host_table.row.add(singlerow).draw();
+                    console.log("id："+new_group+"名字："+new_group_name+"父级id："+sup_group);
+                    var tmp=['<tr class="treegrid-'+ new_group +' treegrid-parent-'+ sup_group +'">',
+                        '<td class="left aligned">'+new_group_name+'</td>',
+                        '<td>组</td>',
+                        '<td class="no-padding">',
+                        '<div class="ui secondary menu">',
+                        '<a class="right item" id="new_'+new_group+'"> 新建</a><a class="item" id="move_'+new_group+'"> 移动</a><a class="item" id="edit_'+new_group+'"> 编辑</a><a class="item" id="delete_'+new_group+'"> 删除</a>',
+                        '</div>',
+                        '</td>',
+                        '</tr>'].join('');
+                    $('#host_table').find('.treegrid-'+ sup_group).after(tmp);
+                    $("#host_table").treegrid();
+                    console.log("测试1："+$('.treegrid-'+ new_group).html())
                 },
                 error: function () {
                     alert("失败");
