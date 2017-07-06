@@ -54,7 +54,7 @@ public class OverviewRestController {
      * @param supGroupId
      * @return
      */
-    @RequestMapping(value = "vo/group", method = RequestMethod.POST)
+    @RequestMapping(value = "ov/group", method = RequestMethod.POST)
     public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("sup_group") String supGroupId) {
         OverviewCreateGroupDTO ocg = null;
         try {
@@ -70,7 +70,7 @@ public class OverviewRestController {
      * @param delGroupId
      * @return
      */
-    @RequestMapping(value = "vo/group", method = RequestMethod.DELETE)
+    @RequestMapping(value = "ov/group", method = RequestMethod.DELETE)
     public String deleteOverviewGroup(@RequestParam("del_group") String delGroupId) {
         OverviewDelGroupDTO odg = null;
         try {
@@ -88,7 +88,7 @@ public class OverviewRestController {
      * @param toGroupId
      * @return
      */
-    @RequestMapping(value = "vo/group/move", method = RequestMethod.PUT)
+    @RequestMapping(value = "ov/group/move", method = RequestMethod.PUT)
     public String moveOverviewGroup(@RequestParam("group") String groupId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) {
         OverviewMoveGroupDTO omg = null;
         try {
@@ -106,7 +106,7 @@ public class OverviewRestController {
      * @param toGroupId
      * @return
      */
-    @RequestMapping(value = "vo/host/move", method = RequestMethod.PUT)
+    @RequestMapping(value = "ov/host/move", method = RequestMethod.PUT)
     public String moveOverviewHost(@RequestParam("host") String hostId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) {
         OverviewMoveHostDTO omh = null;
         try {
