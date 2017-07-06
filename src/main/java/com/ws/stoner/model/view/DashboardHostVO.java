@@ -12,20 +12,9 @@ public class DashboardHostVO {
     private Integer allNum;
     private String state;
     private String type;
-    private Integer problemNum;//主机下监控点问题数
+    private Integer warningNum;//主机下监控点警告数
+    private Integer hightNum;//严重数
 
-    @Override
-    public String toString() {
-        return "DashboardHostVO{" +
-                "ip='" + ip + '\'' +
-                ", hostId='" + hostId + '\'' +
-                ", name='" + name + '\'' +
-                ", allNum=" + allNum +
-                ", state='" + state + '\'' +
-                ", type='" + type + '\'' +
-                ", problemNum=" + problemNum +
-                '}';
-    }
 
     public String getIp() {
         return ip;
@@ -81,12 +70,35 @@ public class DashboardHostVO {
         return this;
     }
 
-    public Integer getProblemNum() {
-        return problemNum;
+    public Integer getWarningNum() {
+        return warningNum;
     }
 
-    public DashboardHostVO setProblemNum(Integer problemNum) {
-        this.problemNum = problemNum;
+    public DashboardHostVO setWarningNum(Integer warningNum) {
+        this.warningNum = warningNum;
         return this;
+    }
+
+    public Integer getHightNum() {
+        return hightNum;
+    }
+
+    public DashboardHostVO setHightNum(Integer hightNum) {
+        this.hightNum = hightNum;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "DashboardHostVO{" +
+                "ip='" + ip + '\'' +
+                ", hostId='" + hostId + '\'' +
+                ", name='" + name + '\'' +
+                ", allNum=" + allNum +
+                ", state='" + state + '\'' +
+                ", type='" + type + '\'' +
+                ", warningNum=" + warningNum +
+                ", hightNum=" + hightNum +
+                '}';
     }
 }

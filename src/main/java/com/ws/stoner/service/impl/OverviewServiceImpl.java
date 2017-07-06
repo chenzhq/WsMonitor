@@ -8,14 +8,11 @@ import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.manager.HostManager;
-import com.ws.stoner.manager.PointManager;
-import com.ws.stoner.manager.TemplateManager;
-import com.ws.stoner.manager.TriggerManager;
+import com.ws.stoner.service.*;
+import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.DO.mongo.Group;
 import com.ws.stoner.model.dto.OverviewListGroupDTO;
-import com.ws.stoner.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -40,16 +37,10 @@ public class OverviewServiceImpl implements OverviewService {
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    private HostManager hostManager;
+    private HostSerivce hostSerivce;
 
     @Autowired
-    private PointManager pointManager;
-
-    @Autowired
-    private TriggerManager triggerManager;
-
-    @Autowired
-    private TemplateManager templateManager;
+    private TemplateService templateService;
 
     @Autowired
     private OverviewDAO overviewDAO;
@@ -59,30 +50,14 @@ public class OverviewServiceImpl implements OverviewService {
     public List<OverviewListGroupDTO> listOverviewGroup() throws ServiceException {
         //step1:调用  listAllHost()，listProblemHost(triggerIds) ,listAllTemplate(),组装ProblemHostIds
         List<BriefHostDTO> allHosts ;
-        List<String> triggerIds ;
-        List<BriefHostDTO>  problemHosts;
         List<BriefTemplateDTO> allTemplates;
-        List<BriefPointDTO> problemPoints;
         try {
-            triggerIds = triggerManager.getProblemTriggerIds();
-            allHosts = hostManager.listAllHost();
-            problemHosts = hostManager.listProblemHost(triggerIds);
-            allTemplates = templateManager.listAllTemplate();
-            problemPoints = pointManager.listProblemPoint(triggerIds);
+            allHosts = hostSerivce.listAllHost();
+            allTemplates = templateService.listAllTemplate();
         } catch (ManagerException e) {
             e.printStackTrace();
             return null;
         }
-        //组装ids
-        List<String> problemHostIds = new ArrayList<>();
-        List<String> problemPointIds = new ArrayList<>();
-        for(BriefHostDTO host : problemHosts) {
-            problemHostIds.add(host.getHostId());
-        }
-        for(BriefPointDTO point : problemPoints) {
-            problemPointIds.add(point.getPointId());
-        }
-
         //step:2初始化 root节点
         Group root = overviewGroupRepository.findByName("root");
         if(root.getHostChildren().length == 0 && root.getGroupChildren().length == 0) {
@@ -100,18 +75,10 @@ public class OverviewServiceImpl implements OverviewService {
         //step:4 反转list，循环 list，
         Collections.reverse(overviewListGroupDTOS);
         for(OverviewListGroupDTO overviewListGroupDTO : overviewListGroupDTOS) {
-            //if type == "监控点"，则为point,给 point 赋值：state
-            if(OverviewTypeEnum.POINT.getName().equals(overviewListGroupDTO.getType())) {
-                if(problemHostIds.contains(overviewListGroupDTO.getcId())) {
-                    overviewListGroupDTO.setState(StatusEnum.PROBLEM.getName());
-                }else {
-                    overviewListGroupDTO.setState(StatusEnum.OK.getName());
-                }
-            }
-            //if type == null 则为主机，,给所有主机赋值 type，state
+            //if type == null 则为主机，,给所有主机赋值 type
             if(overviewListGroupDTO.getType() == null) {
                 for(BriefHostDTO host : allHosts) {
-                    if(overviewListGroupDTO.getcId().equals(host.getHostId())) {
+                    if(overviewListGroupDTO.getcId().equals("h" + host.getHostId())) {
                         //type
                         if(host.getParentTemplates().size() != 0) {
                             String templateId = host.getParentTemplates().get(0).getTemplateId();
@@ -120,12 +87,6 @@ public class OverviewServiceImpl implements OverviewService {
                                     overviewListGroupDTO.setType(templateDTO.getTemplateGroups().get(0).getName());
                                 }
                             }
-                        }
-                        //state
-                        if(problemHostIds.contains(overviewListGroupDTO.getcId())) {
-                            overviewListGroupDTO.setState(StatusEnum.PROBLEM.getName());
-                        }else {
-                            overviewListGroupDTO.setState(StatusEnum.OK.getName());
                         }
                     }
                 }
@@ -139,8 +100,10 @@ public class OverviewServiceImpl implements OverviewService {
                     }
                 }
                 //state赋值
-                if(childStates.contains(StatusEnum.PROBLEM.getName())) {
-                    overviewListGroupDTO.setState(StatusEnum.PROBLEM.getName());
+                if(childStates.contains(StatusEnum.HIGHT.getName())) {
+                    overviewListGroupDTO.setState(StatusEnum.HIGHT.getName());
+                }else if(childStates.contains(StatusEnum.WARNING.getName())){
+                    overviewListGroupDTO.setState(StatusEnum.WARNING.getName());
                 }else {
                     overviewListGroupDTO.setState(StatusEnum.OK.getName());
                 }
@@ -387,6 +350,13 @@ public class OverviewServiceImpl implements OverviewService {
                     mongoHost.setpId(group.getcId());
                     mongoHost.setcId("h" + hostId);
                     mongoHost.setName(host.getName());
+                    if("2".equals(host.getCustomState()) || "1".equals(host.getCustomAvailableState())) {
+                        mongoHost.setState(StatusEnum.HIGHT.getName());
+                    }else if("1".equals(host.getCustomState()) && "0".equals(host.getCustomAvailableState())){
+                        mongoHost.setState(StatusEnum.WARNING.getName());
+                    }else {
+                        mongoHost.setState(StatusEnum.OK.getName());
+                    }
                     overviewListGroupDTOS.add(mongoHost);
                     //循环allHosts,取监控点
                     List<BriefPointDTO> points = host.getPoints();
@@ -396,6 +366,13 @@ public class OverviewServiceImpl implements OverviewService {
                         mongoPoint.setpId(hostId);
                         mongoPoint.setName(point.getName());
                         mongoPoint.setType(OverviewTypeEnum.POINT.getName());
+                        if("1".equals(point.getCustomState())) {
+                            mongoPoint.setState(StatusEnum.WARNING.getName());
+                        }else if("2".equals(point.getCustomState())) {
+                            mongoPoint.setState(StatusEnum.HIGHT.getName());
+                        }else {
+                            mongoPoint.setState(StatusEnum.OK.getName());
+                        }
                         overviewListGroupDTOS.add(mongoPoint);
                     }
                 }

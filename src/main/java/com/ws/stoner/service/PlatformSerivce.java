@@ -1,4 +1,4 @@
-package com.ws.stoner.manager;
+package com.ws.stoner.service;
 
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.stoner.exception.AuthExpireException;
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by zkf on 2017/6/1.
  */
 @CacheConfig(cacheNames = "platformManager")
-public interface PlatformManager {
+public interface PlatformSerivce {
     /**
      * List hostgroup list.
      *
@@ -37,19 +37,26 @@ public interface PlatformManager {
     int countAllPlatform() throws ManagerException;
 
     /**
-     * 获取问题业务平台数量  problem number
+     * 获取告警业务平台数量  warning number
      * @return
      * @throws ManagerException
      */
-    int countProblemPlatform(List<String> triggerIds) throws ManagerException;
+    int countWarningPlatform() throws ManagerException;
 
+
+    /**
+     * 获取严重业务平台数量  hight number
+     * @return
+     * @throws ManagerException
+     */
+    int countHightPlatform() throws ManagerException;
 
     /**
      * 获取正常的业务平台数量 OK number
      * @return
      * @throws ManagerException
      */
-    int countOkPlatform(List<String> triggerIds) throws ManagerException;
+    int countOkPlatform() throws ManagerException;
 
     /**
      * 获取指定业务平台的所有主机数量 all host number by platformIds
@@ -78,10 +85,17 @@ public interface PlatformManager {
     List<BriefPlatformDTO> listAllPlatform() throws ManagerException;
 
     /**
-     * 获取问题的 platform list problem
+     * 获取告警的 platform list warning
      * @return
      * @throws ManagerException
      */
-    List<BriefPlatformDTO> listProblemPlatform(List<String> triggerIds) throws ManagerException;
+    List<BriefPlatformDTO> listWarningPlatform() throws ManagerException;
+
+    /**
+     * 获取严重的 platform list hight
+     * @return
+     * @throws ManagerException
+     */
+    List<BriefPlatformDTO> listHightPlatform() throws ManagerException;
 
 }

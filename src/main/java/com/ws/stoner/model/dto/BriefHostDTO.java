@@ -12,24 +12,16 @@ public class BriefHostDTO {
     private String hostId;
     private String host;
     private String name;
+    @JSONField(name = "custom_state")
+    private String customState;
+    @JSONField(name = "custom_available_state")
+    private String customAvailableState;
     private List<BriefTemplateDTO> parentTemplates; //通过模板映射类型
     private List<BriefHostInterfaceDTO> interfaces; //通过接口获取ip
     @JSONField(name = "applications")
     private List<BriefPointDTO> points;
 
-    public static final String[] PROPERTY_NAMES = {"hostid", "name"};
-
-    @Override
-    public String toString() {
-        return "BriefHostDTO{" +
-                "hostId='" + hostId + '\'' +
-                ", host='" + host + '\'' +
-                ", name='" + name + '\'' +
-                ", parentTemplates=" + parentTemplates +
-                ", interfaces=" + interfaces +
-                ", points=" + points +
-                '}';
-    }
+    public static final String[] PROPERTY_NAMES = {"hostid", "name","custom_state","custom_available_state"};
 
     public List<BriefPointDTO> getPoints() {
         return points;
@@ -95,9 +87,13 @@ public class BriefHostDTO {
         if (hostId != null ? !hostId.equals(that.hostId) : that.hostId != null) return false;
         if (host != null ? !host.equals(that.host) : that.host != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (customState != null ? !customState.equals(that.customState) : that.customState != null) return false;
+        if (customAvailableState != null ? !customAvailableState.equals(that.customAvailableState) : that.customAvailableState != null)
+            return false;
         if (parentTemplates != null ? !parentTemplates.equals(that.parentTemplates) : that.parentTemplates != null)
             return false;
-        return interfaces != null ? interfaces.equals(that.interfaces) : that.interfaces == null;
+        if (interfaces != null ? !interfaces.equals(that.interfaces) : that.interfaces != null) return false;
+        return points != null ? points.equals(that.points) : that.points == null;
     }
 
     @Override
@@ -105,8 +101,45 @@ public class BriefHostDTO {
         int result = hostId != null ? hostId.hashCode() : 0;
         result = 31 * result + (host != null ? host.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (customState != null ? customState.hashCode() : 0);
+        result = 31 * result + (customAvailableState != null ? customAvailableState.hashCode() : 0);
         result = 31 * result + (parentTemplates != null ? parentTemplates.hashCode() : 0);
         result = 31 * result + (interfaces != null ? interfaces.hashCode() : 0);
+        result = 31 * result + (points != null ? points.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String
+    toString() {
+        return "BriefHostDTO{" +
+                "hostId='" + hostId + '\'' +
+                ", host='" + host + '\'' +
+                ", name='" + name + '\'' +
+                ", customState='" + customState + '\'' +
+                ", customAvailableState='" + customAvailableState + '\'' +
+                ", parentTemplates=" + parentTemplates +
+                ", interfaces=" + interfaces +
+                ", points=" + points +
+                '}';
+    }
+
+    public String getCustomState() {
+        return customState;
+    }
+
+    public BriefHostDTO setCustomState(String customState) {
+        this.customState = customState;
+        return this;
+    }
+
+    public String getCustomAvailableState() {
+        return customAvailableState;
+    }
+
+    public BriefHostDTO setCustomAvailableState(String customAvailableState) {
+        this.customAvailableState = customAvailableState;
+        return this;
+    }
+
 }

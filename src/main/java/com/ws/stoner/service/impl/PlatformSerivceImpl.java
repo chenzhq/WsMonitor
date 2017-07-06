@@ -1,4 +1,4 @@
-package com.ws.stoner.manager.impl;
+package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
@@ -7,9 +7,9 @@ import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.manager.HostManager;
-import com.ws.stoner.manager.PlatformManager;
-import com.ws.stoner.manager.TriggerManager;
+import com.ws.stoner.service.HostSerivce;
+import com.ws.stoner.service.PlatformSerivce;
+import com.ws.stoner.service.TriggerSerivce;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import org.slf4j.Logger;
@@ -23,16 +23,16 @@ import java.util.*;
  * Created by pc on 2017/6/1.
  */
 @Service
-public class PlatformManagerImpl implements PlatformManager {
-    private static final Logger logger = LoggerFactory.getLogger(PlatformManagerImpl.class);
+public class PlatformSerivceImpl implements PlatformSerivce {
+    private static final Logger logger = LoggerFactory.getLogger(PlatformSerivceImpl.class);
     @Autowired
     private ZApi zApi;
 
     @Autowired
-    private HostManager hostManager;
+    private HostSerivce hostSerivce;
 
     @Autowired
-    private TriggerManager triggerManager;
+    private TriggerSerivce triggerSerivce;
 
     @Override
     public List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ManagerException {
@@ -81,7 +81,7 @@ public class PlatformManagerImpl implements PlatformManager {
                 .setGroupIds(platformIds)
                 .setFilter(statusFilter)
                 .setCountOutput(true);
-        int allHostNum = hostManager.countHost(hostGetRequest);
+        int allHostNum = hostSerivce.countHost(hostGetRequest);
         return allHostNum;
     }
 
@@ -94,7 +94,7 @@ public class PlatformManagerImpl implements PlatformManager {
     @Override
     public int countProblemHostByPlatformIds(List<String> platformIds) throws ManagerException {
         //step1:获取问题触发器ids
-        List<String> triggerIds = triggerManager.getProblemTriggerIds();
+        List<String> triggerIds = triggerSerivce.getProblemTriggerIds();
         //step2:根据两个触发器的ids得到主机数量 hosts1
         HostGetRequest hostGetRequest1 = new HostGetRequest();
         Map<String,Object> hostFilter1 = new HashMap<>();
@@ -104,7 +104,7 @@ public class PlatformManagerImpl implements PlatformManager {
                 .setGroupIds(platformIds)
                 .setFilter(hostFilter1)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> host1  = hostManager.listHost(hostGetRequest1);
+        List<BriefHostDTO> host1  = hostSerivce.listHost(hostGetRequest1);
         //step4:筛选四种监控接口中至少一个有问题的主机数量 host2
         HostGetRequest hostGetRequest2 = new HostGetRequest();
         Map<String, Object> hostFilter2 = new HashMap<>();
@@ -118,7 +118,7 @@ public class PlatformManagerImpl implements PlatformManager {
                 .setFilter(hostFilter2)
                 .setSearchByAny(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> host2 = hostManager.listHost(hostGetRequest2);
+        List<BriefHostDTO> host2 = hostSerivce.listHost(hostGetRequest2);
         //step5:去掉重复的主机并求和
         Set<BriefHostDTO> hosts = new HashSet<>();
         hosts.addAll(host1);
@@ -144,22 +144,45 @@ public class PlatformManagerImpl implements PlatformManager {
     }
 
     /**
-     * 获取问题业务平台数量 problem
+     * 获取警告业务平台数量 warning
+     * 根据custom_state字段判断
      * @return
      * @throws ManagerException
      */
     @Override
-    public int countProblemPlatform(List<String> triggerIds) throws ManagerException {
-        //step1:获取问题触发器Ids
-        //step2:根据触发器Ids获取业务平台数量
+    public int countWarningPlatform() throws ManagerException {
+        //step1:根据custom_state字段判断
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        Map<String,Object> groupFilter = new HashMap<>();
+        groupFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_WARNING.value);
         groupRequest.getParams()
-                .setTriggerIds(triggerIds)
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
+                .setFilter(groupFilter)
                 .setCountOutput(true);
-        int problemHostGroupNum  = countPlatform(groupRequest);
-        return problemHostGroupNum;
+        int warningHostGroupNum  = countPlatform(groupRequest);
+        return warningHostGroupNum;
+    }
+
+    /**
+     * 获取严重业务平台数量 hight
+     * 根据custom_state字段判断
+     * @return
+     * @throws ManagerException
+     */
+    @Override
+    public int countHightPlatform() throws ManagerException {
+        //step1:根据custom_state字段判断
+        HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        Map<String,Object> groupFilter = new HashMap<>();
+        groupFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT.value);
+        groupRequest.getParams()
+                .setMonitoredHosts(true)
+                .setRealHosts(true)
+                .setFilter(groupFilter)
+                .setCountOutput(true);
+        int hightHostGroupNum  = countPlatform(groupRequest);
+        return hightHostGroupNum;
     }
 
     /**
@@ -168,9 +191,18 @@ public class PlatformManagerImpl implements PlatformManager {
      * @throws ManagerException
      */
     @Override
-    public int countOkPlatform(List<String> triggerIds) throws ManagerException {
-        int OkPlatformNum = countAllPlatform() - countProblemPlatform(triggerIds);
-        return OkPlatformNum;
+    public int countOkPlatform() throws ManagerException {
+        //step1:根据custom_state字段判断
+        HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        Map<String,Object> groupFilter = new HashMap<>();
+        groupFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_OK.value);
+        groupRequest.getParams()
+                .setMonitoredHosts(true)
+                .setRealHosts(true)
+                .setFilter(groupFilter)
+                .setCountOutput(true);
+        int okHostGroupNum  = countPlatform(groupRequest);
+        return okHostGroupNum;
     }
 
 /*
@@ -196,19 +228,38 @@ public class PlatformManagerImpl implements PlatformManager {
     }
 
     /**
-     * 获取问题的 platform list problem
+     * 获取警告的 platform list warning
      * @return
      * @throws ManagerException
      */
     @Override
-    public List<BriefPlatformDTO> listProblemPlatform(List<String> triggerIds) throws ManagerException {
-        //step1:获取问题触发器Ids
-        //step2:根据触发器Ids获取业务平台数量
+    public List<BriefPlatformDTO> listWarningPlatform() throws ManagerException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        Map<String, Object> platformFilter = new HashMap<>();
+        platformFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_WARNING);
         groupRequest.getParams()
-                .setTriggerIds(triggerIds)
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
+                .setFilter(platformFilter)
+                .setOutput(BriefPlatformDTO.PROPERTY_NAMES);
+        List<BriefPlatformDTO> problemPlatforms  = listPlatform(groupRequest);
+        return problemPlatforms;
+    }
+
+    /**
+     * 获取严重的 platform list hight
+     * @return
+     * @throws ManagerException
+     */
+    @Override
+    public List<BriefPlatformDTO> listHightPlatform() throws ManagerException {
+        HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        Map<String, Object> platformFilter = new HashMap<>();
+        platformFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT);
+        groupRequest.getParams()
+                .setMonitoredHosts(true)
+                .setRealHosts(true)
+                .setFilter(platformFilter)
                 .setOutput(BriefPlatformDTO.PROPERTY_NAMES);
         List<BriefPlatformDTO> problemPlatforms  = listPlatform(groupRequest);
         return problemPlatforms;

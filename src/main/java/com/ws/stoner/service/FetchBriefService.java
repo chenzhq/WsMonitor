@@ -47,11 +47,6 @@ public interface FetchBriefService {
     List<DashboardPointVO> listDashboardPoint() throws ServiceException;
 
 
-    /**
-     *
-     * @return
-     * @throws ServiceException
-     */
-    List<BriefProblemVO> listBriefProblems() throws ServiceException;
+
 
 }

@@ -1,11 +1,7 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
-import com.ws.stoner.model.dto.OverviewDelGroupDTO;
-import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
-import com.ws.stoner.model.dto.OverviewMoveHostDTO;
-import com.ws.stoner.model.dto.OverviewListGroupDTO;
+import com.ws.stoner.model.dto.*;
 
 import java.util.List;
 
@@ -55,6 +51,7 @@ public interface OverviewService {
      * @throws ServiceException
      */
     OverviewMoveHostDTO moveOverviewHost(String hostVOId,String fromGroupVOId,String toGroupVOId) throws ServiceException;
+
 
 
 }

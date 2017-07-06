@@ -1,4 +1,4 @@
-package com.ws.stoner.manager;
+package com.ws.stoner.service;
 
 import com.ws.bix4j.access.template.TemplateGetRequest;
 import com.ws.stoner.exception.ManagerException;
@@ -12,7 +12,7 @@ import java.util.List;
  * Created by zkf on 2017/6/19.
  */
 @CacheConfig(cacheNames = "templateManager")
-public interface TemplateManager {
+public interface TemplateService {
     /**
      * 根据 request 获取模板总数量
      * @return

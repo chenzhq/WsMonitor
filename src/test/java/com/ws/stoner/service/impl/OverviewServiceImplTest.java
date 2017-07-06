@@ -4,11 +4,8 @@ import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.model.DO.mongo.Group;
-import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
-import com.ws.stoner.model.dto.OverviewDelGroupDTO;
-import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
-import com.ws.stoner.model.dto.OverviewMoveHostDTO;
-import com.ws.stoner.model.dto.OverviewListGroupDTO;
+import com.ws.stoner.model.dto.*;
+import com.ws.stoner.service.HostSerivce;
 import com.ws.stoner.service.OverviewService;
 import org.junit.Test;
 import org.junit.Before; 
@@ -18,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /** 
@@ -110,7 +109,8 @@ public void testFindAll() throws Exception {
 
     @Test
     public void testListMongoTree() throws Exception{
-//        List<OverviewListGroupDTO> mongoGroupVOS = overviewService.getGroupTree("root",new ArrayList<OverviewListGroupDTO>());
+//        List<BriefHostDTO> allhosts = hostSerivce.listAllHost();
+//        List<OverviewListGroupDTO> mongoGroupVOS = overviewService.getGroupTree("root",new ArrayList<OverviewListGroupDTO>(),allhosts);
 //        Collections.reverse(mongoGroupVOS);
 //        System.out.println(mongoGroupVOS);
     }

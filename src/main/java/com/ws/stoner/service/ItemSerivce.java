@@ -1,4 +1,4 @@
-package com.ws.stoner.manager;
+package com.ws.stoner.service;
 
 
 import com.ws.bix4j.access.item.ItemGetRequest;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by zkf on 2017/6/9.
  */
-public interface ItemManager {
+public interface ItemSerivce {
     /**
      * 根据request请求获取item list
      *

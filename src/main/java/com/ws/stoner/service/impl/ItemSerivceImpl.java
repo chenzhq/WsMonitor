@@ -1,11 +1,11 @@
-package com.ws.stoner.manager.impl;
+package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.manager.ItemManager;
+import com.ws.stoner.service.ItemSerivce;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +18,9 @@ import java.util.List;
  * Created by pc on 2017/6/9.
  */
 @Service
-public class ItemManagerImpl implements ItemManager {
+public class ItemSerivceImpl implements ItemSerivce {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostManagerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostSerivceImpl.class);
     @Autowired
     private ZApi zApi;
 
