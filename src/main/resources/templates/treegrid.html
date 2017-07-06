@@ -13,7 +13,7 @@
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 	<link rel="stylesheet" href="../static/css/jquery.treegrid.css">
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 	<style type="text/css">
 	.ui.table.dataTable thead th {
 	border-left: 0px;
@@ -36,29 +36,29 @@
 			<a class="title item" href="tab.html">
 				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
 			</a>
-			<a class="item" href="table.html">
+			<a class="item active" href="treegrid.html">
 				<i class="ion-ios-world titleIcon  icon"></i>业务概览
 			</a>
 			<div class="title item">
 				<i class="ion-mouse titleIcon icon"></i>设备概览<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
-				<a class="item" href="tab.html">服务器</a>
-				<a class="item" href="table.html">网络设备</a>
-				<a class="item" href="error.html">数据库</a>
-				<a class="item" href="login.html">应用</a>
+				<a class="item" href="#">服务器</a>
+				<a class="item" href="#">网络设备</a>
+				<a class="item" href="#">数据库</a>
+				<a class="item" href="#">应用</a>
 			</div>
-			<a class="title item" href="error.html">
+			<a class="title item" href="#">
 				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
 			</a>
 			<div class="title item">
 				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
-				<a class="item" href="error.html">告警日历</a>
-				<a class="item" href="error.html">告警列表</a>
+				<a class="item" href="#">告警日历</a>
+				<a class="item" href="#">告警列表</a>
 			</div>
-			<a class="title item" href="error.html">
+			<a class="title item" href="#">
 				<i class="ion-briefcase titleIcon icon"></i>报表统计
 			</a>
 		</div>
