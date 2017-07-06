@@ -100,7 +100,7 @@ public class OverviewRestController {
     }
 
     /**
-     * 移动组
+     * 移动设备
      * @param hostId
      * @param fromGroupId
      * @param toGroupId

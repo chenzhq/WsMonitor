@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * Created by zkf on 2017/6/1.
  */
-@CacheConfig(cacheNames = "pointManager")
 public interface PointSerivce {
 
     /**
@@ -82,7 +81,6 @@ public interface PointSerivce {
      * @return
      * @throws ManagerException
      */
-    @Cacheable
     List<BriefPointDTO> listAllPoint() throws ManagerException;
 
     /**

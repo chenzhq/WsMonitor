@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * Created by zkf on 2017/6/1.
  */
-@CacheConfig(cacheNames = "platformManager")
 public interface PlatformSerivce {
     /**
      * List hostgroup list.
@@ -81,7 +80,6 @@ public interface PlatformSerivce {
      * @return
      * @throws ManagerException
      */
-    @Cacheable
     List<BriefPlatformDTO> listAllPlatform() throws ManagerException;
 
     /**

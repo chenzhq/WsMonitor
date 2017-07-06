@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * Created by chenzheqi on 2017/5/23.
  */
-@CacheConfig(cacheNames = "hostManager")
 public interface HostSerivce {
 
 /*
@@ -80,7 +79,6 @@ public interface HostSerivce {
      * @return
      * @throws ManagerException
      */
-    @Cacheable
     List<BriefHostDTO> listAllHost() throws ManagerException;
 
     /**
