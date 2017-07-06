@@ -1,4 +1,4 @@
-package com.ws.stoner.manager;
+package com.ws.stoner.service;
 
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.stoner.exception.ManagerException;
@@ -12,7 +12,7 @@ import java.util.List;
  * Created by chenzheqi on 2017/5/23.
  */
 @CacheConfig(cacheNames = "hostManager")
-public interface HostManager {
+public interface HostSerivce {
 
 /*
  *count host
@@ -43,23 +43,33 @@ public interface HostManager {
     int countAllHost() throws ManagerException;
 
     /**
-     * 获取问题主机数量
-     * 1、根据触发器状态获取问题主机
-     * filter: a.  state:up to date  value:problem  only_true:true
-     *         b.  state:unknown
-     * 2、筛选四种监控接口中至少一个有问题的主机，这是另一部分问题状态的主机filter+searchByAny
+     * 获取告警主机数量
+     * 1、根据custom_state 和 custom_available_state字段联合判断是否是问题主机：
+     *  custom_state = 1，表示根据触发器状态是问题设定主机为问题
+     *  custom_available_state = 1，表示根据四种接口判断是否为问题主机
      * @return
      * @throws ManagerException
      */
-    int countProblemHost(List<String> triggerIds) throws ManagerException;
+    int countWarningHost() throws ManagerException;
+
+    /**
+     * 获取严重主机数量
+     * 1、根据custom_state 和 custom_available_state字段联合判断是否是严重主机：
+     *  custom_state = 2，表示根据触发器状态是问题设定主机为问题 或者
+     *  custom_available_state = 1，表示根据四种接口判断是否为问题主机
+     * @return
+     * @throws ManagerException
+     */
+    int countHightHost() throws ManagerException;
 
     /**
      * 获取正常主机的数量
-     *  okHostNum = allHostNum - problemHostNum
+     * 根据custom_state 和 custom_available_state字段联合判断是否是正常主机：
+     * custom_state和custom_available_state同时为0即为正常
      * @return
      * @throws ManagerException
      */
-    int countOkHost(List<String> triggerIds) throws ManagerException;
+    int countOkHost() throws ManagerException;
 
 /*
  *list host
@@ -74,18 +84,25 @@ public interface HostManager {
     List<BriefHostDTO> listAllHost() throws ManagerException;
 
     /**
-     * 获取问题主机 list  problem
+     * 获取警告主机 list  warning
      * @return
      * @throws ManagerException
      */
-    List<BriefHostDTO> listProblemHost(List<String> triggerIds) throws ManagerException;
+    List<BriefHostDTO> listWarningHost() throws ManagerException;
+
+    /**
+     * 获取严重主机 list  hight
+     * @return
+     * @throws ManagerException
+     */
+    List<BriefHostDTO> listHightHost() throws ManagerException;
 
     /**
      * 获取OK主机 list OK
      * @return
      * @throws ManagerException
      */
-    List<BriefHostDTO> listOkHost(List<String> triggerIds) throws ManagerException;
+    List<BriefHostDTO> listOkHost() throws ManagerException;
 
 
 

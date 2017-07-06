@@ -1,4 +1,4 @@
-package com.ws.stoner.manager;
+package com.ws.stoner.service;
 
 import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.stoner.exception.ManagerException;
@@ -12,7 +12,7 @@ import java.util.List;
  * Created by zkf on 2017/6/1.
  */
 @CacheConfig(cacheNames = "pointManager")
-public interface PointManager {
+public interface PointSerivce {
 
     /**
      * 根据 request 获取监控点数量
@@ -38,18 +38,25 @@ public interface PointManager {
     int countAllPoint() throws ManagerException;
 
     /**
-     * 获取所有的问题监控点
+     * 获取所有的警告监控点  point  warning
      * @return
      * @throws ManagerException
      */
-    int countProblemPoint(List<String> triggerIds) throws ManagerException;
+    int countWarningPoint() throws ManagerException;
+
+    /**
+     * 获取所有的严重监控点  point  hight
+     * @return
+     * @throws ManagerException
+     */
+    int countHightPoint() throws ManagerException;
 
     /**
      * 获取正常监控点
      * @return
      * @throws ManagerException
      */
-    int countOkPoint(List<String> triggerIds) throws  ManagerException;
+    int countOkPoint() throws  ManagerException;
 
     /**
      * 获取指定主机的所有监控点数量  all point hostids number
@@ -79,11 +86,18 @@ public interface PointManager {
     List<BriefPointDTO> listAllPoint() throws ManagerException;
 
     /**
-     * 获取问题监控点 point list
+     * 获取警告监控点 point list warning
      * @return
      * @throws ManagerException
      */
-    List<BriefPointDTO> listProblemPoint(List<String> triggerIds) throws ManagerException;
+    List<BriefPointDTO> listWarningPoint() throws ManagerException;
+
+    /**
+     * 获取严重监控点 point list hight
+     * @return
+     * @throws ManagerException
+     */
+    List<BriefPointDTO> listHightPoint() throws ManagerException;
 
 
 }

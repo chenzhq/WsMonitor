@@ -11,10 +11,31 @@ public class BriefPlatformDTO {
     @JSONField(name = "groupid")
     private String platformId;
     private String name;
+    @JSONField(name = "custom_state")
+    private String customState;
     @JSONField(name = "hosts")
     private List<BriefHostDTO> hosts;
 
-    public static final String[] PROPERTY_NAMES = {"groupid","name"};
+    public static final String[] PROPERTY_NAMES = {"groupid","name","custom_state"};
+
+    @Override
+    public String toString() {
+        return "BriefPlatformDTO{" +
+                "platformId='" + platformId + '\'' +
+                ", name='" + name + '\'' +
+                ", customState='" + customState + '\'' +
+                ", hosts=" + hosts +
+                '}';
+    }
+
+    public String getCustomState() {
+        return customState;
+    }
+
+    public BriefPlatformDTO setCustomState(String customState) {
+        this.customState = customState;
+        return this;
+    }
 
     public String getPlatformId() {
         return platformId;
@@ -23,15 +44,6 @@ public class BriefPlatformDTO {
     public BriefPlatformDTO setPlatformId(String platformId) {
         this.platformId = platformId;
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return "BriefPlatformDTO{" +
-                "platformId='" + platformId + '\'' +
-                ", name='" + name + '\'' +
-                ", hosts=" + hosts +
-                '}';
     }
 
     public List<BriefHostDTO> getHosts() {

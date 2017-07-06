@@ -2,7 +2,7 @@ package com.ws.stoner.controller;
 
 import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.manager.UserManager;
+import com.ws.stoner.service.UserService;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.query.LoginFormQuery;
@@ -38,7 +38,7 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
     @Autowired
-    private UserManager userManager;
+    private UserService userService;
     @Autowired
     private Map<String, String> sessionMap;
 
@@ -54,7 +54,7 @@ public class LoginController {
             request.getSession().setAttribute(ZBX_SESSION, zbx_session);
             request.getSession().setAttribute(REMEMBER_ME, true);
 
-            UserInfoDTO userInfo = userManager.getUser(userId);
+            UserInfoDTO userInfo = userService.getUser(userId);
             request.getSession().setAttribute(CookieConsts.USER_INFO, userInfo);
             sessionMap.put(request.getSession().getId(), zbx_session);
             return "redirect:/dashboard";

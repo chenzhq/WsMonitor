@@ -1,10 +1,10 @@
-package com.ws.stoner.manager.impl;
+package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.manager.ItemManager;
+import com.ws.stoner.service.ItemSerivce;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import org.junit.Test;
 import org.junit.Before; 
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
-* ItemManagerImpl Tester.
+* ItemSerivceImpl Tester.
 * 
 * @author <Authors name> 
 * @since <pre>六月 9, 2017</pre> 
@@ -26,10 +26,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class ItemManagerImplTest {
+public class ItemSerivceImplTest {
 
     @Autowired
-    private ItemManager itemManager;
+    private ItemSerivce itemSerivce;
 
     @Autowired
     private ZApi zApi;
@@ -52,7 +52,7 @@ public void after() throws Exception {
 public void testListItem() throws Exception { 
 //TODO: Test goes here...
     ItemGetRequest itemGetRequest = new ItemGetRequest();
-    List<BriefItemDTO> items = itemManager.listItem(itemGetRequest);
+    List<BriefItemDTO> items = itemSerivce.listItem(itemGetRequest);
     System.out.println(items.toString());
 
 }
@@ -63,7 +63,7 @@ public void testListItem() throws Exception {
         List<String> triggerIds = new ArrayList<String>();
         triggerIds.add("10021");
         triggerIds.add("10047");
-        List<ItemDO> items = itemManager.listItemByTriggerIds(triggerIds);
+        List<ItemDO> items = itemSerivce.listItemByTriggerIds(triggerIds);
         System.out.println(items.toString());
 
     }

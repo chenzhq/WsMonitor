@@ -1,10 +1,10 @@
-package com.ws.stoner.manager.impl;
+package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.template.TemplateGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.manager.TemplateManager;
+import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.dto.BriefTemplateGroupDTO;
 import org.slf4j.Logger;
@@ -18,9 +18,9 @@ import java.util.List;
  * Created by pc on 2017/6/19.
  */
 @Service
-public class TemplateManagerImpl implements TemplateManager {
+public class TemplateServiceImpl implements TemplateService {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostManagerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostSerivceImpl.class);
     @Autowired
     private ZApi zApi;
 

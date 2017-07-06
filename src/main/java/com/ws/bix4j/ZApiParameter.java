@@ -88,6 +88,39 @@ public class ZApiParameter {
     }
 
     /**
+     * 设备、监控点、业务平台、监控项的问题指标字段 custom_state
+     * CUSTOM_STATE_OK(0) 对象状态 0表示正常 1表示警告 2表示严重
+     * CUSTOM_STATE_WARNING(1)
+     * CUSTOM_STATE_HIGHT(2)
+     */
+    public static enum OBJECT_STATE  {
+        CUSTOM_STATE_OK(0), CUSTOM_STATE_WARNING(1),CUSTOM_STATE_HIGHT(2);
+
+        public int value;
+
+        private OBJECT_STATE(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
+     * 设备的问题指标字段 custom_available_state
+     * CUSTOM_AVAILABLE_STATE_OK(0)  只有主机才有这个字段，主机联合CUSTOM_STATE一同判断对象状态，0表示4种接口中全部正常
+     * CUSTOM_AVAILABLE_STATE_PROBLEM(1)  1表示4中接口中其中至少有一个有问题
+     */
+    public static enum HOST_AVAILABLE_STATE  {
+        CUSTOM_AVAILABLE_STATE_OK(0), CUSTOM_AVAILABLE_STATE_PROBLEM(1);
+
+        public int value;
+
+        private HOST_AVAILABLE_STATE(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
      * 主机维护获取数据type
      * WITH_DATA(0) 维护状态获取数据
      * WITHOUT_DATA(1) 维护状态不获取数据

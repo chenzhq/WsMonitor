@@ -1,16 +1,18 @@
-package com.ws.stoner.manager;
+package com.ws.stoner.service;
 
 
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
+import com.ws.stoner.model.view.BriefProblemVO;
 
 import java.util.List;
 
 /**
  * Created by zkf on 2017/6/8.
  */
-public interface TriggerManager {
+public interface TriggerSerivce {
     /**
      * 根据 request 获取触发器 list
      *
@@ -34,6 +36,13 @@ public interface TriggerManager {
      * @throws ManagerException
      */
     int countTrigger(TriggerGetRequest request) throws ManagerException;
+
+    /**
+     *
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefProblemVO> listBriefProblems() throws ServiceException;
 
 
 }

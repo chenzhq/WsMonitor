@@ -1,4 +1,4 @@
-package com.ws.stoner.manager.impl;
+package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
@@ -7,7 +7,9 @@ import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
-import com.ws.stoner.manager.TriggerManager;
+import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.view.BriefProblemVO;
+import com.ws.stoner.service.TriggerSerivce;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +25,9 @@ import java.util.Map;
  * Created by pc on 2017/6/8.
  */
 @Service
-public class TriggerManagerImpl implements TriggerManager {
+public class TriggerSerivceImpl implements TriggerSerivce {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostManagerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostSerivceImpl.class);
     @Autowired
     private ZApi zApi;
 
@@ -111,5 +113,20 @@ public class TriggerManagerImpl implements TriggerManager {
             return 0;
         }
         return triggerNum;
+    }
+
+    @Override
+    public List<BriefProblemVO> listBriefProblems() {
+        TriggerGetRequest request = new TriggerGetRequest();
+        Map<String, Integer> triggerFilter = new HashMap<>();
+        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
+        request.getParams()
+                .setMonitored(true)
+                .setOnlyTrue(true)
+                .setExpandDescription(true)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setOutput(BriefProblemVO.PROPERTY_NAMES)
+                .setFilter(triggerFilter);
+        return listTrigger(request, BriefProblemVO.class);
     }
 }

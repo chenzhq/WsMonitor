@@ -3,7 +3,7 @@ package com.ws.stoner.controller;
 import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.view.BriefProblemVO;
-import com.ws.stoner.service.FetchBriefService;
+import com.ws.stoner.service.TriggerSerivce;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,14 +20,14 @@ import java.util.List;
 public class DashboardController {
 
     @Autowired
-    private FetchBriefService fetchBriefService;
+    private TriggerSerivce triggerSerivce;
 
     @RequestMapping(value = {"/", ""})
     public ModelAndView dashboard(Model model) throws ManagerException {
         ModelAndView mav = new ModelAndView("dashboard");
         List<BriefProblemVO> problemVOList = null;
         try {
-            problemVOList = fetchBriefService.listBriefProblems();
+            problemVOList = triggerSerivce.listBriefProblems();
         } catch (ServiceException e) {
             e.printStackTrace();
         }
