@@ -224,15 +224,17 @@
 										<i class="grey circle icon"></i>  20
 									</p>
 								</a>
+
 								<a class="right item">
 									类型：
-									<select class="ui search dropdown" name="type">
-										<option value="">所有</option>
-										<option value="1">组</option>
-										<option value="2">服务器</option>
-										<option value="3">数据库</option>
-										<option value="4">网络设备</option>
-									</select>
+                                    <select id="ui_dropdown" class="ui dropdown">
+                                        <option value="">选择类型</option>
+                                        <option>组</option>
+                                        <option>服务器</option>
+                                        <option>数据库</option>
+                                        <option>网络设备</option>
+										<option>监控点</option>
+                                    </select>
 								</a>
 							</div>
 						</div>
@@ -404,15 +406,22 @@
                 }
             })
         });
-    });
-
-
-    $('#delete_submit').click(function(){
-        $("#new_content input[type='text']").each(function(){
-            var id = $("#new_content input[type='text']").attr("id");
-            alert("id:"+id+"val"+$(this).val());
+        $('#delete_submit').click(function(){
+            $("#new_content input[type='text']").each(function(){
+                var id = $("#new_content input[type='text']").attr("id");
+                alert("id:"+id+"val"+$(this).val());
+            });
+        });
+        //下拉框事件
+        $("#ui_dropdown").change(function(){
+            //code...});
+            var tmp=$("#ui_dropdown").val()
+            host_table.search(tmp).draw();
         });
     });
+
+
+
 </script>
 </body>
 </html>
