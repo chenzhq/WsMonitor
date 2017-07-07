@@ -375,6 +375,7 @@
 
         //点击事件
         $('#new_submit').click(function(){
+
             var sup_group = $("#new_content input[type='text']").attr("id");
             var new_group_name = $("#new_content input[type='text']").val();
             $.ajax({
@@ -387,19 +388,26 @@
                     var sup_group=data.sup_group;
                     var new_group=data.new_group;
                     var new_group_name=data.new_group_name;
-                    console.log("id："+new_group+"名字："+new_group_name+"父级id："+sup_group);
-                    var tmp=['<tr class="treegrid-'+ new_group +' treegrid-parent-'+ sup_group +'">',
-                        '<td class="left aligned">'+new_group_name+'</td>',
-                        '<td>组</td>',
-                        '<td class="no-padding">',
-                        '<div class="ui secondary menu">',
-                        '<a class="right item" id="new_'+new_group+'"> 新建</a><a class="item" id="move_'+new_group+'"> 移动</a><a class="item" id="edit_'+new_group+'"> 编辑</a><a class="item" id="delete_'+new_group+'"> 删除</a>',
-                        '</div>',
-                        '</td>',
-                        '</tr>'].join('');
-                    $('#host_table').find('.treegrid-'+ sup_group).after(tmp);
+                    host_table.row.add( {
+                        "cid": new_group,
+                        "name": new_group_name,
+                        "pid": sup_group,
+                        "state": "",
+                        "type": "组"
+                    } ).draw();
+                    var index;
+                    var last=host_table.data().length;
+                    for(var i = 0; i < host_table.data().length; i++) {
+                        var array = host_table.data()
+                        if (sup_group == array[i].cid) {
+                            index =i;
+                        }
+                    }
+                    var data = host_table.data();
+                    host_table.clear();
+                    data.splice((index + 1), 0, data.splice(-1,1)[0]);
+                    host_table.rows.add(data).draw();
                     $("#host_table").treegrid();
-                    console.log("测试1："+$('.treegrid-'+ new_group).html())
                 },
                 error: function () {
                     alert("失败");
@@ -418,10 +426,49 @@
             var tmp=$("#ui_dropdown").val()
             host_table.search(tmp).draw();
         });
+        //下拉框事件
+        $("#ui_dropdown").change(function(){
+            //code...});
+            var tmp=$("#ui_dropdown").val()
+            host_table.search(tmp).draw();
+        });
     });
 
 
+	/*var tmp=['<tr class="treegrid-'+ new_group +' treegrid-parent-'+ sup_group +'">',
+	 '<td class="left aligned">'+new_group_name+'</td>',
+	 '<td>组</td>',
+	 '<td class="no-padding">',
+	 '<div class="ui secondary menu">',
+	 '<a class="right item" id="new_'+new_group+'"> 新建</a><a class="item" id="move_'+new_group+'"> 移动</a><a class="item" id="edit_'+new_group+'"> 编辑</a><a class="item" id="delete_'+new_group+'"> 删除</a>',
+	 '</div>',
+	 '</td>',
+	 '</tr>'].join('');
+	 $('#host_table').find('.treegrid-'+ sup_group).after(tmp);
+	 var new_row= {
+	 "cid": new_group,
+	 "name": new_group_name,
+	 "pid": sup_group,
+	 "state": "",
+	 "type": "组"
+	 };
+	 for(var i = 0; i < host_table.data().length; i++) {
+	 var array=host_table.data()
+	 if(sup_group==array[i].cid){
+	 array.splice(i+1,0,new_row);
+	 console.log(array);
+	 }
+	 }
 
+	 $("#host_table").dataTable().fnClearTable();//清空table数据
+	 $("#host_table").dataTable().fnAddData(array);//重新绑定table数据
+
+	 host_table.draw();
+	 console.log(host_table.data());
+	 */
 </script>
 </body>
 </html>
+
+
+
