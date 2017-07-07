@@ -36,7 +36,7 @@
 			<a class="title item" href="tab.html">
 				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
 			</a>
-			<a class="item active" href="treegrid.html">
+			<a class="item active" href="overview.html">
 				<i class="ion-ios-world titleIcon  icon"></i>业务概览
 			</a>
 			<div class="title item">
@@ -306,21 +306,6 @@
             "ordering": false,
             "initComplete": function () {//初始化后回调
                 $("#host_table").treegrid();
-                $(".item").click(function(){
-                    var arr = this.id.split("_");
-                    if (arr[0]=="new"){
-                        var sup_group=arr[1];//父分组id"
-                        $("#new_content").empty();
-                        $("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
-                        $("#new_modal").modal('show')
-					}if (arr[0]=="edit"){
-                        $('.ui.modal').modal('show')
-                    }if (arr[0]=="delete"){
-                        $("#delete_modal").modal('show')
-                    }if (arr[0]=="move"){
-                        $('.ui.modal').modal('show')
-                    }
-                });
             },
             "createdRow": function (row, data, dataIndex) {
                 if (data.pid== null) {
@@ -364,56 +349,15 @@
                     "title": "操作",
                     render: function(data, type, row, meta) {
                         if(row.type=="组"){
-                            return '<div class="ui secondary menu"><a class="right item" id="new_'+row.cid+'"> 新建</a><a class="item" id="move_'+row.cid+'"> 移动</a><a class="item" id="edit_'+row.cid+'"> 编辑</a><a class="item" id="delete_'+row.cid+'"> 删除</a></div>';
+                            return '<div class="ui secondary menu"><a class="right item new" id="new_'+row.cid+'"> 新建</a><a class="item move" id="move_'+row.cid+'"> 移动</a><a class="item edit" id="edit_'+row.cid+'"> 编辑</a><a class="item delete" id="delete_'+row.cid+'"> 删除</a></div>';
                         }else {
-                            return '<div class="ui secondary menu"><a class="right item" id="move_'+row.cid+'"> 移动</a><a class="item" id="edit_'+row.cid+'"> 编辑</a></div>';
+                            return '<div class="ui secondary menu"><a class="right item move" id="move_'+row.cid+'"> 移动</a><a class="item edit" id="edit_'+row.cid+'"> 编辑</a></div>';
                         }
                     }
                 },
             ],
         });
 
-        //点击事件
-        $('#new_submit').click(function(){
-
-            var sup_group = $("#new_content input[type='text']").attr("id");
-            var new_group_name = $("#new_content input[type='text']").val();
-            $.ajax({
-                type: "post",
-                url: "/ov/group",
-                data: {sup_group: sup_group, new_group_name: new_group_name},
-                dataType: "json",
-                success: function (result) {
-                    var data = result.data;
-                    var sup_group=data.sup_group;
-                    var new_group=data.new_group;
-                    var new_group_name=data.new_group_name;
-                    host_table.row.add( {
-                        "cid": new_group,
-                        "name": new_group_name,
-                        "pid": sup_group,
-                        "state": "",
-                        "type": "组"
-                    } ).draw();
-                    var index;
-                    var last=host_table.data().length;
-                    for(var i = 0; i < host_table.data().length; i++) {
-                        var array = host_table.data()
-                        if (sup_group == array[i].cid) {
-                            index =i;
-                        }
-                    }
-                    var data = host_table.data();
-                    host_table.clear();
-                    data.splice((index + 1), 0, data.splice(-1,1)[0]);
-                    host_table.rows.add(data).draw();
-                    $("#host_table").treegrid();
-                },
-                error: function () {
-                    alert("失败");
-                }
-            })
-        });
         $('#delete_submit').click(function(){
             $("#new_content input[type='text']").each(function(){
                 var id = $("#new_content input[type='text']").attr("id");
@@ -426,46 +370,58 @@
             var tmp=$("#ui_dropdown").val()
             host_table.search(tmp).draw();
         });
-        //下拉框事件
-        $("#ui_dropdown").change(function(){
-            //code...});
-            var tmp=$("#ui_dropdown").val()
-            host_table.search(tmp).draw();
+        //点击新建事件
+        $('#host_table tbody').on('click', '.new', function(e) {
+            e.preventDefault();
+            var index= host_table.row($(this).parents('tr')).index();
+            var arr = this.id.split("_");
+            if (arr[0]=="new"){
+                var sup_group=arr[1];
+                $("#new_content").empty();
+                $("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
+                $("#new_modal").modal('show');
+                //提交新建事件
+                $('#new_submit').click(function(){
+                    var sup_group = $("#new_content input[type='text']").attr("id");
+                    var new_group_name = $("#new_content input[type='text']").val();
+                    $.ajax({
+                        type: "post",
+                        url: "/ov/group",
+                        data: {sup_group: sup_group, new_group_name: new_group_name},
+                        dataType: "json",
+                        success: function (result) {
+                            var data = result.data;
+                            var sup_group=data.sup_group;
+                            var new_group=data.new_group;
+                            var new_group_name=data.new_group_name;
+                            host_table.row.add( {
+                                "cid": new_group,
+                                "name": new_group_name,
+                                "pid": sup_group,
+                                "state": "",
+                                "type": "组"
+                            } ).draw();
+                            var data = host_table.data();
+                            host_table.clear();
+                            data.splice((index + 1), 0, data.splice(-1,1)[0]);
+                            host_table.rows.add(data).draw();
+                            $("#host_table").treegrid();
+                        },
+                        error: function () {
+                            alert("失败");
+                        }
+                    })
+                });
+            }if (arr[0]=="edit"){
+                $('.ui.modal').modal('show')
+            }if (arr[0]=="delete"){
+                $("#delete_modal").modal('show')
+            }if (arr[0]=="move"){
+                $('.ui.modal').modal('show')
+            }
         });
     });
 
-
-	/*var tmp=['<tr class="treegrid-'+ new_group +' treegrid-parent-'+ sup_group +'">',
-	 '<td class="left aligned">'+new_group_name+'</td>',
-	 '<td>组</td>',
-	 '<td class="no-padding">',
-	 '<div class="ui secondary menu">',
-	 '<a class="right item" id="new_'+new_group+'"> 新建</a><a class="item" id="move_'+new_group+'"> 移动</a><a class="item" id="edit_'+new_group+'"> 编辑</a><a class="item" id="delete_'+new_group+'"> 删除</a>',
-	 '</div>',
-	 '</td>',
-	 '</tr>'].join('');
-	 $('#host_table').find('.treegrid-'+ sup_group).after(tmp);
-	 var new_row= {
-	 "cid": new_group,
-	 "name": new_group_name,
-	 "pid": sup_group,
-	 "state": "",
-	 "type": "组"
-	 };
-	 for(var i = 0; i < host_table.data().length; i++) {
-	 var array=host_table.data()
-	 if(sup_group==array[i].cid){
-	 array.splice(i+1,0,new_row);
-	 console.log(array);
-	 }
-	 }
-
-	 $("#host_table").dataTable().fnClearTable();//清空table数据
-	 $("#host_table").dataTable().fnAddData(array);//重新绑定table数据
-
-	 host_table.draw();
-	 console.log(host_table.data());
-	 */
 </script>
 </body>
 </html>
