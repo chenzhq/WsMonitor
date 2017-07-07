@@ -677,9 +677,9 @@
             {
                 "data": null,
                 "width": "50px",
-                "title": "设备问题数／设备总数",
+                "title": "严重／警告/设备总数",
                 render: function(data, type, row, meta) {
-                    return  row.problemNum + '/' + row.allNum ;
+                    return  row.hightNum + '/' +row.warningNum + '/'+ row.allNum ;
                 }
             },
             {
@@ -724,9 +724,9 @@
             {
                 "data": null,
                 "width": "200px",
-                "title": "监控点问题数／监控点总数",
+                "title": "严重／警告/监控点总数",
                 render: function(data, type, row, meta) {
-                    return  row.problemNum + '/' + row.allNum ;
+                    return  row.hightNum + '/' +row.warningNum + '/'+ row.allNum ;
                 }
             },
             {
