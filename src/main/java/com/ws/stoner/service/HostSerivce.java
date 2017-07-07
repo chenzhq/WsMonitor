@@ -1,10 +1,8 @@
 package com.ws.stoner.service;
 
 import com.ws.bix4j.access.host.HostGetRequest;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -20,9 +18,9 @@ public interface HostSerivce {
     /**
      * 根据 request 获取主机总数量
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countHost(HostGetRequest request) throws ManagerException;
+    int countHost(HostGetRequest request) throws ServiceException;
 
 
 
@@ -30,16 +28,16 @@ public interface HostSerivce {
      * List host list.
      *
      * @return the list
-     * @throws ManagerException the auth expire exception
+     * @throws ServiceException the auth expire exception
      */
-    List<BriefHostDTO> listHost(HostGetRequest request) throws ManagerException;
+    List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException;
 
     /**
      * 获取主机总数量，排除停用主机，filter： status:0
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countAllHost() throws ManagerException;
+    int countAllHost() throws ServiceException;
 
     /**
      * 获取告警主机数量
@@ -47,9 +45,9 @@ public interface HostSerivce {
      *  custom_state = 1，表示根据触发器状态是问题设定主机为问题
      *  custom_available_state = 1，表示根据四种接口判断是否为问题主机
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countWarningHost() throws ManagerException;
+    int countWarningHost() throws ServiceException;
 
     /**
      * 获取严重主机数量
@@ -57,18 +55,18 @@ public interface HostSerivce {
      *  custom_state = 2，表示根据触发器状态是问题设定主机为问题 或者
      *  custom_available_state = 1，表示根据四种接口判断是否为问题主机
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countHightHost() throws ManagerException;
+    int countHightHost() throws ServiceException;
 
     /**
      * 获取正常主机的数量
      * 根据custom_state 和 custom_available_state字段联合判断是否是正常主机：
      * custom_state和custom_available_state同时为0即为正常
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countOkHost() throws ManagerException;
+    int countOkHost() throws ServiceException;
 
 /*
  *list host
@@ -77,30 +75,30 @@ public interface HostSerivce {
     /**
      *  获取简约所有主机list 剔除停用的
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    List<BriefHostDTO> listAllHost() throws ManagerException;
+    List<BriefHostDTO> listAllHost() throws ServiceException;
 
     /**
      * 获取警告主机 list  warning
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    List<BriefHostDTO> listWarningHost() throws ManagerException;
+    List<BriefHostDTO> listWarningHost() throws ServiceException;
 
     /**
      * 获取严重主机 list  hight
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    List<BriefHostDTO> listHightHost() throws ManagerException;
+    List<BriefHostDTO> listHightHost() throws ServiceException;
 
     /**
      * 获取OK主机 list OK
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    List<BriefHostDTO> listOkHost() throws ManagerException;
+    List<BriefHostDTO> listOkHost() throws ServiceException;
 
 
 

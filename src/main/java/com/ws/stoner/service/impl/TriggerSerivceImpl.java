@@ -6,7 +6,7 @@ import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.service.TriggerSerivce;
@@ -32,7 +32,7 @@ public class TriggerSerivceImpl implements TriggerSerivce {
     private ZApi zApi;
 
     @Override
-    public List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ManagerException {
+    public List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ServiceException {
         List<BriefTriggerDTO> triggers;
         try {
             triggers = zApi.Trigger().get(request,BriefTriggerDTO.class);
@@ -45,7 +45,7 @@ public class TriggerSerivceImpl implements TriggerSerivce {
     }
 
     @Override
-    public List<String> getProblemTriggerIds() throws ManagerException {
+    public List<String> getProblemTriggerIds() throws ServiceException {
         //step1:获取state:up to date 触发器list
         TriggerGetRequest triggerGetRequest1 = new TriggerGetRequest();
         Map<String, Object> triggerFilter1 = new HashMap<>();
@@ -58,7 +58,7 @@ public class TriggerSerivceImpl implements TriggerSerivce {
         List<BriefTriggerDTO> triggers1 ;
         try {
             triggers1 = listTrigger(triggerGetRequest1);
-        } catch (ManagerException e) {
+        } catch (ServiceException e) {
             e.printStackTrace();
             return null;
         }
@@ -72,7 +72,7 @@ public class TriggerSerivceImpl implements TriggerSerivce {
         List<BriefTriggerDTO> triggers2 ;
         try {
             triggers2 = listTrigger(triggerGetRequest2);
-        } catch (AuthExpireException e) {
+        } catch (ServiceException e) {
             e.printStackTrace();
             return null;
         }
@@ -100,13 +100,13 @@ public class TriggerSerivceImpl implements TriggerSerivce {
 
 
     @Override
-    public int countTrigger(TriggerGetRequest request) throws ManagerException {
+    public int countTrigger(TriggerGetRequest request) throws ServiceException {
         int triggerNum;
         try {
             triggerNum = zApi.Trigger().count(request);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ManagerException("");
+                throw new ServiceException("");
             }
             e.printStackTrace();
             logger.error("查询触发器错误！{}", e.getMessage());
