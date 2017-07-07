@@ -16,7 +16,7 @@ import static com.ws.stoner.constant.CookieConsts.ZBX_SESSION;
  * Created by chenzheqi on 2017/5/10.
  */
 @ControllerAdvice
-public class ExceptionHandlerAdvice {
+public class ControllerExceptionHandler {
 
     @ExceptionHandler(value = AuthExpireException.class)
     public ModelAndView authExpireHandle(HttpServletResponse response) {

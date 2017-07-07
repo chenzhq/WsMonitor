@@ -1,12 +1,7 @@
 package com.ws.stoner.controller.rest;
 
-import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.OverviewCreateGroupDTO;
-import com.ws.stoner.model.dto.OverviewDelGroupDTO;
-import com.ws.stoner.model.dto.OverviewMoveGroupDTO;
-import com.ws.stoner.model.dto.OverviewMoveHostDTO;
-import com.ws.stoner.model.dto.OverviewListGroupDTO;
+import com.ws.stoner.model.dto.*;
 import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.ws.stoner.constant.MessageConsts.REST_CREATE_SUCCESS;
-import static com.ws.stoner.constant.MessageConsts.REST_DELETE_SUCCESS;
-import static com.ws.stoner.constant.MessageConsts.REST_MOVE_SUCCESS;
-import static com.ws.stoner.constant.MessageConsts.REST_UPDATE_SUCCESS;
+import static com.ws.stoner.constant.MessageConsts.*;
 
 
 
@@ -38,13 +30,9 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "host/overview", method = RequestMethod.GET)
-    public String listOverviewGroup() {
+    public String listOverviewGroup() throws ServiceException {
         List<OverviewListGroupDTO> overviewListGroupDTO;
-        try {
-            overviewListGroupDTO = overviewService.listOverviewGroup();
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        overviewListGroupDTO = overviewService.listOverviewGroup();
         return RestResultGenerator.genResult(overviewListGroupDTO, REST_UPDATE_SUCCESS).toString();
     }
 
@@ -55,13 +43,9 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "ov/group", method = RequestMethod.POST)
-    public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("sup_group") String supGroupId) {
+    public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("sup_group") String supGroupId) throws ServiceException {
         OverviewCreateGroupDTO ocg = null;
-        try {
-            ocg =  overviewService.createOverviewGroup(newGroupName,supGroupId);
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        ocg =  overviewService.createOverviewGroup(newGroupName,supGroupId);
         return RestResultGenerator.genResult(ocg, REST_CREATE_SUCCESS).toString();
     }
 
@@ -71,13 +55,9 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "ov/group", method = RequestMethod.DELETE)
-    public String deleteOverviewGroup(@RequestParam("del_group") String delGroupId) {
+    public String deleteOverviewGroup(@RequestParam("del_group") String delGroupId) throws ServiceException {
         OverviewDelGroupDTO odg = null;
-        try {
-            odg =  overviewService.deleteOverviewGroup(delGroupId);
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        odg =  overviewService.deleteOverviewGroup(delGroupId);
         return RestResultGenerator.genResult(odg, REST_DELETE_SUCCESS).toString();
     }
 
@@ -89,13 +69,9 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "ov/group/move", method = RequestMethod.PUT)
-    public String moveOverviewGroup(@RequestParam("group") String groupId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) {
+    public String moveOverviewGroup(@RequestParam("group") String groupId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
         OverviewMoveGroupDTO omg = null;
-        try {
-            omg =  overviewService.moveOverviewGroup(groupId,fromGroupId,toGroupId);
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        omg =  overviewService.moveOverviewGroup(groupId,fromGroupId,toGroupId);
         return RestResultGenerator.genResult(omg, REST_MOVE_SUCCESS).toString();
     }
 
@@ -107,13 +83,9 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "ov/host/move", method = RequestMethod.PUT)
-    public String moveOverviewHost(@RequestParam("host") String hostId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) {
+    public String moveOverviewHost(@RequestParam("host") String hostId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
         OverviewMoveHostDTO omh = null;
-        try {
-            omh =  overviewService.moveOverviewHost(hostId,fromGroupId,toGroupId);
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        omh =  overviewService.moveOverviewHost(hostId,fromGroupId,toGroupId);
         return RestResultGenerator.genResult(omh, REST_MOVE_SUCCESS).toString();
     }
 

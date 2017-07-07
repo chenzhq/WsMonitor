@@ -1,6 +1,5 @@
 package com.ws.stoner.controller.rest;
 
-import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
@@ -42,19 +41,15 @@ public class DashboardRestController {
 
 
     @RequestMapping(value = "host/count", method = RequestMethod.GET)
-    public String countHost() {
+    public String countHost() throws ServiceException {
         StateNumDTO hostState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         int allHostNum = 0;
         int warningHostNum = 0;
         int hightHostNum = 0;
-        try {
-            allHostNum = hostService.countAllHost();
-            warningHostNum = hostService.countWarningHost();
-            hightHostNum = hostService.countHighHost();
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        allHostNum = hostService.countAllHost();
+        warningHostNum = hostService.countWarningHost();
+        hightHostNum = hostService.countHighHost();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningHostNum);
         StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGHT,hightHostNum);
         StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allHostNum - warningHostNum - hightHostNum);
@@ -66,19 +61,15 @@ public class DashboardRestController {
     }
 
     @RequestMapping(value = "point/count",method = RequestMethod.GET)
-    public String countPoint() {
+    public String countPoint() throws ServiceException {
         StateNumDTO pointState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         int allPointNum = 0;
         int warningPointNum = 0;
         int hightPoinNum = 0;
-        try {
-            allPointNum = pointSerivce.countAllPoint();
-            warningPointNum = pointSerivce.countWarningPoint();
-            hightPoinNum = pointSerivce.countHightPoint();
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        allPointNum = pointSerivce.countAllPoint();
+        warningPointNum = pointSerivce.countWarningPoint();
+        hightPoinNum = pointSerivce.countHightPoint();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPointNum);
         StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGHT,hightPoinNum);
         StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPointNum - warningPointNum - hightPoinNum);
@@ -90,19 +81,15 @@ public class DashboardRestController {
     }
 
     @RequestMapping(value = "platform/count", method = RequestMethod.GET)
-    public String countPlatform() {
+    public String countPlatform() throws ServiceException {
         StateNumDTO platformState = new StateNumDTO();
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         int allPlarformNum = 0;
         int warningPlatformNum = 0;
         int hightPlatformNum = 0;
-        try {
-            allPlarformNum = platformService.countAllPlatform();
-            warningPlatformNum = platformService.countWarningPlatform();
-            hightPlatformNum = platformService.countHightPlatform();
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        allPlarformNum = platformService.countAllPlatform();
+        warningPlatformNum = platformService.countWarningPlatform();
+        hightPlatformNum = platformService.countHightPlatform();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPlatformNum);
         StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGHT,hightPlatformNum);
         StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPlarformNum - warningPlatformNum - hightPlatformNum);
@@ -114,17 +101,13 @@ public class DashboardRestController {
     }
 
     @RequestMapping(value = "host/list", method = RequestMethod.GET)
-    public String listHost() {
+    public String listHost() throws ServiceException {
         List<BriefHostDTO> allhostDTO = null;
         List<BriefTemplateDTO> allTemplateDTO = null;
-        try {
-            //step1:取BriefHostDTO 类型所有主机allhostDTO
-            allhostDTO = hostService.listAllHost();
-            //step2:获取所有模板allTemplateDTO
-            allTemplateDTO = templateService.listAllTemplate();
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        //step1:取BriefHostDTO 类型所有主机allhostDTO
+        allhostDTO = hostService.listAllHost();
+        //step2:获取所有模板allTemplateDTO
+        allTemplateDTO = templateService.listAllTemplate();
         //step3:循环给DashBoardHostVO赋值
         List<DashboardHostVO> hostVOS = new ArrayList<>();
         for(BriefHostDTO hostDTO : allhostDTO) {
@@ -173,17 +156,13 @@ public class DashboardRestController {
     }
 
     @RequestMapping(value = "platform/list", method = RequestMethod.GET)
-    public String listPlatform() {
+    public String listPlatform() throws ServiceException {
         List<BriefPlatformDTO> allPlatformDTO = null;
         List<BriefHostDTO> hostDTOS = null;
-        try {
-            //step1:获取BriefPlatformDTO 类型的所有业务平台 allPlatformDTO
-            allPlatformDTO = platformService.listAllPlatform();
-            //step2:取所有监控中的主机，组装hostIds
-            hostDTOS = hostService.listAllHost();
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        //step1:获取BriefPlatformDTO 类型的所有业务平台 allPlatformDTO
+        allPlatformDTO = platformService.listAllPlatform();
+        //step2:取所有监控中的主机，组装hostIds
+        hostDTOS = hostService.listAllHost();
         List<String> hostIds = new ArrayList<>();
         for(BriefHostDTO host : hostDTOS) {
             hostIds.add(host.getHostId());
@@ -229,14 +208,10 @@ public class DashboardRestController {
     }
 
     @RequestMapping(value = "point/list", method = RequestMethod.GET)
-    public String listPoint() {
+    public String listPoint() throws ServiceException {
         //step1:获取BriefPointDTO 类型的所有启用的主机的监控点point allPointDTO
         List<BriefPointDTO> allPointDTO = null;
-        try {
-            allPointDTO = pointSerivce.listAllPoint();
-        } catch (ServiceException e) {
-            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-        }
+        allPointDTO = pointSerivce.listAllPoint();
         //step2:新建List<DashboardPointVO>，循环allPointDTO，新建DashboardPointVO，分别赋值
         List<DashboardPointVO> pointVOS = new ArrayList<>();
         for(BriefPointDTO point :allPointDTO) {
