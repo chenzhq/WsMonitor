@@ -2,6 +2,7 @@ package com.ws.stoner.controller;
 
 import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.UserService;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
@@ -75,7 +76,12 @@ public class LoginController {
             return "login";
         }
 
-        LoginDTO loginResult = loginService.login(loginFormQuery);
+        LoginDTO loginResult = null;
+        try {
+            loginResult = loginService.login(loginFormQuery);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
         if (!loginResult.isLoginSuccess()) {
             FieldError fieldError = new FieldError("loginFormQuery", "password", "用户名或密码错误");
             bindingResult.addError(fieldError);

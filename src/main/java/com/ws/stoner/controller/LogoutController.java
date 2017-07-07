@@ -3,6 +3,7 @@ package com.ws.stoner.controller;
 import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.LoginService;
 import com.ws.stoner.utils.CookieUtils;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class LogoutController {
     public String logout(HttpServletResponse response, HttpSession session) throws ManagerException {
         try {
             loginService.logout();
-        } catch (AuthExpireException e) {
+        } catch (ServiceException e) {
             //添加了拦截器后，正常情况应该不会产生这个异常
             //除非，有人手动更改了后台数据库中的数据
         }
