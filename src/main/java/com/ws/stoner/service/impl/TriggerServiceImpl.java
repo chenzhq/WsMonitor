@@ -8,9 +8,9 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
-import com.ws.stoner.model.view.BriefProblemVO;
-import com.ws.stoner.service.TriggerSerivce;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
+import com.ws.stoner.model.view.BriefProblemVO;
+import com.ws.stoner.service.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +21,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
+import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
+
 /**
  * Created by pc on 2017/6/8.
  */
 @Service
-public class TriggerSerivceImpl implements TriggerSerivce {
+public class TriggerServiceImpl implements TriggerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostSerivceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostServiceImpl.class);
     @Autowired
     private ZApi zApi;
 
@@ -37,8 +40,12 @@ public class TriggerSerivceImpl implements TriggerSerivce {
         try {
             triggers = zApi.Trigger().get(request,BriefTriggerDTO.class);
         } catch (ZApiException e) {
-            e.printStackTrace();
-            return null;
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
+            }
+            logger.error("查询触发器 {}", e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
 
         return triggers;
@@ -56,12 +63,7 @@ public class TriggerSerivceImpl implements TriggerSerivce {
                 .setOutput(BriefTriggerDTO.PROPERTY_NAMES)
                 .setFilter(triggerFilter1);
         List<BriefTriggerDTO> triggers1 ;
-        try {
-            triggers1 = listTrigger(triggerGetRequest1);
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            return null;
-        }
+        triggers1 = listTrigger(triggerGetRequest1);
         //step2:获取state:unknown 触发器list
         TriggerGetRequest triggerGetRequest2 = new TriggerGetRequest();
         Map<String, Object> triggerFilter2 = new HashMap<>();
@@ -70,12 +72,7 @@ public class TriggerSerivceImpl implements TriggerSerivce {
                 .setOutput(BriefTriggerDTO.PROPERTY_NAMES)
                 .setFilter(triggerFilter2);
         List<BriefTriggerDTO> triggers2 ;
-        try {
-            triggers2 = listTrigger(triggerGetRequest2);
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            return null;
-        }
+        triggers2 = listTrigger(triggerGetRequest2);
         //step3:组装两类触发器得到 triggerIds
         List<String> triggerIds = new ArrayList<>();
         for(BriefTriggerDTO trigger : triggers1) {
@@ -105,12 +102,12 @@ public class TriggerSerivceImpl implements TriggerSerivce {
         try {
             triggerNum = zApi.Trigger().count(request);
         } catch (ZApiException e) {
-            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ServiceException("");
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
             }
-            e.printStackTrace();
-            logger.error("查询触发器错误！{}", e.getMessage());
-            return 0;
+            logger.error("查询触发器 {}", e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return triggerNum;
     }

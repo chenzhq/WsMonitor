@@ -1,13 +1,12 @@
 package com.ws.stoner.controller;
 
 import com.ws.stoner.constant.CookieConsts;
-import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.UserService;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.query.LoginFormQuery;
 import com.ws.stoner.service.LoginService;
+import com.ws.stoner.service.UserService;
 import com.ws.stoner.utils.CookieUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login/auth", method = RequestMethod.POST)
     public String login(@Valid @ModelAttribute LoginFormQuery loginFormQuery, BindingResult bindingResult,
-                        HttpSession session, HttpServletResponse response) throws ManagerException {
+                        HttpSession session, HttpServletResponse response) throws ServiceException {
         if(bindingResult.hasErrors()) {
             return "login";
         }

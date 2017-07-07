@@ -7,7 +7,10 @@ import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.DashboardHostVO;
 import com.ws.stoner.model.view.DashboardPlatformVO;
 import com.ws.stoner.model.view.DashboardPointVO;
-import com.ws.stoner.service.*;
+import com.ws.stoner.service.HostService;
+import com.ws.stoner.service.PlatformService;
+import com.ws.stoner.service.PointSerivce;
+import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,10 +29,10 @@ import static com.ws.stoner.constant.MessageConsts.REST_RESPONSE_SUCCESS;
 @RestController
 public class DashboardRestController {
     @Autowired
-    private HostSerivce hostSerivce;
+    private HostService hostService;
 
     @Autowired
-    private PlatformSerivce platformSerivce;
+    private PlatformService platformService;
 
     @Autowired
     private PointSerivce pointSerivce;
@@ -46,9 +49,9 @@ public class DashboardRestController {
         int warningHostNum = 0;
         int hightHostNum = 0;
         try {
-            allHostNum = hostSerivce.countAllHost();
-            warningHostNum = hostSerivce.countWarningHost();
-            hightHostNum = hostSerivce.countHightHost();
+            allHostNum = hostService.countAllHost();
+            warningHostNum = hostService.countWarningHost();
+            hightHostNum = hostService.countHighHost();
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
@@ -94,9 +97,9 @@ public class DashboardRestController {
         int warningPlatformNum = 0;
         int hightPlatformNum = 0;
         try {
-            allPlarformNum = platformSerivce.countAllPlatform();
-            warningPlatformNum = platformSerivce.countWarningPlatform();
-            hightPlatformNum = platformSerivce.countHightPlatform();
+            allPlarformNum = platformService.countAllPlatform();
+            warningPlatformNum = platformService.countWarningPlatform();
+            hightPlatformNum = platformService.countHightPlatform();
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
@@ -116,7 +119,7 @@ public class DashboardRestController {
         List<BriefTemplateDTO> allTemplateDTO = null;
         try {
             //step1:取BriefHostDTO 类型所有主机allhostDTO
-            allhostDTO = hostSerivce.listAllHost();
+            allhostDTO = hostService.listAllHost();
             //step2:获取所有模板allTemplateDTO
             allTemplateDTO = templateService.listAllTemplate();
         } catch (ServiceException e) {
@@ -175,9 +178,9 @@ public class DashboardRestController {
         List<BriefHostDTO> hostDTOS = null;
         try {
             //step1:获取BriefPlatformDTO 类型的所有业务平台 allPlatformDTO
-            allPlatformDTO = platformSerivce.listAllPlatform();
+            allPlatformDTO = platformService.listAllPlatform();
             //step2:取所有监控中的主机，组装hostIds
-            hostDTOS = hostSerivce.listAllHost();
+            hostDTOS = hostService.listAllHost();
         } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }

@@ -7,16 +7,13 @@ import com.ws.stoner.dao.OverviewDAO;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.*;
-import com.ws.stoner.service.PointSerivce;
-import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.DO.mongo.Group;
-import com.ws.stoner.model.dto.OverviewListGroupDTO;
+import com.ws.stoner.model.dto.*;
+import com.ws.stoner.service.OverviewService;
+import com.ws.stoner.service.TemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +35,7 @@ public class OverviewServiceImpl implements OverviewService {
     private OverviewGroupRepository overviewGroupRepository;
 
     @Autowired
-    private HostSerivce hostSerivce;
+    private HostServiceImpl hostServiceImpl;
 
     @Autowired
     private TemplateService templateService;
@@ -53,7 +50,7 @@ public class OverviewServiceImpl implements OverviewService {
         List<BriefHostDTO> allHosts ;
         List<BriefTemplateDTO> allTemplates;
         try {
-            allHosts = hostSerivce.listAllHost();
+            allHosts = hostServiceImpl.listAllHost();
             allTemplates = templateService.listAllTemplate();
         } catch (ServiceException e) {
             e.printStackTrace();

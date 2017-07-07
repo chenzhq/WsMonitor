@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by chenzheqi on 2017/5/23.
  */
-public interface HostSerivce {
+public interface HostService {
 
 /*
  *count host
@@ -57,7 +57,7 @@ public interface HostSerivce {
      * @return
      * @throws ServiceException
      */
-    int countHightHost() throws ServiceException;
+    int countHighHost() throws ServiceException;
 
     /**
      * 获取正常主机的数量

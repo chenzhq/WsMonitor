@@ -1,8 +1,6 @@
 package com.ws.stoner.controller;
 
 import com.ws.stoner.constant.CookieConsts;
-import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.LoginService;
 import com.ws.stoner.utils.CookieUtils;
@@ -30,7 +28,7 @@ public class LogoutController {
     private Map<String, String> sessionMap;
 
     @RequestMapping(value = {"/", ""})
-    public String logout(HttpServletResponse response, HttpSession session) throws ManagerException {
+    public String logout(HttpServletResponse response, HttpSession session) {
         try {
             loginService.logout();
         } catch (ServiceException e) {

@@ -3,11 +3,11 @@ package com.ws.stoner.service.impl;
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.service.HostSerivce;
 import com.ws.stoner.model.dto.BriefHostDTO;
-import org.junit.Test;
-import org.junit.Before; 
+import com.ws.stoner.service.HostService;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 /** 
-* HostServiceImpl Tester. 
+* HostService Tester.
 * 
 * @author <Authors name> 
 * @since <pre>六月 8, 2017</pre> 
@@ -24,10 +24,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class HostSerivceImplTest {
+public class HostServiceImplImplTest {
 
     @Autowired
-    private HostSerivce hostSerivce;
+    private HostService hostService;
 
     @Autowired
     private ZApi zApi;
@@ -49,14 +49,14 @@ public void after() throws Exception {
 public void testListHost() throws Exception { 
 //TODO: Test goes here...
     HostGetRequest hostGetRequest = new HostGetRequest();
-    List<BriefHostDTO> hosts = hostSerivce.listHost(hostGetRequest);
+    List<BriefHostDTO> hosts = hostService.listHost(hostGetRequest);
     System.out.println(hosts.toString());
 }
 
 @Test
 public void testListAllHost() throws Exception {
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = hostSerivce.listAllHost();
+    List<BriefHostDTO> hosts = hostService.listAllHost();
     System.out.println(hosts);
 
 }
@@ -64,15 +64,15 @@ public void testListAllHost() throws Exception {
 @Test
 public void testListProblemHost() throws Exception {
 //TODO: Test goes here...
-    System.out.println(hostSerivce.listWarningHost());
-    System.out.println(hostSerivce.countHightHost());
+    System.out.println(hostService.listWarningHost());
+    System.out.println(hostService.countHighHost());
 
 }
 
 @Test
 public void testListOkHost() throws Exception {
 //TODO: Test goes here...
-    List<BriefHostDTO> hosts = hostSerivce.listOkHost();
+    List<BriefHostDTO> hosts = hostService.listOkHost();
     System.out.println(hosts);
 
 }
@@ -80,20 +80,20 @@ public void testListOkHost() throws Exception {
 @Test
 public void testCountAllHost() throws Exception {
 //TODO: Test goes here...
-    int allhostNum = hostSerivce.countAllHost();
+    int allhostNum = hostService.countAllHost();
     System.out.println(allhostNum);
 
 }
 
 @Test
 public void testCountProblemHost() throws Exception {
-    System.out.println(hostSerivce.countWarningHost());
-    System.out.println(hostSerivce.countHightHost());
+    System.out.println(hostService.countWarningHost());
+    System.out.println(hostService.countHighHost());
 }
 
 @Test
 public void testCountOKHost() throws Exception {
-    int okhostNum = hostSerivce.countOkHost();
+    int okhostNum = hostService.countOkHost();
     System.out.println(okhostNum);
 }
 

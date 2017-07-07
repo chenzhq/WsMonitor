@@ -2,11 +2,11 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.service.PlatformSerivce;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
-import org.junit.Test;
-import org.junit.Before; 
+import com.ws.stoner.service.PlatformService;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,9 +23,9 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class PlatformSerivceImplTest {
+public class PlatformServiceImplImplTest {
     @Autowired
-    private PlatformSerivce platformSerivce;
+    private PlatformService platformService;
 
     @Autowired
     private ZApi zApi;
@@ -89,7 +89,7 @@ public void testCountProblemHostByPlatformIds() throws Exception {
 @Test
 public void testCountAllPlatform() throws Exception { 
 //TODO: Test goes here...
-    int allHostGroupNum = platformSerivce.countAllPlatform();
+    int allHostGroupNum = platformService.countAllPlatform();
     System.out.println(allHostGroupNum);
 } 
 
@@ -101,8 +101,8 @@ public void testCountAllPlatform() throws Exception {
 @Test
 public void testCountProblemPlatform() throws Exception { 
 //TODO: Test goes here...
-    System.out.println(platformSerivce.countWarningPlatform());
-    System.out.println(platformSerivce.countHightPlatform());
+    System.out.println(platformService.countWarningPlatform());
+    System.out.println(platformService.countHightPlatform());
 } 
 
 /** 
@@ -113,7 +113,7 @@ public void testCountProblemPlatform() throws Exception {
 @Test
 public void testCountOkPlatform() throws Exception { 
 //TODO: Test goes here...
-    int okHostGroupNum = platformSerivce.countOkPlatform();
+    int okHostGroupNum = platformService.countOkPlatform();
     System.out.println(okHostGroupNum);
 
 } 
@@ -126,7 +126,7 @@ public void testCountOkPlatform() throws Exception {
 @Test
 public void testListAllPlatform() throws Exception { 
 //TODO: Test goes here...
-    List<BriefPlatformDTO> allHostGroups = platformSerivce.listAllPlatform();
+    List<BriefPlatformDTO> allHostGroups = platformService.listAllPlatform();
     System.out.println(allHostGroups);
 } 
 
@@ -138,8 +138,8 @@ public void testListAllPlatform() throws Exception {
 @Test
 public void testListProblemPlatform() throws Exception { 
 //TODO: Test goes here...
-    System.out.println(platformSerivce.listWarningPlatform());
-    System.out.println(platformSerivce.listHightPlatform());
+    System.out.println(platformService.listWarningPlatform());
+    System.out.println(platformService.listHightPlatform());
 } 
 
 

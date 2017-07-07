@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by zkf on 2017/6/9.
  */
-public interface ItemSerivce {
+public interface ItemService {
     /**
      * 根据request请求获取item list
      *

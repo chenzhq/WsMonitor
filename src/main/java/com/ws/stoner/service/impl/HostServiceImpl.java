@@ -5,12 +5,13 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.HostSerivce;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
+import com.ws.stoner.service.HostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
+import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
+
 /**
  * Created by chenzheqi on 2017/5/2.
  */
 @Service
-public class HostSerivceImpl implements HostSerivce {
+public class HostServiceImpl implements HostService {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostSerivceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostServiceImpl.class);
     @Autowired
     private ZApi zApi;
 
@@ -40,12 +44,12 @@ public class HostSerivceImpl implements HostSerivce {
         try {
             allHost = zApi.Host().count(request);
         } catch (ZApiException e) {
-            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ServiceException("");
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
             }
-            e.printStackTrace();
             logger.error("查询主机数量错误！{}", e.getMessage());
-            return 0;
+            throw new ServiceException(e.getMessage());
         }
         return allHost;
     }
@@ -61,12 +65,12 @@ public class HostSerivceImpl implements HostSerivce {
         try {
             hosts = zApi.Host().get(request,BriefHostDTO.class);
         } catch (ZApiException e) {
-            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ServiceException("");
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
             }
-            e.printStackTrace();
-            logger.error("查询主机list错误！{}", e.getMessage());
-            return null;
+            logger.error("查询主机错误！{}", e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return hosts;
     }
@@ -120,7 +124,7 @@ public class HostSerivceImpl implements HostSerivce {
      * @throws ServiceException
      */
     @Override
-    public int countHightHost() throws ServiceException {
+    public int countHighHost() throws ServiceException {
         //step1:根据custom_state 和 custom_available_state字段联合判断是否是严重主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String,Object> hostFilter = new HashMap<>();

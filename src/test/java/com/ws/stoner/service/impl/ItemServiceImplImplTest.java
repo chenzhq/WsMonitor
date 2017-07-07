@@ -4,11 +4,11 @@ import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.service.ItemSerivce;
 import com.ws.stoner.model.dto.BriefItemDTO;
-import org.junit.Test;
-import org.junit.Before; 
+import com.ws.stoner.service.ItemService;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,10 +26,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class ItemSerivceImplTest {
+public class ItemServiceImplImplTest {
 
     @Autowired
-    private ItemSerivce itemSerivce;
+    private ItemService itemService;
 
     @Autowired
     private ZApi zApi;
@@ -52,7 +52,7 @@ public void after() throws Exception {
 public void testListItem() throws Exception { 
 //TODO: Test goes here...
     ItemGetRequest itemGetRequest = new ItemGetRequest();
-    List<BriefItemDTO> items = itemSerivce.listItem(itemGetRequest);
+    List<BriefItemDTO> items = itemService.listItem(itemGetRequest);
     System.out.println(items.toString());
 
 }
@@ -63,7 +63,7 @@ public void testListItem() throws Exception {
         List<String> triggerIds = new ArrayList<String>();
         triggerIds.add("10021");
         triggerIds.add("10047");
-        List<ItemDO> items = itemSerivce.listItemByTriggerIds(triggerIds);
+        List<ItemDO> items = itemService.listItemByTriggerIds(triggerIds);
         System.out.println(items.toString());
 
     }

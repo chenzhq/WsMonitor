@@ -6,12 +6,13 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.HostSerivce;
-import com.ws.stoner.service.PlatformSerivce;
-import com.ws.stoner.service.TriggerSerivce;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
+import com.ws.stoner.service.HostService;
+import com.ws.stoner.service.PlatformService;
+import com.ws.stoner.service.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +20,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
+import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
+
 /**
  * Created by pc on 2017/6/1.
  */
 @Service
-public class PlatformSerivceImpl implements PlatformSerivce {
-    private static final Logger logger = LoggerFactory.getLogger(PlatformSerivceImpl.class);
+public class PlatformServiceImpl implements PlatformService {
+    private static final Logger logger = LoggerFactory.getLogger(PlatformServiceImpl.class);
     @Autowired
     private ZApi zApi;
 
     @Autowired
-    private HostSerivce hostSerivce;
+    private HostService hostService;
 
     @Autowired
-    private TriggerSerivce triggerSerivce;
+    private TriggerService triggerService;
 
     @Override
     public List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ServiceException {
@@ -40,12 +44,12 @@ public class PlatformSerivceImpl implements PlatformSerivce {
         try {
             groups = zApi.Group().get(request, BriefPlatformDTO.class);
         } catch (ZApiException e) {
-            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ServiceException("");
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
             }
-            e.printStackTrace();
-            logger.error("查询业务平台错误！{}", e.getMessage());
-            return null;
+            logger.error("查询业务平台 {}", e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return groups;
     }
@@ -61,12 +65,12 @@ public class PlatformSerivceImpl implements PlatformSerivce {
         try {
             hostGroupNum = zApi.Group().count(request);
         } catch (ZApiException e) {
-            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ServiceException("");
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
             }
-            e.printStackTrace();
-            logger.error("查询业务平台数量错误！{}", e.getMessage());
-            return 0;
+            logger.error("查询业务平台 {}", e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return hostGroupNum;
     }
@@ -85,7 +89,7 @@ public class PlatformSerivceImpl implements PlatformSerivce {
                 .setGroupIds(platformIds)
                 .setFilter(statusFilter)
                 .setCountOutput(true);
-        int allHostNum = hostSerivce.countHost(hostGetRequest);
+        int allHostNum = hostService.countHost(hostGetRequest);
         return allHostNum;
     }
 
@@ -98,7 +102,7 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     @Override
     public int countProblemHostByPlatformIds(List<String> platformIds) throws ServiceException {
         //step1:获取问题触发器ids
-        List<String> triggerIds = triggerSerivce.getProblemTriggerIds();
+        List<String> triggerIds = triggerService.getProblemTriggerIds();
         //step2:根据两个触发器的ids得到主机数量 hosts1
         HostGetRequest hostGetRequest1 = new HostGetRequest();
         Map<String,Object> hostFilter1 = new HashMap<>();
@@ -108,7 +112,7 @@ public class PlatformSerivceImpl implements PlatformSerivce {
                 .setGroupIds(platformIds)
                 .setFilter(hostFilter1)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> host1  = hostSerivce.listHost(hostGetRequest1);
+        List<BriefHostDTO> host1  = hostService.listHost(hostGetRequest1);
         //step4:筛选四种监控接口中至少一个有问题的主机数量 host2
         HostGetRequest hostGetRequest2 = new HostGetRequest();
         Map<String, Object> hostFilter2 = new HashMap<>();
@@ -122,7 +126,7 @@ public class PlatformSerivceImpl implements PlatformSerivce {
                 .setFilter(hostFilter2)
                 .setSearchByAny(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> host2 = hostSerivce.listHost(hostGetRequest2);
+        List<BriefHostDTO> host2 = hostService.listHost(hostGetRequest2);
         //step5:去掉重复的主机并求和
         Set<BriefHostDTO> hosts = new HashSet<>();
         hosts.addAll(host1);

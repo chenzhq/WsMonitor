@@ -3,8 +3,8 @@ package com.ws.stoner.service.impl;
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.service.TriggerSerivce;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
+import com.ws.stoner.service.TriggerService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,10 +24,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class TriggerSerivceImplTest {
+public class TriggerServiceImplImplTest {
 
     @Autowired
-    private TriggerSerivce triggerSerivce;
+    private TriggerService triggerService;
 
     @Autowired
     private ZApi zApi;
@@ -50,13 +50,13 @@ public void after() throws Exception {
 public void testListTrigger() throws Exception { 
 //TODO: Test goes here...
     TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
-    List<BriefTriggerDTO> triggerDOList = triggerSerivce.listTrigger(triggerGetRequest);
+    List<BriefTriggerDTO> triggerDOList = triggerService.listTrigger(triggerGetRequest);
     System.out.println(triggerDOList.toString());
 } 
 
 @Test
     public void testListUnknownTrigger() throws Exception {
-//    List<TriggerDO> unknownTriggers = triggerSerivce.listUnknownTrigger();
+//    List<TriggerDO> unknownTriggers = triggerService.listUnknownTrigger();
 //    System.out.println(unknownTriggers);
 }
 

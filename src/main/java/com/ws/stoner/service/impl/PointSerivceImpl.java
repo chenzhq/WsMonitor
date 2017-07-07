@@ -7,14 +7,15 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.service.HostSerivce;
-import com.ws.stoner.service.ItemSerivce;
-import com.ws.stoner.service.PointSerivce;
-import com.ws.stoner.service.TriggerSerivce;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
+import com.ws.stoner.service.HostService;
+import com.ws.stoner.service.ItemService;
+import com.ws.stoner.service.PointSerivce;
+import com.ws.stoner.service.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,24 +26,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
+import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
+
 /**
  * Created by zkf on 2017/6/8.
  */
 @Service
 public class PointSerivceImpl implements PointSerivce {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostSerivceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HostService.class);
     @Autowired
     private ZApi zApi;
 
     @Autowired
-    private HostSerivce hostSerivce;
+    private HostService hostService;
 
     @Autowired
-    private TriggerSerivce triggerSerivce;
+    private TriggerService triggerService;
 
     @Autowired
-    private ItemSerivce itemSerivce;
+    private ItemService itemService;
 
     /**
      * 根据request 获取监控点数量
@@ -56,12 +60,12 @@ public class PointSerivceImpl implements PointSerivce {
         try {
             appNum = zApi.Application().count(request);
         } catch (ZApiException e) {
-            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ServiceException("");
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
             }
-            e.printStackTrace();
-            logger.error("查询监控点数量错误！{}", e.getMessage());
-            return 0;
+            logger.error("查询监控点 {}", e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return appNum;
     }
@@ -77,12 +81,12 @@ public class PointSerivceImpl implements PointSerivce {
         try {
             listApplication = zApi.Application().get(request,BriefPointDTO.class);
         } catch (ZApiException e) {
-            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ServiceException("");
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
             }
-            e.printStackTrace();
-            logger.error("查询监控点list错误！{}", e.getMessage());
-            return null;
+            logger.error("查询监控点 {}", e.getMessage());
+            throw new ServiceException(e.getMessage());
         }
         return listApplication;
     }
@@ -99,7 +103,7 @@ public class PointSerivceImpl implements PointSerivce {
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts = hostSerivce.listHost(hostGetRequest);
+        List<BriefHostDTO> hosts = hostService.listHost(hostGetRequest);
         //step2:根据这些主机筛选其下的所有应用集hostids，即为所有的应用集（排出了停用状态，和模版中的应用集）
         List<String> hostIds = new ArrayList<>();
         if(hosts == null) {
@@ -130,7 +134,7 @@ public class PointSerivceImpl implements PointSerivce {
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts = hostSerivce.listHost(hostGetRequest);
+        List<BriefHostDTO> hosts = hostService.listHost(hostGetRequest);
         if(hosts == null) {
             return 0;
         }
@@ -165,7 +169,7 @@ public class PointSerivceImpl implements PointSerivce {
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts = hostSerivce.listHost(hostGetRequest);
+        List<BriefHostDTO> hosts = hostService.listHost(hostGetRequest);
         if(hosts == null) {
             return 0;
         }
@@ -200,7 +204,7 @@ public class PointSerivceImpl implements PointSerivce {
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts = hostSerivce.listHost(hostGetRequest);
+        List<BriefHostDTO> hosts = hostService.listHost(hostGetRequest);
         if(hosts == null) {
             return 0;
         }
@@ -241,14 +245,14 @@ public class PointSerivceImpl implements PointSerivce {
     @Override
     public int countProblemPointByHostIds(List<String> hostIds) throws ServiceException {
         //step1:获取问题触发器Ids
-        List<String> triggerIds  = triggerSerivce.getProblemTriggerIds();
+        List<String> triggerIds  = triggerService.getProblemTriggerIds();
         //step2:根据触发器Ids获取items
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         itemGetRequest.getParams()
                 .setTriggerIds(triggerIds)
                 .setMonitored(true)
                 .setOutput(BriefItemDTO.PROPERTY_NAMES);
-        List<BriefItemDTO> items  = itemSerivce.listItem(itemGetRequest);
+        List<BriefItemDTO> items  = itemService.listItem(itemGetRequest);
         //step3:根据item筛选出应用集
         List<String> itemIds = new ArrayList<>();
         for(BriefItemDTO item : items) {
@@ -280,7 +284,7 @@ public class PointSerivceImpl implements PointSerivce {
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts = hostSerivce.listHost(hostGetRequest);
+        List<BriefHostDTO> hosts = hostService.listHost(hostGetRequest);
         //step2:根据主机ids获取所有的监控点
         List<String> hostIds = new ArrayList<>();
         if(hosts == null) {
@@ -311,7 +315,7 @@ public class PointSerivceImpl implements PointSerivce {
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts = hostSerivce.listHost(hostGetRequest);
+        List<BriefHostDTO> hosts = hostService.listHost(hostGetRequest);
         if(hosts == null) {
             return null;
         }
@@ -342,7 +346,7 @@ public class PointSerivceImpl implements PointSerivce {
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
-        List<BriefHostDTO> hosts = hostSerivce.listHost(hostGetRequest);
+        List<BriefHostDTO> hosts = hostService.listHost(hostGetRequest);
         if(hosts == null) {
             return null;
         }

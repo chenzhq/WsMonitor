@@ -4,15 +4,13 @@ import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
 /**
  * Created by zkf on 2017/6/1.
  */
-public interface PlatformSerivce {
+public interface PlatformService {
     /**
      * List hostgroup list.
      *
