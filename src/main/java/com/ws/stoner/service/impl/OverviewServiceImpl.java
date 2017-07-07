@@ -6,13 +6,15 @@ import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.dao.OverviewDAO;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.*;
 import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.DO.mongo.Group;
 import com.ws.stoner.model.dto.OverviewListGroupDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -30,11 +32,10 @@ import java.util.List;
 @Transactional
 public class OverviewServiceImpl implements OverviewService {
 
-    @Autowired
-    private OverviewGroupRepository overviewGroupRepository;
+    private static final Logger logger = LoggerFactory.getLogger(OverviewServiceImpl.class);
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private OverviewGroupRepository overviewGroupRepository;
 
     @Autowired
     private HostSerivce hostSerivce;
@@ -54,8 +55,9 @@ public class OverviewServiceImpl implements OverviewService {
         try {
             allHosts = hostSerivce.listAllHost();
             allTemplates = templateService.listAllTemplate();
-        } catch (ManagerException e) {
+        } catch (ServiceException e) {
             e.printStackTrace();
+            logger.error("查询API错误！{}", e.getMessage());
             return null;
         }
         //step:2初始化 root节点
@@ -123,6 +125,7 @@ public class OverviewServiceImpl implements OverviewService {
             maxGroup = overviewDAO.findMaxGroupCId();
         } catch (DAOException e) {
             e.printStackTrace();
+            logger.error("查询mongodb最大组错误！{}", e.getMessage());
             return null;
         }
         String cId = String.valueOf(Integer.parseInt(maxGroup.getcId()) + 1);
@@ -146,6 +149,7 @@ public class OverviewServiceImpl implements OverviewService {
             supGroup = overviewDAO.findGroupByCId(pId);
         } catch (DAOException e) {
             e.printStackTrace();
+            logger.error("根据CID查询mongodb错误！{}", e.getMessage());
             return null;
         }
         List<String> supGroupListTemp = Arrays.asList(supGroup.getGroupChildren());
@@ -179,6 +183,7 @@ public class OverviewServiceImpl implements OverviewService {
             supGroup = overviewDAO.findGroupByCId(delGroup.getpId());
         } catch (DAOException e) {
             e.printStackTrace();
+            logger.error("根据CID查询mongodb错误！{}", e.getMessage());
             return null;
         }
         //step3:循环delGroup 的 group_children添加到 supGroup 的group_children中,同时更改子成员的pid为supGroup 的 cid
@@ -234,6 +239,7 @@ public class OverviewServiceImpl implements OverviewService {
             targetGroup = overviewDAO.findGroupByCId(groupId);
         } catch (DAOException e) {
             e.printStackTrace();
+            logger.error("查询mongodb错误！{}", e.getMessage());
             return null;
         }
         targetGroup.setpId(toGroupId);
@@ -249,6 +255,7 @@ public class OverviewServiceImpl implements OverviewService {
             fromGroup = overviewDAO.findGroupByCId(fromGroupId);
         } catch (DAOException e) {
             e.printStackTrace();
+            logger.error("根据Cid查询mongodb错误！{}", e.getMessage());
             return null;
         }
         List<String> fromGroupChildrenTemp = Arrays.asList(fromGroup.getGroupChildren());
@@ -262,6 +269,7 @@ public class OverviewServiceImpl implements OverviewService {
             toGroup = overviewDAO.findGroupByCId(toGroupId);
         } catch (DAOException e) {
             e.printStackTrace();
+            logger.error("根据CId查询mongodb错误！{}", e.getMessage());
             return null;
         }
         List<String> toGroupChildrenTemp = Arrays.asList(toGroup.getGroupChildren());
@@ -297,6 +305,7 @@ public class OverviewServiceImpl implements OverviewService {
             fromGroup = overviewDAO.findGroupByCId(fromGroupId);
         } catch (DAOException e) {
             e.printStackTrace();
+            logger.error("Cid查询mongodb错误！{}", e.getMessage());
             return null;
         }
         List<String> fromHostChildrenTemp = Arrays.asList(fromGroup.getHostChildren());
@@ -310,6 +319,7 @@ public class OverviewServiceImpl implements OverviewService {
             toGroup= overviewDAO.findGroupByCId(toGroupId);
         } catch (DAOException e) {
             e.printStackTrace();
+            logger.error("Cid查询 toGroup 的mongodb错误！{}", e.getMessage());
             return null;
         }
         List<String> toHostChildrenTemp = Arrays.asList(toGroup.getHostChildren());

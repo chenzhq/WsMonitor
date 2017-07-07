@@ -2,7 +2,7 @@ package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.DashboardHostVO;
 import com.ws.stoner.model.view.DashboardPlatformVO;
@@ -49,7 +49,7 @@ public class DashboardRestController {
             allHostNum = hostSerivce.countAllHost();
             warningHostNum = hostSerivce.countWarningHost();
             hightHostNum = hostSerivce.countHightHost();
-        } catch (ManagerException e) {
+        } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningHostNum);
@@ -73,7 +73,7 @@ public class DashboardRestController {
             allPointNum = pointSerivce.countAllPoint();
             warningPointNum = pointSerivce.countWarningPoint();
             hightPoinNum = pointSerivce.countHightPoint();
-        } catch (ManagerException e) {
+        } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPointNum);
@@ -97,7 +97,7 @@ public class DashboardRestController {
             allPlarformNum = platformSerivce.countAllPlatform();
             warningPlatformNum = platformSerivce.countWarningPlatform();
             hightPlatformNum = platformSerivce.countHightPlatform();
-        } catch (ManagerException e) {
+        } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPlatformNum);
@@ -119,7 +119,7 @@ public class DashboardRestController {
             allhostDTO = hostSerivce.listAllHost();
             //step2:获取所有模板allTemplateDTO
             allTemplateDTO = templateService.listAllTemplate();
-        } catch (ManagerException e) {
+        } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
         //step3:循环给DashBoardHostVO赋值
@@ -178,7 +178,7 @@ public class DashboardRestController {
             allPlatformDTO = platformSerivce.listAllPlatform();
             //step2:取所有监控中的主机，组装hostIds
             hostDTOS = hostSerivce.listAllHost();
-        } catch (ManagerException e) {
+        } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
         List<String> hostIds = new ArrayList<>();
@@ -231,7 +231,7 @@ public class DashboardRestController {
         List<BriefPointDTO> allPointDTO = null;
         try {
             allPointDTO = pointSerivce.listAllPoint();
-        } catch (ManagerException e) {
+        } catch (ServiceException e) {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
         //step2:新建List<DashboardPointVO>，循环allPointDTO，新建DashboardPointVO，分别赋值

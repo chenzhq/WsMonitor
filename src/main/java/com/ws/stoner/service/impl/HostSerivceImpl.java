@@ -5,7 +5,6 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
-import com.ws.stoner.exception.ManagerException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.HostSerivce;
 import com.ws.stoner.model.dto.BriefHostDTO;
@@ -36,16 +35,16 @@ public class HostSerivceImpl implements HostSerivce {
  */
 
     @Override
-    public int countHost(HostGetRequest request) throws ManagerException {
+    public int countHost(HostGetRequest request) throws ServiceException {
         int allHost;
         try {
             allHost = zApi.Host().count(request);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ManagerException("");
+                throw new ServiceException("");
             }
             e.printStackTrace();
-            logger.error("查询主机错误！{}", e.getMessage());
+            logger.error("查询主机数量错误！{}", e.getMessage());
             return 0;
         }
         return allHost;
@@ -54,19 +53,19 @@ public class HostSerivceImpl implements HostSerivce {
     /**
      * 获取所有的主机列表
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefHostDTO> listHost(HostGetRequest request) throws ManagerException {
+    public List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException {
         List<BriefHostDTO> hosts;
         try {
             hosts = zApi.Host().get(request,BriefHostDTO.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ManagerException("");
+                throw new ServiceException("");
             }
             e.printStackTrace();
-            logger.error("查询主机错误！{}", e.getMessage());
+            logger.error("查询主机list错误！{}", e.getMessage());
             return null;
         }
         return hosts;
@@ -78,7 +77,7 @@ public class HostSerivceImpl implements HostSerivce {
      * @throws ServiceException
      */
     @Override
-    public int countAllHost() throws ManagerException {
+    public int countAllHost() throws ServiceException {
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
@@ -95,10 +94,10 @@ public class HostSerivceImpl implements HostSerivce {
      *  custom_state = 1，主机正常 ， 1表示警告，2表示严重
      *  custom_available_state = 0，表示根据四种接口判断是否为问题主机
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countWarningHost() throws ManagerException {
+    public int countWarningHost() throws ServiceException {
         //step1:根据custom_state 和 custom_available_state字段联合判断是否是问题主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String,Object> hostFilter = new HashMap<>();
@@ -118,10 +117,10 @@ public class HostSerivceImpl implements HostSerivce {
      *  custom_state = 2，主机正常 ， 1表示警告，2表示严重
      *  custom_available_state = 1，表示根据四种接口判断是否为问题主机
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countHightHost() throws ManagerException {
+    public int countHightHost() throws ServiceException {
         //step1:根据custom_state 和 custom_available_state字段联合判断是否是严重主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String,Object> hostFilter = new HashMap<>();
@@ -141,10 +140,10 @@ public class HostSerivceImpl implements HostSerivce {
      * 根据custom_state 和 custom_available_state字段联合判断是否是正常主机：
      * custom_state和custom_available_state同时为0即为正常
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countOkHost() throws ManagerException {
+    public int countOkHost() throws ServiceException {
         //step1:根据custom_state 和 custom_available_state字段联合判断是否是正常主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String,Object> hostFilter = new HashMap<>();
@@ -165,10 +164,10 @@ public class HostSerivceImpl implements HostSerivce {
     /**
      * 获取简约所有主机list 剔除停用的
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefHostDTO> listAllHost() throws ManagerException {
+    public List<BriefHostDTO> listAllHost() throws ServiceException {
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
@@ -183,10 +182,10 @@ public class HostSerivceImpl implements HostSerivce {
     /**
      * 获取警告主机 list  warning
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefHostDTO> listWarningHost() throws ManagerException {
+    public List<BriefHostDTO> listWarningHost() throws ServiceException {
         //step1:step1:根据custom_state 和 custom_available_state字段联合判断是否是问题主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String,Object> hostFilter = new HashMap<>();
@@ -206,10 +205,10 @@ public class HostSerivceImpl implements HostSerivce {
     /**
      * 获取严重主机list hight
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefHostDTO> listHightHost() throws ManagerException {
+    public List<BriefHostDTO> listHightHost() throws ServiceException {
         //step1:step1:根据custom_state 和 custom_available_state字段联合判断是否是问题主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String,Object> hostFilter = new HashMap<>();
@@ -229,10 +228,10 @@ public class HostSerivceImpl implements HostSerivce {
     /**
      * 获取OK主机 list OK
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefHostDTO> listOkHost() throws ManagerException {
+    public List<BriefHostDTO> listOkHost() throws ServiceException {
         //step1:step1:根据custom_state 和 custom_available_state字段联合判断是否是正常主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String,Object> hostFilter = new HashMap<>();

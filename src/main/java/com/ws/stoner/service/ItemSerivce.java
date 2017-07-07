@@ -3,7 +3,7 @@ package com.ws.stoner.service;
 
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefItemDTO;
 
 import java.util.List;
@@ -16,16 +16,16 @@ public interface ItemSerivce {
      * 根据request请求获取item list
      *
      * @return the list
-     * @throws ManagerException the auth expire exception
+     * @throws ServiceException the auth expire exception
      */
-    List<BriefItemDTO> listItem(ItemGetRequest request) throws ManagerException;
+    List<BriefItemDTO> listItem(ItemGetRequest request) throws ServiceException;
 
     /**
      * 获取满足触发器在提供的 TriggerIds 内的所有item
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    List<ItemDO> listItemByTriggerIds(List<String> triggerIds) throws ManagerException;
+    List<ItemDO> listItemByTriggerIds(List<String> triggerIds) throws ServiceException;
 
 
 }

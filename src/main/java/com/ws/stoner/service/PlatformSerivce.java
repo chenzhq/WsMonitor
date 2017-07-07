@@ -2,7 +2,7 @@ package com.ws.stoner.service;
 
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,56 +19,56 @@ public interface PlatformSerivce {
      * @return the list
      * @throws AuthExpireException the auth expire exception
      */
-    List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ManagerException;
+    List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ServiceException;
 
     /**
      * 根据request获取业务平台数量 hostgroup number
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countPlatform(HostGroupGetRequest request) throws ManagerException;
+    int countPlatform(HostGroupGetRequest request) throws ServiceException;
 
     /**
      * 获取所有业务平台数量 platform number all
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countAllPlatform() throws ManagerException;
+    int countAllPlatform() throws ServiceException;
 
     /**
      * 获取告警业务平台数量  warning number
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countWarningPlatform() throws ManagerException;
+    int countWarningPlatform() throws ServiceException;
 
 
     /**
      * 获取严重业务平台数量  hight number
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countHightPlatform() throws ManagerException;
+    int countHightPlatform() throws ServiceException;
 
     /**
      * 获取正常的业务平台数量 OK number
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countOkPlatform() throws ManagerException;
+    int countOkPlatform() throws ServiceException;
 
     /**
      * 获取指定业务平台的所有主机数量 all host number by platformIds
      */
-    int countAllHostByPlatformIds(List<String> platformIds) throws ManagerException;
+    int countAllHostByPlatformIds(List<String> platformIds) throws ServiceException;
 
     /**
      * 获取指定业务平台的问题主机数量 problem host number by platformIds
      * @param platformIds
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    int countProblemHostByPlatformIds(List<String> platformIds) throws ManagerException;
+    int countProblemHostByPlatformIds(List<String> platformIds) throws ServiceException;
 
 
 /*
@@ -78,22 +78,22 @@ public interface PlatformSerivce {
     /**
      * 获取简约 platform list all
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    List<BriefPlatformDTO> listAllPlatform() throws ManagerException;
+    List<BriefPlatformDTO> listAllPlatform() throws ServiceException;
 
     /**
      * 获取告警的 platform list warning
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    List<BriefPlatformDTO> listWarningPlatform() throws ManagerException;
+    List<BriefPlatformDTO> listWarningPlatform() throws ServiceException;
 
     /**
      * 获取严重的 platform list hight
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
-    List<BriefPlatformDTO> listHightPlatform() throws ManagerException;
+    List<BriefPlatformDTO> listHightPlatform() throws ServiceException;
 
 }

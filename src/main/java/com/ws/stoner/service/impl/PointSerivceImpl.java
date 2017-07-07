@@ -7,7 +7,7 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.HostSerivce;
 import com.ws.stoner.service.ItemSerivce;
 import com.ws.stoner.service.PointSerivce;
@@ -48,15 +48,19 @@ public class PointSerivceImpl implements PointSerivce {
      * 根据request 获取监控点数量
      * @param request
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countPoint(ApplicationGetRequest request) throws ManagerException {
+    public int countPoint(ApplicationGetRequest request) throws ServiceException {
         int appNum ;
         try {
             appNum = zApi.Application().count(request);
         } catch (ZApiException e) {
+            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+                throw new ServiceException("");
+            }
             e.printStackTrace();
+            logger.error("查询监控点数量错误！{}", e.getMessage());
             return 0;
         }
         return appNum;
@@ -65,19 +69,19 @@ public class PointSerivceImpl implements PointSerivce {
     /**
      *
      * @return 获取监控点列表
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws ManagerException {
+    public List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws ServiceException {
         List<BriefPointDTO> listApplication ;
         try {
             listApplication = zApi.Application().get(request,BriefPointDTO.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ManagerException("");
+                throw new ServiceException("");
             }
             e.printStackTrace();
-            logger.error("查询监控点错误！{}", e.getMessage());
+            logger.error("查询监控点list错误！{}", e.getMessage());
             return null;
         }
         return listApplication;
@@ -86,10 +90,10 @@ public class PointSerivceImpl implements PointSerivce {
     /**
      * 获取所有的监控点
      * 根据筛选监控中的主机得到所有的监控点
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countAllPoint() throws ManagerException {
+    public int countAllPoint() throws ServiceException {
         //step1:筛选所有监控中的主机monitored
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()
@@ -117,10 +121,10 @@ public class PointSerivceImpl implements PointSerivce {
      * 获取所有的警告监控点   point warning
      * 根据 custom_state 判断问题监控点 0正常，1警告，2严重
      * @return int
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countWarningPoint() throws ManagerException {
+    public int countWarningPoint() throws ServiceException {
         //step1:取所有监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()
@@ -152,10 +156,10 @@ public class PointSerivceImpl implements PointSerivce {
      * 获取所有的严重监控点   point hight
      * 根据 custom_state 判断问题监控点 0正常，1警告，2严重
      * @return int
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countHightPoint() throws ManagerException {
+    public int countHightPoint() throws ServiceException {
         //step1:取所有监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()
@@ -187,10 +191,10 @@ public class PointSerivceImpl implements PointSerivce {
      * 获取正常监控点 数量
      * okAppNum = allAppNum - problemAppNum
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countOkPoint() throws ManagerException {
+    public int countOkPoint() throws ServiceException {
         //step1:取所有监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()
@@ -222,10 +226,10 @@ public class PointSerivceImpl implements PointSerivce {
      * 获取指定主机的监控点数量
      * @param hostIds
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countAllPointByHostIds(List<String> hostIds) throws ManagerException {
+    public int countAllPointByHostIds(List<String> hostIds) throws ServiceException {
         ApplicationGetRequest applicationGetRequest = new ApplicationGetRequest();
         applicationGetRequest.getParams()
                 .setHostIds(hostIds)
@@ -235,7 +239,7 @@ public class PointSerivceImpl implements PointSerivce {
     }
 
     @Override
-    public int countProblemPointByHostIds(List<String> hostIds) throws ManagerException {
+    public int countProblemPointByHostIds(List<String> hostIds) throws ServiceException {
         //step1:获取问题触发器Ids
         List<String> triggerIds  = triggerSerivce.getProblemTriggerIds();
         //step2:根据触发器Ids获取items
@@ -267,10 +271,10 @@ public class PointSerivceImpl implements PointSerivce {
     /**
      * 获取简约监控点 point list
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefPointDTO> listAllPoint() throws ManagerException {
+    public List<BriefPointDTO> listAllPoint() throws ServiceException {
         //step1:获取监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()
@@ -298,10 +302,10 @@ public class PointSerivceImpl implements PointSerivce {
     /**
      * 获取警告监控点 point list  warning
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefPointDTO> listWarningPoint() throws ManagerException {
+    public List<BriefPointDTO> listWarningPoint() throws ServiceException {
         //step1:取所有监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()
@@ -329,10 +333,10 @@ public class PointSerivceImpl implements PointSerivce {
     /**
      * 获取严重监控点 point list  hight
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefPointDTO> listHightPoint() throws ManagerException {
+    public List<BriefPointDTO> listHightPoint() throws ServiceException {
         //step1:取所有监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()

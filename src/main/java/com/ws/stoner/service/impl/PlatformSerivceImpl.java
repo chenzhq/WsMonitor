@@ -6,7 +6,7 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.service.HostSerivce;
 import com.ws.stoner.service.PlatformSerivce;
 import com.ws.stoner.service.TriggerSerivce;
@@ -35,13 +35,13 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     private TriggerSerivce triggerSerivce;
 
     @Override
-    public List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ManagerException {
+    public List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ServiceException {
         List<BriefPlatformDTO> groups;
         try {
             groups = zApi.Group().get(request, BriefPlatformDTO.class);
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new ManagerException("");
+                throw new ServiceException("");
             }
             e.printStackTrace();
             logger.error("查询业务平台错误！{}", e.getMessage());
@@ -53,15 +53,19 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     /**
      * 根据request获取业务平台数量
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countPlatform(HostGroupGetRequest request) throws ManagerException {
+    public int countPlatform(HostGroupGetRequest request) throws ServiceException {
         int hostGroupNum ;
         try {
             hostGroupNum = zApi.Group().count(request);
         } catch (ZApiException e) {
+            if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
+                throw new ServiceException("");
+            }
             e.printStackTrace();
+            logger.error("查询业务平台数量错误！{}", e.getMessage());
             return 0;
         }
         return hostGroupNum;
@@ -70,10 +74,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     /**
      * 获取指定业务平台的所有主机数量 all host number by platformIds
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countAllHostByPlatformIds(List<String> platformIds) throws ManagerException {
+    public int countAllHostByPlatformIds(List<String> platformIds) throws ServiceException {
         HostGetRequest hostGetRequest = new HostGetRequest();
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
@@ -89,10 +93,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
      * 获取指定业务平台的问题主机数量 problem host number by platformIds
      * @param platformIds
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countProblemHostByPlatformIds(List<String> platformIds) throws ManagerException {
+    public int countProblemHostByPlatformIds(List<String> platformIds) throws ServiceException {
         //step1:获取问题触发器ids
         List<String> triggerIds = triggerSerivce.getProblemTriggerIds();
         //step2:根据两个触发器的ids得到主机数量 hosts1
@@ -130,10 +134,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     /**
      * 获取所有业务平台数量 hostgroup number
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countAllPlatform() throws ManagerException {
+    public int countAllPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         groupRequest.getParams()
                 .setMonitoredHosts(true)
@@ -147,10 +151,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
      * 获取警告业务平台数量 warning
      * 根据custom_state字段判断
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countWarningPlatform() throws ManagerException {
+    public int countWarningPlatform() throws ServiceException {
         //step1:根据custom_state字段判断
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String,Object> groupFilter = new HashMap<>();
@@ -168,10 +172,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
      * 获取严重业务平台数量 hight
      * 根据custom_state字段判断
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countHightPlatform() throws ManagerException {
+    public int countHightPlatform() throws ServiceException {
         //step1:根据custom_state字段判断
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String,Object> groupFilter = new HashMap<>();
@@ -188,10 +192,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     /**
      * 获取正常的业务平台数量 OK
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public int countOkPlatform() throws ManagerException {
+    public int countOkPlatform() throws ServiceException {
         //step1:根据custom_state字段判断
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String,Object> groupFilter = new HashMap<>();
@@ -213,10 +217,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     /**
      * 获取简约listPlatform list all
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefPlatformDTO> listAllPlatform() throws ManagerException {
+    public List<BriefPlatformDTO> listAllPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         groupRequest.getParams()
                 .setMonitoredHosts(true)
@@ -230,10 +234,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     /**
      * 获取警告的 platform list warning
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefPlatformDTO> listWarningPlatform() throws ManagerException {
+    public List<BriefPlatformDTO> listWarningPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String, Object> platformFilter = new HashMap<>();
         platformFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_WARNING);
@@ -249,10 +253,10 @@ public class PlatformSerivceImpl implements PlatformSerivce {
     /**
      * 获取严重的 platform list hight
      * @return
-     * @throws ManagerException
+     * @throws ServiceException
      */
     @Override
-    public List<BriefPlatformDTO> listHightPlatform() throws ManagerException {
+    public List<BriefPlatformDTO> listHightPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String, Object> platformFilter = new HashMap<>();
         platformFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT);
