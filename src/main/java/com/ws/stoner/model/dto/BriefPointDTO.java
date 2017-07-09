@@ -12,7 +12,7 @@ public class BriefPointDTO {
     private String pointId;
     private String name;
     @JSONField(name = "custom_state")
-    private String customState;
+    private int customState;
     @JSONField(name = "hostid")
     private String hostId;
     private BriefHostDTO host;
@@ -32,11 +32,11 @@ public class BriefPointDTO {
                 '}';
     }
 
-    public String getCustomState() {
+    public int getCustomState() {
         return customState;
     }
 
-    public BriefPointDTO setCustomState(String customState) {
+    public BriefPointDTO setCustomState(int customState) {
         this.customState = customState;
         return this;
     }

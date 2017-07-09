@@ -99,8 +99,8 @@ public class OverviewServiceImpl implements OverviewService {
                     }
                 }
                 //state赋值
-                if(childStates.contains(StatusEnum.HIGHT.getName())) {
-                    overviewListGroupDTO.setState(StatusEnum.HIGHT.getName());
+                if(childStates.contains(StatusEnum.HIGH.getName())) {
+                    overviewListGroupDTO.setState(StatusEnum.HIGH.getName());
                 }else if(childStates.contains(StatusEnum.WARNING.getName())){
                     overviewListGroupDTO.setState(StatusEnum.WARNING.getName());
                 }else {
@@ -258,7 +258,7 @@ public class OverviewServiceImpl implements OverviewService {
         List<String> fromGroupChildrenTemp = Arrays.asList(fromGroup.getGroupChildren());
         List<String> fromGroupChildren = new ArrayList<>(fromGroupChildrenTemp);
         fromGroupChildren.remove(targetGroup.getName());
-        fromGroup.setGroupChildren((String[])fromGroupChildren.toArray(new String[0]));
+        fromGroup.setGroupChildren(fromGroupChildren.toArray(new String[0]));
         overviewGroupRepository.save(fromGroup);
         //step3:to_group组的group_children添加group的name
         Group toGroup;
@@ -272,7 +272,7 @@ public class OverviewServiceImpl implements OverviewService {
         List<String> toGroupChildrenTemp = Arrays.asList(toGroup.getGroupChildren());
         List<String> toGroupChildren = new ArrayList<>(toGroupChildrenTemp);
         toGroupChildren.add(targetGroup.getName());
-        toGroup.setGroupChildren((String[])toGroupChildren.toArray(new String[0]));
+        toGroup.setGroupChildren(toGroupChildren.toArray(new String[0]));
         overviewGroupRepository.save(toGroup);
         //组装返回数据对象
         OverviewMoveGroupDTO omg = new OverviewMoveGroupDTO();
@@ -357,9 +357,9 @@ public class OverviewServiceImpl implements OverviewService {
                     mongoHost.setpId(group.getcId());
                     mongoHost.setcId("h" + hostId);
                     mongoHost.setName(host.getName());
-                    if("2".equals(host.getCustomState()) || "1".equals(host.getCustomAvailableState())) {
-                        mongoHost.setState(StatusEnum.HIGHT.getName());
-                    }else if("1".equals(host.getCustomState()) && "0".equals(host.getCustomAvailableState())){
+                    if(StatusEnum.WARNING.code == host.getCustomState() || 1 == host.getCustomAvailableState()) {
+                        mongoHost.setState(StatusEnum.HIGH.getName());
+                    }else if(StatusEnum.WARNING.code ==host.getCustomState() && 0 ==host.getCustomAvailableState()){
                         mongoHost.setState(StatusEnum.WARNING.getName());
                     }else {
                         mongoHost.setState(StatusEnum.OK.getName());
@@ -373,10 +373,10 @@ public class OverviewServiceImpl implements OverviewService {
                         mongoPoint.setpId(hostId);
                         mongoPoint.setName(point.getName());
                         mongoPoint.setType(OverviewTypeEnum.POINT.getName());
-                        if("1".equals(point.getCustomState())) {
+                        if(StatusEnum.WARNING.code == point.getCustomState()) {
                             mongoPoint.setState(StatusEnum.WARNING.getName());
-                        }else if("2".equals(point.getCustomState())) {
-                            mongoPoint.setState(StatusEnum.HIGHT.getName());
+                        }else if(StatusEnum.HIGH.code ==point.getCustomState()) {
+                            mongoPoint.setState(StatusEnum.HIGH.getName());
                         }else {
                             mongoPoint.setState(StatusEnum.OK.getName());
                         }
