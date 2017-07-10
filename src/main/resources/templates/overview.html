@@ -349,9 +349,9 @@
                     "title": "操作",
                     render: function(data, type, row, meta) {
                         if(row.type=="组"){
-                            return '<div class="ui secondary menu"><a class="right item new" id="new_'+row.cid+'"> 新建</a><a class="item move" id="move_'+row.cid+'"> 移动</a><a class="item edit" id="edit_'+row.cid+'"> 编辑</a><a class="item delete" id="delete_'+row.cid+'"> 删除</a></div>';
+                            return '<div class="ui secondary menu"><a class="right item new" id="'+row.cid+'"> 新建</a><a class="item move" id="'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a><a class="item delete" id="'+row.pid+'_'+row.cid+'"> 删除</a></div>';
                         }else {
-                            return '<div class="ui secondary menu"><a class="right item move" id="move_'+row.cid+'"> 移动</a><a class="item edit" id="edit_'+row.cid+'"> 编辑</a></div>';
+                            return '<div class="ui secondary menu"><a class="right item move" id="'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
                         }
                     }
                 },
@@ -374,53 +374,71 @@
         $('#host_table tbody').on('click', '.new', function(e) {
             e.preventDefault();
             var index= host_table.row($(this).parents('tr')).index();
-            var arr = this.id.split("_");
-            if (arr[0]=="new"){
-                var sup_group=arr[1];
-                $("#new_content").empty();
-                $("#new_actions").empty();
-                $("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
-                $("#new_actions").append("<div class='ui button deny'>取消</div> <div class='ui green button deny' id='new_submit'>确认</div>");
-                $("#new_modal").modal('show');
-                //提交新建事件
-                $('#new_submit').click(function(){
-                    var sup_group = $("#new_content input[type='text']").attr("id");
-                    var new_group_name = $("#new_content input[type='text']").val();
-                    $.ajax({
-                        type: "post",
-                        url: "/ov/group",
-                        data: {sup_group: sup_group, new_group_name: new_group_name},
-                        dataType: "json",
-                        success: function (result) {
-                            var data = result.data;
-                            console.log(data);
-                            var sup_group=data.sup_group;
-                            var new_group=data.new_group;
-                            var new_group_name=data.new_group_name;
-                            host_table.row.add( {
-                                "cid": new_group,
-                                "name": new_group_name,
-                                "pid": sup_group,
-                                "state": "",
-                                "type": "组"
-                            } ).draw();
-                            var data = host_table.data();
-                            host_table.clear();
-                            data.splice((index + 1), 0, data.splice(-1,1)[0]);
-                            host_table.rows.add(data).draw();
-                            $("#host_table").treegrid();
-                        },
-                        error: function () {
-                            alert("失败");
-                        }
-                    })
-                });
-            }if (arr[0]=="edit"){
-                $('.ui.modal').modal('show')
-            }if (arr[0]=="delete"){
-                $("#delete_modal").modal('show')
-            }if (arr[0]=="move"){
-                $('.ui.modal').modal('show')
+			var sup_group=this.id;
+			$("#new_content").empty();
+			$("#new_actions").empty();
+			$("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
+			$("#new_actions").append("<div class='ui button deny'>取消</div> <div class='ui green button deny' id='new_submit'>确认</div>");
+			$("#new_modal").modal('show');
+			$('#new_submit').click(function(){
+				var sup_group = $("#new_content input[type='text']").attr("id");
+				var new_group_name = $("#new_content input[type='text']").val();
+				$.ajax({
+					type: "post",
+					url: "/ov/group",
+					data: {sup_group: sup_group, new_group_name: new_group_name},
+					dataType: "json",
+					success: function (result) {
+						var data = result.data;
+						/*console.log(data);*/
+						var sup_group=data.sup_group;
+						var new_group=data.new_group;
+						var new_group_name=data.new_group_name;
+						host_table.row.add( {
+							"cid": new_group,
+							"name": new_group_name,
+							"pid": sup_group,
+							"state": "",
+							"type": "组"
+						} ).draw();
+						var data = host_table.data();
+						host_table.clear();
+						data.splice((index + 1), 0, data.splice(-1,1)[0]);
+						host_table.rows.add(data).draw();
+						$("#host_table").treegrid();
+					},
+					error: function () {
+						alert("失败");
+					}
+				})
+			});
+        });
+        //点击移除事件
+        $('#host_table tbody').on('click', '.move', function(e) {
+
+        });
+        //点击移除事件
+        $('#host_table tbody').on('click', '.delete', function(e) {
+            e.preventDefault();
+            var id=this.id.split("_");
+            console.log(host_table.row(2).data());
+            if (confirm("确定要删除该属性？")) {
+                host_table.row($(this).parents('tr')).remove().draw();
+                host_table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                    var d = this.data();
+                    if(d.pid==id[1]){
+                        d.pid=id[0];
+						var oldpid=[' treegrid-parent-'+ id[1]].join('');
+						var newpid=[' treegrid-parent-'+ id[0]].join('');
+						alert($('tr:eq(rowIdx)').class);
+                        $('tr:eq(rowIdx)').removeClass(oldpid);
+                        $('tr:eq(rowIdx)').addClass(newpid);
+                    }
+                   /*this.invalidate();*/
+                } );
+                host_table.draw();
+                console.log(host_table.row(2).data());
+                $("#host_table").treegrid();
             }
         });
     });
