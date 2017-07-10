@@ -51,7 +51,8 @@ public class OverviewServiceImpl implements OverviewService {
         List<BriefTemplateDTO> allTemplates;
         allHosts = hostServiceImpl.listAllHost();
         allTemplates = templateService.listAllTemplate();
-        //step:2初始化 root节点
+        //step:2 初始化 root节点
+            //root节点为空
         Group root = overviewGroupRepository.findByName("root");
         if(root.getHostChildren().length == 0 && root.getGroupChildren().length == 0) {
             List<String> hostIds = new ArrayList<>();
@@ -61,6 +62,33 @@ public class OverviewServiceImpl implements OverviewService {
             String[] hostIdsString = hostIds.toArray(new String[hostIds.size()]);
             root.setHostChildren(hostIdsString);
             overviewGroupRepository.save(root);
+        }else {
+            //有新添加的设备
+            //取所有 group 节点 host_children 形成hostIds ，和allHosts 的hostIds比较是否相同
+            List<Group> allGroups = overviewGroupRepository.findAll();
+            List<String> allHostIds = new ArrayList<>();
+            List<String> allHostIdsAPI = new ArrayList<>();
+            for(Group g : allGroups) {
+                List<String> hostIds = Arrays.asList(g.getHostChildren());
+                allHostIds.addAll(hostIds);
+            }
+            for(BriefHostDTO host : allHosts) {
+                allHostIdsAPI.add(host.getHostId());
+            }
+            //不相同  提取出新增的hostIds 组成String[] 赋值给root的 hostChildren
+            if(allHostIds.size() != allHostIdsAPI.size()) {
+                List<String> addHostIds = new ArrayList<>();
+                for(String hostId : allHostIdsAPI) {
+                    if(!allHostIds.contains(hostId)) {
+                        addHostIds.add(hostId);
+                    }
+                }
+                List<String> rootHostIdsTemp = Arrays.asList(root.getHostChildren());
+                List<String> rootHostIds = new ArrayList<>(rootHostIdsTemp);
+                rootHostIds.addAll(addHostIds);
+                root.setHostChildren(rootHostIds.toArray(new String[0]));
+                overviewGroupRepository.save(root);
+            }
         }
         //step:3 创建list，调用list = getGroupTree()
         List<OverviewListGroupDTO> overviewListGroupDTOS = new ArrayList<>();
@@ -324,7 +352,11 @@ public class OverviewServiceImpl implements OverviewService {
         //step2:给vo赋值，cid，pid，name，添加vo到list中
         OverviewListGroupDTO mongoGroup = new OverviewListGroupDTO();
         mongoGroup.setcId("g" + group.getcId());
-        mongoGroup.setpId(group.getpId());
+        if("root".equals(group.getName())) {
+            mongoGroup.setpId(null);
+        }else {
+            mongoGroup.setpId("g" + group.getpId());
+        }
         mongoGroup.setName(group.getName());
         mongoGroup.setType(OverviewTypeEnum.GROUP.getName());
         overviewListGroupDTOS.add(mongoGroup);
@@ -340,7 +372,7 @@ public class OverviewServiceImpl implements OverviewService {
             for(BriefHostDTO host : allHosts) {
                 if(hostId.equals(host.getHostId())) {
                     OverviewListGroupDTO mongoHost = new OverviewListGroupDTO();
-                    mongoHost.setpId(group.getcId());
+                    mongoHost.setpId("g" + group.getcId());
                     mongoHost.setcId("h" + hostId);
                     mongoHost.setName(host.getName());
                     if(StatusEnum.WARNING.code == host.getCustomState() || 1 == host.getCustomAvailableState()) {
@@ -356,7 +388,7 @@ public class OverviewServiceImpl implements OverviewService {
                     for(BriefPointDTO point : points) {
                         OverviewListGroupDTO mongoPoint = new OverviewListGroupDTO();
                         mongoPoint.setcId("p" + point.getPointId());
-                        mongoPoint.setpId(hostId);
+                        mongoPoint.setpId("h" + hostId);
                         mongoPoint.setName(point.getName());
                         mongoPoint.setType(OverviewTypeEnum.POINT.getName());
                         if(StatusEnum.WARNING.code == point.getCustomState()) {
