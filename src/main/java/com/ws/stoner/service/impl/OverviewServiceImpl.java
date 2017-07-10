@@ -63,7 +63,7 @@ public class OverviewServiceImpl implements OverviewService {
             root.setHostChildren(hostIdsString);
             overviewGroupRepository.save(root);
         }else {
-            //有新添加的设备
+            //有新添加或删减的设备
             //取所有 group 节点 host_children 形成hostIds ，和allHosts 的hostIds比较是否相同
             List<Group> allGroups = overviewGroupRepository.findAll();
             List<String> allHostIds = new ArrayList<>();
@@ -75,19 +75,36 @@ public class OverviewServiceImpl implements OverviewService {
             for(BriefHostDTO host : allHosts) {
                 allHostIdsAPI.add(host.getHostId());
             }
-            //不相同  提取出新增的hostIds 组成String[] 赋值给root的 hostChildren
+            //不相同
             if(allHostIds.size() != allHostIdsAPI.size()) {
+                //删减 allgroups中含有 delHostIds 的hostId
+                for(Group g : allGroups) {
+                    List<String> hostIdsTemp = Arrays.asList(g.getHostChildren());
+                    List<String> hostIds = new ArrayList<>(hostIdsTemp);
+                    for(String hostId : hostIdsTemp) {
+                        if(!allHostIdsAPI.contains(hostId)) {
+                            hostIds.remove(hostId);
+                        }
+                    }
+                    g.setHostChildren(hostIds.toArray(new String[0]));
+                    //批量更新的方法还未找到，先一个一个的save
+                    overviewGroupRepository.save(g);
+                }
+                //新增 提取出新增的hostIds 组成String[] 赋值给root的 hostChildren
+                Group newRoot = overviewGroupRepository.findByName("root");
                 List<String> addHostIds = new ArrayList<>();
                 for(String hostId : allHostIdsAPI) {
                     if(!allHostIds.contains(hostId)) {
                         addHostIds.add(hostId);
                     }
                 }
-                List<String> rootHostIdsTemp = Arrays.asList(root.getHostChildren());
-                List<String> rootHostIds = new ArrayList<>(rootHostIdsTemp);
-                rootHostIds.addAll(addHostIds);
-                root.setHostChildren(rootHostIds.toArray(new String[0]));
-                overviewGroupRepository.save(root);
+                if(addHostIds.size() != 0) {
+                    List<String> rootHostIdsTemp = Arrays.asList(root.getHostChildren());
+                    List<String> rootHostIds = new ArrayList<>(rootHostIdsTemp);
+                    rootHostIds.addAll(addHostIds);
+                    newRoot.setHostChildren(rootHostIds.toArray(new String[0]));
+                    overviewGroupRepository.save(newRoot);
+                }
             }
         }
         //step:3 创建list，调用list = getGroupTree()

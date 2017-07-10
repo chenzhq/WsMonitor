@@ -3,6 +3,8 @@ package com.ws.stoner.dao;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.model.DO.mongo.Group;
 
+import java.util.List;
+
 /**
  * Created by pc on 2017/6/30.
  */
@@ -19,6 +21,13 @@ public interface OverviewDAO {
      * 根据cid，查询 group
      */
     Group findGroupByCId(String cId) throws DAOException;
+
+    /**
+     * 批量更新组 group
+     * @param groups
+     * @throws DAOException
+     */
+    void bathUpdateGroups(List<Group>groups) throws DAOException;
 
 
 }
