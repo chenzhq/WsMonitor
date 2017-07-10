@@ -102,7 +102,7 @@ public void testCountAllPlatform() throws Exception {
 public void testCountProblemPlatform() throws Exception { 
 //TODO: Test goes here...
     System.out.println(platformService.countWarningPlatform());
-    System.out.println(platformService.countHightPlatform());
+    System.out.println(platformService.countHighPlatform());
 } 
 
 /** 
@@ -139,7 +139,7 @@ public void testListAllPlatform() throws Exception {
 public void testListProblemPlatform() throws Exception { 
 //TODO: Test goes here...
     System.out.println(platformService.listWarningPlatform());
-    System.out.println(platformService.listHightPlatform());
+    System.out.println(platformService.listHighPlatform());
 } 
 
 

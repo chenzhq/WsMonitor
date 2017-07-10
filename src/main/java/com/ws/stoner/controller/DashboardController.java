@@ -24,12 +24,7 @@ public class DashboardController {
     @RequestMapping(value = {"/", ""})
     public ModelAndView dashboard(Model model) throws ServiceException {
         ModelAndView mav = new ModelAndView("dashboard");
-        List<BriefProblemVO> problemVOList = null;
-        try {
-            problemVOList = triggerService.listBriefProblems();
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
+        List<BriefProblemVO> problemVOList = triggerService.listBriefProblems();
         mav.addObject("problemList", problemVOList);
         return mav;
     }

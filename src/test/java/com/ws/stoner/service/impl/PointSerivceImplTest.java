@@ -81,7 +81,7 @@ public void testCountAllPoint() throws Exception {
 public void testCountProblemPoint() throws Exception { 
 //TODO: Test goes here...
     System.out.println(pointSerivce.countWarningPoint());
-    System.out.println(pointSerivce.countHightPoint());
+    System.out.println(pointSerivce.countHighPoint());
 } 
 
 /** 
@@ -137,7 +137,7 @@ public void testListAllPoint() throws Exception {
 public void testListProblemPoint() throws Exception { 
 //TODO: Test goes here...
     System.out.println(pointSerivce.listWarningPoint());
-    System.out.println(pointSerivce.listHightPoint());
+    System.out.println(pointSerivce.listHighPoint());
 
 } 
 

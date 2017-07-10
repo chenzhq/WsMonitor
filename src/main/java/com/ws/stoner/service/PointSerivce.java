@@ -44,11 +44,11 @@ public interface PointSerivce {
     int countWarningPoint() throws ServiceException;
 
     /**
-     * 获取所有的严重监控点  point  hight
+     * 获取所有的严重监控点  point  high
      * @return
      * @throws ServiceException
      */
-    int countHightPoint() throws ServiceException;
+    int countHighPoint() throws ServiceException;
 
     /**
      * 获取正常监控点
@@ -91,11 +91,11 @@ public interface PointSerivce {
     List<BriefPointDTO> listWarningPoint() throws ServiceException;
 
     /**
-     * 获取严重监控点 point list hight
+     * 获取严重监控点 point list high
      * @return
      * @throws ServiceException
      */
-    List<BriefPointDTO> listHightPoint() throws ServiceException;
+    List<BriefPointDTO> listHighPoint() throws ServiceException;
 
 
 }

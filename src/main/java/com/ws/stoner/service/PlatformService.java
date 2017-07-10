@@ -42,11 +42,11 @@ public interface PlatformService {
 
 
     /**
-     * 获取严重业务平台数量  hight number
+     * 获取严重业务平台数量  high number
      * @return
      * @throws ServiceException
      */
-    int countHightPlatform() throws ServiceException;
+    int countHighPlatform() throws ServiceException;
 
     /**
      * 获取正常的业务平台数量 OK number
@@ -88,10 +88,10 @@ public interface PlatformService {
     List<BriefPlatformDTO> listWarningPlatform() throws ServiceException;
 
     /**
-     * 获取严重的 platform list hight
+     * 获取严重的 platform list high
      * @return
      * @throws ServiceException
      */
-    List<BriefPlatformDTO> listHightPlatform() throws ServiceException;
+    List<BriefPlatformDTO> listHighPlatform() throws ServiceException;
 
 }

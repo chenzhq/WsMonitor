@@ -173,13 +173,13 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     /**
-     * 获取严重业务平台数量 hight
+     * 获取严重业务平台数量 high
      * 根据custom_state字段判断
      * @return
      * @throws ServiceException
      */
     @Override
-    public int countHightPlatform() throws ServiceException {
+    public int countHighPlatform() throws ServiceException {
         //step1:根据custom_state字段判断
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String,Object> groupFilter = new HashMap<>();
@@ -260,7 +260,7 @@ public class PlatformServiceImpl implements PlatformService {
      * @throws ServiceException
      */
     @Override
-    public List<BriefPlatformDTO> listHightPlatform() throws ServiceException {
+    public List<BriefPlatformDTO> listHighPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String, Object> platformFilter = new HashMap<>();
         platformFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT);

@@ -46,16 +46,16 @@ public class DashboardRestController {
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         int allHostNum = 0;
         int warningHostNum = 0;
-        int hightHostNum = 0;
+        int highHostNum = 0;
         allHostNum = hostService.countAllHost();
         warningHostNum = hostService.countWarningHost();
-        hightHostNum = hostService.countHighHost();
+        highHostNum = hostService.countHighHost();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningHostNum);
-        StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, hightHostNum);
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allHostNum - warningHostNum - hightHostNum);
+        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highHostNum);
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allHostNum - warningHostNum - highHostNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
-        stateNums.add(hightStateNum);
+        stateNums.add(highStateNum);
         hostState.setTotalNum(allHostNum).setStateNum(stateNums);
         return RestResultGenerator.genResult(hostState, REST_RESPONSE_SUCCESS).toString();
     }
@@ -69,13 +69,13 @@ public class DashboardRestController {
         int highPointNum;
         allPointNum = pointSerivce.countAllPoint();
         warningPointNum = pointSerivce.countWarningPoint();
-        highPointNum = pointSerivce.countHightPoint();
+        highPointNum = pointSerivce.countHighPoint();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPointNum);
-        StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPointNum);
+        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPointNum);
         StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPointNum - warningPointNum - highPointNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
-        stateNums.add(hightStateNum);
+        stateNums.add(highStateNum);
         pointState.setTotalNum(allPointNum).setStateNum(stateNums);
         return RestResultGenerator.genResult(pointState, REST_RESPONSE_SUCCESS).toString();
     }
@@ -89,13 +89,13 @@ public class DashboardRestController {
         int highPlatformNum;
         allPlatformNum = platformService.countAllPlatform();
         warningPlatformNum = platformService.countWarningPlatform();
-        highPlatformNum = platformService.countHightPlatform();
+        highPlatformNum = platformService.countHighPlatform();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPlatformNum);
-        StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPlatformNum);
+        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPlatformNum);
         StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPlatformNum - warningPlatformNum - highPlatformNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
-        stateNums.add(hightStateNum);
+        stateNums.add(highStateNum);
         platformState.setTotalNum(allPlatformNum).setStateNum(stateNums);
         return RestResultGenerator.genResult(platformState, REST_RESPONSE_SUCCESS).toString();
     }
@@ -118,9 +118,9 @@ public class DashboardRestController {
             //ip
             hostVO.setIp(hostDTO.getInterfaces().get(0).getIp());
             //state
-            if(StatusEnum.OK.code == hostDTO.getCustomState() && "0".equals(hostDTO.getCustomAvailableState())) {
+            if(StatusEnum.OK.code == hostDTO.getCustomState() && StatusEnum.OK.code == hostDTO.getCustomAvailableState()) {
                 hostVO.setState(StatusEnum.OK.getName());
-            }else if(StatusEnum.WARNING.code == hostDTO.getCustomState() && "0".equals(hostDTO.getCustomAvailableState())) {
+            }else if(StatusEnum.WARNING.code == hostDTO.getCustomState() && StatusEnum.OK.code == hostDTO.getCustomAvailableState()) {
                 hostVO.setState(StatusEnum.WARNING.getName());
             }else {
                 hostVO.setState(StatusEnum.HIGH.getName());
@@ -137,19 +137,19 @@ public class DashboardRestController {
             //allNum
             hostVO.setAllNum(hostDTO.getPoints().size());
             //warningNum
-            //hightNum
+            //highNum
             int warningNum = 0;
-            int hightNum = 0;
+            int highNum = 0;
             for(BriefPointDTO point : hostDTO.getPoints()) {
-                if("1".equals(point.getCustomState())) {
+                if(StatusEnum.WARNING.code == point.getCustomState()) {
                     warningNum++;
                 }
-                if("2".equals(point.getCustomState())) {
-                    hightNum++;
+                if(StatusEnum.HIGH.code == point.getCustomState()) {
+                    highNum++;
                 }
             }
             hostVO.setWarningNum(warningNum);
-            hostVO.setHightNum(hightNum);
+            hostVO.setHighNum(highNum);
             hostVOS.add(hostVO);
         }
         return RestResultGenerator.genResult(hostVOS, REST_RESPONSE_SUCCESS).toString();
@@ -176,9 +176,9 @@ public class DashboardRestController {
             platformVO.setName(platform.getName());
             platformVO.setAvailability(100);
             //state
-            if("1".equals(platform.getCustomState())) {
+            if(StatusEnum.WARNING.code == platform.getCustomState()) {
                 platformVO.setState(StatusEnum.WARNING.getName());
-            }else if("2".equals(platform.getCustomState())) {
+            }else if(StatusEnum.HIGH.code == platform.getCustomState()) {
                 platformVO.setState(StatusEnum.HIGH.getName());
             }else {
                 platformVO.setState(StatusEnum.OK.getName());
@@ -186,7 +186,7 @@ public class DashboardRestController {
             //allNum，warningNum,highNum
             int allNum = 0;
             int warningNum = 0;
-            int hightNum = 0;
+            int highNum = 0;
             for(BriefHostDTO host : platform.getHosts()) {
                 if(hostIds.contains(host.getHostId())) {
                     allNum++;
@@ -195,12 +195,12 @@ public class DashboardRestController {
                     warningNum++;
                 }
                 if(StatusEnum.HIGH.code == host.getCustomState() || StatusEnum.WARNING.code == host.getCustomAvailableState()) {
-                    hightNum++;
+                    highNum++;
                 }
             }
             platformVO.setAllNum(allNum);
             platformVO.setWarningNum(warningNum);
-            platformVO.setHightNum(hightNum);
+            platformVO.setHighNum(highNum);
 
             platformVOS.add(platformVO);
         }

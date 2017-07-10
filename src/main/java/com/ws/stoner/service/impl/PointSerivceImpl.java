@@ -163,7 +163,7 @@ public class PointSerivceImpl implements PointSerivce {
      * @throws ServiceException
      */
     @Override
-    public int countHightPoint() throws ServiceException {
+    public int countHighPoint() throws ServiceException {
         //step1:取所有监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()
@@ -186,8 +186,8 @@ public class PointSerivceImpl implements PointSerivce {
                 .setHostIds(hostIds)
                 .setFilter(pointFilter)
                 .setCountOutput(true);
-        int appHightNum  = countPoint(appRequest);
-        return appHightNum;
+        int appHighNum  = countPoint(appRequest);
+        return appHighNum;
 
     }
 
@@ -335,12 +335,12 @@ public class PointSerivceImpl implements PointSerivce {
     }
 
     /**
-     * 获取严重监控点 point list  hight
+     * 获取严重监控点 point list  high
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<BriefPointDTO> listHightPoint() throws ServiceException {
+    public List<BriefPointDTO> listHighPoint() throws ServiceException {
         //step1:取所有监控中的主机
         HostGetRequest hostGetRequest = new HostGetRequest();
         hostGetRequest.getParams()

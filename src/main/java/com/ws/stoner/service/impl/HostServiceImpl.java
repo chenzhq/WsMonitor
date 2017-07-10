@@ -135,8 +135,8 @@ public class HostServiceImpl implements HostService {
                 .setFilter(hostFilter)
                 .setSearchByAny(true)
                 .setCountOutput(true);
-        int hostHightNum = countHost(hostGetRequest);
-        return hostHightNum;
+        int hostHighNum = countHost(hostGetRequest);
+        return hostHighNum;
     }
 
     /**
