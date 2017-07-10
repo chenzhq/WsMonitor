@@ -356,22 +356,23 @@ var Lobibox = Lobibox || {};
         success: {
             'class': 'lobibox-notify-success',
             'title': 'Success',
-            sound: 'sound2'
+            sound: false
         },
         error: {
             'class': 'lobibox-notify-error',
             'title': 'Error',
-            sound: 'sound4'
+            sound: false
         },
         warning: {
             'class': 'lobibox-notify-warning',
             'title': 'Warning',
-            sound: 'sound5'
+            sound: false
         },
         info: {
             'class': 'lobibox-notify-info',
             'title': 'Information',
-            sound: 'sound6'
+            sound: false
+           /* sound: 'sound6'*/
         },
         icons: {
             bootstrap: {

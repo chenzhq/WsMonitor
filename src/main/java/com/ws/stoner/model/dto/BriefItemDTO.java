@@ -13,19 +13,22 @@ public class BriefItemDTO {
     @JSONField(name = "itemid")
     private String itemId;
     private String name;
+    @JSONField(name = "custom_state")
+    private String customState;
     @JSONField(name = "lastclock",format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastTime;
 
-    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock"};
+    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state"};
 
-    @Override
-    public String toString() {
-        return "BriefItemDTO{" +
-                "itemId='" + itemId + '\'' +
-                ", name='" + name + '\'' +
-                ", lastTime=" + lastTime +
-                '}';
+    public String getCustomState() {
+        return customState;
     }
+
+    public BriefItemDTO setCustomState(String customState) {
+        this.customState = customState;
+        return this;
+    }
+
 
     public String getItemId() {
         return itemId;
@@ -47,6 +50,16 @@ public class BriefItemDTO {
 
     public LocalDateTime getLastTime() {
         return lastTime;
+    }
+
+    @Override
+    public String toString() {
+        return "BriefItemDTO{" +
+                "itemId='" + itemId + '\'' +
+                ", name='" + name + '\'' +
+                ", customState='" + customState + '\'' +
+                ", lastTime=" + lastTime +
+                '}';
     }
 
     public BriefItemDTO setLastTime(int lastTime) {

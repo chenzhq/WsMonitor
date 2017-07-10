@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>监控系统</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/semantic.js"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css"  />
+	<link rel="stylesheet" href="../static/css/icon.css"  />
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
+	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+	<link rel="stylesheet" href="../static/css/jquery.treegrid.css">
+	<!-- 引入 ajax异步请求，模拟服务器地址 -->
+	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+	<style type="text/css">
+	.ui.table.dataTable thead th {
+	border-left: 0px;
+	}
+	</style>
+</head>
+<body>
+<div id="contextWrap">
+	<!--sidebar-->
+	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
+		 th:replace="layout::left_menu">
+		<a class="item logo" href="index.html">
+			<img src="../static/images/logo.png" alt="stagblogo"/><img src="../static/images/thumblogo.png"
+																	   alt="stagblogo" class="displaynone"/>
+		</a>
+		<div class="ui accordion inverted">
+			<a class="title item" href="dashboard.html">
+				<i class="ion-speedometer titleIcon icon"></i>仪表盘
+			</a>
+			<a class="title item" href="tab.html">
+				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
+			</a>
+			<a class="item active" href="overview.html">
+				<i class="ion-ios-world titleIcon  icon"></i>业务概览
+			</a>
+			<div class="title item">
+				<i class="ion-mouse titleIcon icon"></i>设备概览<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="#">服务器</a>
+				<a class="item" href="#">网络设备</a>
+				<a class="item" href="#">数据库</a>
+				<a class="item" href="#">应用</a>
+			</div>
+			<a class="title item" href="#">
+				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+			</a>
+			<div class="title item">
+				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="#">告警日历</a>
+				<a class="item" href="#">告警列表</a>
+			</div>
+			<a class="title item" href="#">
+				<i class="ion-briefcase titleIcon icon"></i>报表统计
+			</a>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>仪表盘1</span>
+			<i class="ion-speedometer icon"></i>
+			<div class="menu">
+				<div class="header">
+					仪表盘1
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>监控视图</span>
+			<i class="ion-ios-lightbulb icon"></i>
+			<div class="menu">
+				<div class="header">
+					监控视图
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>业务概览</span>
+			<i class="ion-ios-world icon"></i>
+			<div class="menu">
+				<div class="header">
+					业务概览
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>设备概览</span>
+			<i class="ion-mouse icon"></i>
+			<div class="menu">
+				<div class="header">
+					设备概览
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="tab.html">服务器</a>
+				<a class="item" href="table.html">网络设备</a>
+				<a class="item" href="error.html">数据库</a>
+				<a class="item" href="login.html">应用</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>视图展示</span>
+			<i class="ion-arrow-graph-up-right icon"></i>
+			<div class="menu">
+				<div class="header">
+					视图展示
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>告警展示</span>
+			<i class="ion-paintbrush icon"></i>
+			<div class="menu">
+				<div class="header">
+					告警展示
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="error.html">告警日历</a>
+				<a class="item" href="error.html">告警列表</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>报表统计</span>
+			<a href="error.html">
+				<i class="ion-briefcase icon"></i>
+			</a>
+		</div>
+
+		<div class="ui divider"></div>
+
+	</div>
+
+	<!--sidebar-->
+
+	<div class="pusher">
+		<!--navbar-->
+		<div class="navslide navwrap" th:replace="layout::top_nav">
+			<div class="ui menu icon borderless grid" data-color="inverted white">
+				<a class="item labeled openbtn">
+					<i class="ion-navicon-round big icon"></i>
+				</a>
+				<div class="item ui colhidden">
+					<div class="ui icon input">
+						<input type="text" placeholder="Search...">
+						<i class="search icon"></i>
+					</div>
+				</div>
+				<div class="right menu colhidden">
+					<div class="ui dropdown item labeled icon">
+						<i class="bell icon"></i> 告警
+						<div class="ui red label mini circular">6</div>
+						<div class="menu">
+							<div class="header">
+								紧急告警
+							</div>
+							<div class="item">
+								告警信息1……
+								<div class="ui teal left pointing label">1</div>
+							</div>
+							<div class="item">
+								告警信息2……
+								<div class="ui label">51</div>
+							</div>
+							<div class="item">
+								告警信息3……
+								<div class="ui label">1</div>
+							</div>
+							<div class="header">
+								严重告警
+							</div>
+							<div class="item">
+								<i class="dropdown icon"></i>
+								<span class="text">更多</span>
+								<div class="menu">
+									<div class="item">告警信息……</div>
+									<div class="item">告警信息……</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="ui dropdown item">
+						<img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/0.jpg}"
+							 alt="label-image"/>
+						<div class="menu">
+							<a class="item" href="mail.html">注销</a>
+						</div>
+					</div>
+					<a class="item labeled rightsidebar computer only">
+						<i class="ion-wrench large icon"></i>工具
+					</a>
+
+				</div>
+			</div>
+		</div>
+		<!--navbar-->
+		<!--maincontent-->
+		<div class="mainWrap navslide">
+			<div class="ui equal width left aligned padded grid stackable">
+				<!--Site Content-->
+				<div class="sixteen wide tablet sixteen wide computer column">
+					<div class="ui segments">
+						<div class="ui segment no-padding">
+							<div class="ui secondary menu">
+								<a class="header item">
+									<h3><i class="bar large chart icon"></i>检测总数：</h3>
+								</a>
+								<a class="item">
+									<p>36个设备的222个监测点。
+										<i class="red circle icon"></i>  30
+										<i class="yellow circle icon"></i>  50
+										<i class="green circle icon"></i>  122
+										<i class="grey circle icon"></i>  20
+									</p>
+								</a>
+
+								<a class="right item">
+									类型：
+                                    <select id="ui_dropdown" class="ui dropdown">
+                                        <option value="">选择类型</option>
+                                        <option>组</option>
+                                        <option>服务器</option>
+                                        <option>数据库</option>
+                                        <option>网络设备</option>
+										<option>监控点</option>
+                                    </select>
+								</a>
+							</div>
+						</div>
+						<div class="ui segment">
+							<table  id="host_table" class="tree ui  compact very basic table center aligned ">
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<!--modal-->
+				<div id="new_modal" class="ui small modal">
+					<i class="close icon"></i>
+					<div class="content">
+						<div class="ui form">
+							<h4 class="ui dividing header">新建组</h4>
+							<div id="new_content" class="field">
+							</div>
+						</div>
+					</div>
+					<div class="actions">
+						<div class="ui button deny">取消</div>
+						<div class="ui green button deny" id="new_submit">确认</div>
+					</div>
+				</div>
+
+				<div id="delete_modal" class="ui small modal">
+					<i class="close icon"></i>
+					<div class="header">
+						Update Your Settings
+					</div>
+					<div class="content">
+						<div class="ui form">
+							<h4 class="ui dividing header">Give us your feedback</h4>
+							<div class="field">
+								<label>Feedback</label>
+								<textarea></textarea>
+							</div>
+							<div class="field">
+								<div class="ui checkbox">
+									<input type="checkbox" checked="checked" name="contact-me">
+									<label>It's okay to contact me.</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="actions">
+						<div class="ui button deny">取消</div>
+						<div class="ui green button deny" id="delete_submit">确认</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="../static/js/js.cookie.js"></script>
+<script src="../static/js/jquery.nicescroll.min.js"></script>
+<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
+<script src="../static/js/main.js"></script>
+<script type="text/javascript" src="../static/js/jquery.treegrid.js"></script>
+<th:block th:fragment="specialScript">
+	<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+	<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+</th:block>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var host_table = $("#host_table").DataTable({
+            "paging": false,
+            "ordering": false,
+            "initComplete": function () {//初始化后回调
+                $("#host_table").treegrid();
+            },
+            "createdRow": function (row, data, dataIndex) {
+                if (data.pid== null) {
+                    var tmp=['treegrid-'+ data.cid].join('');
+                } else {
+                    var tmp=['treegrid-'+ data.cid +' treegrid-parent-'+ data.pid].join('');
+                }
+                $(row).addClass(tmp);
+                $('td', row).eq(0).addClass('left aligned');
+                $('td', row).eq(2).addClass('no-padding');
+            },
+            ajax: {
+                url: '/host/overview',
+                dataSrc: 'data'
+            },
+            columns: [
+                {
+                    "data": null,
+                    "width": "20%",
+                    "title": "名称",
+                    render: function(data, type, row, meta) {
+                        if(data.state=="正常"){
+                        return  '<i class="green circle icon"></i>' + row.name;
+                    }else {
+                            if(data.state=="问题"){
+                                return  '<i class="red circle icon"></i>' + row.name;
+							}else {
+                                return  row.name;
+							}
+                        }
+                    }
+                },
+                {
+                    "data": "type",
+                    "width": "20%",
+                    "title": "类型"
+                },
+                {
+                    "data": null,
+                    "width": "20%",
+                    "title": "操作",
+                    render: function(data, type, row, meta) {
+                        if(row.type=="组"){
+                            return '<div class="ui secondary menu"><a class="right item new" id="new_'+row.cid+'"> 新建</a><a class="item move" id="move_'+row.cid+'"> 移动</a><a class="item edit" id="edit_'+row.cid+'"> 编辑</a><a class="item delete" id="delete_'+row.cid+'"> 删除</a></div>';
+                        }else {
+                            return '<div class="ui secondary menu"><a class="right item move" id="move_'+row.cid+'"> 移动</a><a class="item edit" id="edit_'+row.cid+'"> 编辑</a></div>';
+                        }
+                    }
+                },
+            ],
+        });
+
+        $('#delete_submit').click(function(){
+            $("#new_content input[type='text']").each(function(){
+                var id = $("#new_content input[type='text']").attr("id");
+                alert("id:"+id+"val"+$(this).val());
+            });
+        });
+        //下拉框事件
+        $("#ui_dropdown").change(function(){
+            //code...});
+            var tmp=$("#ui_dropdown").val()
+            host_table.search(tmp).draw();
+        });
+        //点击新建事件
+        $('#host_table tbody').on('click', '.new', function(e) {
+            e.preventDefault();
+            var index= host_table.row($(this).parents('tr')).index();
+            var arr = this.id.split("_");
+            if (arr[0]=="new"){
+                var sup_group=arr[1];
+                $("#new_content").empty();
+                $("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
+                $("#new_modal").modal('show');
+                //提交新建事件
+                $('#new_submit').click(function(){
+                    var sup_group = $("#new_content input[type='text']").attr("id");
+                    var new_group_name = $("#new_content input[type='text']").val();
+                    $.ajax({
+                        type: "post",
+                        url: "/ov/group",
+                        data: {sup_group: sup_group, new_group_name: new_group_name},
+                        dataType: "json",
+                        success: function (result) {
+                            var data = result.data;
+                            var sup_group=data.sup_group;
+                            var new_group=data.new_group;
+                            var new_group_name=data.new_group_name;
+                            host_table.row.add( {
+                                "cid": new_group,
+                                "name": new_group_name,
+                                "pid": sup_group,
+                                "state": "",
+                                "type": "组"
+                            } ).draw();
+                            var data = host_table.data();
+                            host_table.clear();
+                            data.splice((index + 1), 0, data.splice(-1,1)[0]);
+                            host_table.rows.add(data).draw();
+                            $("#host_table").treegrid();
+                        },
+                        error: function () {
+                            alert("失败");
+                        }
+                    })
+                });
+            }if (arr[0]=="edit"){
+                $('.ui.modal').modal('show')
+            }if (arr[0]=="delete"){
+                $("#delete_modal").modal('show')
+            }if (arr[0]=="move"){
+                $('.ui.modal').modal('show')
+            }
+        });
+    });
+
+</script>
+</body>
+</html>
+
+
+

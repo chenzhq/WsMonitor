@@ -2,8 +2,10 @@ package com.ws.bix4j.access.hostgroup;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.SelectParamSerializer;
 import com.ws.bix4j.access.ZRequest;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,12 +47,38 @@ public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
         /**
          * with 参数
          */
+
+
         /**
          * select 参数
          */
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectHosts;
+
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectTemplates;
+
+        @Override
+        public String toString() {
+            return "Params{" +
+                    "graphIds=" + graphIds +
+                    ", groupIds=" + groupIds +
+                    ", hostIds=" + hostIds +
+                    ", maintenanceIds=" + maintenanceIds +
+                    ", monitoredHosts=" + monitoredHosts +
+                    ", realHosts=" + realHosts +
+                    ", templatedHosts='" + templatedHosts + '\'' +
+                    ", templateIds=" + templateIds +
+                    ", triggerIds=" + triggerIds +
+                    ", selectHosts=" + Arrays.toString(selectHosts) +
+                    ", selectTemplates=" + Arrays.toString(selectTemplates) +
+                    '}';
+        }
+
         /**
          * 其他参数
          */
+
         public List<String> getGraphIds() {
             return graphIds;
         }
@@ -96,7 +124,7 @@ public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
             return this;
         }
 
-        public boolean getRealHosts() {
+        public boolean isRealHosts() {
             return realHosts;
         }
 
@@ -129,6 +157,24 @@ public class HostGroupGetRequest extends ZRequest<HostGroupGetRequest.Params> {
 
         public Params setTriggerIds(List<String> triggerIds) {
             this.triggerIds = triggerIds;
+            return this;
+        }
+
+        public String[] getSelectHosts() {
+            return selectHosts;
+        }
+
+        public Params setSelectHosts(String[] selectHosts) {
+            this.selectHosts = selectHosts;
+            return this;
+        }
+
+        public String[] getSelectTemplates() {
+            return selectTemplates;
+        }
+
+        public Params setSelectTemplates(String[] selectTemplates) {
+            this.selectTemplates = selectTemplates;
             return this;
         }
     }

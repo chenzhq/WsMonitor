@@ -4,18 +4,59 @@
     var factory = function ($, DataTable) {
         "use strict";
 
-        /* Set the defaults for DataTables initialisation */
+        /* 初始化时设置DataTable默认属性*/
         $.extend(true, DataTable.defaults, {
-            dom:
-                "<'left aligned eight wide column'l><'right aligned eight wide column'f>" +
+            dom:// 不显示搜索框
                 "<'sixteen wide column'tr>" +
-                "<'left aligned four wide column'i><'right aligned twelve wide column'p>",
-            renderer: 'semantic'
+                "<'left aligned five wide column'i><'right aligned eleven wide column'p>",
+            renderer: 'semantic',
+            order: [0, 'asc'],// 以升序排列此列
+            "pagingType": "full_numbers_icon",
+            "iDisplayLength" : 12,// 每页显示的记录数
+            "language": {
+                "sLengthMenu" : "每页显示 _MENU_ 条记录",
+                "sZeroRecords" : "对不起，没有匹配的数据",
+                "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
+                "sInfoEmpty" : "没有匹配的数据",
+                "sInfoFiltered" : "(原 _MAX_ 条记录)",
+                "sProcessing" : "正在加载中...",
+                "sSearch" : "全文搜索：",
+                "oPaginate" : {
+                    "sFirst" : "首页",
+                    "sPrevious" : " 上一页 ",
+                    "sNext" : " 下一页 ",
+                    "sLast" : " 末页 "
+                }
+            },
         });
 
         $.extend(DataTable.ext.pager, {
             full_numbers_icon: DataTable.ext.pager.full_numbers
         });
+
+        //错误信息提示
+        $.fn.dataTable.ext.errMode = function (s, h, m) {
+            if (h == 1) {
+                Lobibox.notify("error", {
+                    size: "normal",
+                    rounded: false,
+                    delayIndicator: true,
+                    msg: "连接服务器失败！",
+                    icon: "warning icon",
+                    title: "业务系统 Table",
+                });
+            } else if (h == 7) {
+                Lobibox.notify("error", {
+                    size: "normal",
+                    rounded: false,
+                    delayIndicator: true,
+                    /*msg: "返回数据错误！",*/
+                    msg: "连接服务器失败！",
+                    icon: "warning icon",
+                    title: "业务系统 Table",
+                });
+            }
+        };
 
         /* Default class modification */
         $.extend(DataTable.ext.classes, {
@@ -24,7 +65,7 @@
             sLengthSelect: ""
         });
 
-        /* Bootstrap paging button renderer */
+        /* 分页按钮渲染 */
         DataTable.ext.renderer.pageButton.semantic = function (settings, host, idx, buttons, page, pages) {
             var api = new DataTable.Api(settings);
             var classes = settings.oClasses;

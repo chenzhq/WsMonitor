@@ -8,21 +8,10 @@ public class DashboardPlatformVO {
     private String platformId;
     private Integer availability;
     private String name;
-    private Integer problemNum; //问题主机数量
+    private Integer warningNum; //警告主机数量
+    private Integer hightNum; //严重主机数量
     private String state;
     private Integer allNum;
-
-    @Override
-    public String toString() {
-        return "DashboardPlatformVO{" +
-                "platformId='" + platformId + '\'' +
-                ", availability=" + availability +
-                ", name='" + name + '\'' +
-                ", problemNum=" + problemNum +
-                ", state='" + state + '\'' +
-                ", allNum=" + allNum +
-                '}';
-    }
 
     public String getPlatformId() {
         return platformId;
@@ -51,12 +40,34 @@ public class DashboardPlatformVO {
         return this;
     }
 
-    public Integer getProblemNum() {
-        return problemNum;
+    @Override
+    public String toString() {
+        return "DashboardPlatformVO{" +
+                "platformId='" + platformId + '\'' +
+                ", availability=" + availability +
+                ", name='" + name + '\'' +
+                ", warningNum=" + warningNum +
+                ", hightNum=" + hightNum +
+                ", state='" + state + '\'' +
+                ", allNum=" + allNum +
+                '}';
     }
 
-    public DashboardPlatformVO setProblemNum(Integer problemNum) {
-        this.problemNum = problemNum;
+    public Integer getWarningNum() {
+        return warningNum;
+    }
+
+    public DashboardPlatformVO setWarningNum(Integer warningNum) {
+        this.warningNum = warningNum;
+        return this;
+    }
+
+    public Integer getHightNum() {
+        return hightNum;
+    }
+
+    public DashboardPlatformVO setHightNum(Integer hightNum) {
+        this.hightNum = hightNum;
         return this;
     }
 

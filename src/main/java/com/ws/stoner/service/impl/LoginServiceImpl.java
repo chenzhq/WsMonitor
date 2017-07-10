@@ -6,7 +6,7 @@ import com.ws.bix4j.access.user.UserLoginResponse;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
-import com.ws.stoner.exception.ManagerException;
+import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.query.LoginFormQuery;
@@ -26,7 +26,7 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private ZApi zApi;
 
-    public LoginDTO login(LoginFormQuery loginFormQuery) throws ManagerException {
+    public LoginDTO login(LoginFormQuery loginFormQuery) throws ServiceException {
         UserLoginResponse.Result result;
         LoginDTO loginDTO = new LoginDTO(false);
         try {
@@ -38,7 +38,7 @@ public class LoginServiceImpl implements LoginService {
                 return loginDTO;
             } else {
                 //如果是网络问题，或者请求参数不合法等问题
-                throw new ManagerException(e.getMessage());
+                throw new ServiceException(e.getMessage());
             }
 
         }
@@ -63,16 +63,17 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public boolean logout() throws ManagerException {
+    public boolean logout() throws ServiceException {
         boolean logoutSuccess;
         try {
             logoutSuccess = zApi.logout().getResult();
         } catch (ZApiException e) {
             if (e.getCode().equals(ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE)) {
-                throw new AuthExpireException("");
-            } else {
-                throw new ManagerException("");
+                throw new ServiceException("");
             }
+            e.printStackTrace();
+            logger.error("登出错误！{}", e.getMessage());
+            return false;
         }
         return logoutSuccess;
     }

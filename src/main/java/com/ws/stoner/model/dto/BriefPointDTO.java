@@ -11,21 +11,34 @@ public class BriefPointDTO {
     @JSONField(name = "applicationid")
     private String pointId;
     private String name;
+    @JSONField(name = "custom_state")
+    private int customState;
     @JSONField(name = "hostid")
     private String hostId;
     private BriefHostDTO host;
     private List<BriefItemDTO> items;
 
-    public static final String[] PROPERTY_NAMES = {"applicationid","name","hostid"};
+    public static final String[] PROPERTY_NAMES = {"applicationid","name","hostid","custom_state"};
 
     @Override
     public String toString() {
         return "BriefPointDTO{" +
                 "pointId='" + pointId + '\'' +
                 ", name='" + name + '\'' +
+                ", customState='" + customState + '\'' +
                 ", hostId='" + hostId + '\'' +
                 ", host=" + host +
+                ", items=" + items +
                 '}';
+    }
+
+    public int getCustomState() {
+        return customState;
+    }
+
+    public BriefPointDTO setCustomState(int customState) {
+        this.customState = customState;
+        return this;
     }
 
     public List<BriefItemDTO> getItems() {

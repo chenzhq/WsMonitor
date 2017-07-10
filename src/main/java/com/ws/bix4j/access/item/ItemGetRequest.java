@@ -2,8 +2,10 @@ package com.ws.bix4j.access.item;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.SelectParamSerializer;
 import com.ws.bix4j.access.ZRequest;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,40 +59,17 @@ public class ItemGetRequest extends ZRequest<ItemGetRequest.Params>{
         /**
          * select 参数
          */
-        @JSONField(name = "selectHosts")
-        private String stringHosts;
-        @JSONField(name = "selectHosts")
-        private List<String> listHosts;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectHosts;
 
-        @JSONField(name = "selectInterfaces")
-        private String stringInterfaces;
-        @JSONField(name = "selectInterfaces")
-        private List<String> listInterfaces;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectInterfaces;
 
-        @JSONField(name = "selectTriggers")
-        private String stringTriggers;
-        @JSONField(name = "selectTriggers")
-        private List<String> listTriggers;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectTriggers;
 
-        @JSONField(name = "selectGraphs")
-        private String stringGraphs;
-        @JSONField(name = "selectGraphs")
-        private List<String> listGraphs;
-
-        @JSONField(name = "selectApplications")
-        private String stringApplications;
-        @JSONField(name = "selectApplications")
-        private List<String> listApplications;
-
-        @JSONField(name = "selectDiscoveryRule")
-        private String stringDiscoveryRule;
-        @JSONField(name = "selectDiscoveryRule")
-        private List<String> listDiscoveryRule;
-
-        @JSONField(name = "selectItemDiscovery")
-        private String stringItemDiscovery;
-        @JSONField(name = "selectItemDiscovery")
-        private List<String> listItemDiscovery;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectApplications;
 
         @Override
         public String toString() {
@@ -108,24 +87,14 @@ public class ItemGetRequest extends ZRequest<ItemGetRequest.Params>{
                     ", inherited=" + inherited +
                     ", templated=" + templated +
                     ", monitored=" + monitored +
-                    ", hostgroup='" + group + '\'' +
+                    ", group='" + group + '\'' +
                     ", host='" + host + '\'' +
                     ", application='" + application + '\'' +
                     ", withTriggers=" + withTriggers +
-                    ", stringHosts='" + stringHosts + '\'' +
-                    ", listHosts=" + listHosts +
-                    ", stringInterfaces='" + stringInterfaces + '\'' +
-                    ", listInterfaces=" + listInterfaces +
-                    ", stringTriggers='" + stringTriggers + '\'' +
-                    ", listTriggers=" + listTriggers +
-                    ", stringGraphs='" + stringGraphs + '\'' +
-                    ", listGraphs=" + listGraphs +
-                    ", stringApplications='" + stringApplications + '\'' +
-                    ", listApplications=" + listApplications +
-                    ", stringDiscoveryRule='" + stringDiscoveryRule + '\'' +
-                    ", listDiscoveryRule=" + listDiscoveryRule +
-                    ", stringItemDiscovery='" + stringItemDiscovery + '\'' +
-                    ", listItemDiscovery=" + listItemDiscovery +
+                    ", selectHosts=" + Arrays.toString(selectHosts) +
+                    ", selectInterfaces=" + Arrays.toString(selectInterfaces) +
+                    ", selectTriggers=" + Arrays.toString(selectTriggers) +
+                    ", selectApplications=" + Arrays.toString(selectApplications) +
                     '}';
         }
 
@@ -282,129 +251,39 @@ public class ItemGetRequest extends ZRequest<ItemGetRequest.Params>{
             return this;
         }
 
-        public String getStringHosts() {
-            return stringHosts;
+        public String[] getSelectHosts() {
+            return selectHosts;
         }
 
-        public Params setStringHosts(String stringHosts) {
-            this.stringHosts = stringHosts;
+        public Params setSelectHosts(String[] selectHosts) {
+            this.selectHosts = selectHosts;
             return this;
         }
 
-        public List<String> getListHosts() {
-            return listHosts;
+        public String[] getSelectInterfaces() {
+            return selectInterfaces;
         }
 
-        public Params setListHosts(List<String> listHosts) {
-            this.listHosts = listHosts;
+        public Params setSelectInterfaces(String[] selectInterfaces) {
+            this.selectInterfaces = selectInterfaces;
             return this;
         }
 
-        public String getStringInterfaces() {
-            return stringInterfaces;
+        public String[] getSelectTriggers() {
+            return selectTriggers;
         }
 
-        public Params setStringInterfaces(String stringInterfaces) {
-            this.stringInterfaces = stringInterfaces;
+        public Params setSelectTriggers(String[] selectTriggers) {
+            this.selectTriggers = selectTriggers;
             return this;
         }
 
-        public List<String> getListInterfaces() {
-            return listInterfaces;
+        public String[] getSelectApplications() {
+            return selectApplications;
         }
 
-        public Params setListInterfaces(List<String> listInterfaces) {
-            this.listInterfaces = listInterfaces;
-            return this;
-        }
-
-        public String getStringTriggers() {
-            return stringTriggers;
-        }
-
-        public Params setStringTriggers(String stringTriggers) {
-            this.stringTriggers = stringTriggers;
-            return this;
-        }
-
-        public List<String> getListTriggers() {
-            return listTriggers;
-        }
-
-        public Params setListTriggers(List<String> listTriggers) {
-            this.listTriggers = listTriggers;
-            return this;
-        }
-
-        public String getStringGraphs() {
-            return stringGraphs;
-        }
-
-        public Params setStringGraphs(String stringGraphs) {
-            this.stringGraphs = stringGraphs;
-            return this;
-        }
-
-        public List<String> getListGraphs() {
-            return listGraphs;
-        }
-
-        public Params setListGraphs(List<String> listGraphs) {
-            this.listGraphs = listGraphs;
-            return this;
-        }
-
-        public String getStringApplications() {
-            return stringApplications;
-        }
-
-        public Params setStringApplications(String stringApplications) {
-            this.stringApplications = stringApplications;
-            return this;
-        }
-
-        public List<String> getListApplications() {
-            return listApplications;
-        }
-
-        public Params setListApplications(List<String> listApplications) {
-            this.listApplications = listApplications;
-            return this;
-        }
-
-        public String getStringDiscoveryRule() {
-            return stringDiscoveryRule;
-        }
-
-        public Params setStringDiscoveryRule(String stringDiscoveryRule) {
-            this.stringDiscoveryRule = stringDiscoveryRule;
-            return this;
-        }
-
-        public List<String> getListDiscoveryRule() {
-            return listDiscoveryRule;
-        }
-
-        public Params setListDiscoveryRule(List<String> listDiscoveryRule) {
-            this.listDiscoveryRule = listDiscoveryRule;
-            return this;
-        }
-
-        public String getStringItemDiscovery() {
-            return stringItemDiscovery;
-        }
-
-        public Params setStringItemDiscovery(String stringItemDiscovery) {
-            this.stringItemDiscovery = stringItemDiscovery;
-            return this;
-        }
-
-        public List<String> getListItemDiscovery() {
-            return listItemDiscovery;
-        }
-
-        public Params setListItemDiscovery(List<String> listItemDiscovery) {
-            this.listItemDiscovery = listItemDiscovery;
+        public Params setSelectApplications(String[] selectApplications) {
+            this.selectApplications = selectApplications;
             return this;
         }
     }

@@ -17,7 +17,10 @@
 	<!-- 引入 ajax异步请求，模拟服务器地址 -->
     <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
     <style type="text/css">
-        .dataTables_wrapper .dataTables_filter{display:none;}
+		.pie{height: 200px}
+		.pie_copy{height: 200px;margin-top: 100px}
+		.ui.tab.segment.active{margin: 12px 0 0 0;}
+		.tab_height{height: 540px;}
     </style>
 </head>
 
@@ -32,13 +35,13 @@
 																	   alt="stagblogo" class="displaynone"/>
 		</a>
 		<div class="ui accordion inverted">
-			<a class="title item" href="dashboard.html">
+			<a class="title item active" href="dashboard.html">
 				<i class="ion-speedometer titleIcon icon"></i>仪表盘
 			</a>
 			<a class="title item" href="tab.html">
 				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
 			</a>
-			<a class="item" href="table.html">
+			<a class="item" href="treegrid.html">
 				<i class="ion-ios-world titleIcon  icon"></i>业务概览
 			</a>
 			<div class="title item">
@@ -103,7 +106,7 @@
 					设备概览
 				</div>
 				<div class="ui divider"></div>
-				<a class="item" href="tab.html">服务器</a>
+				<a class="item" href="treegrid.html">服务器</a>
 				<a class="item" href="table.html">网络设备</a>
 				<a class="item" href="error.html">数据库</a>
 				<a class="item" href="login.html">应用</a>
@@ -209,177 +212,134 @@
 		<!--navbar-->
 		<!--maincontent-->
 		<div class="mainWrap navslide">
-			<div class="ui equal width left aligned padded grid stackable">
+			<div class="ui equal width left aligned padded grid stackable" >
 				<!--Site Content-->
                 <div class="sixteen wide tablet sixteen wide computer column">
                     <div class="ui segments">
-                        <div class="ui segment">
-                            <div class="ui pointing secondary menu">
+                        <div class="ui segment" >
+                            <div class="ui pointing secondary menu tab_content">
                                 <a class="item active" data-tab="all_datatab">全部</a>
                                 <a class="item" data-tab="platform_datatab">业务系统</a>
                                 <a class="item" data-tab="host_datatab">设备</a>
                                 <a class="item" data-tab="point_datatab">监控点</a>
                             </div>
-
                             <div class="ui tab segment active" data-tab="all_datatab">
                                 <div class="row">
                                     <div class="ui three column grid">
                                         <div class="column">
-                                            <div id="platform_pie" style="height: 200px"></div>
+                                            <div id="platform_pie" class="pie"></div>
                                         </div>
                                         <div class="column">
-                                            <div id="host_pie" style="height: 200px"></div>
+                                            <div id="host_pie" class="pie"></div>
                                         </div>
                                         <div class="column">
-                                            <div id="point_pie" style="height: 200px"></div>
+                                            <div id="point_pie" class="pie"></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="ui divider"></div>
                                 <div class="row">
-                                    <div class="sixteen wide column">
-                                        <div class="ui grid">
-                                            <div class="six wide column">
-                                                <div class="ui grey large header" >
-                                                    <i class="bar chart icon"></i>
-                                                    最新问题
-                                                </div>
-                                            </div>
-                                            <div class="ten wide column">
-                                                <div class="ui buttons">
-                                                    <button id="time_today" class="ui button">今天</button>
-                                                    <button id="time_days" class="ui button">三天</button>
-                                                    <button id="time_week" class="ui button">一周</button>
-                                                    <button id="time_month" class="ui button">一月</button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <table id="problem_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%" style="margin-top: -30px">
-                                            <thead>
-                                            <tr >
-                                                <th>主机</th>
-                                                <th>问题</th>
-                                                <th>上次修改于</th>
-                                                <th>历时</th>
-                                                <th>确认</th>
-                                                <th>备注</th>
-                                            </tr></thead>
-                                            <tbody >
-                                            <tr th:each="problem : ${problemList}">
-                                                <td th:text="${problem.hosts[0].name}">机1</td>
-                                                <td th:text="${problem.description}">主机1内存使用率超过90%</td>
-                                                <td th:text="${problem.time}">2017-6-21 15:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                                <td>434</td>
-                                            </tr>
-                                            <tr >
-                                                <td>主机1</td>
-                                                <td>主机1内存使用率超过90%</td>
-                                                <td>2017-6-20 15:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                                <td>44</td>
-                                            </tr>
-                                            <tr >
-                                                <td>主机1</td>
-                                                <td>主机1内存使用率超过90%</td>
-                                                <td>2017-5-19 15:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                                <td>64</td>
-                                            </tr>
-                                            <tr >
-                                                <td>主机1</td>
-                                                <td>主机1内存使用率超过90%</td>
-                                                <td>2017-6-17 15:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                                <td>134</td>
-                                            </tr>
-                                            <tr>
-                                                <td>主机1</td>
-                                                <td>主机1内存使用率超过90%</td>
-                                                <td>2017-6-23 05:33:20</td>
-                                                <td><p>2天4小时50分</p></td>
-                                                <td><button >不</button></td>
-                                                <td>334</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+									<div class="ui secondary menu">
+										<a class="header item">
+											<h3><i class="bar large chart icon"></i>最新问题：</h3>
+										</a>
+										<a class="right item">
+											<div class="ui top attached buttons">
+												<button id="time_today" class="ui button">今天</button>
+												<button id="time_days" class="ui button">三天</button>
+												<button id="time_week" class="ui button">一周</button>
+												<button id="time_month" class="ui button">一月</button>
+											</div>
+										</a>
+									</div>
+									<table id="problem_table" class="ui compact celled table center aligned">
+										<thead>
+										<tr>
+											<th class="two wide">主机</th>
+											<th class="six wide">问题</th>
+											<th class="four wide">上次修改于</th>
+											<th class="two wide">历时</th>
+											<th class="two wide">确认</th>
+										</tr></thead>
+										<tbody>
+										<tr th:each="problem : ${problemList}">
+											<td th:text="${problem.hosts[0].name}">机1</td>
+											<td th:text="${problem.description}">主机1内存使用率超过90%</td>
+											<td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:ss')}">2017-6-21 15:33:20</td>
+											<td th:text="${problem.durationString}">2天4小时50分</td>
+											<td>不</td>
+										</tr>
+										<tr th:remove="all">
+											<td>主机1</td>
+											<td>主机1内存使用率超过90%</td>
+											<td>2017-6-20 15:33:20</td>
+											<td><p>2天4小时50分</p></td>
+											<td>不</td>
+										</tr>
+										<tr th:remove="all">
+											<td>主机1</td>
+											<td>主机1内存使用率超过90%</td>
+											<td>2017-5-19 15:33:20</td>
+											<td><p>2天4小时50分</p></td>
+											<td>不</td>
+										</tr>
+										<tr th:remove="all">
+											<td>主机1</td>
+											<td>主机1内存使用率超过90%</td>
+											<td>2017-6-17 15:33:20</td>
+											<td><p>2天4小时50分</p></td>
+											<td><a class="item">不</a></td>
+										</tr>
+										<tr th:remove="all">
+											<td>主机1</td>
+											<td>主机1内存使用率超过90%</td>
+											<td>2017-6-23 05:33:20</td>
+											<td><p>2天4小时50分</p></td>
+											<td>不</td>
+										</tr>
+										</tbody>
+									</table>
                                 </div>
                             </div>
-                            <div class="ui tab segment" data-tab="platform_datatab">
+                            <div class="tab_height ui tab segment" data-tab="platform_datatab">
                                 <div class="row">
                                     <div class="sixteen wide column">
                                         <div class="ui grid">
                                             <div class="five wide column">
-                                                <div id="platform_pie_copy" style="height: 200px;margin-top: 100px;"></div>
+                                                <div id="platform_pie_copy" class="pie_copy"></div>
                                             </div>
                                             <div class="eleven wide column">
-                                                <table id="platform_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                    <thead>
-                                                    <tr class="center aligned">
-                                                        <th>名称</th>
-                                                        <th>可用性</th>
-                                                        <th>设备问题数/设备总数</th>
-                                                        <th>状态</th>
-                                                    </tr>
-                                                    </thead >
-                                                    <tbody id="platform_list" class="center aligned">
-                                                    </tbody>
+                                                <table id="platform_table" class="ui compact celled table center aligned" width="100%">
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="ui tab segment" data-tab="host_datatab" >
+							<div class="tab_height ui tab segment" data-tab="host_datatab">
+								<div class="row">
+									<div class="sixteen wide column">
+										<div class="ui grid">
+											<div class="five wide column">
+												<div id="host_pie_copy" class="pie_copy"></div>
+											</div>
+											<div class="eleven wide column">
+												<table id="host_table" class="ui compact celled table center aligned" width="100%">
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+                            <div class="tab_height ui tab segment" data-tab="point_datatab">
                                 <div class="row">
                                     <div class="sixteen wide column">
                                         <div class="ui grid">
                                             <div class="five wide column">
-                                                <div id="host_pie_copy" style="height: 200px;margin-top: 100px;"></div>
+                                                <div id="point_pie_copy" class="pie_copy"></div>
                                             </div>
                                             <div class="eleven wide column">
-                                                <table id="host_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                    <thead>
-                                                    <tr class="center aligned">
-                                                        <th>名称</th>
-                                                        <th>ip</th>
-                                                        <th>类型</th>
-                                                        <th>监控点问题数／监控点总数</th>
-                                                        <th>状态</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody id="host_list" class="center aligned">
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ui tab segment" data-tab="point_datatab">
-                                <div class="row">
-                                    <div class="sixteen wide column">
-                                        <div class="ui grid">
-                                            <div class="five wide column">
-                                                <div id="point_pie_copy" style="height: 200px;margin-top: 100px;"></div>
-                                            </div>
-                                            <div class="eleven wide column">
-                                                <table id="point_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                                    <thead>
-                                                    <tr class="center aligned">
-                                                        <th>名称</th>
-                                                        <th>所属设备</th>
-                                                        <th>状态</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody id="point_list" class="center aligned">
-                                                    </tbody>
+                                                <table id="point_table" class="ui compact celled table center aligned" width="100%">
                                                 </table>
                                             </div>
                                         </div>
@@ -410,7 +370,9 @@
 <script type="text/javascript">
     //给搜索按钮绑定点击事件
     $(document).ready(function () {
-        var table = $('#problem_table').DataTable();
+        var table = $('#problem_table').DataTable({
+            "iDisplayLength" : 10,
+		});
         $('#time_today').click(function(){
             drawsearch(1);
             table.draw();
@@ -450,32 +412,12 @@
             }
         );
     }
-    // 将datatable汉化并修改默认设置
-    $.extend( $.fn.dataTable.defaults, {
-        "pagingType": "full_numbers_icon",
-        "iDisplayLength" : 11,
-        "bLengthChange": false,
-        /*searching: false,*/
-        order: [0, 'asc'],
-        "language": {
-            "sLengthMenu" : "每页显示 _MENU_ 条记录",
-            "sZeroRecords" : "对不起，没有匹配的数据",
-            "sInfo" : "第 _START_ - _END_ 条 / 共 _TOTAL_ 条数据",
-            "sInfoEmpty" : "没有匹配的数据",
-            "sInfoFiltered" : "(数据表中共 _MAX_ 条记录)",
-            "sProcessing" : "正在加载中...",
-            "sSearch" : "全文搜索：",
-            "oPaginate" : {
-                "sFirst" : "首页",
-                "sPrevious" : " 上一页 ",
-                "sNext" : " 下一页 ",
-                "sLast" : " 末页 "
-            }
-        },
-    } );
 </script>
 <script type="text/javascript">
 	//饼状图
+    var platform_index;//记录切换页面时饼状图点击状态
+    var host_index;
+    var point_index;
     //业务系统pie
     var platform_myChart = echarts.init(document.getElementById('platform_pie'));
     var platform_option={
@@ -484,7 +426,7 @@
             subtext: '业务系统',
             x: 'center',
             y: 'center',
-            itemGap: 10,
+            itemGap: 1,
             textStyle: {
                 color: '#01AAED',
                 fontFamily: '微软雅黑',
@@ -500,7 +442,8 @@
             {
                 name: '访问来源',
                 type: 'pie',
-                radius: ['52%', '82%'],
+                radius: ['40%', '65%'],
+                selectedMode: '',
                 itemStyle: {
                     normal: {
                         label: {
@@ -514,7 +457,7 @@
                         }
                     },
                 },
-                data: [],
+                data: [ ],
                 color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
             }
         ]
@@ -543,12 +486,16 @@
                 size: "normal",
                 rounded: false,
                 delayIndicator: true,
-                msg: "请求链接失败!",
+                msg: "连接服务器失败！",
                 icon: "warning icon",
                 title: "业务系统 Pie",
             });
         }
     })
+    platform_myChart.on('click', function (param) {
+        platform_index =param.dataIndex;
+        $('.tab_content.menu .item').tab('change tab','platform_datatab',platform_index);
+    });
     //设备pie
     var host_myChart = echarts.init(document.getElementById('host_pie'));
     var host_option={
@@ -557,7 +504,7 @@
             subtext: '设备',
             x: 'center',
             y: 'center',
-            itemGap: 10,
+            itemGap: 1,
             textStyle: {
                 color: '#01AAED',
                 fontFamily: '微软雅黑',
@@ -573,7 +520,8 @@
             {
                 name: '访问来源',
                 type: 'pie',
-                radius: ['52%', '82%'],
+                radius: ['40%', '65%'],
+                selectedMode: '',
                 itemStyle: {
                     normal: {
                         label: {
@@ -615,12 +563,16 @@
                 size: "normal",
                 rounded: false,
                 delayIndicator: true,
-                msg: "请求链接失败!",
+                msg: "连接服务器失败！",
                 icon: "warning icon",
                 title: "设备 Pie",
             });
         }
     })
+    host_myChart.on('click', function (param) {
+        host_index =param.dataIndex;
+        $('.tab_content.menu .item').tab('change tab','host_datatab',host_index);
+    });
     //监控点pie
     var point_myChart = echarts.init(document.getElementById('point_pie'));
     var point_option = {
@@ -629,7 +581,7 @@
             subtext: '监控点',
             x: 'center',
             y: 'center',
-            itemGap: 10,
+            itemGap: 1,
             textStyle: {
                 color: '#01AAED',
                 fontFamily: '微软雅黑',
@@ -645,7 +597,8 @@
             {
                 name: '访问来源',
                 type: 'pie',
-                radius: ['52%', '82%'],
+                radius: ['40%', '65%'],
+                selectedMode: '',
                 itemStyle: {
                     normal: {
                         label: {
@@ -687,211 +640,245 @@
                 size: "normal",
                 rounded: false,
                 delayIndicator: true,
-                msg: "请求链接失败!",
+                msg: "连接服务器失败！",
                 icon: "warning icon",
                 title: "监控点 Pie",
             });
         }
     })
-	//tabdata切换加载Pei和datatable
-    $('.menu .item')
+    point_myChart.on('click', function (param) {
+     point_index =param.dataIndex;
+        $('.tab_content.menu .item').tab('change tab','point_datatab',point_index);
+    });
+	//tabdata切换加载
+    var platform_table = $("#platform_table").DataTable({
+        "createdRow": function (row, data, dataIndex) {
+            if (data.state== "正常") {
+                $(row).addClass('positive');
+            } else {
+                $(row).addClass('negative');
+            }
+        },
+        ajax: {
+            url: '/platform/list',
+            dataSrc: 'data'
+        },
+        columns: [
+            {
+                "data": "name",
+                "width": "100px",
+                "title": "名称"
+            },
+            {
+                "data": "availability",
+                "width": "100px",
+                "title": "可能性"
+            },
+            {
+                "data": null,
+                "width": "50px",
+                "title": "严重／警告/设备总数",
+                render: function(data, type, row, meta) {
+                    return  row.hightNum + '/' +row.warningNum + '/'+ row.allNum ;
+                }
+            },
+            {
+                "data": "state",
+                "width": "50px",
+                "title": "状态",
+                "orderable": false,
+            }
+        ],
+    });
+    //设备datatable
+    var host_table = $("#host_table").DataTable({
+        "createdRow": function (row, data, dataIndex) {
+            if (data.state== "正常") {
+                $(row).addClass('positive');
+            } else {
+                $(row).addClass('negative');
+            }
+        },
+        ajax: {
+            url: '/host/list',
+            dataSrc: 'data'
+        },
+        columns: [
+            {
+                "data": "name",
+                "width": "100px",
+                "title": "名称"
+            },
+            {
+                "data": "ip",
+                "width": "100px",
+                "title": "IP",
+                "orderable":false,
+            },
+            {
+                "data": "type",
+                "width": "200px",
+                "title": "类型",
+                "orderable":false,
+            },
+            {
+                "data": null,
+                "width": "200px",
+                "title": "严重／警告/监控点总数",
+                render: function(data, type, row, meta) {
+                    return  row.hightNum + '/' +row.warningNum + '/'+ row.allNum ;
+                }
+            },
+            {
+                "data": "state",
+                "width": "50px",
+                "title": "状态",
+                "orderable":false,
+            }
+        ],
+    });
+    //监控点datatable
+    var point_table = $("#point_table").DataTable({
+        "createdRow": function (row, data, dataIndex) {
+            if (data.state== "正常") {
+                $(row).addClass('positive ');
+            } else {
+                $(row).addClass('negative');
+            }
+        },
+        ajax: {
+            url: '/point/list',
+            dataSrc: 'data'
+        },
+        columns: [
+            {
+                "data": "name",
+                "width": "30%",
+                "title": "名称"
+            },
+            {
+                "data": "hostName",
+                "width": "40%",
+                "title": "所属设备",
+                "orderable":false,
+            },
+            {
+                "data": "state",
+                "width": "30%",
+                "title": "状态",
+                "orderable":false,
+            },
+        ],
+    });
+    $('.tab_content.menu .item')
         .tab({
             'onFirstLoad': function(path){
 				if(path === 'platform_datatab') {
-					var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
+                    var platform_copy_myChart = echarts.init(document.getElementById('platform_pie_copy'));
+                    platform_option.series[0].selectedMode = 'single';
                     platform_copy_myChart.setOption(platform_option);
-                    //业务系统datatable
-                    $.ajax({
-                        type: "get",
-                        async: true,
-                        url: "/platform/list",
-                        data: {},
-                        dataType: "json",
-                        success: function (result) {
-                            var data=result.data;
-                            var success=result.success;
-                            if(success){
-                                $("#platform_list").html("");
-                                for(var i in data){
-                                    var color_state=new Array();
-                                    if(data[i].state=="正常"){
-                                        color_state[i]="positive";
-                                    }else {
-                                        color_state[i]="negative";
-                                    }
-                                    $("#platform_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].availability+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td>"+data[i].state+"</td></tr>");
-                                };
-                                var platform_table = $("#platform_table").DataTable({
-                                    "columnDefs":[{
-                                        "orderable":false,
-                                        "targets":[3],
-                                    }],
-                                });
-                                platform_copy_myChart.on('click', function (param) {
-                                    var index = param.dataIndex;
-                                    if(index==0)
-                                    {
-                                        platform_table.search( "正常" ).draw();
-                                    }
-                                    else
-                                    {
-                                        platform_table.search( "问题" ).draw();
-                                    }
-                                });
-                            }
-                            else {
-                                Lobibox.notify("default", {
-                                    size: "normal",
-                                    rounded: false,
-                                    delayIndicator: true,
-                                    msg: "请求数据失败!",
-                                    icon: "comment icon",
-                                    title: "业务系统 Table",
-                                });
-                            }
-                        },
-                        error: function (errorMsg) {
-                            Lobibox.notify("error", {
-                                size: "normal",
-                                rounded: false,
-                                delayIndicator: true,
-                                msg: "请求链接失败!",
-                                icon: "warning icon",
-                                title: "业务系统 Table",
-                            });
+                    var last_param;//上一次点击状态
+                    var num;//点击次数
+                    platform_copy_myChart.on('click', function (param) {
+                        var index = param.dataIndex;
+                        if(index==0)
+                        {
+                            platform_table.search( "正常" ).draw();
                         }
-                    })
-
+                        else
+                        {
+                            platform_table.search( "问题" ).draw();
+                        }
+                        if (last_param==index){
+                            num++;
+                            if(num%2 == 0){
+                                platform_table.search("").draw();
+                            }
+                        }else {
+                            last_param=index;
+                            num=1;
+                        }
+                    });
                 }
                 if(path === 'host_datatab') {
 					var host_copy_myChart = echarts.init(document.getElementById('host_pie_copy'));
-                    host_copy_myChart.setOption(host_option);
-                    //设备datatable
-                    $.ajax({
-                        type: "get",
-                        async: true,
-                        url: "/host/list",
-                        data: {},
-                        dataType: "json",
-                        success: function (result) {
-                            var data=result.data;
-                            var success=result.success;
-                            if(success) {
-                                $("#host_list").html("");
-                                for(var i in data){
-                                    var color_state=new Array();
-                                    if(data[i].state=="正常"){
-                                        color_state[i]="positive";
-                                    }else {
-                                        color_state[i]="negative";
-                                    }
-                                    $("#host_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].ip+"</td><td>"+data[i].type+"</td><td>"+data[i].problemNum+"/"+data[i].allNum+"</td><td>"+data[i].state+"</td></tr>");
-                                };
-                                var host_table = $("#host_table").DataTable({
-                                    "columnDefs":[{
-                                        "orderable":false,
-                                        "targets":[1,2,4],
-                                    }],
-                                });
-                                host_copy_myChart.on('click', function (param) {
-                                    var index = param.dataIndex;
-                                    if(index==0)
-                                    {
-                                        host_table.search( "正常" ).draw();
-                                    }
-                                    else
-                                    {
-                                        host_table.search( "问题" ).draw();
-                                    }
-                                });
-                            }
-                            else {
-                                Lobibox.notify("default", {
-                                    size: "normal",
-                                    rounded: false,
-                                    delayIndicator: true,
-                                    msg: "请求数据失败!",
-                                    icon: "comment icon",
-                                    title: "设备 Table",
-                                });
-                            }
-                        },
-                        error: function (errorMsg) {
-                            Lobibox.notify("error", {
-                                size: "normal",
-                                rounded: false,
-                                delayIndicator: true,
-                                msg: "请求链接失败!",
-                                icon: "warning icon",
-                                title: "设备 Table",
-                            });
+                    host_option.series[0].selectedMode = 'single';
+					host_copy_myChart.setOption(host_option);
+                    var last_param;//上一次点击状态
+                    var num;//点击次数
+                    host_copy_myChart.on('click', function (param) {
+                        var index = param.dataIndex;
+                        if(index==0)
+                        {
+                            host_table.search( "正常" ).draw();
                         }
-                    })
+                        else
+                        {
+                            host_table.search( "问题" ).draw();
+                        }
+                        if (last_param==index){
+                            num++;
+                            if(num%2 == 0){
+                                host_table.search("").draw();
+                            }
+                        }else {
+                            last_param=index;
+                            num=1;
+                        }
+                    });
                 }
                 if(path === 'point_datatab') {
 					var point_copy_myChart = echarts.init(document.getElementById('point_pie_copy'));
-                    point_copy_myChart.setOption(point_option);
-                    //监控点datatable
-                    $.ajax({
-                        type: "get",
-                        async: true,
-                        url: "/point/list",
-                        data: {},
-                        dataType: "json",
-                        success: function (result) {
-                            var data=result.data;
-                            var success=result.success;
-                            if(success){
-                                $("#point_list").html("");
-                                for(var i in data){
-                                    var color_state=new Array();
-                                    if(data[i].state=="正常"){
-                                        color_state[i]="positive";
-                                    }else {
-                                        color_state[i]="negative";
-                                    }
-                                    $("#point_list").append("<tr class="+color_state[i]+"><td>"+data[i].name+"</td><td>"+data[i].hostName+"</td><td>"+data[i].state+"</td></tr>");
-                                };
-                                var point_table = $("#point_table").DataTable({
-                                    "columnDefs":[{
-                                        "orderable":false,
-                                        "targets":[1,2],
-                                    }],
-                                });
-                                point_copy_myChart.on('click', function (param) {
-                                    var index = param.dataIndex;
-                                    if(index==0)
-                                    {
-                                        point_table.search( "正常" ).draw();
-                                    }
-                                    else
-                                    {
-                                        point_table.search( "问题" ).draw();
-                                    }
-                                });
-                            }
-                            else {
-                                Lobibox.notify("default", {
-                                    size: "normal",
-                                    rounded: false,
-                                    delayIndicator: true,
-                                    msg: "请求数据失败!",
-                                    icon: "comment icon",
-                                    title: "监控点 Table",
-                                });
-                            }
-                        },
-                        error: function (errorMsg) {
-                            Lobibox.notify("error", {
-                                size: "normal",
-                                rounded: false,
-                                delayIndicator: true,
-                                msg: "请求链接失败!",
-                                icon: "warning icon",
-                                title: "监控点 Table",
-                            });
+                    point_option.series[0].selectedMode = 'single';
+					point_copy_myChart.setOption(point_option);
+                    var last_param;//上一次点击状态
+                    var num;//点击次数
+                    point_copy_myChart.on('click', function (param) {
+                        var index = param.dataIndex;
+                        if(index==0)
+                        {
+                            point_table.search( "正常" ).draw();
                         }
-                    })
+                        else
+                        {
+                            point_table.search( "问题" ).draw();
+                        }
+                        if (last_param==index){
+                            num++;
+                            if(num%2 == 0){
+                                point_table.search("").draw();
+                            }
+                        }else {
+                            last_param=index;
+                            num=1;
+                        }
+                    });
+                }
+            },
+            'onVisible': function(path){
+                if(path === 'platform_datatab') {
+                    if (platform_index == 0) {
+                        platform_table.search("正常").draw();
+                    }
+                    if (platform_index == 1) {
+                        platform_table.search("问题").draw();
+                    }
+                }
+                if(path === 'host_datatab') {
+                    if (host_index == 0) {
+                        host_table.search("正常").draw();
+                    }
+                    if (host_index == 1) {
+                        host_table.search("问题").draw();
+                    }
+                }
+                if(path === 'point_datatab') {
+                    if (point_index == 0) {
+                        point_table.search("正常").draw();
+                    }
+                    if (point_index == 1) {
+                        point_table.search("问题").draw();
+                    }
                 }
             }
         });

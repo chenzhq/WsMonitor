@@ -17,7 +17,8 @@ public class ResponseResult<T> {
     private String errorCode;
 
     public void setErrorInfo(ResponseErrorEnum errorEnum) {
-        this.errorCode = errorEnum.name;
+        this.errorCode = errorEnum.code;
+        this.message = errorEnum.name;
     }
 
     public String getErrorCode() {
