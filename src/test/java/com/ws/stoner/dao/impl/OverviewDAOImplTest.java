@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** 
 * OverviewDAOImpl Tester. 
 * 
@@ -64,6 +67,17 @@ public void testFindMaxGroupCId() throws Exception {
        overviewGroupRepository.delete(delGroup);
 }
 
+    @Test
+    public void testBathUpdate() throws  Exception {
+        List<Group> groups = new ArrayList<>();
+        Group OA = overviewGroupRepository.findByName("OA平台");
+        Group MAC = overviewGroupRepository.findByName("MAC");
+        OA.setHostChildren(new String[]{"10084"});
+        MAC.setHostChildren(new String[]{"10114"});
+        groups.add(OA);
+        groups.add(MAC);
+        overviewDAO.bathUpdateGroups(groups);
+    }
 
 
 } 
