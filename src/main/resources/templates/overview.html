@@ -255,7 +255,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="actions">
+					<div id="new_actions" class="actions">
 						<div class="ui button deny">取消</div>
 						<div class="ui green button deny" id="new_submit">确认</div>
 					</div>
@@ -378,7 +378,9 @@
             if (arr[0]=="new"){
                 var sup_group=arr[1];
                 $("#new_content").empty();
+                $("#new_actions").empty();
                 $("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
+                $("#new_actions").append("<div class='ui button deny'>取消</div> <div class='ui green button deny' id='new_submit'>确认</div>");
                 $("#new_modal").modal('show');
                 //提交新建事件
                 $('#new_submit').click(function(){
@@ -391,6 +393,7 @@
                         dataType: "json",
                         success: function (result) {
                             var data = result.data;
+                            console.log(data);
                             var sup_group=data.sup_group;
                             var new_group=data.new_group;
                             var new_group_name=data.new_group_name;
