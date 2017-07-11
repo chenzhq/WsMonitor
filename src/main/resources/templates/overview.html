@@ -201,7 +201,6 @@
 					<a class="item labeled rightsidebar computer only">
 						<i class="ion-wrench large icon"></i>工具
 					</a>
-
 				</div>
 			</div>
 		</div>
@@ -262,30 +261,19 @@
 					</div>
 				</div>
 
-				<div id="delete_modal" class="ui small modal">
+				<div id="move_modal" class="ui small modal">
 					<i class="close icon"></i>
-					<div class="header">
-						Update Your Settings
+					<div class="inline fields content">
+						<table id="move_table" class="tree">
+						</table>
 					</div>
-					<div class="content">
-						<div class="ui form">
-							<h4 class="ui dividing header">Give us your feedback</h4>
-							<div class="field">
-								<label>Feedback</label>
-								<textarea></textarea>
-							</div>
-							<div class="field">
-								<div class="ui checkbox">
-									<input type="checkbox" checked="checked" name="contact-me">
-									<label>It's okay to contact me.</label>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="actions">
+					<div id="move_content" class="actions">
 						<div class="ui button deny">取消</div>
-						<div class="ui green button deny" id="delete_submit">确认</div>
+						<div class="ui green button deny" id="move_submit">确认</div>
 					</div>
+				</div>
+
+				<div id="delete_modal" class="ui small modal">
 				</div>
 			</div>
 		</div>
@@ -353,9 +341,9 @@
                     "title": "操作",
                     render: function(data, type, row, meta) {
                         if(row.type=="组"){
-                            return '<div class="ui secondary menu"><a class="right item new" id="'+row.cid+'"> 新建</a><a class="item move" id="'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a><a class="item delete" id="'+row.pid+'_'+row.cid+'"> 删除</a></div>';
+                            return '<div class="ui secondary menu"><a class="right item new" id="'+row.cid+'"> 新建</a><a class="item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a><a class="item delete" id="'+row.pid+'_'+row.cid+'"> 删除</a></div>';
                         }else {
-                            return '<div class="ui secondary menu"><a class="right item move" id="'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
+                            return '<div class="ui secondary menu"><a class="right item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
                         }
                     }
                 },
@@ -417,18 +405,82 @@
 				})
 			});
         });
-        //点击移除事件
+        //点击移动事件
         $('#host_table tbody').on('click', '.move', function(e) {
-
+            e.preventDefault();
+            var index= host_table.row($(this).parents('tr')).index();
+            var pid=this.id.split("_")[0];
+            var cid=this.id.split("_")[1];
+            $.ajax({
+                type: "get",
+                url: "/ov/group/get_tree",
+                data: {from_group: pid},
+                dataType: "json",
+                success: function (result) {
+                    var data=result.data;
+                    var str='';
+                    for(var i=0; i<data.length; i++){
+                        if(data[i].pid=='')
+						{
+							var tmp=['<tr class="treegrid-'+ data[i].cid +'">',
+                                '<td><div class="ui radio checkbox">',
+								'<input type="radio" name="get_tree" value="'+$(this).text()+'" id="'+data[i].cid+'"><label>',
+                                '<td>'+data[i].name+'</td>',
+								'</label></div></td></tr>'].join('');
+						}else {
+                            var tmp=['<tr class="treegrid-'+ data[i].cid +' treegrid-parent-'+ data[i].pid+'">',
+                                '<td><div class="ui radio checkbox">',
+                                '<input type="radio" name="get_tree" value="'+$(this).text()+'" id="'+data[i].cid+'"><label>',
+                                '<td>'+data[i].name+'</td>',
+                                '</label></div></td></tr>'].join('');
+						}
+						str=str+tmp;
+					}
+                    $("#move_table").empty();
+                    $("#move_content").empty();
+                    $("#move_table").append(str);
+                    $("#move_content").append("<div class='ui button deny'>取消</div><div class='ui green button deny' id='move_submit'>确认</div>");
+                    $("#move_table").treegrid();
+                    $("#move_modal").modal('show');
+                    $('#move_submit').click(function(){
+                        var newindex=0;
+                        var newid = $("#move_table input[name='get_tree']:checked").attr("id");
+                        var name = $("#move_table input[name='get_tree']:checked").val();
+                        host_table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                            var d = this.data();
+                            if (d.pid == newid) {
+                                newindex=rowIdx;
+                            }
+                        });
+                        var data = host_table.data();
+                        host_table.clear();
+                        console.log("newindex:"+newindex+"index"+index);
+                        data.splice((newindex), 0, data.splice(index,1)[0]);
+                        host_table.rows.add(data).draw();
+                        $.ajax({
+                            type: "put",
+                            url: "/ov/host/move",
+                            data: {from_group: pid, host: cid, to_group: newid},
+                            dataType: "json",
+                            success: function (result) {
+                                var data=result.data;
+                            }
+                        })
+                    })
+                },
+                error: function () {
+                    alert("失败");
+                }
+            });
         });
-        //点击移除事件
+        //点击删除事件
         $('#host_table tbody').on('click', '.delete', function(e) {
             e.preventDefault();
             var id=this.id.split("_");
-            console.log(host_table.row(2).data());
+            /*console.log(host_table.row(2).data());*/
             if (confirm("确定要删除该属性？")) {
                 host_table.row($(this).parents('tr')).remove().draw();
-                host_table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+				/* host_table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
                     var d = this.data();
                     if(d.pid==id[1]){
                         d.pid=id[0];
@@ -438,11 +490,11 @@
                         $('tr:eq(rowIdx)').removeClass(oldpid);
                         $('tr:eq(rowIdx)').addClass(newpid);
                     }
-                   /*this.invalidate();*/
+                   this.invalidate();
                 } );
                 host_table.draw();
                 console.log(host_table.row(2).data());
-                $("#host_table").treegrid();
+                $("#host_table").treegrid();*/
             }
         });
     });
