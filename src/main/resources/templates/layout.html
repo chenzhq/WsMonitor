@@ -3,13 +3,14 @@
 <head th:fragment="common_head(title, links)">
 	<meta charset="UTF-8">
 	<title th:replace="${title}">监控系统</title>
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
 	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
 	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 
 	<th:block th:replace="${links}"></th:block>
 </head>
@@ -35,10 +36,10 @@
 				<i class="ion-ios-world titleIcon  icon"></i>业务概览
 			</a>
 			<div class="title item">
-				<i class="ion-mouse titleIcon icon"></i>设备概览<i class="dropdown icon"></i>
+				<i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
-				<a class="item" href="#">服务器</a>
+				<a class="item" href="#" th:href="@{/overview}">设备总览</a>
 				<a class="item" href="#">网络设备</a>
 				<a class="item" href="#">数据库</a>
 				<a class="item" href="#">应用</a>

@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <html>
-<head>
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
 	<title>仪表盘</title>
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/jquery-3.2.1.min.js"></script>
 	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{css/semantic.css}"/>
 	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}"/>
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
-	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<!-- 引入 echarts.js -->
-	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
-	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
-    <style type="text/css">
-		.pie{height: 200px}
-		.pie_copy{height: 200px;margin-top: 100px}
-		.ui.tab.segment.active{margin: 12px 0 0 0;}
-		.tab_height{height: 540px;}
-    </style>
+	<th:block th:fragment="supplement">
+        <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<style type="text/css">
+			.pie{height: 200px}
+			.pie_copy{height: 200px;margin-top: 100px}
+			.ui.tab.segment.active{margin: 12px 0 0 0;}
+			.tab_height{height: 540px;}
+		</style>
+	</th:block>
 </head>
 
 <body>

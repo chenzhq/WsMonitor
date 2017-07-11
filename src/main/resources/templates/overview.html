@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
 	<title>监控系统</title>
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/jquery-3.2.1.min.js"></script>
 	<script src="../static/js/semantic.js"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css"  />
 	<link rel="stylesheet" href="../static/css/icon.css"  />
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
-	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<link rel="stylesheet" href="../static/css/jquery.treegrid.css">
-	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
-	<style type="text/css">
-	.ui.table.dataTable thead th {
-	border-left: 0px;
-	}
-	</style>
+	<th:block th:fragment="supplement">
+		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+		<link rel="stylesheet" href="../static/css/jquery.treegrid.css" th:href="@{css/jquery.treegrid.css}">
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<style type="text/css">
+			.ui.table.dataTable thead th {
+				border-left: 0px;
+			}
+		</style>
+	</th:block>
 </head>
 <body>
 <div id="contextWrap">
@@ -290,14 +291,17 @@
 		</div>
 	</div>
 </div>
-<script src="../static/js/js.cookie.js"></script>
-<script src="../static/js/jquery.nicescroll.min.js"></script>
-<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
-<script src="../static/js/main.js"></script>
-<script type="text/javascript" src="../static/js/jquery.treegrid.js"></script>
-<th:block th:fragment="specialScript">
-	<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
-	<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+<th:block th:replace="layout::bottom_script(~{::specialScript})">
+	<script src="../static/js/js.cookie.js"></script>
+	<script src="../static/js/jquery.nicescroll.min.js"></script>
+	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
+	<script src="../static/js/main.js"></script>
+	<th:block th:fragment="specialScript">
+		<script type="text/javascript" src="../static/js/jquery.treegrid.js" th:src="@{js/jquery.treegrid.js}"></script>
+		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+	</th:block>
 </th:block>
 <script type="text/javascript">
     $(document).ready(function() {
