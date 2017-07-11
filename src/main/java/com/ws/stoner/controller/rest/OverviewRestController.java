@@ -97,7 +97,7 @@ public class OverviewRestController {
     @RequestMapping(value = "ov/group/get_tree", method = RequestMethod.GET)
     public String getMoveGroupTree(@RequestParam("from_group") String fromGroupId) throws ServiceException {
         List<OverviewListGroupDTO> olg = overviewService.getMoveGroupTree(fromGroupId);
-        return RestResultGenerator.genResult(olg, REST_MOVE_SUCCESS).toString();
+        return RestResultGenerator.genResult(olg, REST_RESPONSE_SUCCESS).toString();
     }
 
 }

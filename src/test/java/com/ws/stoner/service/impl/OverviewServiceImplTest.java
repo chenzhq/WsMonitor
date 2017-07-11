@@ -149,7 +149,7 @@ public void testFindAll() throws Exception {
 
     @Test
     public void testMoveOverviewHost() throws Exception {
-        OverviewMoveHostDTO omh = overviewService.moveOverviewHost("h10084","g1","g2");
+        OverviewMoveHostDTO omh = overviewService.moveOverviewHost("h10114","g0","g2");
     }
 
     @Test

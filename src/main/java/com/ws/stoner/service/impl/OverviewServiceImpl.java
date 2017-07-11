@@ -413,9 +413,9 @@ public class OverviewServiceImpl implements OverviewService {
                     mongoHost.setpId("g" + group.getcId());
                     mongoHost.setcId("h" + hostId);
                     mongoHost.setName(host.getName());
-                    if(StatusEnum.WARNING.code == host.getCustomState() || 1 == host.getCustomAvailableState()) {
+                    if(StatusEnum.HIGH.code == host.getCustomState() || StatusEnum.WARNING.code == host.getCustomAvailableState()) {
                         mongoHost.setState(StatusEnum.HIGH.getName());
-                    }else if(StatusEnum.WARNING.code ==host.getCustomState() && 0 ==host.getCustomAvailableState()){
+                    }else if(StatusEnum.WARNING.code ==host.getCustomState() && StatusEnum.OK.code ==host.getCustomAvailableState()){
                         mongoHost.setState(StatusEnum.WARNING.getName());
                     }else {
                         mongoHost.setState(StatusEnum.OK.getName());
