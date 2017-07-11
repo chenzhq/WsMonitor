@@ -52,6 +52,14 @@ public interface OverviewService {
      */
     OverviewMoveHostDTO moveOverviewHost(String hostVOId,String fromGroupVOId,String toGroupVOId) throws ServiceException;
 
+    /**
+     * 在移动分组的时候需要先获取分组树供用户选择
+     * @param fromGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    List<OverviewListGroupDTO> getMoveGroupTree(String fromGroupVOId) throws ServiceException;
+
 
 
 }

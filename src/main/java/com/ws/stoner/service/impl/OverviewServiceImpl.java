@@ -363,6 +363,27 @@ public class OverviewServiceImpl implements OverviewService {
         return omh;
     }
 
+    /**
+     * 在移动分组的时候需要先获取分组树供用户选择
+     * @param fromGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<OverviewListGroupDTO> getMoveGroupTree(String fromGroupVOId) throws ServiceException {
+        //新建
+        List<OverviewListGroupDTO> grouptree = new ArrayList<>();
+        //调用
+        grouptree =  getGroupTree("root",grouptree,new ArrayList<BriefHostDTO>());
+        List<OverviewListGroupDTO> groups = new ArrayList<>(grouptree);
+        for(OverviewListGroupDTO group : groups) {
+            if(group.getcId().equals(fromGroupVOId)) {
+                grouptree.remove(group);
+            }
+        }
+        return grouptree;
+    }
+
     private List<OverviewListGroupDTO> getGroupTree(String name, List<OverviewListGroupDTO> overviewListGroupDTOS, List<BriefHostDTO> allHosts)  {
         //step1:新建List<OverviewListGroupDTO> list,OverviewListGroupDTO mongoGroup,根据name查出mongoGroupDO
         Group group = overviewGroupRepository.findByName(name);

@@ -89,5 +89,15 @@ public class OverviewRestController {
         return RestResultGenerator.genResult(omh, REST_MOVE_SUCCESS).toString();
     }
 
+    /**
+     * 在移动分组的时候需要先获取分组树供用户选择
+     * @param fromGroupId
+     * @return
+     */
+    @RequestMapping(value = "ov/group/get_tree", method = RequestMethod.GET)
+    public String getMoveGroupTree(@RequestParam("from_group") String fromGroupId) throws ServiceException {
+        List<OverviewListGroupDTO> olg = overviewService.getMoveGroupTree(fromGroupId);
+        return RestResultGenerator.genResult(olg, REST_MOVE_SUCCESS).toString();
+    }
 
 }

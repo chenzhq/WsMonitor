@@ -160,6 +160,13 @@ public void testFindAll() throws Exception {
 
     }
 
+    @Test
+    public void testGetMoveTree() throws Exception {
+        List<OverviewListGroupDTO> grouptree = overviewService.getMoveGroupTree("g2");
+        System.out.println(grouptree);
+
+    }
+
 
 
 } 
