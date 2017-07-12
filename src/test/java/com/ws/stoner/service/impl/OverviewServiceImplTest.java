@@ -162,7 +162,7 @@ public void testFindAll() throws Exception {
 
     @Test
     public void testGetMoveTree() throws Exception {
-        List<OverviewListGroupDTO> grouptree = overviewService.getMoveGroupTree("g2");
+        List<OverviewListGroupDTO> grouptree = overviewService.getMoveGroupTree("OA平台");
         System.out.println(grouptree);
 
     }

@@ -365,29 +365,33 @@ public class OverviewServiceImpl implements OverviewService {
 
     /**
      * 在移动分组的时候需要先获取分组树供用户选择
-     * @param fromGroupVOId
+     * @param groupName
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<OverviewListGroupDTO> getMoveGroupTree(String fromGroupVOId) throws ServiceException {
+    public List<OverviewListGroupDTO> getMoveGroupTree(String groupName) throws ServiceException {
         //新建
-        List<OverviewListGroupDTO> grouptree = new ArrayList<>();
+        List<OverviewListGroupDTO> rootTree = new ArrayList<>();
+        List<OverviewListGroupDTO> moveGroupTree = new ArrayList<>();
         //调用
-        grouptree =  getGroupTree("root",grouptree,new ArrayList<BriefHostDTO>());
-        List<OverviewListGroupDTO> groups = new ArrayList<>(grouptree);
-        for(OverviewListGroupDTO group : groups) {
-            if(group.getcId().equals(fromGroupVOId)) {
-                grouptree.remove(group);
+        rootTree =  getGroupTree("root",rootTree,new ArrayList<BriefHostDTO>());
+        moveGroupTree =  getGroupTree(groupName,moveGroupTree,new ArrayList<BriefHostDTO>());
+        //状态赋值，state = 0,表示可选择，1表示不可选择
+        for(OverviewListGroupDTO group : rootTree) {
+            if(moveGroupTree.contains(group)) {
+                group.setEnable(false);
+            }else {
+                group.setEnable(true);
             }
         }
-        return grouptree;
+        return rootTree;
     }
 
     private List<OverviewListGroupDTO> getGroupTree(String name, List<OverviewListGroupDTO> overviewListGroupDTOS, List<BriefHostDTO> allHosts)  {
         //step1:新建List<OverviewListGroupDTO> list,OverviewListGroupDTO mongoGroup,根据name查出mongoGroupDO
         Group group = overviewGroupRepository.findByName(name);
-        //step2:给vo赋值，cid，pid，name，添加vo到list中
+        //step2:给vo赋值，cid，pid，name,groupChildren，添加vo到list中
         OverviewListGroupDTO mongoGroup = new OverviewListGroupDTO();
         mongoGroup.setcId("g" + group.getcId());
         if("root".equals(group.getName())) {
@@ -397,6 +401,7 @@ public class OverviewServiceImpl implements OverviewService {
         }
         mongoGroup.setName(group.getName());
         mongoGroup.setType(OverviewTypeEnum.GROUP.getName());
+        mongoGroup.setGroupChildren(group.getGroupChildren());
         overviewListGroupDTOS.add(mongoGroup);
         //step3:判断DO的group_children.length != 0
         if(group.getGroupChildren().length != 0) {

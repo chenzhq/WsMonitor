@@ -54,11 +54,11 @@ public interface OverviewService {
 
     /**
      * 在移动分组的时候需要先获取分组树供用户选择
-     * @param fromGroupVOId
+     * @param groupName
      * @return
      * @throws ServiceException
      */
-    List<OverviewListGroupDTO> getMoveGroupTree(String fromGroupVOId) throws ServiceException;
+    List<OverviewListGroupDTO> getMoveGroupTree(String groupName) throws ServiceException;
 
 
 
