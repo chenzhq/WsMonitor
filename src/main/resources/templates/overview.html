@@ -453,6 +453,21 @@
                             }
                         });
                         var data = host_table.data();
+                        var i = index;
+                        var known= data[index].pid;
+                        do{
+                            var j = index;
+							known=data[i].pid;
+							console.log("父级的index(i)："+i);
+							do{
+								 j++;
+								 console.log(data[j]);
+                                console.log(data[i]);
+							}
+							while (data[i].pid != data[j].pid && j<data.length)
+							i--;
+                        }while ((data[i].cid==known || i == index) && i>=0 && data[i].pid == data[j].pid)
+						console.log("跳出的index(j)："+j);
                         host_table.clear();
                         console.log("newindex:"+newindex+"index"+index);
                         data.splice((newindex), 0, data.splice(index,1)[0]);
@@ -470,6 +485,7 @@
                 },
                 error: function () {
                     alert("失败");
+
                 }
             });
         });
