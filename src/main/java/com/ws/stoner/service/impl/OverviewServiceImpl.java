@@ -309,9 +309,9 @@ public class OverviewServiceImpl implements OverviewService {
         overviewGroupRepository.save(toGroup);
         //组装返回数据对象
         OverviewMoveGroupDTO omg = new OverviewMoveGroupDTO();
-        omg.setGroupId(groupId);
-        omg.setFromGroupId(fromGroupId);
-        omg.setToGroupId(toGroupId);
+        omg.setGroupId(groupVOId);
+        omg.setFromGroupId(fromGroupVOId);
+        omg.setToGroupId(toGroupVOId);
         return omg;
 
     }
@@ -376,13 +376,15 @@ public class OverviewServiceImpl implements OverviewService {
         List<OverviewListGroupDTO> moveGroupTree = new ArrayList<>();
         //调用
         rootTree =  getGroupTree("root",rootTree,new ArrayList<BriefHostDTO>());
-        moveGroupTree =  getGroupTree(groupName,moveGroupTree,new ArrayList<BriefHostDTO>());
-        //状态赋值，state = 0,表示可选择，1表示不可选择
-        for(OverviewListGroupDTO group : rootTree) {
-            if(moveGroupTree.contains(group)) {
-                group.setEnable(false);
-            }else {
-                group.setEnable(true);
+        if(!"".equals(groupName) && groupName != null) {
+            moveGroupTree =  getGroupTree(groupName,moveGroupTree,new ArrayList<BriefHostDTO>());
+            //状态赋值，state = 0,表示可选择，1表示不可选择
+            for(OverviewListGroupDTO group : rootTree) {
+                if(moveGroupTree.contains(group)) {
+                    group.setEnable(false);
+                }else {
+                    group.setEnable(true);
+                }
             }
         }
         return rootTree;
