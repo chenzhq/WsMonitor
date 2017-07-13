@@ -3,6 +3,7 @@ package com.ws.stoner.service;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.view.HostDetailVO;
 
 import java.util.List;
 
@@ -101,6 +102,13 @@ public interface HostService {
     List<BriefHostDTO> listOkHost() throws ServiceException;
 
 
+    /**
+     * 根据指定的 hostids 获取 List<BriefHostDTO> list
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefHostDTO> getHostsByHostIds(List<String> hostIds) throws ServiceException;
 
 
 

@@ -14,21 +14,54 @@ public class BriefItemDTO {
     private String itemId;
     private String name;
     @JSONField(name = "custom_state")
-    private String customState;
+    private int customState;
     @JSONField(name = "lastclock",format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastTime;
+    @JSONField(name = "lastvalue")
+    private String lastValue;
+    @JSONField(name = "value_type")
+    private Integer valueType;
 
-    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state"};
+    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type"};
 
-    public String getCustomState() {
+    public int getCustomState() {
         return customState;
     }
 
-    public BriefItemDTO setCustomState(String customState) {
+    public BriefItemDTO setCustomState(int customState) {
         this.customState = customState;
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "BriefItemDTO{" +
+                "itemId='" + itemId + '\'' +
+                ", name='" + name + '\'' +
+                ", customState=" + customState +
+                ", lastTime=" + lastTime +
+                ", lastValue='" + lastValue + '\'' +
+                ", valueType='" + valueType + '\'' +
+                '}';
+    }
+
+    public Integer getValueType() {
+        return valueType;
+    }
+
+    public BriefItemDTO setValueType(Integer valueType) {
+        this.valueType = valueType;
+        return this;
+    }
+
+    public String getLastValue() {
+        return lastValue;
+    }
+
+    public BriefItemDTO setLastValue(String lastValue) {
+        this.lastValue = lastValue;
+        return this;
+    }
 
     public String getItemId() {
         return itemId;
@@ -50,16 +83,6 @@ public class BriefItemDTO {
 
     public LocalDateTime getLastTime() {
         return lastTime;
-    }
-
-    @Override
-    public String toString() {
-        return "BriefItemDTO{" +
-                "itemId='" + itemId + '\'' +
-                ", name='" + name + '\'' +
-                ", customState='" + customState + '\'' +
-                ", lastTime=" + lastTime +
-                '}';
     }
 
     public BriefItemDTO setLastTime(int lastTime) {

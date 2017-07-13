@@ -11,6 +11,7 @@ import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
+import com.ws.stoner.model.view.HostDetailVO;
 import com.ws.stoner.service.HostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -249,6 +250,25 @@ public class HostServiceImpl implements HostService {
                 .setFilter(hostFilter);
         List<BriefHostDTO> hosts = listHost(hostGetRequest);
         return hosts;
+    }
+
+    /**
+     * 根据指定的 hostids 获取 List<BriefHostDTO> list
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefHostDTO> getHostsByHostIds(List<String> hostIds) throws ServiceException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        hostGetRequest.getParams()
+                .setHostIds(hostIds)
+                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
+                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setOutput(BriefHostDTO.PROPERTY_NAMES);
+        List<BriefHostDTO> hostDTOS = listHost(hostGetRequest);
+        return hostDTOS;
     }
 
 
