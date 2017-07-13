@@ -11,8 +11,25 @@
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 	<th:block th:replace="${links}"></th:block>
+	<link href="../static/css/jquery.gridly.css" rel="stylesheet" type="text/css" th:src="@{css/jquery.gridly.css}"/>
+	<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
+	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+	<style type="text/css">
+		.no-padding-bottom{  padding-bottom: 0px;  }
+		.chart-style{  height: 200px  }
+	</style>
+	<style type="text/css">
+		.gridly {
+			position: relative;
+			width: 960px;
+		}
+		.brick.small {
+			height: 200px;
+		}
+
+	</style>
 </head>
 <body>
 <!--header start-->
@@ -214,47 +231,69 @@
 							</h3>
 						</div>
 						<div class="ui segment">
+
 							<div class="sixteen wide column">
 								<div class="ui grid">
-									<div class="eight wide column">
-										<div class="ui segments">
-											<div class="ui segment">
-												<h3 class="ui header">
-													配置详情
-												</h3>
+									<div class="four wide column">
+										<div class="ui top attached tabular menu">
+											<a class="active item" data-tab="first"><h3>配置详情</h3></a>
+											<a class="item" data-tab="second"><h3>连接详情</h3></a>
+										</div>
+										<div class="ui bottom attached active tab segment" style="margin-bottom: 0px" data-tab="first">
+											<div class="ui relaxed divided list">
+												<div class="item">
+													<div class="description">设备名：设备名</div>
+												</div>
+												<div class="item">
+													<div class="description">IP：127.0.0.1</div>
+												</div>
+												<div class="item">
+													<div class="description">类型：类型</div>
+												</div>
+												<div class="item">
+													<div class="content">
+														<p class="header">描述:</p>
+														<div class="description">
+															包含一个简单的表格列出设备等信息;</br>部分信息可以伸缩隐藏，例如四种配置接口等数据
+														</div>
+													</div>
+												</div>
 											</div>
-											<div class="ui segment">
-										<table class="ui table">
-											<tbody>
-											<tr>
-												<td>设备名</td>
-												<td>设备名</td>
-												<td>设备名</td>
-												<td>设备名</td>
-											</tr>
-											<tr>
-												<td>设备名</td>
-												<td>设备名</td>
-												<td>设备名</td>
-												<td>设备名</td>
-											</tr>
-											<tr>
-												<td>设备名</td>
-												<td>设备名</td>
-												<td>设备名</td>
-												<td>设备名</td>
-											</tr>
-											<tr>
-												<td>设备名</td>
-												<td>设备名</td>
-												<td>设备名</td>
-												<td>设备名</td>
-											</tbody>
-										</table>
+										</div>
+										<div class="ui bottom attached tab segment" data-tab="second">
+											<div class="ui relaxed divided list">
+												<div class="item">
+													<i class="big green checkmark icon"></i>
+													<div class="content">
+														<p class="header">Agent方式</p>
+														<div class="description">IP：127.0.0.1;DNS端口号：8080</div>
+													</div>
+												</div>
+												<div class="item">
+													<i class="big green checkmark icon"></i>
+													<div class="content">
+														<p class="header">SNMP方式</p>
+														<div class="description">IP：127.0.0.1;DNS端口号：8080</div>
+													</div>
+												</div>
+												<div class="item">
+													<i class="big red remove icon"></i>
+													<div class="content">
+														<p class="header">JMX方式</p>
+														<div class="description">IP：无;DNS端口号：无</div>
+													</div>
+												</div>
+												<div class="item">
+													<i class="big red remove icon"></i>
+													<div class="content">
+														<p class="header">IPMI方式</p>
+														<div class="description">IP：无;DNS端口号：无</div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
-									<div class="eight wide column">
+									<div class="twelve wide column">
 										<div class="ui segments">
 											<div class="ui segment">
 												<h3 class="ui header">
@@ -262,30 +301,48 @@
 												</h3>
 											</div>
 											<div class="ui segment">
-										<div class="ui five column grid">
+										<div class="ui six column grid">
 											<div class="column" >
-												<div class="ui red button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
 											</div>
 											<div class="column" >
-												<div class="ui red button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
 											</div>
 											<div class="column" >
-												<div class="ui red button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
 											</div>
 											<div class="column" >
-												<div class="ui red button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
 											</div>
 											<div class="column" >
-												<div class="ui red button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
 											</div>
 											<div class="column" >
-												<div class="ui red button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
 											</div>
 											<div class="column" >
-												<div class="ui red button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
 											</div>
 											<div class="column" >
-												<div class="ui red button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+											</div>
+											<div class="column" >
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+											</div>
+											<div class="column" >
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+											</div>
+											<div class="column" >
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+											</div>
+											<div class="column" >
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+											</div>
+											<div class="column" >
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
+											</div>
+											<div class="column" >
+												<div class="ui red top attached button" data-html="<div class='content'><p>名称:CPU</p><p>状态:危险</p><p>最新数据时间:2017年7月12日15:38:07</p><p>监控项的最新数值:???</p></div></div>">CPU</div>
 											</div>
 										</div>
 											</div>
@@ -293,52 +350,13 @@
 									</div>
 								</div>
 							</div>
-
-							<div class="ui divider"></div>
-								<div class="row">
-							<div class="ui secondary menu">
-								<a class="header item">
-									<h3><i class="bar large chart icon"></i>监控项视图</h3>
-								</a>
-								<a class="ui tag label right item "><i class="heart icon"></i>可自定义</a>
+							<div class="row" style="padding-top:20px; ">
+								<div id="flag_false"></div>
+								<div id="flag_true" ></div>
 							</div>
-							<div class="ui three column grid">
-								<div class="column" >
-									<div id="main0" style="height: 200px" ></div>
-								</div>
-								<div class="column">
-									<div id="main1" style="height: 200px" ></div>
-								</div>
-								<div class="column">
-									<a class="ui right corner label">
-										<i class="heart icon"></i>
-									</a>
-									<div id="main2" style="height: 200px" ></div>
-								</div>
-								<div class="column">
-									<a class="ui right corner label">
-										<i class="heart icon"></i>
-									</a>
-									<div id="main3" style="height: 200px" ></div>
-								</div>
-								<div class="column">
-									<a class="ui right corner label">
-										<i class="heart icon"></i>
-									</a>
-									<div id="main4" style="height: 200px" ></div>
-								</div>
-								<div class="column">
-									<a class="ui right corner label">
-										<i class="heart icon"></i>
-									</a>
-									<div id="main5" style="height: 200px" ></div>
-								</div>
-							</div>
-								</div>
 						</div>
 					</div>
 				</div>
-
 				<!--Site Content-->
 			</div>
 		</div>
@@ -359,46 +377,77 @@
     ;
 </script>
 <script type="text/javascript">
-    // 基于准备好的dom，初始化echarts实例
-    var myChart0 = echarts.init(document.getElementById('main0'));
-    var myChart1 = echarts.init(document.getElementById('main1'));
-    var myChart2 = echarts.init(document.getElementById('main2'));
-    var myChart3 = echarts.init(document.getElementById('main3'));
-    var myChart4 = echarts.init(document.getElementById('main4'));
-    var myChart5 = echarts.init(document.getElementById('main5'));
-
     // 指定图表的配置项和数据
-    var option = {
-        title: {
-            text: 'ECharts 示例'
-        },
-        tooltip: {},
-        legend: {
-            data:[]
-        },
-        xAxis: {
-            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-        },
-        yAxis: {},
-        series: [{
-            name: '销量',
-            type: 'bar',
-            data: [5, 20, 36, 10, 10, 20],
-            color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
-        }]
-    };
-    // 使用刚指定的配置项和数据显示图表。
-    myChart0.setOption(option);
-    option.title.text = 'CPU使用率 示例';
-    myChart1.setOption(option);
-    option.title.text = '内存使用率 示例';
-    myChart2.setOption(option);
-    option.title.text = 'C盘使用率 示例';
-    myChart3.setOption(option);
-    option.title.text = '日志存储量 示例';
-    myChart4.setOption(option);
-    option.title.text = 'd盘使用率 示例';
-    myChart5.setOption(option);
+	//加载数据
+  	$.ajax({
+        type: "post",
+        url: "/hostgraphs",
+        data: {host_id: "g2"},
+        dataType: "json",
+        success: function (result) {
+            var data = result.data;
+            for (var i=0; i<data.length; i++){
+                var id = ['host_id'+data[i].host_id+'item_id'+data[i].item_id].join('');
+				if (data[i].flag==true)
+				{
+                    if($("#flag_true").children().length == 0)
+                    {
+                        $("#flag_true").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>自定义监控项</h4> <div class='ui three column grid gridly' id='flag_true_content'>");
+                        $("#flag_true_content").append("<div class='column no-padding-bottom brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                    }else {
+                        $("#flag_true_content").append("<div class='column no-padding-bottom brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                    }
+				}else {
+                    if($("#flag_false").children().length == 0)
+                    {
+                        $("#flag_false").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐严重监控项</h4> <div class='ui three column grid gridly ' id='flag_false_content'>");
+                        $("#flag_false_content").append("<div class='column no-padding-bottom  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                    }else {
+                        $("#flag_false_content").append("<div class='column no-padding-bottom  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                    }
+                }
+
+                var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+				if (data[i].state == "正常"){ var myColor = Color[0] }
+                if (data[i].state == "严重"){ var myColor = Color[1] }
+                if (data[i].state == "警告"){ var myColor = Color[2] }
+                var myChart = echarts.init(document.getElementById(id));
+                var option = {
+                    title: {
+                        text: data[i].item_name
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:[]
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            magicType: {type: ['line', 'bar']},
+                        }
+                    },
+                    xAxis: {
+                        data: data[i].data_time
+                    },
+                    yAxis: {
+                    },
+                    series: [{
+                        name: data[i].graph_name,
+                        type: data[i].graph_type,
+                        data: data[i].date,
+                        color: [myColor]
+                    }]
+                };
+                myChart.setOption(option);
+            }
+            $('.gridly').gridly({
+                base: 60, // px
+                gutter: 20, // px
+                columns: 12
+            });
+        }
+    })
 </script>
+
 </body>
 </html>
