@@ -386,6 +386,11 @@ public class OverviewServiceImpl implements OverviewService {
                     group.setEnable(true);
                 }
             }
+        }else {
+            //状态赋值，state = 0,表示可选择，1表示不可选择
+            for(OverviewListGroupDTO group : rootTree) {
+                group.setEnable(true);
+            }
         }
         return rootTree;
     }
