@@ -44,8 +44,13 @@ public class OverviewRestController {
      */
     @RequestMapping(value = "ov/group", method = RequestMethod.POST)
     public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("sup_group") String supGroupId) throws ServiceException {
-        OverviewCreateGroupDTO ocg =  overviewService.createOverviewGroup(newGroupName,supGroupId);
-        return RestResultGenerator.genResult(ocg, REST_CREATE_SUCCESS).toString();
+        boolean success =  overviewService.createOverviewGroup(newGroupName,supGroupId);
+        if(success) {
+            List<OverviewListGroupDTO> olg = overviewService.listOverviewGroup();
+            return RestResultGenerator.genResult(olg, REST_CREATE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
     }
 
     /**
@@ -57,7 +62,7 @@ public class OverviewRestController {
     @RequestMapping(value = "ov/group/edit", method = RequestMethod.POST)
     public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("old_group_name") String oldGroupName,@RequestParam("sup_group_id") String supGroupVOId) throws ServiceException {
         OverviewEditGroupDTO oeg =  overviewService.editOverviewGroup(oldGroupName,newGroupName,supGroupVOId);
-        return RestResultGenerator.genResult(oeg, REST_CREATE_SUCCESS).toString();
+        return RestResultGenerator.genResult(oeg, REST_UPDATE_SUCCESS).toString();
     }
 
     /**

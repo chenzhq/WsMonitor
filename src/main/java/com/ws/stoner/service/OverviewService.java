@@ -20,10 +20,10 @@ public interface OverviewService {
 
     /**
      * 创建分组，overview group create
-     * @return
+     * @return boolean true表示删除成功，false表示删除失败
      * @throws ServiceException
      */
-    OverviewCreateGroupDTO createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException;
+    boolean createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException;
 
     /**
      * 删除指定分组，并将其下所有子节点移动到上一节点中

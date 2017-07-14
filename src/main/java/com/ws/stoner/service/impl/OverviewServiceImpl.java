@@ -154,7 +154,8 @@ public class OverviewServiceImpl implements OverviewService {
     }
 
     @Override
-    public OverviewCreateGroupDTO createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException {
+    public boolean createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException {
+        boolean success = false;
         //step1:查最大cid，设置新的分组cid+1
         Group maxGroup = null;
         try {
@@ -191,12 +192,9 @@ public class OverviewServiceImpl implements OverviewService {
         supGroupList.add(newGroupName);
         supGroup.setGroupChildren((String[])supGroupList.toArray(new String[0]));
         overviewGroupRepository.save(supGroup);
-        //step3:返回值：newGroupId，newGroupName,supGroupId
-        OverviewCreateGroupDTO ocg = new OverviewCreateGroupDTO();
-        ocg.setNewGroupId("g" + cId);
-        ocg.setNewGroupName(newGroupName);
-        ocg.setSupGroupId(supGroupId);
-        return ocg;
+        //step3:返回值：
+        success = true;
+        return success;
     }
 
     /**
