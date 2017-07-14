@@ -13,6 +13,10 @@ import java.util.List;
  * Created by zkf on 2017/6/9.
  */
 public interface ItemService {
+
+/*
+  item 基础方法  list
+ */
     /**
      * 根据request请求获取item list
      *
@@ -44,6 +48,10 @@ public interface ItemService {
      */
     List<BriefItemDTO> getItemsByPointIds(List<String> pointIds) throws ServiceException;
 
+
+/*
+item 在 mongodb下的业务方法
+ */
     /**
      * 在mongodb数据库中根据hostid 查询出所有的 item
      * @param hostId

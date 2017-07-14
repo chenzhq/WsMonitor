@@ -3,6 +3,8 @@ package com.ws.stoner.service;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.view.HostDetailInterfaceVO;
+import com.ws.stoner.model.view.HostDetailPointVO;
 import com.ws.stoner.model.view.HostDetailVO;
 
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.List;
 public interface HostService {
 
 /*
- *count host
+ *基础方法
  */
 
     /**
@@ -32,6 +34,10 @@ public interface HostService {
      * @throws ServiceException the auth expire exception
      */
     List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException;
+
+/*
+仪表板页面下的 count 数据获取的业务方法
+ */
 
     /**
      * 获取主机总数量，排除停用主机，filter： status:0
@@ -70,7 +76,7 @@ public interface HostService {
     int countOkHost() throws ServiceException;
 
 /*
- *list host
+ *仪表板页面下的 list 数据获取的业务方法
  */
 
     /**
@@ -110,6 +116,29 @@ public interface HostService {
      */
     List<BriefHostDTO> getHostsByHostIds(List<String> hostIds) throws ServiceException;
 
+/*
+设备详情页面下的业务方法
+ */
 
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 基本信息的 HostDetailVO
+     * @return
+     * @throws ServiceException
+     */
+    HostDetailVO getHostDetailByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
+
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 设备接口信息的 InterfaceVO
+     * @return
+     * @throws ServiceException
+     */
+    HostDetailInterfaceVO getHostInterfaceByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
+
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 设备下所有监控点状态信息 的 pointVO
+     * @return
+     * @throws ServiceException
+     */
+    List<HostDetailPointVO> getPointsByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
 
 }

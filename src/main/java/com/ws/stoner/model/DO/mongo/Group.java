@@ -27,6 +27,10 @@ public class Group {
     public Group() {
     }
 
+    public Group(String name) {
+        this.name = name;
+    }
+
     public Group(String id, String name, String flag, String cId, String pId, String[] groupChildren, String[] hostChildren) {
         this.id = id;
         this.name = name;

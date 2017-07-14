@@ -154,7 +154,8 @@ public class OverviewServiceImpl implements OverviewService {
     }
 
     @Override
-    public OverviewCreateGroupDTO createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException {
+    public boolean createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException {
+        boolean success = false;
         //step1:查最大cid，设置新的分组cid+1
         Group maxGroup = null;
         try {
@@ -191,22 +192,19 @@ public class OverviewServiceImpl implements OverviewService {
         supGroupList.add(newGroupName);
         supGroup.setGroupChildren((String[])supGroupList.toArray(new String[0]));
         overviewGroupRepository.save(supGroup);
-        //step3:返回值：newGroupId，newGroupName,supGroupId
-        OverviewCreateGroupDTO ocg = new OverviewCreateGroupDTO();
-        ocg.setNewGroupId("g" + cId);
-        ocg.setNewGroupName(newGroupName);
-        ocg.setSupGroupId(supGroupId);
-        return ocg;
+        //step3:返回值：
+        success = true;
+        return success;
     }
 
     /**
      * 删除指定分组，并将其下所有子节点移动到上一节点中
      * @param delGroupVOId
-     * @return
-     * @throws ServiceException
+     * @return boolean true表示删除成功，false表示删除失败
      */
     @Override
-    public OverviewDelGroupDTO deleteOverviewGroup(String delGroupVOId) throws ServiceException {
+    public boolean deleteOverviewGroup(String delGroupVOId) throws ServiceException {
+        boolean success = false;
         String delGroupId = delGroupVOId.substring(1);
         Group delGroup = null;
         Group supGroup = null;
@@ -223,6 +221,8 @@ public class OverviewServiceImpl implements OverviewService {
         List<String> delGroupChildren = Arrays.asList(delGroup.getGroupChildren());
         List<String> supGroupChildrenTemp = Arrays.asList(supGroup.getGroupChildren());
         List<String> supGroupChildren = new ArrayList<>(supGroupChildrenTemp);
+        //剔除掉 在sup的group_children 中要删除的group的name
+        supGroupChildren.remove(delGroup.getName());
         for(String groupName : delGroupChildren) {
             supGroupChildren.add(groupName);
             Group childGroup = overviewGroupRepository.findByName(groupName);
@@ -247,10 +247,8 @@ public class OverviewServiceImpl implements OverviewService {
         overviewGroupRepository.save(supGroup);
         //step5:删除指定组
         overviewGroupRepository.delete(delGroup);
-        OverviewDelGroupDTO odg = new OverviewDelGroupDTO();
-        odg.setDelGroupId(delGroupVOId);
-        odg.setToGroupId("g" + supGroup.getcId());
-        return odg;
+        success = true;
+        return success;
     }
 
     /**
@@ -258,11 +256,12 @@ public class OverviewServiceImpl implements OverviewService {
      * @param groupVOId
      * @param fromGroupVOId
      * @param toGroupVOId
-     * @return
+     * @return boolean true表示删除成功，false表示删除失败
      * @throws ServiceException
      */
     @Override
-    public OverviewMoveGroupDTO moveOverviewGroup(String groupVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+    public boolean moveOverviewGroup(String groupVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+        boolean success = false;
         String groupId = groupVOId.substring(1);
         String fromGroupId = fromGroupVOId.substring(1);
         String toGroupId = toGroupVOId.substring(1);
@@ -308,11 +307,8 @@ public class OverviewServiceImpl implements OverviewService {
         toGroup.setGroupChildren(toGroupChildren.toArray(new String[0]));
         overviewGroupRepository.save(toGroup);
         //组装返回数据对象
-        OverviewMoveGroupDTO omg = new OverviewMoveGroupDTO();
-        omg.setGroupId(groupVOId);
-        omg.setFromGroupId(fromGroupVOId);
-        omg.setToGroupId(toGroupVOId);
-        return omg;
+        success = true;
+        return success;
 
     }
 
@@ -321,11 +317,12 @@ public class OverviewServiceImpl implements OverviewService {
      * @param hostVOId
      * @param fromGroupVOId
      * @param toGroupVOId
-     * @return
+     * @return boolean true表示移动成功，false表示移动失败
      * @throws ServiceException
      */
     @Override
-    public OverviewMoveHostDTO moveOverviewHost(String hostVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+    public boolean moveOverviewHost(String hostVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+        boolean success = false;
         String hostId = hostVOId.substring(1);
         String fromGroupId = fromGroupVOId.substring(1);
         String toGroupId = toGroupVOId.substring(1);
@@ -356,11 +353,40 @@ public class OverviewServiceImpl implements OverviewService {
         toGroup.setHostChildren((String[])toHostChildren.toArray(new String[0]));
         overviewGroupRepository.save(toGroup);
         //step3:组装返回数据
-        OverviewMoveHostDTO omh = new OverviewMoveHostDTO();
-        omh.setHostId(hostVOId);
-        omh.setFromGroupId(fromGroupVOId);
-        omh.setToGroupId(toGroupVOId);
-        return omh;
+        success = true;
+        return success;
+    }
+
+    /**
+     * 编辑修改分组名 service
+     * @param oldGroupName
+     * @param newGroupName
+     * @param supGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public OverviewEditGroupDTO editOverviewGroup(String oldGroupName,String newGroupName, String supGroupVOId) throws ServiceException {
+        String supGroupId = supGroupVOId.substring(1);
+        //oldGroupName 查 group,修改name
+        Group oldGroup = overviewGroupRepository.findByName(oldGroupName);
+        oldGroup.setName(newGroupName);
+        overviewGroupRepository.save(oldGroup);
+        // supGroupVOId 查 sup_group，修改group_children
+        Group supGroup = null;
+        try {
+            supGroup = overviewDAO.findGroupByCId(supGroupId);
+        } catch (DAOException e) {
+            logger.error("Cid查询mongodb错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        List<String> groupChildrenTemp = Arrays.asList(supGroup.getGroupChildren());
+        List<String> groupChildren = new ArrayList<>(groupChildrenTemp);
+        groupChildren.remove(oldGroupName);
+        groupChildren.add(newGroupName);
+        supGroup.setGroupChildren(groupChildren.toArray(new String[0]));
+        overviewGroupRepository.save(supGroup);
+        return new OverviewEditGroupDTO(oldGroupName,newGroupName,supGroupVOId);
     }
 
     /**

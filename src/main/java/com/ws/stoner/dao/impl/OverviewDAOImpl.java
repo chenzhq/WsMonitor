@@ -43,6 +43,12 @@ public class OverviewDAOImpl implements OverviewDAO {
         Group group = mongoTemplate.findOne(query, Group.class);
         return group;
     }
+    //更新name
+    @Override
+    public void updateGroupFirst(Group group) throws DAOException {
+        String name = group.getName();
+        mongoTemplate.updateFirst(new Query(Criteria.where("id").is(group.getId())),Update.update("name",name), Group.class);
+    }
 
     /**
      * 批量更新组 group   测试未实现批量插入 还在研究中

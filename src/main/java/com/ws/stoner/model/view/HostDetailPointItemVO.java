@@ -7,18 +7,9 @@ public class HostDetailPointItemVO {
 
     private String itemId;
     private String name;
+    private String pointId;
     private String value;
     private String state;
-
-    @Override
-    public String toString() {
-        return "HostDetailPointItemVO{" +
-                "itemId='" + itemId + '\'' +
-                ", name='" + name + '\'' +
-                ", value='" + value + '\'' +
-                ", state='" + state + '\'' +
-                '}';
-    }
 
     public String getItemId() {
         return itemId;
@@ -26,6 +17,27 @@ public class HostDetailPointItemVO {
 
     public HostDetailPointItemVO setItemId(String itemId) {
         this.itemId = itemId;
+        return this;
+    }
+
+    @Override
+    public String
+    toString() {
+        return "HostDetailPointItemVO{" +
+                "itemId='" + itemId + '\'' +
+                ", name='" + name + '\'' +
+                ", pointId='" + pointId + '\'' +
+                ", value='" + value + '\'' +
+                ", state='" + state + '\'' +
+                '}';
+    }
+
+    public String getPointId() {
+        return pointId;
+    }
+
+    public HostDetailPointItemVO setPointId(String pointId) {
+        this.pointId = pointId;
         return this;
     }
 
