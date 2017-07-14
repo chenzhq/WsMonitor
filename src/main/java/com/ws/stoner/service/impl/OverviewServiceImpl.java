@@ -202,11 +202,11 @@ public class OverviewServiceImpl implements OverviewService {
     /**
      * 删除指定分组，并将其下所有子节点移动到上一节点中
      * @param delGroupVOId
-     * @return
-     * @throws ServiceException
+     * @return boolean true表示删除成功，false表示删除失败
      */
     @Override
-    public OverviewDelGroupDTO deleteOverviewGroup(String delGroupVOId) throws ServiceException {
+    public boolean deleteOverviewGroup(String delGroupVOId) throws ServiceException {
+        boolean success = false;
         String delGroupId = delGroupVOId.substring(1);
         Group delGroup = null;
         Group supGroup = null;
@@ -247,10 +247,8 @@ public class OverviewServiceImpl implements OverviewService {
         overviewGroupRepository.save(supGroup);
         //step5:删除指定组
         overviewGroupRepository.delete(delGroup);
-        OverviewDelGroupDTO odg = new OverviewDelGroupDTO();
-        odg.setDelGroupId(delGroupVOId);
-        odg.setToGroupId("g" + supGroup.getcId());
-        return odg;
+        success = true;
+        return success;
     }
 
     /**
@@ -258,11 +256,12 @@ public class OverviewServiceImpl implements OverviewService {
      * @param groupVOId
      * @param fromGroupVOId
      * @param toGroupVOId
-     * @return
+     * @return boolean true表示删除成功，false表示删除失败
      * @throws ServiceException
      */
     @Override
-    public OverviewMoveGroupDTO moveOverviewGroup(String groupVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+    public boolean moveOverviewGroup(String groupVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+        boolean success = false;
         String groupId = groupVOId.substring(1);
         String fromGroupId = fromGroupVOId.substring(1);
         String toGroupId = toGroupVOId.substring(1);
@@ -308,11 +307,8 @@ public class OverviewServiceImpl implements OverviewService {
         toGroup.setGroupChildren(toGroupChildren.toArray(new String[0]));
         overviewGroupRepository.save(toGroup);
         //组装返回数据对象
-        OverviewMoveGroupDTO omg = new OverviewMoveGroupDTO();
-        omg.setGroupId(groupVOId);
-        omg.setFromGroupId(fromGroupVOId);
-        omg.setToGroupId(toGroupVOId);
-        return omg;
+        success = true;
+        return success;
 
     }
 
@@ -321,11 +317,12 @@ public class OverviewServiceImpl implements OverviewService {
      * @param hostVOId
      * @param fromGroupVOId
      * @param toGroupVOId
-     * @return
+     * @return boolean true表示移动成功，false表示移动失败
      * @throws ServiceException
      */
     @Override
-    public OverviewMoveHostDTO moveOverviewHost(String hostVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+    public boolean moveOverviewHost(String hostVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+        boolean success = false;
         String hostId = hostVOId.substring(1);
         String fromGroupId = fromGroupVOId.substring(1);
         String toGroupId = toGroupVOId.substring(1);
@@ -356,11 +353,8 @@ public class OverviewServiceImpl implements OverviewService {
         toGroup.setHostChildren((String[])toHostChildren.toArray(new String[0]));
         overviewGroupRepository.save(toGroup);
         //step3:组装返回数据
-        OverviewMoveHostDTO omh = new OverviewMoveHostDTO();
-        omh.setHostId(hostVOId);
-        omh.setFromGroupId(fromGroupVOId);
-        omh.setToGroupId(toGroupVOId);
-        return omh;
+        success = true;
+        return success;
     }
 
     /**

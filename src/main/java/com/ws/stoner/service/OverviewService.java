@@ -27,30 +27,30 @@ public interface OverviewService {
 
     /**
      * 删除指定分组，并将其下所有子节点移动到上一节点中
-     * @return
+     * @return boolean true表示删除成功，false表示删除失败
      * @throws ServiceException
      */
-    OverviewDelGroupDTO deleteOverviewGroup(String delGroupVOId) throws ServiceException;
+    boolean deleteOverviewGroup(String delGroupVOId) throws ServiceException;
 
     /**
      * 移动组 操作 move group
      * @param groupVOId
      * @param fromGroupVOId
      * @param toGroupVOId
-     * @return
+     * @return boolean true表示删除成功，false表示删除失败
      * @throws ServiceException
      */
-    OverviewMoveGroupDTO moveOverviewGroup(String groupVOId,String fromGroupVOId, String toGroupVOId) throws ServiceException;
+    boolean moveOverviewGroup(String groupVOId,String fromGroupVOId, String toGroupVOId) throws ServiceException;
 
     /**
      * 移动设备 操作 move host
      * @param hostVOId
      * @param fromGroupVOId
      * @param toGroupVOId
-     * @return
+     * @return boolean true表示删除成功，false表示删除失败
      * @throws ServiceException
      */
-    OverviewMoveHostDTO moveOverviewHost(String hostVOId,String fromGroupVOId,String toGroupVOId) throws ServiceException;
+    boolean moveOverviewHost(String hostVOId,String fromGroupVOId,String toGroupVOId) throws ServiceException;
 
     /**
      * 在移动分组的时候需要先获取分组树供用户选择
