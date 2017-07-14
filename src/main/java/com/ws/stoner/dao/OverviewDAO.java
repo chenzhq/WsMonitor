@@ -23,6 +23,13 @@ public interface OverviewDAO {
     Group findGroupByCId(String cId) throws DAOException;
 
     /**
+     * 根据 group update name
+     * @param group
+     * @throws DAOException
+     */
+    void updateGroupFirst(Group group) throws DAOException;
+
+    /**
      * 批量更新组 group
      * @param groups
      * @throws DAOException

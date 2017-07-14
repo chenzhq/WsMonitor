@@ -53,12 +53,24 @@ public interface OverviewService {
     boolean moveOverviewHost(String hostVOId,String fromGroupVOId,String toGroupVOId) throws ServiceException;
 
     /**
+     * 编辑修改分组名 service
+     * @param oldGroupName
+     * @param newGroupName
+     * @param supGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    OverviewEditGroupDTO editOverviewGroup(String oldGroupName,String newGroupName, String supGroupVOId) throws ServiceException;
+
+
+    /**
      * 在移动分组的时候需要先获取分组树供用户选择
      * @param groupName
      * @return
      * @throws ServiceException
      */
     List<OverviewListGroupDTO> getMoveGroupTree(String groupName) throws ServiceException;
+
 
 
 

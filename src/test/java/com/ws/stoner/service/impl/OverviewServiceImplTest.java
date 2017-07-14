@@ -167,6 +167,11 @@ public void testFindAll() throws Exception {
 
     }
 
+    @Test
+    public void testUpdateGroupName() throws Exception {
+        OverviewEditGroupDTO oeg = overviewService.editOverviewGroup("服务器","数据库","g0");
+    }
+
 
 
 } 

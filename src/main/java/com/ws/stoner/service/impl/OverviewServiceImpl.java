@@ -358,6 +358,38 @@ public class OverviewServiceImpl implements OverviewService {
     }
 
     /**
+     * 编辑修改分组名 service
+     * @param oldGroupName
+     * @param newGroupName
+     * @param supGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public OverviewEditGroupDTO editOverviewGroup(String oldGroupName,String newGroupName, String supGroupVOId) throws ServiceException {
+        String supGroupId = supGroupVOId.substring(1);
+        //oldGroupName 查 group,修改name
+        Group oldGroup = overviewGroupRepository.findByName(oldGroupName);
+        oldGroup.setName(newGroupName);
+        overviewGroupRepository.save(oldGroup);
+        // supGroupVOId 查 sup_group，修改group_children
+        Group supGroup = null;
+        try {
+            supGroup = overviewDAO.findGroupByCId(supGroupId);
+        } catch (DAOException e) {
+            logger.error("Cid查询mongodb错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        List<String> groupChildrenTemp = Arrays.asList(supGroup.getGroupChildren());
+        List<String> groupChildren = new ArrayList<>(groupChildrenTemp);
+        groupChildren.remove(oldGroupName);
+        groupChildren.add(newGroupName);
+        supGroup.setGroupChildren(groupChildren.toArray(new String[0]));
+        overviewGroupRepository.save(supGroup);
+        return new OverviewEditGroupDTO(oldGroupName,newGroupName,supGroupVOId);
+    }
+
+    /**
      * 在移动分组的时候需要先获取分组树供用户选择
      * @param groupName
      * @return
