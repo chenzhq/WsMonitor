@@ -61,9 +61,8 @@ public class HistoryServiceImpl implements HistoryService {
         historyGetRequest.getParams()
                 .setHistory(valueType)
                 .setItemIds(itemIds)
-                .setTimeFrom(((int)System.currentTimeMillis()/1000-1*24*3600))
-                .setTimeTill((int)System.currentTimeMillis()/1000)
-                .setOutput(BriefHistoryDTO.PROPERTY_NAMES);
+                .setTimeFrom(String.valueOf(System.currentTimeMillis()/1000-1*24*3600))
+                .setTimeTill(String.valueOf(System.currentTimeMillis()/1000));
         List<BriefHistoryDTO> historyDTOS = listHistory(historyGetRequest);
         return historyDTOS;
     }

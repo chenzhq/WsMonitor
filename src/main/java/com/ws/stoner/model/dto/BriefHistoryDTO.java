@@ -13,7 +13,7 @@ public class BriefHistoryDTO {
 
     @JSONField(name = "itemid")
     private String itemId;
-    @JSONField(name = "clock",format = "yyyy-MM-dd HH:mm:ss")
+    @JSONField(name = "clock")
     private LocalDateTime lastTime;
     private float value;
 

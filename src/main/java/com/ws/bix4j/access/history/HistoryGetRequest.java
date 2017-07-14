@@ -30,10 +30,10 @@ public class HistoryGetRequest extends ZRequest<HistoryGetRequest.Params> {
         private List<String> hostIds;
         @JSONField(name = "itemids")
         private List<String> itemIds;
-        @JSONField(name = "time_from",format = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime timeFrom;
-        @JSONField(name = "time_till",format = "yyyy-MM-dd HH:mm:ss")
-        private LocalDateTime timeTill;
+        @JSONField(name = "time_from")
+        private String timeFrom;
+        @JSONField(name = "time_till")
+        private String timeTill;
 
 
         public Integer getHistory() {
@@ -63,23 +63,21 @@ public class HistoryGetRequest extends ZRequest<HistoryGetRequest.Params> {
             return this;
         }
 
-        public LocalDateTime getTimeFrom() {
+        public String getTimeFrom() {
             return timeFrom;
         }
 
-        public Params setTimeFrom(int timeFrom) {
-            Instant instant = Instant.ofEpochSecond(timeFrom);
-            this.timeFrom = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        public Params setTimeFrom(String timeFrom) {
+            this.timeFrom = timeFrom;
             return this;
         }
 
-        public LocalDateTime getTimeTill() {
+        public String getTimeTill() {
             return timeTill;
         }
 
-        public Params setTimeTill(int  timeTill) {
-            Instant instant = Instant.ofEpochSecond(timeTill);
-            this.timeTill = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        public Params setTimeTill(String timeTill) {
+            this.timeTill = timeTill;
             return this;
         }
     }

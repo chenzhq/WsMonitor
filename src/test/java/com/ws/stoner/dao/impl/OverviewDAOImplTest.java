@@ -67,6 +67,11 @@ public void testFindMaxGroupCId() throws Exception {
        overviewGroupRepository.delete(delGroup);
 }
 
+@Test
+public void testUpdateName() throws Exception {
+    Group group = new Group("");
+}
+
     @Test
     public void testBathUpdate() throws  Exception {
         List<Group> groups = new ArrayList<>();
