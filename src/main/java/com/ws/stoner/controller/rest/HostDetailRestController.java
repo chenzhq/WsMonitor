@@ -62,8 +62,10 @@ public class HostDetailRestController {
             itemVOS.add(itemVO);
         }
         pointVO.setItems(itemVOS);
-        pointVO.setName(itemDTOS.get(0).getPoint().getName());
         pointVO.setPointId(pointId);
+        if(itemDTOS.size() != 0) {
+            pointVO.setName(itemDTOS.get(0).getPoints().get(0).getName());
+        }
         return RestResultGenerator.genResult(pointVO, REST_RESPONSE_SUCCESS).toString();
     }
 

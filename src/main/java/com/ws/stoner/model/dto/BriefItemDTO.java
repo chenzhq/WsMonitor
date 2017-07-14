@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 /**
  * Created by pc on 2017/6/20.
@@ -21,7 +22,8 @@ public class BriefItemDTO {
     private String lastValue;
     @JSONField(name = "value_type")
     private Integer valueType;
-    private BriefPointDTO point;
+    @JSONField(name = "applications")
+    private List<BriefPointDTO> points;
 
     public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type"};
 
@@ -43,16 +45,16 @@ public class BriefItemDTO {
                 ", lastTime=" + lastTime +
                 ", lastValue='" + lastValue + '\'' +
                 ", valueType=" + valueType +
-                ", point=" + point +
+                ", points=" + points +
                 '}';
     }
 
-    public BriefPointDTO getPoint() {
-        return point;
+    public List<BriefPointDTO> getPoints() {
+        return points;
     }
 
-    public BriefItemDTO setPoint(BriefPointDTO point) {
-        this.point = point;
+    public BriefItemDTO setPoints(List<BriefPointDTO> points) {
+        this.points = points;
         return this;
     }
 

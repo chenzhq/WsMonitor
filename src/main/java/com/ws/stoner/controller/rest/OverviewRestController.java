@@ -49,6 +49,18 @@ public class OverviewRestController {
     }
 
     /**
+     * 编辑组
+     * @param
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "ov/group/edit", method = RequestMethod.POST)
+    public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("old_group_name") String oldGroupName,@RequestParam("sup_group_id") String supGroupVOId) throws ServiceException {
+        OverviewEditGroupDTO oeg =  overviewService.editOverviewGroup(oldGroupName,newGroupName,supGroupVOId);
+        return RestResultGenerator.genResult(oeg, REST_CREATE_SUCCESS).toString();
+    }
+
+    /**
      * 删除组
      * @param delGroupId
      * @return
