@@ -223,6 +223,8 @@ public class OverviewServiceImpl implements OverviewService {
         List<String> delGroupChildren = Arrays.asList(delGroup.getGroupChildren());
         List<String> supGroupChildrenTemp = Arrays.asList(supGroup.getGroupChildren());
         List<String> supGroupChildren = new ArrayList<>(supGroupChildrenTemp);
+        //剔除掉 在sup的group_children 中要删除的group的name
+        supGroupChildren.remove(delGroup.getName());
         for(String groupName : delGroupChildren) {
             supGroupChildren.add(groupName);
             Group childGroup = overviewGroupRepository.findByName(groupName);

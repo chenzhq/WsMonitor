@@ -138,7 +138,7 @@ public void testFindAll() throws Exception {
 
     @Test
     public void testDelOverviewGroup() throws Exception {
-        boolean odg = overviewService.deleteOverviewGroup("1");
+        boolean odg = overviewService.deleteOverviewGroup("g2");
         System.out.println(odg);
     }
 
