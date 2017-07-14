@@ -415,6 +415,7 @@
 </script>
 <script type="text/javascript">
 	//饼状图
+    var Color = ['#5FB878', '#F7B824', '#f11111','#d2d2d2', '#2F4056'];//绿色#5FB878黄色#F7B824红色#FF5722老红#DB2828
     var platform_index;//记录切换页面时饼状图点击状态
     var host_index;
     var point_index;
@@ -458,7 +459,7 @@
                     },
                 },
                 data: [ ],
-                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
+                color: Color
             }
         ]
     };
@@ -536,7 +537,7 @@
                     },
                 },
                 data: [],
-                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
+                color: Color
             }
         ]
     };
@@ -613,7 +614,7 @@
                     },
                 },
                 data: [],
-                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
+                color: Color
             }
         ]
     }
@@ -658,6 +659,7 @@
             } else {
                 $(row).addClass('negative');
             }
+            $('td:eq(2)', row).addClass('right aligned');
         },
         ajax: {
             url: '/platform/list',
@@ -679,7 +681,12 @@
                 "width": "50px",
                 "title": "严重／警告/设备总数",
                 render: function(data, type, row, meta) {
-                    return  row.hightNum + '/' +row.warningNum + '/'+ row.allNum ;
+                    return  '<a class="ui red header">'
+                        +row.highNum + '</a>' +
+                        '<a class="ui yellow header">  /'
+                        +row.warningNum + '</a>' +
+                        '<a class="ui header ">  /'
+                        +row.allNum + '</a>'  ;
                 }
             },
             {
@@ -698,6 +705,7 @@
             } else {
                 $(row).addClass('negative');
             }
+            $('td:eq(3)', row).addClass('right aligned');
         },
         ajax: {
             url: '/host/list',
@@ -726,7 +734,12 @@
                 "width": "200px",
                 "title": "严重／警告/监控点总数",
                 render: function(data, type, row, meta) {
-                    return  row.hightNum + '/' +row.warningNum + '/'+ row.allNum ;
+                    return  '<a class="ui red header">'
+                        +row.highNum + '</a>' +
+                        '<a class="ui yellow header">  /'
+                        +row.warningNum + '</a>' +
+                        '<a class="ui header ">  /'
+                        +row.allNum + '</a>'  ;
                 }
             },
             {
@@ -781,14 +794,9 @@
                     var num;//点击次数
                     platform_copy_myChart.on('click', function (param) {
                         var index = param.dataIndex;
-                        if(index==0)
-                        {
-                            platform_table.search( "正常" ).draw();
-                        }
-                        else
-                        {
-                            platform_table.search( "问题" ).draw();
-                        }
+                        if(index==0) {platform_table.search( "正常" ).draw();}
+                        if(index==1) {platform_table.search( "警告" ).draw();}
+                        if(index==2) {platform_table.search( "严重" ).draw();}
                         if (last_param==index){
                             num++;
                             if(num%2 == 0){
@@ -808,14 +816,9 @@
                     var num;//点击次数
                     host_copy_myChart.on('click', function (param) {
                         var index = param.dataIndex;
-                        if(index==0)
-                        {
-                            host_table.search( "正常" ).draw();
-                        }
-                        else
-                        {
-                            host_table.search( "问题" ).draw();
-                        }
+                        if(index==0) {host_table.search( "正常" ).draw();}
+                        if(index==1) {host_table.search( "警告" ).draw();}
+                        if(index==2) {host_table.search( "严重" ).draw();}
                         if (last_param==index){
                             num++;
                             if(num%2 == 0){
@@ -835,14 +838,9 @@
                     var num;//点击次数
                     point_copy_myChart.on('click', function (param) {
                         var index = param.dataIndex;
-                        if(index==0)
-                        {
-                            point_table.search( "正常" ).draw();
-                        }
-                        else
-                        {
-                            point_table.search( "问题" ).draw();
-                        }
+                        if(index==0) {point_table.search( "正常" ).draw();}
+                        if(index==1) {point_table.search( "警告" ).draw();}
+                        if(index==2) {point_table.search( "严重" ).draw();}
                         if (last_param==index){
                             num++;
                             if(num%2 == 0){
@@ -857,28 +855,19 @@
             },
             'onVisible': function(path){
                 if(path === 'platform_datatab') {
-                    if (platform_index == 0) {
-                        platform_table.search("正常").draw();
-                    }
-                    if (platform_index == 1) {
-                        platform_table.search("问题").draw();
-                    }
+                    if(platform_index==0) {platform_table.search( "正常" ).draw();}
+                    if(platform_index==1) {platform_table.search( "警告" ).draw();}
+                    if(platform_index==2) {platform_table.search( "严重" ).draw();}
                 }
                 if(path === 'host_datatab') {
-                    if (host_index == 0) {
-                        host_table.search("正常").draw();
-                    }
-                    if (host_index == 1) {
-                        host_table.search("问题").draw();
-                    }
+                    if(host_index==0) {host_table.search( "正常" ).draw();}
+                    if(host_index==1) {host_table.search( "警告" ).draw();}
+                    if(host_index==2) {host_table.search( "严重" ).draw();}
                 }
                 if(path === 'point_datatab') {
-                    if (point_index == 0) {
-                        point_table.search("正常").draw();
-                    }
-                    if (point_index == 1) {
-                        point_table.search("问题").draw();
-                    }
+                    if(point_index==0) {point_table.search( "正常" ).draw();}
+                    if(point_index==1) {point_table.search( "警告" ).draw();}
+                    if(point_index==2) {point_table.search( "严重" ).draw();}
                 }
             }
         });

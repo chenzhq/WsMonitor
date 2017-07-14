@@ -11,25 +11,25 @@
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<th:block th:replace="${links}"></th:block>
-	<link href="../static/css/jquery.gridly.css" rel="stylesheet" type="text/css" th:src="@{css/jquery.gridly.css}"/>
-	<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
-	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
-	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
-	<style type="text/css">
-		.no-padding-bottom{  padding-bottom: 0px;  }
-		.chart-style{  height: 200px  }
-	</style>
-	<style type="text/css">
-		.gridly {
-			position: relative;
-			width: 960px;
-		}
-		.brick.small {
-			height: 200px;
-		}
+	<th:block th:replace="${links}">
+		<link href="../static/css/jquery.gridly.css" rel="stylesheet" type="text/css" th:src="@{css/jquery.gridly.css}"/>
+		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+		<style type="text/css">
+			.no-padding-bottom{  padding-bottom: 0px;  }
+			.chart-style{  height: 200px  }
+			.gridly {
+				position: relative;
+				width: 960px;
+			}
+			.brick.small {
+				height: 200px;
+			}
+		</style>
+	</th:block>
 
-	</style>
 </head>
 <body>
 <!--header start-->
@@ -399,8 +399,15 @@
                 $("#"+point_id).attr("data-html",str);
                 $("#"+point_id).popup('show');
             },
-            error: function () {
-                alert("失败");
+            error: function (errorMsg) {
+                Lobibox.notify("error", {
+                    size: "normal",
+                    rounded: false,
+                    delayIndicator: true,
+                    msg: "连接服务器失败！",
+                    icon: "warning icon",
+                    title: "监控点详情",
+                });
             }
         })
     })
@@ -476,8 +483,15 @@
                 columns: 12
             });
         },
-        error: function () {
-            alert("失败");
+        error: function (errorMsg) {
+            Lobibox.notify("error", {
+                size: "normal",
+                rounded: false,
+                delayIndicator: true,
+                msg: "连接服务器失败！",
+                icon: "warning icon",
+                title: "监控项图形",
+            });
         }
     })
 </script>
