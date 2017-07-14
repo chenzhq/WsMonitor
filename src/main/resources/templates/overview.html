@@ -13,6 +13,8 @@
 	<th:block th:fragment="supplement">
 		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 		<link rel="stylesheet" href="../static/css/jquery.treegrid.css" th:href="@{css/jquery.treegrid.css}">
+		<link rel="stylesheet" href="../static/css/jstree-default/style.min.css" th:href="@{css/jstree-default/style.min.css}">
+		<script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 			.ui.table.dataTable thead th {
@@ -245,39 +247,45 @@
 					</div>
 				</div>
 
-				<!--modal-->
-				<div id="new_modal" class="ui small modal">
-					<i class="close icon"></i>
-					<div class="content">
-						<div class="ui form">
-							<h4 class="ui dividing header">新建组</h4>
-							<div id="new_content" class="field">
-							</div>
-						</div>
-					</div>
-					<div id="new_actions" class="actions">
-						<div class="ui button deny">取消</div>
-						<div class="ui green button deny" id="new_submit">确认</div>
-					</div>
-				</div>
 
-				<div id="move_modal" class="ui small modal">
-					<i class="close icon"></i>
-					<div class="inline fields content">
-						<table id="move_table" class="tree">
-						</table>
-					</div>
-					<div id="move_content" class="actions">
-						<div class="ui button deny">取消</div>
-						<div class="ui green button deny" id="move_submit">确认</div>
-					</div>
-				</div>
-
-				<div id="delete_modal" class="ui small modal">
-				</div>
 			</div>
 		</div>
 	</div>
+</div>
+<!--modal-->
+<div id="new_modal" class="ui small modal">
+	<i class="close icon"></i>
+	<div class="content">
+		<div class="ui form">
+			<h4 class="ui dividing header">新建组</h4>
+			<input type="text" id="new-group-input">
+			<div id="new_content" class="field">
+			</div>
+		</div>
+	</div>
+	<div id="new_actions" class="actions">
+		<div class="ui button deny">取消</div>
+		<div class="ui green button approve" id="new_submit">确认</div>
+	</div>
+</div>
+
+<div id="move_modal" class="ui small modal">
+	<i class="close icon"></i>
+	<div class="inline fields content">
+		<div id="group_tree"></div>
+	</div>
+	<div id="move_content" class="actions">
+		<div class="ui deny button ">取消</div>
+		<div class="ui green approve button" id="move_submit">确认</div>
+	</div>
+</div>
+
+<div id="delete_modal" class="ui small modal">
+</div>
+<div id="del-pop" class="ui custom popup transition hidden">
+	<div class="description">是否删除该分组？</div>
+	<i class="mini checkmark negative icon "></i>
+
 </div>
 <th:block th:replace="layout::bottom_script(~{::specialScript})">
 	<script src="../static/js/js.cookie.js"></script>
@@ -293,11 +301,57 @@
 </th:block>
 <script type="text/javascript">
     $(document).ready(function() {
+        var testflag = false;
         var host_table = $("#host_table").DataTable({
             "paging": false,
             "ordering": false,
-            "initComplete": function () {//初始化后回调
-                $("#host_table").treegrid();
+            "initComplete": function () {
+				console.log('init')
+				testflag = true;
+                $('#host_table tr:eq(1)').treegrid('expand')
+            },
+            "drawCallback": function () {//初始化后回调
+				console.log('draw')
+                $("#host_table").treegrid({
+					'initialState': 'collapsed',
+//					'saveState': true
+//					'expanderTemplate': '<i class="caret right icon"></i>',
+//					'expanderExpandedClass': 'down',
+//					'expanderCollapsedClass': 'right'
+				});
+				console.log($('#host_table tr:eq(1)'))
+				if(testflag)
+                $('#host_table tr:eq(1)').treegrid('expand')
+                var selectIndex
+                $('a.delete').on('click',function (e) {
+                    selectIndex = host_table.row($(this).parents('tr')).index();
+                }).popup({
+                    popup: $('#del-pop'),
+                    position: 'top right',
+                    on: 'click'
+                })
+
+                $('#del-pop').on('click', 'i.checkmark', function () {
+                    var sourceData = $('#host_table').DataTable().data();
+                    console.log(sourceData[selectIndex].cid)
+                    $.ajax({
+                        type: 'delete',
+                        url: '/ov/group?del_group='+ sourceData[selectIndex].cid,
+                        data: {del_group: sourceData[selectIndex].cid},
+                        dataType: 'json',
+                        success: function(result) {
+                            if(result.success) {
+                                host_table.rows().remove()
+                                host_table.rows.add(result.data).draw()
+                            } else {
+                                console.error('服务器错误')
+                            }
+                        },
+                        error: function (e) {
+                            console.error(e)
+                        }
+                    })
+                })
             },
             "createdRow": function (row, data, dataIndex) {
                 if (data.pid== null) {
@@ -319,21 +373,29 @@
                     "width": "20%",
                     "title": "名称",
                     render: function(data, type, row, meta) {
-                        if(data.state=="正常"){
-                        return  '<i class="green circle icon"></i>' + row.name;
-                    }else {
-                            if(data.state=="问题"){
-                                return  '<i class="red circle icon"></i>' + row.name;
-							}else {
-                                return  row.name;
-							}
+                        if (data.state == "正常") {
+                            if (row.type === '组') {
+                                return '<i class="green folder icon"></i>' + row.name;
+                            } else {
+                                return '<i class="green circle icon"></i>' + row.name;
+                            }
+                        } else if (data.state == "严重") {
+                            if (row.type === '组') {
+                                return '<i class="red folder icon"></i>' + row.name;
+                            } else {
+                                return '<i class="red circle icon"></i>' + row.name;
+                            }
+
+                        } else {
+                            return '<i class="list green layout icon"></i>' + row.name;
                         }
                     }
+
                 },
                 {
                     "data": "type",
                     "width": "20%",
-                    "title": "类型"
+                    "title": "类型",
                 },
                 {
                     "data": null,
@@ -341,7 +403,15 @@
                     "title": "操作",
                     render: function(data, type, row, meta) {
                         if(row.type=="组"){
-                            return '<div class="ui secondary menu"><a class="right item new" id="'+row.cid+'"> 新建</a><a class="item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a><a class="item delete" id="'+row.pid+'_'+row.cid+'"> 删除</a></div>';
+                            if(row.cid === 'g0') {
+                                return '<div class="ui secondary menu">' +
+                                '<a class="right item new" id="'+row.cid+'"> 新建</a></div>';
+                            }
+                            return '<div class="ui secondary menu">' +
+								'<a class="right item new" > 新建</a>' +
+								'<a class="item move" > 移动</a>' +
+								'<a class="item edit" > 编辑</a>' +
+								'<a class="item delete"> 删除</a></div>';
                         }else {
                             return '<div class="ui secondary menu"><a class="right item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
                         }
@@ -350,12 +420,6 @@
             ],
         });
 
-        $('#delete_submit').click(function(){
-            $("#new_content input[type='text']").each(function(){
-                var id = $("#new_content input[type='text']").attr("id");
-                alert("id:"+id+"val"+$(this).val());
-            });
-        });
         //下拉框事件
         $("#ui_dropdown").change(function(){
             //code...});
@@ -365,154 +429,158 @@
         //点击新建事件
         $('#host_table tbody').on('click', '.new', function(e) {
             e.preventDefault();
-            var index= host_table.row($(this).parents('tr')).index();
-			var sup_group=this.id;
-			$("#new_content").empty();
-			$("#new_actions").empty();
-			$("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
-			$("#new_actions").append("<div class='ui button deny'>取消</div> <div class='ui green button deny' id='new_submit'>确认</div>");
-			$("#new_modal").modal('show');
-			$('#new_submit').click(function(){
-				var sup_group = $("#new_content input[type='text']").attr("id");
-				var new_group_name = $("#new_content input[type='text']").val();
-				$.ajax({
-					type: "post",
-					url: "/ov/group",
-					data: {sup_group: sup_group, new_group_name: new_group_name},
-					dataType: "json",
-					success: function (result) {
-						var data = result.data;
-						/*console.log(data);*/
-						var sup_group=data.sup_group;
-						var new_group=data.new_group;
-						var new_group_name=data.new_group_name;
-						host_table.row.add( {
-							"cid": new_group,
-							"name": new_group_name,
-							"pid": sup_group,
-							"state": "",
-							"type": "组"
-						} ).draw();
-						var data = host_table.data();
-						host_table.clear();
-						data.splice((index + 1), 0, data.splice(-1,1)[0]);
-						host_table.rows.add(data).draw();
-						$("#host_table").treegrid();
-					},
-					error: function () {
-						alert("失败");
-					}
-				})
-			});
+
+            var sup_index = host_table.row($(this).parents('tr')).index();
+			var sourceData = host_table.data();
+
+
+			$('#new_modal').modal({
+                onApprove: function () {
+                    $.ajax({
+                        type: "post",
+                        url: "/ov/group",
+                        data: {
+                            sup_group: sourceData[sup_index].cid,
+                            new_group_name: $('#new-group-input').val()
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.success) {
+                                host_table.rows().remove()
+                                host_table.rows.add(result.data).draw()
+                            } else {
+                                console.error(result.message)
+                            }
+
+                        },
+                        error: function (e) {
+                            console.error(e)
+                        }
+                    })
+                }
+			}).modal('show')
+//			$('#new_submit').click(function(){
+//				var sup_group = $("#new_content input[type='text']").attr("id");
+//				var new_group_name = $("#new_content input[type='text']").val();
+//				})
+//			});
         });
         //点击移动事件
         $('#host_table tbody').on('click', '.move', function(e) {
             e.preventDefault();
-            var index= host_table.row($(this).parents('tr')).index();
-            var pid=this.id.split("_")[0];
-            var cid=this.id.split("_")[1];
+
+            function genTreeGroup(group, allGroups) {
+                var _group = {};
+                allGroups.forEach(function (v, i, a) {
+					if(v.name === group) {
+					    _group = a.slice(i,i+1)[0];
+					    return;
+                    }
+                });
+                var res = {
+                    'text': group,
+					'state': {
+                        'disabled': !_group.enable,
+						'opened': true
+					},
+					'data': {
+                    	'cid': _group.cid,
+                    	'pid': _group.pid
+					},
+					'children': []
+                }
+                if(_group.group_children.length > 0) {
+                    _group.group_children.forEach(function (v, i, a) {
+						res.children.push(genTreeGroup(v, allGroups))
+                    })
+                    return res;
+				} else {
+                    return res;
+				}
+			}
+
+
+            var sourceArr = host_table.data().toArray();
+            var moved_index= host_table.row($(this).parents('tr')).index();
+            var to_index = moved_index;
+            var move_url, disable_group_name;
+
+            if(sourceArr[moved_index].type === '组') {
+				move_url = "/ov/group/move"
+				disable_group_name = sourceArr[moved_index].name
+			} else {
+                move_url = "/ov/host/move"
+				disable_group_name = ''
+			}
+
+			//发送请求 获取树形group结构
             $.ajax({
                 type: "get",
                 url: "/ov/group/get_tree",
-                data: {from_group: pid},
+                data: {group_name: disable_group_name},
                 dataType: "json",
                 success: function (result) {
-                    var data=result.data;
-                    var str='';
-                    for(var i=0; i<data.length; i++){
-                        if(data[i].pid=='')
-						{
-							var tmp=['<tr class="treegrid-'+ data[i].cid +'">',
-                                '<td><div class="ui radio checkbox">',
-								'<input type="radio" name="get_tree" value="'+$(this).text()+'" id="'+data[i].cid+'"><label>',
-                                '<td>'+data[i].name+'</td>',
-								'</label></div></td></tr>'].join('');
-						}else {
-                            var tmp=['<tr class="treegrid-'+ data[i].cid +' treegrid-parent-'+ data[i].pid+'">',
-                                '<td><div class="ui radio checkbox">',
-                                '<input type="radio" name="get_tree" value="'+$(this).text()+'" id="'+data[i].cid+'"><label>',
-                                '<td>'+data[i].name+'</td>',
-                                '</label></div></td></tr>'].join('');
-						}
-						str=str+tmp;
-					}
-                    $("#move_table").empty();
-                    $("#move_content").empty();
-                    $("#move_table").append(str);
-                    $("#move_content").append("<div class='ui button deny'>取消</div><div class='ui green button deny' id='move_submit'>确认</div>");
-                    $("#move_table").treegrid();
-                    $("#move_modal").modal('show');
-                    $('#move_submit').click(function(){
-                        var newindex=0;
-                        var newid = $("#move_table input[name='get_tree']:checked").attr("id");
-                        var name = $("#move_table input[name='get_tree']:checked").val();
-                        host_table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-                            var d = this.data();
-                            if (d.pid == newid) {
-                                newindex=rowIdx;
-                            }
-                        });
-                        var data = host_table.data();
-                        var i = index;
-                        var known= data[index].pid;
-                        do{
-                            var j = index;
-							known=data[i].pid;
-							console.log("父级的index(i)："+i);
-							do{
-								 j++;
-								 console.log(data[j]);
-                                console.log(data[i]);
+					if (result.success) {
+					    var $group_tree = $('#group_tree')
+						$group_tree.data('jstree', false).empty();
+                        $group_tree.jstree({
+							'core': {
+							    'data': genTreeGroup('root', result.data)
 							}
-							while (data[i].pid != data[j].pid && j<data.length)
-							i--;
-                        }while ((data[i].cid==known || i == index) && i>=0 && data[i].pid == data[j].pid)
-						console.log("跳出的index(j)："+j);
-                        host_table.clear();
-                        console.log("newindex:"+newindex+"index"+index);
-                        data.splice((newindex), 0, data.splice(index,1)[0]);
-                        host_table.rows.add(data).draw();
-                        $.ajax({
-                            type: "put",
-                            url: "/ov/host/move",
-                            data: {from_group: pid, host: cid, to_group: newid},
-                            dataType: "json",
-                            success: function (result) {
-                                var data=result.data;
-                            }
-                        })
-                    })
-                },
-                error: function () {
-                    alert("失败");
+						})
+						$('#move_modal').modal({
+							onApprove: function() {
+							    var $submit_btn = $('#move_submit')
+								$submit_btn.addClass('loading')
+                                var group_ins = $group_tree.jstree(true)
+                                var selected_data = group_ins.get_selected(true)[0].data;
+                                sourceArr.forEach(function (v,i) {
+                                    if(v.cid === selected_data.cid) {
+                                        to_index = i;
+                                        return
+                                    }
+                                })
 
+                                //发送请求 移动分组
+                                $.ajax({
+                                    type: "put",
+                                    url: move_url,
+                                    data: {
+                                        from_group: sourceArr[moved_index].pid,
+                                        target_id: sourceArr[moved_index].cid,
+                                        to_group: sourceArr[to_index].cid
+                                    },
+                                    dataType: "json",
+                                    success: function (result) {
+                                        if(result.success) {
+
+                                            host_table.rows().remove()
+                                            host_table.rows.add(result.data).draw()
+                                            $submit_btn.addClass('loading')
+											$('#move_modal').modal('hide')
+                                        } else {
+                                            //move action error
+                                            console.error('move action error')
+                                        }
+                                    }
+                                })
+								return false
+							}
+						}).modal('show')
+						
+
+                    } else {
+					    //get group tree error
+                        console.error('get group tree error')
+                    }
                 }
-            });
+            })
         });
         //点击删除事件
-        $('#host_table tbody').on('click', '.delete', function(e) {
-            e.preventDefault();
-            var id=this.id.split("_");
-            /*console.log(host_table.row(2).data());*/
-            if (confirm("确定要删除该属性？")) {
-                host_table.row($(this).parents('tr')).remove().draw();
-				/* host_table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-                    var d = this.data();
-                    if(d.pid==id[1]){
-                        d.pid=id[0];
-						var oldpid=[' treegrid-parent-'+ id[1]].join('');
-						var newpid=[' treegrid-parent-'+ id[0]].join('');
-						alert($('tr:eq(rowIdx)').class);
-                        $('tr:eq(rowIdx)').removeClass(oldpid);
-                        $('tr:eq(rowIdx)').addClass(newpid);
-                    }
-                   this.invalidate();
-                } );
-                host_table.draw();
-                console.log(host_table.row(2).data());
-                $("#host_table").treegrid();*/
-            }
-        });
+		$('#del-pop i.checkmark').on('click', function (e) {
+
+        })
+
     });
 
 </script>

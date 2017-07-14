@@ -29,9 +29,6 @@
 			<a class="title item" href="#" th:href="@{/dashboard}">
                 <i class="ion-speedometer titleIcon icon"></i>仪表盘
 			</a>
-			<a class="title item" href="#">
-				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
-			</a>
 			<a class="item" href="#">
 				<i class="ion-ios-world titleIcon  icon"></i>业务概览
 			</a>
@@ -40,9 +37,7 @@
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/overview}">设备总览</a>
-				<a class="item" href="#">网络设备</a>
-				<a class="item" href="#">数据库</a>
-				<a class="item" href="#">应用</a>
+				<a class="item" href="#">设备详情</a>
 			</div>
 			<a class="title item" href="#">
 				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
@@ -70,16 +65,6 @@
 		</div>
 
 		<div class="ui dropdown item displaynone scrolling">
-			<span>监控视图</span>
-			<i class="ion-ios-lightbulb icon"></i>
-			<div class="menu">
-				<div class="header">
-					监控视图
-				</div>
-			</div>
-		</div>
-
-		<div class="ui dropdown item displaynone scrolling">
 			<span>业务概览</span>
 			<i class="ion-ios-world icon"></i>
 			<div class="menu">
@@ -90,17 +75,15 @@
 		</div>
 
 		<div class="ui dropdown item displaynone scrolling">
-			<span>设备概览</span>
+			<span>设备监控</span>
 			<i class="ion-mouse icon"></i>
 			<div class="menu">
 				<div class="header">
-					设备概览
+					设备监控
 				</div>
 				<div class="ui divider"></div>
-				<a class="item" href="tab.html">服务器</a>
-				<a class="item" href="table.html">网络设备</a>
-				<a class="item" href="error.html">数据库</a>
-				<a class="item" href="login.html">应用</a>
+				<a class="item" href="tab.html">设备总览</a>
+				<a class="item" href="table.html">设备详情</a>
 			</div>
 		</div>
 

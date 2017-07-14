@@ -2,7 +2,8 @@ package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.*;
+import com.ws.stoner.model.dto.OverviewEditGroupDTO;
+import com.ws.stoner.model.dto.OverviewListGroupDTO;
 import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,7 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "ov/group/move", method = RequestMethod.PUT)
-    public String moveOverviewGroup(@RequestParam("group") String groupId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
+    public String moveOverviewGroup(@RequestParam("target_id") String groupId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
        boolean success = overviewService.moveOverviewGroup(groupId,fromGroupId,toGroupId);
        if(success) {
            List<OverviewListGroupDTO> olg = overviewService.listOverviewGroup();
@@ -108,7 +109,7 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "ov/host/move", method = RequestMethod.PUT)
-    public String moveOverviewHost(@RequestParam("host") String hostId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
+    public String moveOverviewHost(@RequestParam("target_id") String hostId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
         boolean success = overviewService.moveOverviewHost(hostId,fromGroupId,toGroupId);
         if(success) {
             List<OverviewListGroupDTO> olg = overviewService.listOverviewGroup();
