@@ -21,6 +21,7 @@ public class BriefItemDTO {
     private String lastValue;
     @JSONField(name = "value_type")
     private Integer valueType;
+    private BriefPointDTO point;
 
     public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type"};
 
@@ -41,8 +42,18 @@ public class BriefItemDTO {
                 ", customState=" + customState +
                 ", lastTime=" + lastTime +
                 ", lastValue='" + lastValue + '\'' +
-                ", valueType='" + valueType + '\'' +
+                ", valueType=" + valueType +
+                ", point=" + point +
                 '}';
+    }
+
+    public BriefPointDTO getPoint() {
+        return point;
+    }
+
+    public BriefItemDTO setPoint(BriefPointDTO point) {
+        this.point = point;
+        return this;
     }
 
     public Integer getValueType() {

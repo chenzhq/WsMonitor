@@ -14,8 +14,6 @@ public class HostDetailItemVO {
     private String itemId;
     @JSONField(name = "item_name")
     private String itemName;
-    @JSONField(name = "host_id")
-    private String hostId;
     @JSONField(name = "data_time",format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime[] dataTime;
     private Float[] data;
@@ -33,7 +31,6 @@ public class HostDetailItemVO {
         return "HostDetailItemVO{" +
                 "itemId='" + itemId + '\'' +
                 ", itemName='" + itemName + '\'' +
-                ", hostId='" + hostId + '\'' +
                 ", dataTime=" + Arrays.toString(dataTime) +
                 ", data=" + Arrays.toString(data) +
                 ", graphName='" + graphName + '\'' +
@@ -68,15 +65,6 @@ public class HostDetailItemVO {
 
     public HostDetailItemVO setItemName(String itemName) {
         this.itemName = itemName;
-        return this;
-    }
-
-    public String getHostId() {
-        return hostId;
-    }
-
-    public HostDetailItemVO setHostId(String hostId) {
-        this.hostId = hostId;
         return this;
     }
 

@@ -138,18 +138,18 @@ public void testFindAll() throws Exception {
 
     @Test
     public void testDelOverviewGroup() throws Exception {
-        OverviewDelGroupDTO odg = overviewService.deleteOverviewGroup("1");
+        boolean odg = overviewService.deleteOverviewGroup("1");
         System.out.println(odg);
     }
 
     @Test
     public void testMoveOverviewGroup() throws Exception {
-        OverviewMoveGroupDTO omg = overviewService.moveOverviewGroup("g5","g1","g2");
+        boolean omg = overviewService.moveOverviewGroup("g5","g1","g2");
     }
 
     @Test
     public void testMoveOverviewHost() throws Exception {
-        OverviewMoveHostDTO omh = overviewService.moveOverviewHost("h10114","g0","g2");
+        boolean omh = overviewService.moveOverviewHost("h10114","g0","g2");
     }
 
     @Test

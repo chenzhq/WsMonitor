@@ -40,11 +40,12 @@ public class HostDetailRestController {
      * @return
      */
     @RequestMapping(value = "brief/point", method = RequestMethod.GET)
-    public String listPointItemsFlow(@RequestParam("point") HostDetailPointVO point) throws ServiceException {
+    public String listPointItemsFlow(@RequestParam("point_id") String pointId) throws ServiceException {
         List<String> pointIds = new ArrayList<>();
-        pointIds.add(point.getHostId());
+        pointIds.add(pointId);
         List<BriefItemDTO> itemDTOS = itemService.getItemsByPointIds(pointIds);
         List<HostDetailPointItemVO> itemVOS = new ArrayList<>();
+        HostDetailPointVO pointVO = new HostDetailPointVO();
         for(BriefItemDTO itemDTO :itemDTOS) {
             HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
             itemVO.setItemId(itemDTO.getItemId());
@@ -60,16 +61,17 @@ public class HostDetailRestController {
             }
             itemVOS.add(itemVO);
         }
-        point.setItems(itemVOS);
-
-        return RestResultGenerator.genResult(point, REST_RESPONSE_SUCCESS).toString();
+        pointVO.setItems(itemVOS);
+        pointVO.setName(itemDTOS.get(0).getPoint().getName());
+        pointVO.setPointId(pointId);
+        return RestResultGenerator.genResult(pointVO, REST_RESPONSE_SUCCESS).toString();
     }
 
     /**
      * 获取设备所有监控项的图形
      * @return
      */
-    @RequestMapping(value = "hostgraphs", method = RequestMethod.POST)
+    @RequestMapping(value = "hostgraphs", method = RequestMethod.GET)
     public String listHostItemsGraph(@RequestParam("host_id") String hostId) throws ServiceException {
         //取 BriefItemDTO list, 过滤出 value_type=0,3
         List<String> hostIds = new ArrayList<>();
@@ -92,7 +94,6 @@ public class HostDetailRestController {
                     itemVO.setFlag(true);
                     itemVO.setGraphName(mongoItem.getGraphName());
                     itemVO.setGraphType(mongoItem.getGraphType());
-                    itemVO.setHostId(mongoItem.getHostId());
                     itemVO.setValueType(itemDTO.getValueType());
                     //state
                     if(StatusEnum.HIGH.code == itemDTO.getCustomState()) {
@@ -113,7 +114,6 @@ public class HostDetailRestController {
             //问题item，且非用户自定义
             if(itemDTO.getCustomState() != StatusEnum.OK.code && !problemIds.contains(itemDTO.getItemId())) {
                 HostDetailItemVO itemVO = new HostDetailItemVO();
-                itemVO.setHostId(hostId);
                 itemVO.setItemId(itemDTO.getItemId());
                 itemVO.setItemName(itemDTO.getName());
                 itemVO.setFlag(false);
@@ -131,7 +131,7 @@ public class HostDetailRestController {
                 itemVOS.add(itemVO);
             }
         }
-        //根据value_type取对应的history.get,时间区间为前7天的数据 得到 BriefHistory list
+        //根据value_type取对应的history.get,时间区间为前1天的数据 得到 BriefHistory list
         for(HostDetailItemVO itemVO : itemVOS) {
             List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType());
             List<Float> datas = new ArrayList<>();

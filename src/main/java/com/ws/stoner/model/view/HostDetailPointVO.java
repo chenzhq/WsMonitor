@@ -14,7 +14,6 @@ public class HostDetailPointVO {
     private String pointId;
     private String name;
     private String state;
-    private String hostId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<HostDetailPointItemVO> items;
 
@@ -24,7 +23,6 @@ public class HostDetailPointVO {
                 "pointId='" + pointId + '\'' +
                 ", name='" + name + '\'' +
                 ", state='" + state + '\'' +
-                ", hostId='" + hostId + '\'' +
                 ", items=" + items +
                 '}';
     }
@@ -66,13 +64,5 @@ public class HostDetailPointVO {
         return this;
     }
 
-    public String getHostId() {
-        return hostId;
-    }
-
-    public HostDetailPointVO setHostId(String hostId) {
-        this.hostId = hostId;
-        return this;
-    }
 
 }

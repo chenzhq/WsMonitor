@@ -121,7 +121,9 @@ public class ItemServiceImpl implements ItemService {
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setHostIds(pointIds)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
                 .setOutput(BriefItemDTO.PROPERTY_NAMES);
+
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
     }
