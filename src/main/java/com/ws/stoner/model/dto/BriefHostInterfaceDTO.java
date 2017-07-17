@@ -13,8 +13,9 @@ public class BriefHostInterfaceDTO {
     private String dns;
     private String type;
     private String ip;
+    private String port;
 
-    public static final String[] PROPERTY_NAMES = {"interfaceid","ip","hostid","dns","type"};
+    public static final String[] PROPERTY_NAMES = {"interfaceid","ip","hostid","dns","type","port"};
 
     public String getIp() {
         return ip;
@@ -23,41 +24,6 @@ public class BriefHostInterfaceDTO {
     public BriefHostInterfaceDTO setIp(String ip) {
         this.ip = ip;
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BriefHostInterfaceDTO that = (BriefHostInterfaceDTO) o;
-
-        if (interfaceId != null ? !interfaceId.equals(that.interfaceId) : that.interfaceId != null) return false;
-        if (hostId != null ? !hostId.equals(that.hostId) : that.hostId != null) return false;
-        if (dns != null ? !dns.equals(that.dns) : that.dns != null) return false;
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
-        return ip != null ? ip.equals(that.ip) : that.ip == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = interfaceId != null ? interfaceId.hashCode() : 0;
-        result = 31 * result + (hostId != null ? hostId.hashCode() : 0);
-        result = 31 * result + (dns != null ? dns.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (ip != null ? ip.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "BriefHostInterfaceDTO{" +
-                "interfaceId='" + interfaceId + '\'' +
-                ", hostId='" + hostId + '\'' +
-                ", dns='" + dns + '\'' +
-                ", type='" + type + '\'' +
-                ", ip='" + ip + '\'' +
-                '}';
     }
 
     public String getInterfaceId() {
@@ -96,4 +62,50 @@ public class BriefHostInterfaceDTO {
         return this;
     }
 
+    public String getPort() {
+        return port;
+    }
+
+    public BriefHostInterfaceDTO setPort(String port) {
+        this.port = port;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BriefHostInterfaceDTO that = (BriefHostInterfaceDTO) o;
+
+        if (interfaceId != null ? !interfaceId.equals(that.interfaceId) : that.interfaceId != null) return false;
+        if (hostId != null ? !hostId.equals(that.hostId) : that.hostId != null) return false;
+        if (dns != null ? !dns.equals(that.dns) : that.dns != null) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
+        return port != null ? port.equals(that.port) : that.port == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = interfaceId != null ? interfaceId.hashCode() : 0;
+        result = 31 * result + (hostId != null ? hostId.hashCode() : 0);
+        result = 31 * result + (dns != null ? dns.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (ip != null ? ip.hashCode() : 0);
+        result = 31 * result + (port != null ? port.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BriefHostInterfaceDTO{" +
+                "interfaceId='" + interfaceId + '\'' +
+                ", hostId='" + hostId + '\'' +
+                ", dns='" + dns + '\'' +
+                ", type='" + type + '\'' +
+                ", ip='" + ip + '\'' +
+                ", port='" + port + '\'' +
+                '}';
+    }
 }

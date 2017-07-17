@@ -1,6 +1,5 @@
 package com.ws.stoner.model.view;
 
-
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -11,10 +10,12 @@ import java.util.List;
  */
 public class HostDetailPointVO {
 
+    @JSONField(name = "point_id")
     private String pointId;
     private String name;
     private String state;
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JSONField(name = "item_datas")
     private List<HostDetailPointItemVO> items;
 
     @Override

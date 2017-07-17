@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="common_head(title, links)">
+<!--<head th:fragment="common_head(title, links)">-->
 	<meta charset="UTF-8">
-	<title th:replace="${title}">监控系统</title>
+	<!--<title th:replace="${title}">监控系统</title>-->
+	<title >监控系统</title>
 	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
 	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
@@ -11,12 +12,12 @@
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<th:block th:replace="${links}">
+	<!--<th:block th:replace="${links}">-->
 		<link href="../static/css/jquery.gridly.css" rel="stylesheet" type="text/css" th:src="@{css/jquery.gridly.css}"/>
 		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 			.no-padding-bottom{  padding-bottom: 0px;  }
 			.chart-style{  height: 200px  }
@@ -227,7 +228,9 @@
 					<div class="ui segments">
 						<div class="ui segment">
 							<h3 class="ui header">
-								主机名称
+								<span style="display: none" id="host_id" th:text="${hostDetailVO.hostId}">10110</span>
+								<span th:text="${hostDetailVO.hostName}">设备名称</span>(
+								<span th:text="${hostDetailVO.state}">设备状态</span>)
 							</h3>
 						</div>
 						<div class="ui segment">
@@ -241,18 +244,27 @@
 										<div class="ui bottom attached active tab segment" style="margin-bottom: 0px" data-tab="first">
 											<div class="ui relaxed divided list">
 												<div class="item">
-													<div class="description">设备名：设备名</div>
+													<div class="description">
+														<span>设备名： </span>
+														<span th:text="${hostDetailVO.hostName}">设备名称</span>
+													</div>
 												</div>
 												<div class="item">
-													<div class="description">IP：127.0.0.1</div>
+													<div class="description">
+														<span>IP：</span>
+														<span th:text="${hostDetailVO.ip}">ip</span>
+													</div>
 												</div>
 												<div class="item">
-													<div class="description">类型：类型</div>
+													<div class="description">
+														<span>类型：</span>
+														<span th:text="${hostDetailVO.type}">type</span>
+													</div>
 												</div>
 												<div class="item">
 													<p class="header">描述:</p>
 													<div class="description">
-														包含一个简单的表格列出设备等信息;</br>部分信息可以伸缩隐藏，例如四种配置接口等数据
+														<span th:text="${hostDetailVO.description}">包含一个简单的表格列出设备等信息;</br>部分信息可以伸缩隐藏，例如四种配置接口等数据</span>
 													</div>
 												</div>
 											</div>
@@ -260,31 +272,59 @@
 										<div class="ui bottom attached tab segment" data-tab="second">
 											<div class="ui relaxed divided list">
 												<div class="item">
-													<i class="big green checkmark icon"></i>
+													<i class="big green checkmark icon" th:class="(${interfaceVO.agentIp} == null and ${interfaceVO.agentDNS} == null and ${interfaceVO.agentPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
 													<div class="content">
 														<p class="header">Agent方式</p>
-														<div class="description">IP：127.0.0.1;DNS端口号：8080</div>
+														<div class="description">
+															<span>IP：</span>
+															<span th:text="${interfaceVO.agentIp}">127.0.0.1</span>
+															<span> DNS：</span>
+															<span th:text="${interfaceVO.agentDNS}">114.114.114</span>
+															<span> 端口号：</span>
+															<span th:text="${interfaceVO.agentPort}">10050</span>
+														</div>
 													</div>
 												</div>
 												<div class="item">
-													<i class="big green checkmark icon"></i>
+													<i class="big green checkmark icon" th:class="(${interfaceVO.SNMPIp} == null and ${interfaceVO.SNMPDNS} == null and ${interfaceVO.SNMPPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
 													<div class="content">
 														<p class="header">SNMP方式</p>
-														<div class="description">IP：127.0.0.1;DNS端口号：8080</div>
+														<div class="description">
+															<span>IP：</span>
+															<span th:text="${interfaceVO.SNMPIp}">127.0.0.1</span>
+															<span>  DNS：</span>
+															<span th:text="${interfaceVO.SNMPDNS}">114.114.114.114</span>
+															<span>  端口号：</span>
+															<span th:text="${interfaceVO.SNMPPort}">10050</span>
+														</div>
 													</div>
 												</div>
 												<div class="item">
-													<i class="big red remove icon"></i>
-													<div class="content">
-														<p class="header">JMX方式</p>
-														<div class="description">IP：无;DNS端口号：无</div>
-													</div>
-												</div>
-												<div class="item">
-													<i class="big red remove icon"></i>
+													<i class="big green checkmark icon" th:class="(${interfaceVO.IPMIIp} == null and ${interfaceVO.IPMIDNS} == null and ${interfaceVO.IPMIPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
 													<div class="content">
 														<p class="header">IPMI方式</p>
-														<div class="description">IP：无;DNS端口号：无</div>
+														<div class="description">
+															<span>IP：</span>
+															<span th:text="${interfaceVO.IPMIIp}">127.0.0.1</span>
+															<span>  DNS：</span>
+															<span th:text="${interfaceVO.IPMIDNS}">114.114.114.114</span>
+															<span>  端口号：</span>
+															<span th:text="${interfaceVO.IPMIPort}">10050</span>
+														</div>
+													</div>
+												</div>
+												<div class="item">
+													<i class="big green checkmark icon" th:class="(${interfaceVO.JMXIp} == null and ${interfaceVO.JMXDNS} == null and ${interfaceVO.JMXPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
+													<div class="content">
+														<p class="header">JMX方式</p>
+														<div class="description">
+															<span>IP：</span>
+															<span th:text="${interfaceVO.JMXIp}">127.0.0.1</span>
+															<span>  DNS：</span>
+															<span th:text="${interfaceVO.JMXDNS}">114.114.114.114</span>
+															<span>  端口号：</span>
+															<span th:text="${interfaceVO.JMXPort}">10050</span>
+														</div>
 													</div>
 												</div>
 											</div>
@@ -298,47 +338,47 @@
 												</h3>
 											</div>
 											<div class="ui segment">
-										<div class="ui six column grid" id="brief_point_id">
-											<div class="column" >
-												<div class="ui red top attached button" id="0101">CPU</div>
+										<div class="ui six column grid" id="brief_point_id" >
+											<div class="column" th:each="pointVO : ${pointVOS}">
+												<div class="ui red top attached button" id="0101" th:class="${pointVO.state}=='正常' ? 'ui green top attached button' : (${pointVO.state}=='警告' ? 'ui yellow top attached button' : 'ui red top attached button')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all" >
 												<div class="ui red top attached button" id="0102">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all" >
 												<div class="ui red top attached button" id="0103">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all" >
 												<div class="ui yellow top attached button" id="0104">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all" >
 												<div class="ui yellow top attached button" id="0105">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all" >
 												<div class="ui yellow top attached button" id="0106">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all" >
 												<div class="ui yellow top attached button" id="0107">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all" >
 												<div class="ui green top attached button" id="0108">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all">
 												<div class="ui green top attached button" id="0109">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all">
 												<div class="ui green top attached button" id="0110">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all">
 												<div class="ui green top attached button" id="0111">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all">
 												<div class="ui red top attached button" id="0112">CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all">
 												<div class="ui red top attached button" id="0113" >CPU</div>
 											</div>
-											<div class="column" >
+											<div class="column" th:remove="all">
 												<div class="ui red top attached button" id="0114" >CPU</div>
 											</div>
 										</div>
@@ -366,20 +406,21 @@
 	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
 
-    <th:block th:replace="${scripts}"></th:block>
+    <!--<th:block th:replace="${scripts}"></th:block>-->
 </th:block>
 <script type="text/javascript">
     //加载监控点悬浮框
     $('#brief_point_id').on('mouseover', '.button',function(e) {
         e.preventDefault();
-        var point_id=this.id;
+        var point_id=this.id.substring(1);
+        console.log("加载监控点悬浮框的 point_id = " + point_id);
         $.ajax({
             type: "get",
             url: "/brief/point?point_id="+point_id,
             dataType: "json",
             success: function (result) {
                 var data = result.data;
-                var item_datas=data.item_datas
+                var item_datas=data.item_datas;
                 var str_item_datas='';
                 for(var i=0; i<item_datas.length; i++){
                     var tmp = ['<tr><td>' +item_datas[i].name+'</td>'
@@ -396,8 +437,8 @@
                 +'<div class="item"><p class="header">监控项：<div class="description">'
                 +'<table class="ui very basic compact collapsing celled table no-padding">'
                 +str_item_datas+'</table></div></p></div></div>'].join('');
-                $("#"+point_id).attr("data-html",str);
-                $("#"+point_id).popup('show');
+                $("#p"+point_id).attr("data-html",str);
+                $("#p"+point_id).popup('show');
             },
             error: function (errorMsg) {
                 Lobibox.notify("error", {
@@ -412,88 +453,92 @@
         })
     })
     $('#brief_point_id').on('mouseout', '.button',function(e) {
-        console.log("point_id");
+        console.log("point_id"+this.id);
         $('#brief_point_id .button').popup('hide all');
     })
-	//加载监控项的图形
-  	$.ajax({
-        type: "post",
-        url: "/hostgraphs",
-        data: {host_id: "g2"},
-        dataType: "json",
-        success: function (result) {
-            var data = result.data;
-            for (var i=0; i<data.length; i++){
-                var id = ['h'+data[i].host_id+'i'+data[i].item_id].join('');
-				if (data[i].flag==true)
-				{
-                    if($("#flag_true").children().length == 0)
+	//页面加载完后加载监控项的图形
+    $(function(){
+        var host_id = $("#host_id").text();
+        console.log("加载监控项图形的参数：host_id = " + host_id);
+        $.ajax({
+            type: "get",
+            url: "/hostgraphs?host_id="+host_id,
+            dataType: "json",
+            success: function (result) {
+                var data = result.data;
+                console.log(data);
+                for (var i=0; i<data.length; i++){
+                    var id = "i" + data[i].item_id;
+                    if (data[i].flag==true)
                     {
-                        $("#flag_true").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>自定义监控项</h4> <div class='ui three column grid gridly' id='flag_true_content'>");
-                        $("#flag_true_content").append("<div class='column no-padding-bottom brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                    }else {
-                        $("#flag_true_content").append("<div class='column no-padding-bottom brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                    }
-				}else {
-                    if($("#flag_false").children().length == 0)
-                    {
-                        $("#flag_false").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐严重监控项</h4> <div class='ui three column grid gridly ' id='flag_false_content'>");
-                        $("#flag_false_content").append("<div class='column no-padding-bottom  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                    }else {
-                        $("#flag_false_content").append("<div class='column no-padding-bottom  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                    }
-                }
-
-                var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
-				if (data[i].state == "正常"){ var myColor = Color[0] }
-                if (data[i].state == "严重"){ var myColor = Color[1] }
-                if (data[i].state == "警告"){ var myColor = Color[2] }
-                var myChart = echarts.init(document.getElementById(id));
-                var option = {
-                    title: {
-                        text: data[i].item_name
-                    },
-                    tooltip: {},
-                    legend: {
-                        data:[]
-                    },
-                    toolbox: {
-                        show: true,
-                        feature: {
-                            magicType: {type: ['line', 'bar']},
+                        if($("#flag_true").children().length == 0)
+                        {
+                            $("#flag_true").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>自定义监控项</h4> <div class='ui three column grid gridly' id='flag_true_content'>");
+                            $("#flag_true_content").append("<div class='column no-padding-bottom brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                        }else {
+                            $("#flag_true_content").append("<div class='column no-padding-bottom brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
                         }
-                    },
-                    xAxis: {
-                        data: data[i].data_time
-                    },
-                    yAxis: {
-                    },
-                    series: [{
-                        name: data[i].graph_name,
-                        type: data[i].graph_type,
-                        data: data[i].date,
-                        color: [myColor]
-                    }]
-                };
-                myChart.setOption(option);
+                    }else {
+                        if($("#flag_false").children().length == 0)
+                        {
+                            $("#flag_false").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐严重监控项</h4> <div class='ui three column grid gridly ' id='flag_false_content'>");
+                            $("#flag_false_content").append("<div class='column no-padding-bottom  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                        }else {
+                            $("#flag_false_content").append("<div class='column no-padding-bottom  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                        }
+                    }
+
+                    var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+                    if (data[i].state == "正常"){ var myColor = Color[0] }
+                    if (data[i].state == "严重"){ var myColor = Color[1] }
+                    if (data[i].state == "警告"){ var myColor = Color[2] }
+                    var myChart = echarts.init(document.getElementById(id));
+                    var option = {
+                        title: {
+                            text: data[i].item_name
+                        },
+                        tooltip: {},
+                        legend: {
+                            data:[]
+                        },
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                magicType: {type: ['line', 'bar']},
+                            }
+                        },
+                        xAxis: {
+                            data: data[i].data_time
+                        },
+                        yAxis: {
+                        },
+                        series: [{
+                            name: data[i].graph_name,
+                            type: data[i].graph_type,
+                            data: data[i].data,
+                            color: [myColor]
+                        }]
+                    };
+                    myChart.setOption(option);
+                }
+                $('.gridly').gridly({
+                    base: 60, // px
+                    gutter: 20, // px
+                    columns: 12
+                });
+            },
+            error: function (errorMsg) {
+                Lobibox.notify("error", {
+                    size: "normal",
+                    rounded: false,
+                    delayIndicator: true,
+                    msg: "连接服务器失败！",
+                    icon: "warning icon",
+                    title: "监控项图形",
+                });
             }
-            $('.gridly').gridly({
-                base: 60, // px
-                gutter: 20, // px
-                columns: 12
-            });
-        },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "监控项图形",
-            });
-        }
-    })
+        })
+	})
 </script>
 
 </body>

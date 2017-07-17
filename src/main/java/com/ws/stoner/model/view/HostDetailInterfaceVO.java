@@ -8,27 +8,16 @@ public class HostDetailInterfaceVO {
     private String hostId;
     private String agentIp;
     private String agentDNS;
+    private String agentPort;
     private String SNMPIp;
     private String SNMPDNS;
+    private String SNMPPort;
     private String IPMIIp;
     private String IPMIDNS;
+    private String IPMIPort;
     private String JMXIp;
     private String JMXDNS;
-
-    @Override
-    public String toString() {
-        return "HostDetailInterfaceVO{" +
-                "hostId='" + hostId + '\'' +
-                ", agentIp='" + agentIp + '\'' +
-                ", agentDNS='" + agentDNS + '\'' +
-                ", SNMPIp='" + SNMPIp + '\'' +
-                ", SNMPDNS='" + SNMPDNS + '\'' +
-                ", IPMIIp='" + IPMIIp + '\'' +
-                ", IPMIDNS='" + IPMIDNS + '\'' +
-                ", JMXIp='" + JMXIp + '\'' +
-                ", JMXDNS='" + JMXDNS + '\'' +
-                '}';
-    }
+    private String JMXPort;
 
     public String getHostId() {
         return hostId;
@@ -109,5 +98,60 @@ public class HostDetailInterfaceVO {
     public HostDetailInterfaceVO setJMXDNS(String JMXDNS) {
         this.JMXDNS = JMXDNS;
         return this;
+    }
+
+    public String getAgentPort() {
+        return agentPort;
+    }
+
+    public HostDetailInterfaceVO setAgentPort(String agentPort) {
+        this.agentPort = agentPort;
+        return this;
+    }
+
+    public String getSNMPPort() {
+        return SNMPPort;
+    }
+
+    public HostDetailInterfaceVO setSNMPPort(String SNMPPort) {
+        this.SNMPPort = SNMPPort;
+        return this;
+    }
+
+    public String getIPMIPort() {
+        return IPMIPort;
+    }
+
+    public HostDetailInterfaceVO setIPMIPort(String IPMIPort) {
+        this.IPMIPort = IPMIPort;
+        return this;
+    }
+
+    public String getJMXPort() {
+        return JMXPort;
+    }
+
+    public HostDetailInterfaceVO setJMXPort(String JMXPort) {
+        this.JMXPort = JMXPort;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "HostDetailInterfaceVO{" +
+                "hostId='" + hostId + '\'' +
+                ", agentIp='" + agentIp + '\'' +
+                ", agentDNS='" + agentDNS + '\'' +
+                ", agentPort='" + agentPort + '\'' +
+                ", SNMPIp='" + SNMPIp + '\'' +
+                ", SNMPDNS='" + SNMPDNS + '\'' +
+                ", SNMPPort='" + SNMPPort + '\'' +
+                ", IPMIIp='" + IPMIIp + '\'' +
+                ", IPMIDNS='" + IPMIDNS + '\'' +
+                ", IPMIPort='" + IPMIPort + '\'' +
+                ", JMXIp='" + JMXIp + '\'' +
+                ", JMXDNS='" + JMXDNS + '\'' +
+                ", JMXPort='" + JMXPort + '\'' +
+                '}';
     }
 }

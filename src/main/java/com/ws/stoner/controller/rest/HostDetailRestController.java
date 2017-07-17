@@ -64,7 +64,20 @@ public class HostDetailRestController {
         pointVO.setItems(itemVOS);
         pointVO.setPointId(pointId);
         if(itemDTOS.size() != 0) {
+            //point name
             pointVO.setName(itemDTOS.get(0).getPoints().get(0).getName());
+            //point state
+            int customState = itemDTOS.get(0).getPoints().get(0).getCustomState();
+            if(StatusEnum.WARNING.code == customState) {
+                pointVO.setState(StatusEnum.WARNING.getName());
+            }else if(StatusEnum.HIGH.code == customState) {
+                pointVO.setState(StatusEnum.HIGH.getName());
+            }else {
+                pointVO.setState(StatusEnum.OK.getName());
+            }
+        }else {
+            pointVO.setName("监控点中没有监控项");
+            pointVO.setState(StatusEnum.OK.getName());
         }
         return RestResultGenerator.genResult(pointVO, REST_RESPONSE_SUCCESS).toString();
     }

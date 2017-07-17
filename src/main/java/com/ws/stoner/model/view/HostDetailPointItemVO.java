@@ -1,13 +1,15 @@
 package com.ws.stoner.model.view;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * Created by pc on 2017/7/13.
  */
 public class HostDetailPointItemVO {
 
+    @JSONField(name = "item_id")
     private String itemId;
     private String name;
-    private String pointId;
     private String value;
     private String state;
 
@@ -26,20 +28,11 @@ public class HostDetailPointItemVO {
         return "HostDetailPointItemVO{" +
                 "itemId='" + itemId + '\'' +
                 ", name='" + name + '\'' +
-                ", pointId='" + pointId + '\'' +
                 ", value='" + value + '\'' +
                 ", state='" + state + '\'' +
                 '}';
     }
 
-    public String getPointId() {
-        return pointId;
-    }
-
-    public HostDetailPointItemVO setPointId(String pointId) {
-        this.pointId = pointId;
-        return this;
-    }
 
     public String getName() {
         return name;

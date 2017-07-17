@@ -122,17 +122,17 @@ public void testFindAll() throws Exception {
     @Test
     public  void testcreateOverviewGroup() throws Exception {
 
-        OverviewCreateGroupDTO ocg1 = overviewService.createOverviewGroup("OA平台","g0");
-        OverviewCreateGroupDTO ocg2 = overviewService.createOverviewGroup("MAC","g0");
-        OverviewCreateGroupDTO ocg3 = overviewService.createOverviewGroup("PAS","g0");
-        OverviewCreateGroupDTO ocg4 = overviewService.createOverviewGroup("HIS","g0");
+        boolean ocg1 = overviewService.createOverviewGroup("OA平台","g0");
+        boolean ocg2 = overviewService.createOverviewGroup("MAC","g0");
+        boolean ocg3 = overviewService.createOverviewGroup("PAS","g0");
+        boolean ocg4 = overviewService.createOverviewGroup("HIS","g0");
 
         System.out.println(ocg1);
         System.out.println(ocg2);
         System.out.println(ocg3);
         System.out.println(ocg4);
 
-          OverviewCreateGroupDTO ocg5 = overviewService.createOverviewGroup("服务器","g1");
+        boolean ocg5 = overviewService.createOverviewGroup("服务器","g1");
 
     }
 
