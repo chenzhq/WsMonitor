@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--<head th:fragment="common_head(title, links)">-->
+<head  th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
-	<!--<title th:replace="${title}">监控系统</title>-->
 	<title >监控系统</title>
 	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
 	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
@@ -12,8 +11,8 @@
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<!--<th:block th:replace="${links}">-->
-		<link href="../static/css/jquery.gridly.css" rel="stylesheet" type="text/css" th:src="@{css/jquery.gridly.css}"/>
+	<th:block th:fragment="supplement">
+		<link href="../static/css/jquery.gridly.css" rel="stylesheet" th:href="@{css/jquery.gridly.css}"/>
 		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
@@ -23,10 +22,11 @@
 			.chart-style{  height: 200px  }
 			.gridly {
 				position: relative;
-				width: 960px;
+				width: 100%;
 			}
 			.brick.small {
 				height: 200px;
+				width: 25%;
 			}
 		</style>
 	</th:block>
@@ -37,14 +37,13 @@
 <div id="contextWrap">
 	<!--sidebar-->
 	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
-		 th:fragment="left_menu">
-		<a class="item logo" href="#">
-			<img src="../static/images/logo.png" th:src="@{images/logo.png}" alt="whstone"/><img
-				src="../static/images/thumblogo.png" th:src="@{images/thumblogo.png}" alt="whstone"
-				class="displaynone"/>
+		 th:replace="layout::left_menu">
+		<a class="item logo" href="index.html">
+			<img src="../static/images/logo.png" alt="stagblogo"/><img src="../static/images/thumblogo.png"
+																	   alt="stagblogo" class="displaynone"/>
 		</a>
 		<div class="ui accordion inverted">
-			<a class="title item" href="#" th:href="@{/dashboard}">
+			<a class="title item" href="#">
                 <i class="ion-speedometer titleIcon icon"></i>仪表盘
 			</a>
 			<a class="title item" href="#">
@@ -57,7 +56,7 @@
 				<i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
-				<a class="item" href="#" th:href="@{/overview}">设备总览</a>
+				<a class="item" href="#">设备总览</a>
 				<a class="item" href="#">网络设备</a>
 				<a class="item" href="#">数据库</a>
 				<a class="item" href="#">应用</a>
@@ -473,18 +472,18 @@
                     {
                         if($("#flag_true").children().length == 0)
                         {
-                            $("#flag_true").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>自定义监控项</h4> <div class='ui three column grid gridly' id='flag_true_content'>");
-                            $("#flag_true_content").append("<div class='column no-padding-bottom brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                            $("#flag_true").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>自定义监控项</h4> <div class='gridly' id='flag_true_content'>");
+                            $("#flag_true_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
                         }else {
-                            $("#flag_true_content").append("<div class='column no-padding-bottom brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                            $("#flag_true_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
                         }
                     }else {
                         if($("#flag_false").children().length == 0)
                         {
-                            $("#flag_false").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐严重监控项</h4> <div class='ui three column grid gridly ' id='flag_false_content'>");
-                            $("#flag_false_content").append("<div class='column no-padding-bottom  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                            $("#flag_false").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐严重监控项</h4> <div class='gridly ' id='flag_false_content'>");
+                            $("#flag_false_content").append("<div class='  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
                         }else {
-                            $("#flag_false_content").append("<div class='column no-padding-bottom  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                            $("#flag_false_content").append("<div class='  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
                         }
                     }
 
