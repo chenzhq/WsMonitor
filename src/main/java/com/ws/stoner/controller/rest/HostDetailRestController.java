@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,17 +149,19 @@ public class HostDetailRestController {
             }
         }
         //根据value_type取对应的history.get,时间区间为前1天的数据 得到 BriefHistory list
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm:ss");
         for(HostDetailItemVO itemVO : itemVOS) {
             List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType());
             List<Float> datas = new ArrayList<>();
-            List<LocalDateTime> dataTime = new ArrayList<>();
+            List<String> dataTime = new ArrayList<>();
             //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
             for(BriefHistoryDTO historyDTO : historyDTOS) {
                 datas.add(historyDTO.getValue());
-                dataTime.add(historyDTO.getLastTime());
+                String dataTimeString = historyDTO.getLastTime().format(formatter);
+                dataTime.add(dataTimeString);
             }
             itemVO.setData(datas.toArray(new Float[0]));
-            itemVO.setDataTime(dataTime.toArray(new LocalDateTime[0]));
+            itemVO.setDataTime(dataTime.toArray(new String[0]));
         }
 
         return RestResultGenerator.genResult(itemVOS, REST_RESPONSE_SUCCESS).toString();

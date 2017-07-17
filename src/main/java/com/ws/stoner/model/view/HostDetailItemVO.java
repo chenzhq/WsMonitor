@@ -14,8 +14,8 @@ public class HostDetailItemVO {
     private String itemId;
     @JSONField(name = "item_name")
     private String itemName;
-    @JSONField(name = "data_time",format = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime[] dataTime;
+    @JSONField(name = "data_time")
+    private String[] dataTime;
     private Float[] data;
     @JSONField(name = "graph_name")
     private String graphName;
@@ -68,11 +68,11 @@ public class HostDetailItemVO {
         return this;
     }
 
-    public LocalDateTime[] getDataTime() {
+    public String[] getDataTime() {
         return dataTime;
     }
 
-    public HostDetailItemVO setDataTime(LocalDateTime[] dataTime) {
+    public HostDetailItemVO setDataTime(String[] dataTime) {
         this.dataTime = dataTime;
         return this;
     }
