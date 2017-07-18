@@ -241,6 +241,9 @@
 							</div>
 						</div>
 						<div class="ui segment">
+							<div id="host_table_dimmer" class="ui inverted dimmer">
+								<div class="ui text loader">加载</div>
+							</div>
 							<table  id="host_table" class="tree ui  compact very basic table center aligned ">
 							</table>
 						</div>
@@ -269,6 +272,22 @@
 	</div>
 </div>
 
+<div id="edit_modal" class="ui small modal">
+	<i class="close icon"></i>
+	<div class="content">
+		<div class="ui form">
+			<h4 class="ui dividing header">编辑组</h4>
+			<input type="text" id="edit-group-input">
+			<div id="edit_content" class="field">
+			</div>
+		</div>
+	</div>
+	<div id="edit_actions" class="actions">
+		<div class="ui button deny">取消</div>
+		<div class="ui green button approve" id="edit_submit">确认</div>
+	</div>
+</div>
+
 <div id="move_modal" class="ui small modal">
 	<i class="close icon"></i>
 	<div class="inline fields content">
@@ -280,8 +299,7 @@
 	</div>
 </div>
 
-<div id="delete_modal" class="ui small modal">
-</div>
+
 <div id="del-pop" class="ui custom popup transition hidden">
 	<div class="description">是否删除该分组？</div>
 	<i class="mini checkmark negative icon "></i>
@@ -320,46 +338,53 @@
 //					'expanderCollapsedClass': 'right'
 				});
 				console.log($('#host_table tr:eq(1)'))
-				if(testflag)
-                $('#host_table tr:eq(1)').treegrid('expand')
+//				if(host_table !== undefined)
+//                console.log(host_table.isFirstInit)
+				if(host_table !== undefined && !host_table.isFirstInit)
+                	$('#host_table tr:eq(1)').treegrid('expand')
                 var selectIndex
                 $('a.delete').on('click',function (e) {
                     selectIndex = host_table.row($(this).parents('tr')).index();
+                    $('#del-pop').on('click', 'i.checkmark', function () {
+                        var sourceData = $('#host_table').DataTable().data();
+                        $('#host_table_dimmer').dimmer('show')
+                        $('#del-pop').removeClass('visible').addClass('hidden')
+                        $.ajax({
+                            type: 'delete',
+                            url: '/ov/group?del_group='+ sourceData[selectIndex].cid,
+                            data: {del_group: sourceData[selectIndex].cid},
+                            dataType: 'json',
+                            success: function(result) {
+                                if(result.success) {
+                                    host_table.rows().remove()
+                                    host_table.rows.add(result.data).draw()
+                                    $('#host_table_dimmer').dimmer('hide')
+                                } else {
+                                    console.error('服务器错误')
+                                }
+                            },
+                            error: function (e) {
+                                console.error(e)
+                            }
+                        })
+                    })
                 }).popup({
                     popup: $('#del-pop'),
                     position: 'top right',
                     on: 'click'
                 })
 
-                $('#del-pop').on('click', 'i.checkmark', function () {
-                    var sourceData = $('#host_table').DataTable().data();
-                    console.log(sourceData[selectIndex].cid)
-                    $.ajax({
-                        type: 'delete',
-                        url: '/ov/group?del_group='+ sourceData[selectIndex].cid,
-                        data: {del_group: sourceData[selectIndex].cid},
-                        dataType: 'json',
-                        success: function(result) {
-                            if(result.success) {
-                                host_table.rows().remove()
-                                host_table.rows.add(result.data).draw()
-                            } else {
-                                console.error('服务器错误')
-                            }
-                        },
-                        error: function (e) {
-                            console.error(e)
-                        }
-                    })
-                })
+
             },
             "createdRow": function (row, data, dataIndex) {
                 if (data.pid== null) {
-                    var tmp=['treegrid-'+ data.cid].join('');
+                    var tmp='treegrid-'+ data.cid;
                 } else {
-                    var tmp=['treegrid-'+ data.cid +' treegrid-parent-'+ data.pid].join('');
+                    var tmp='treegrid-'+ data.cid +' treegrid-parent-'+ data.pid;
                 }
-                $(row).addClass(tmp);
+                if (data.cid.substr(0, 1) === 'h')
+                    $(row).attr('data-id', data.cid);
+                $(row).addClass(tmp)
                 $('td', row).eq(0).addClass('left aligned');
                 $('td', row).eq(2).addClass('no-padding');
             },
@@ -376,15 +401,21 @@
                         if (data.state == "正常") {
                             if (row.type === '组') {
                                 return '<i class="green folder icon"></i>' + row.name;
-                            } else {
+                            } else if(row.type === '监控点') {
                                 return '<i class="green circle icon"></i>' + row.name;
+                            } else {
+                                return '<a href="hostDetail?host_id =' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+									'<i class="green desktop icon"></i>' + row.name + '</a>';
                             }
                         } else if (data.state == "严重") {
                             if (row.type === '组') {
                                 return '<i class="red folder icon"></i>' + row.name;
-                            } else {
+                            } else if(row.type === '监控点') {
                                 return '<i class="red circle icon"></i>' + row.name;
-                            }
+                            } else {
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+									'<i class="red desktop icon"></i>' + row.name + '</a>';
+							}
 
                         } else {
                             return '<i class="list green layout icon"></i>' + row.name;
@@ -422,10 +453,10 @@
 
         //下拉框事件
         $("#ui_dropdown").change(function(){
-            //code...});
             var tmp=$("#ui_dropdown").val()
             host_table.search(tmp).draw();
         });
+
         //点击新建事件
         $('#host_table tbody').on('click', '.new', function(e) {
             e.preventDefault();
@@ -436,6 +467,7 @@
 
 			$('#new_modal').modal({
                 onApprove: function () {
+                    $('#new_submit').addClass('loading')
                     $.ajax({
                         type: "post",
                         url: "/ov/group",
@@ -446,9 +478,14 @@
                         dataType: "json",
                         success: function (result) {
                             if (result.success) {
+                                $('#new_submit').removeClass('loading')
                                 host_table.rows().remove()
                                 host_table.rows.add(result.data).draw()
+								$('#new_modal').modal('hide')
+								$('#new-group-input').val('')
                             } else {
+                                $('#new_submit').removeClass('loading')
+                                $('#move_modal').modal('hide')
                                 console.error(result.message)
                             }
 
@@ -457,13 +494,9 @@
                             console.error(e)
                         }
                     })
+					return false;
                 }
 			}).modal('show')
-//			$('#new_submit').click(function(){
-//				var sup_group = $("#new_content input[type='text']").attr("id");
-//				var new_group_name = $("#new_content input[type='text']").val();
-//				})
-//			});
         });
         //点击移动事件
         $('#host_table tbody').on('click', '.move', function(e) {
@@ -560,6 +593,8 @@
 											$('#move_modal').modal('hide')
                                         } else {
                                             //move action error
+                                            $submit_btn.addClass('loading')
+                                            $('#move_modal').modal('hide')
                                             console.error('move action error')
                                         }
                                     }
@@ -576,10 +611,46 @@
                 }
             })
         });
-        //点击删除事件
-		$('#del-pop i.checkmark').on('click', function (e) {
 
-        })
+        $('#host_table tbody').on('click', '.edit', function(e) {
+            e.preventDefault();
+            var select_row = $(this).parents('tr')
+            var select_index = host_table.row(select_row).index();
+            var sourceData = host_table.data();
+            $('#edit_modal').modal({
+                onApprove: function () {
+                    $('#edit_submit').addClass('loading')
+                    $.ajax({
+                        type: "post",
+                        url: "/ov/group/edit",
+                        data: {
+                            new_group_name: $('#edit-group-input').val(),
+                            old_group_name: sourceData[select_index].name,
+							sup_group_id: sourceData[select_index].pid
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.success) {
+                                $('#edit_submit').removeClass('loading')
+                                sourceData[select_index].name = result.data.new_group_name;
+								host_table.row(select_row).data(sourceData[select_index]).draw();
+                                $('#edit_modal').modal('hide')
+                                $('#edit-group-input').val('')
+                            } else {
+                                $('#edit_submit').removeClass('loading')
+                                $('#move_modal').modal('hide')
+                                console.error(result.message)
+                            }
+
+                        },
+                        error: function (e) {
+                            console.error(e)
+                        }
+                    })
+                    return false;
+                }
+            }).modal('show')
+        });
 
     });
 
