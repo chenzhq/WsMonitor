@@ -6,7 +6,7 @@ import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
-import com.ws.stoner.dao.HostDetailDAO;
+import com.ws.stoner.dao.MongoItemDAO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
@@ -18,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +37,7 @@ public class ItemServiceImpl implements ItemService {
     private ZApi zApi;
 
     @Autowired
-    private HostDetailDAO hostDetailDAO;
+    private MongoItemDAO mongoItemDAO;
 
 
     /**
@@ -128,6 +126,25 @@ public class ItemServiceImpl implements ItemService {
     }
 
     /**
+     * pointIds 获取附带有触发器的 items BriefItemDTO
+     * @param pointIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefItemDTO> getItemsWithTriggersByPointIds(List<String> pointIds) throws ServiceException {
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        itemGetRequest.getParams()
+                .setMonitored(true)
+                .setApplicationIds(pointIds)
+                .setWithTriggers(true)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setOutput(BriefItemDTO.PROPERTY_NAMES);
+        List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
+        return itemDTOS;
+    }
+
+    /**
      * 在mongodb数据库中根据hostid 查询出所有的 item
      * @param hostId
      * @return
@@ -138,7 +155,7 @@ public class ItemServiceImpl implements ItemService {
         List<Item> mongoItems = null;
         try {
 
-            mongoItems  = hostDetailDAO.findItemByHostId(hostId);
+            mongoItems  = mongoItemDAO.findItemByHostId(hostId);
         } catch (DAOException e) {
             logger.error("查询mongodb 的 item 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());

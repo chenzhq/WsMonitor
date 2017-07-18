@@ -17,7 +17,7 @@ public class Item {
     private String hostId;
     @Field("graph_name")
     private String graphName;
-    @Field("graph_type")
+    @Field("GraphType")
     private String graphType;
 
     @Override

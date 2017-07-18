@@ -48,6 +48,14 @@ public interface ItemService {
      */
     List<BriefItemDTO> getItemsByPointIds(List<String> pointIds) throws ServiceException;
 
+    /**
+     * pointIds 获取附带有触发器的 items BriefItemDTO
+     * @param pointIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefItemDTO> getItemsWithTriggersByPointIds(List<String> pointIds) throws ServiceException;
+
 
 /*
 item 在 mongodb下的业务方法

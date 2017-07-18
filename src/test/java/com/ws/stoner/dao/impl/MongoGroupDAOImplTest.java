@@ -1,7 +1,7 @@
 package com.ws.stoner.dao.impl;
 
 import com.ws.stoner.BootApplication;
-import com.ws.stoner.dao.OverviewDAO;
+import com.ws.stoner.dao.MongoGroupDAO;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.model.DO.mongo.Group;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 
-* OverviewDAOImpl Tester. 
+* MongoGroupDAOImpl Tester.
 * 
 * @author <Authors name> 
 * @since <pre>六月 30, 2017</pre> 
@@ -24,10 +24,10 @@ import java.util.List;
 */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = BootApplication.class)
-public class OverviewDAOImplTest {
+public class MongoGroupDAOImplTest {
 
     @Autowired
-    private OverviewDAO overviewDAO;
+    private MongoGroupDAO mongoGroupDAO;
 
     @Autowired
     private OverviewGroupRepository overviewGroupRepository;
@@ -48,14 +48,14 @@ public void after() throws Exception {
 @Test
 public void testFindMaxGroupCId() throws Exception { 
 //TODO: Test goes here...
-    Group group = overviewDAO.findMaxGroupCId();
+    Group group = mongoGroupDAO.findMaxGroupCId();
     System.out.println(group);
 
 }
 
 @Test
     public void testFindGroupByCId() throws Exception {
-        Group group =overviewDAO.findGroupByCId("1");
+        Group group = mongoGroupDAO.findGroupByCId("1");
         System.out.println(group);
 }
 
@@ -81,7 +81,7 @@ public void testUpdateName() throws Exception {
         MAC.setHostChildren(new String[]{"10114"});
         groups.add(OA);
         groups.add(MAC);
-        overviewDAO.bathUpdateGroups(groups);
+        mongoGroupDAO.bathUpdateGroups(groups);
     }
 
 

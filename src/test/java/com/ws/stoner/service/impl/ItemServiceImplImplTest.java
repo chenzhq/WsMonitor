@@ -68,5 +68,13 @@ public void testListItem() throws Exception {
 
     }
 
+    @Test
+    public void testGetItemsWithTriggersByPointIds() throws Exception {
+        List<String> ids = new ArrayList<>();
+        ids.add("1087");
+        List<BriefItemDTO> briefItemDTOS = itemService.getItemsWithTriggersByPointIds(ids);
+        System.out.println(briefItemDTOS);
+    }
+
 
 } 

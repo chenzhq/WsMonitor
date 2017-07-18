@@ -3,7 +3,7 @@ package com.ws.stoner.service.impl;
 
 import com.ws.stoner.constant.OverviewTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.dao.OverviewDAO;
+import com.ws.stoner.dao.MongoGroupDAO;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
@@ -41,7 +41,7 @@ public class OverviewServiceImpl implements OverviewService {
     private TemplateService templateService;
 
     @Autowired
-    private OverviewDAO overviewDAO;
+    private MongoGroupDAO mongoGroupDAO;
 
 
     @Override
@@ -159,7 +159,7 @@ public class OverviewServiceImpl implements OverviewService {
         //step1:查最大cid，设置新的分组cid+1
         Group maxGroup = null;
         try {
-            maxGroup = overviewDAO.findMaxGroupCId();
+            maxGroup = mongoGroupDAO.findMaxGroupCId();
         } catch (DAOException e) {
             logger.error("查询mongodb最大组错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -182,7 +182,7 @@ public class OverviewServiceImpl implements OverviewService {
         //step3:更新父级组的group_children，新增name进去。
         Group supGroup = null;
         try {
-            supGroup = overviewDAO.findGroupByCId(pId);
+            supGroup = mongoGroupDAO.findGroupByCId(pId);
         } catch (DAOException e) {
             logger.error("根据CID查询mongodb错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -210,9 +210,9 @@ public class OverviewServiceImpl implements OverviewService {
         Group supGroup = null;
         try {
             //step1:根据删除组cid取要删除组的group_children,host_children；
-            delGroup = overviewDAO.findGroupByCId(delGroupId);
+            delGroup = mongoGroupDAO.findGroupByCId(delGroupId);
             //step2:根据删除组cid取该组的上一级节点
-            supGroup = overviewDAO.findGroupByCId(delGroup.getpId());
+            supGroup = mongoGroupDAO.findGroupByCId(delGroup.getpId());
         } catch (DAOException e) {
             logger.error("根据CID查询mongodb错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -268,7 +268,7 @@ public class OverviewServiceImpl implements OverviewService {
         //step1:Group组的pid更新为toGroupId
         Group targetGroup = null;
         try {
-            targetGroup = overviewDAO.findGroupByCId(groupId);
+            targetGroup = mongoGroupDAO.findGroupByCId(groupId);
         } catch (DAOException e) {
             logger.error("查询mongodb错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -283,7 +283,7 @@ public class OverviewServiceImpl implements OverviewService {
         //step2:from_group组的group_children去掉group的name；
         Group fromGroup = null;
         try {
-            fromGroup = overviewDAO.findGroupByCId(fromGroupId);
+            fromGroup = mongoGroupDAO.findGroupByCId(fromGroupId);
         } catch (DAOException e) {
             logger.error("根据Cid查询mongodb错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -296,7 +296,7 @@ public class OverviewServiceImpl implements OverviewService {
         //step3:to_group组的group_children添加group的name
         Group toGroup = null;
         try {
-            toGroup = overviewDAO.findGroupByCId(toGroupId);
+            toGroup = mongoGroupDAO.findGroupByCId(toGroupId);
         } catch (DAOException e) {
             logger.error("根据CId查询mongodb错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -329,7 +329,7 @@ public class OverviewServiceImpl implements OverviewService {
         //step1:from_group组的host_children去掉host原设备的id；
         Group fromGroup = null;
         try {
-            fromGroup = overviewDAO.findGroupByCId(fromGroupId);
+            fromGroup = mongoGroupDAO.findGroupByCId(fromGroupId);
         } catch (DAOException e) {
             logger.error("Cid查询mongodb错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -342,7 +342,7 @@ public class OverviewServiceImpl implements OverviewService {
         //step2:to_group组的host_children添加host原设备的id
         Group toGroup = null;
         try {
-            toGroup= overviewDAO.findGroupByCId(toGroupId);
+            toGroup= mongoGroupDAO.findGroupByCId(toGroupId);
         } catch (DAOException e) {
             logger.error("Cid查询 toGroup 的mongodb错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -375,7 +375,7 @@ public class OverviewServiceImpl implements OverviewService {
         // supGroupVOId 查 sup_group，修改group_children
         Group supGroup = null;
         try {
-            supGroup = overviewDAO.findGroupByCId(supGroupId);
+            supGroup = mongoGroupDAO.findGroupByCId(supGroupId);
         } catch (DAOException e) {
             logger.error("Cid查询mongodb错误！{}", e.getMessage());
             new ServiceException(e.getMessage());

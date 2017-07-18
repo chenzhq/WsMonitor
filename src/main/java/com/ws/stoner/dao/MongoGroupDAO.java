@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by pc on 2017/6/30.
  */
-public interface OverviewDAO {
+public interface MongoGroupDAO {
 
     /**
      * 查询group 中 cid最大的 group

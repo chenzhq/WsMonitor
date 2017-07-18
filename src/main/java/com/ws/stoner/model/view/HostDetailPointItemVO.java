@@ -9,9 +9,12 @@ public class HostDetailPointItemVO {
 
     @JSONField(name = "item_id")
     private String itemId;
+    @JSONField(name = "item_name")
     private String name;
     private String value;
     private String state;
+    @JSONField(name = "with_triggers")
+    private boolean withTriggers;
 
     public String getItemId() {
         return itemId;
@@ -33,6 +36,14 @@ public class HostDetailPointItemVO {
                 '}';
     }
 
+    public boolean isWithTriggers() {
+        return withTriggers;
+    }
+
+    public HostDetailPointItemVO setWithTriggers(boolean withTriggers) {
+        this.withTriggers = withTriggers;
+        return this;
+    }
 
     public String getName() {
         return name;

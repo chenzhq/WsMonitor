@@ -19,7 +19,7 @@ public class HostDetailItemVO {
     private Float[] data;
     @JSONField(name = "graph_name")
     private String graphName;
-    @JSONField(name = "graph_type")
+    @JSONField(name = "GraphType")
     private String graphType;
     private String state;
     private boolean flag;

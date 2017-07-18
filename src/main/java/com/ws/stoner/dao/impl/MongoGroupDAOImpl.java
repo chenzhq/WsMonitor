@@ -1,6 +1,6 @@
 package com.ws.stoner.dao.impl;
 
-import com.ws.stoner.dao.OverviewDAO;
+import com.ws.stoner.dao.MongoGroupDAO;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.model.DO.mongo.Group;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.List;
  * Created by pc on 2017/6/30.
  */
 @Repository
-public class OverviewDAOImpl implements OverviewDAO {
+public class MongoGroupDAOImpl implements MongoGroupDAO {
 
     @Autowired
     private MongoTemplate mongoTemplate;

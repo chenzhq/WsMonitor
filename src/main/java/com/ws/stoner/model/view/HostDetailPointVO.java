@@ -12,6 +12,7 @@ public class HostDetailPointVO {
 
     @JSONField(name = "point_id")
     private String pointId;
+    @JSONField(name = "point_name")
     private String name;
     private String state;
     @JsonInclude(JsonInclude.Include.NON_NULL)
