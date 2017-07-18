@@ -26,7 +26,10 @@
 			}
 			.brick.small {
 				height: 200px;
-				width: 25%;
+				width: 360px;
+			}
+			.fixed-height{
+				height: 180px
 			}
 		</style>
 	</th:block>
@@ -240,23 +243,23 @@
 											<a class="active item" data-tab="first"><h3>配置详情</h3></a>
 											<a class="item" data-tab="second"><h3>连接详情</h3></a>
 										</div>
-										<div class="ui bottom attached active tab segment" style="margin-bottom: 0px" data-tab="first">
+										<div class="ui bottom attached active tab segment fixed-height" data-tab="first" style="margin-bottom: 0px;">
 											<div class="ui relaxed divided list">
 												<div class="item">
 													<div class="description">
-														<span>设备名： </span>
+														<span>设备名: </span>
 														<span th:text="${hostDetailVO.hostName}">设备名称</span>
 													</div>
 												</div>
 												<div class="item">
 													<div class="description">
-														<span>IP：</span>
+														<span>IP:</span>
 														<span th:text="${hostDetailVO.ip}">ip</span>
 													</div>
 												</div>
 												<div class="item">
 													<div class="description">
-														<span>类型：</span>
+														<span>类型:</span>
 														<span th:text="${hostDetailVO.type}">type</span>
 													</div>
 												</div>
@@ -268,19 +271,19 @@
 												</div>
 											</div>
 										</div>
-										<div class="ui bottom attached tab segment" data-tab="second">
+										<div class="ui bottom attached tab segment fixed-height" data-tab="second">
 											<div class="ui relaxed divided list">
 												<div class="item">
 													<i class="big green checkmark icon" th:class="(${interfaceVO.agentIp} == null and ${interfaceVO.agentDNS} == null and ${interfaceVO.agentPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
 													<div class="content">
 														<p class="header">Agent方式</p>
 														<div class="description">
-															<span>IP：</span>
-															<span th:text="${interfaceVO.agentIp}">127.0.0.1</span>
-															<span> DNS：</span>
-															<span th:text="${interfaceVO.agentDNS}">114.114.114</span>
-															<span> 端口号：</span>
-															<span th:text="${interfaceVO.agentPort}">10050</span>
+															<span>IP:</span>
+															<span th:text="${interfaceVO.agentIp} ? ${interfaceVO.agentIp} : '&nbsp'">127.0.0.1</span>
+															<span>&nbspDNS:</span>
+															<span th:text="${interfaceVO.agentDNS} ? ${interfaceVO.agentDNS} : '&nbsp'">114.114.114</span>
+															<span>&nbsp端口号:</span>
+															<span th:text="${interfaceVO.agentPort}  ? ${interfaceVO.agentPort} : '&nbsp'">10050</span>
 														</div>
 													</div>
 												</div>
@@ -289,12 +292,12 @@
 													<div class="content">
 														<p class="header">SNMP方式</p>
 														<div class="description">
-															<span>IP：</span>
-															<span th:text="${interfaceVO.SNMPIp}">127.0.0.1</span>
-															<span>  DNS：</span>
-															<span th:text="${interfaceVO.SNMPDNS}">114.114.114.114</span>
-															<span>  端口号：</span>
-															<span th:text="${interfaceVO.SNMPPort}">10050</span>
+															<span>IP:</span>
+															<span th:text="${interfaceVO.SNMPIp}  ? ${interfaceVO.SNMPIp} : '&nbsp'">127.0.0.1</span>
+															<span>&nbspDNS:</span>
+															<span th:text="${interfaceVO.SNMPDNS}  ? ${interfaceVO.SNMPDNS} : '&nbsp'">114.114.114.114</span>
+															<span>&nbsp端口号:</span>
+															<span th:text="${interfaceVO.SNMPPort}  ? ${interfaceVO.SNMPPort} : '&nbsp'">10050</span>
 														</div>
 													</div>
 												</div>
@@ -303,12 +306,12 @@
 													<div class="content">
 														<p class="header">IPMI方式</p>
 														<div class="description">
-															<span>IP：</span>
-															<span th:text="${interfaceVO.IPMIIp}">127.0.0.1</span>
-															<span>  DNS：</span>
-															<span th:text="${interfaceVO.IPMIDNS}">114.114.114.114</span>
-															<span>  端口号：</span>
-															<span th:text="${interfaceVO.IPMIPort}">10050</span>
+															<span>IP:</span>
+															<span th:text="${interfaceVO.IPMIIp} ? ${interfaceVO.SNMPPort} : '&nbsp'">127.0.0.1</span>
+															<span>&nbspDNS:</span>
+															<span  th:text="${interfaceVO.IPMIDNS} ? ${interfaceVO.IPMIDNS} : '&nbsp'">114.114.114.114</span>
+															<span>&nbsp端口号:</span>
+															<span th:text="${interfaceVO.IPMIPort} ? ${interfaceVO.IPMIPort} : '&nbsp'">10050</span>
 														</div>
 													</div>
 												</div>
@@ -317,12 +320,12 @@
 													<div class="content">
 														<p class="header">JMX方式</p>
 														<div class="description">
-															<span>IP：</span>
-															<span th:text="${interfaceVO.JMXIp}">127.0.0.1</span>
-															<span>  DNS：</span>
-															<span th:text="${interfaceVO.JMXDNS}">114.114.114.114</span>
-															<span>  端口号：</span>
-															<span th:text="${interfaceVO.JMXPort}">10050</span>
+															<span>IP:</span>
+															<span th:text="${interfaceVO.JMXIp} ? ${interfaceVO.JMXIp} : '&nbsp'">127.0.0.1</span>
+															<span>&nbspDNS:</span>
+															<span th:text="${interfaceVO.JMXDNS} ? ${interfaceVO.JMXDNS} : '&nbsp'">114.114.114.114</span>
+															<span>&nbsp端口号:</span>
+															<span th:text="${interfaceVO.JMXPort}  ? ${interfaceVO.JMXPort} : '&nbsp'">10050</span>
 														</div>
 													</div>
 												</div>
@@ -337,50 +340,32 @@
 												</h3>
 											</div>
 											<div class="ui segment">
-										<div class="ui six column grid" id="brief_point_id" >
-											<div class="column" th:each="pointVO : ${pointVOS}">
-												<div class="ui red top attached button" id="0101" th:class="${pointVO.state}=='正常' ? 'ui green top attached button' : (${pointVO.state}=='警告' ? 'ui yellow top attached button' : 'ui red top attached button')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
-											</div>
-											<div class="column" th:remove="all" >
-												<div class="ui red top attached button" id="0102">CPU</div>
-											</div>
-											<div class="column" th:remove="all" >
-												<div class="ui red top attached button" id="0103">CPU</div>
-											</div>
-											<div class="column" th:remove="all" >
-												<div class="ui yellow top attached button" id="0104">CPU</div>
-											</div>
-											<div class="column" th:remove="all" >
-												<div class="ui yellow top attached button" id="0105">CPU</div>
-											</div>
-											<div class="column" th:remove="all" >
-												<div class="ui yellow top attached button" id="0106">CPU</div>
-											</div>
-											<div class="column" th:remove="all" >
-												<div class="ui yellow top attached button" id="0107">CPU</div>
-											</div>
-											<div class="column" th:remove="all" >
-												<div class="ui green top attached button" id="0108">CPU</div>
-											</div>
-											<div class="column" th:remove="all">
-												<div class="ui green top attached button" id="0109">CPU</div>
-											</div>
-											<div class="column" th:remove="all">
-												<div class="ui green top attached button" id="0110">CPU</div>
-											</div>
-											<div class="column" th:remove="all">
-												<div class="ui green top attached button" id="0111">CPU</div>
-											</div>
-											<div class="column" th:remove="all">
-												<div class="ui red top attached button" id="0112">CPU</div>
-											</div>
-											<div class="column" th:remove="all">
-												<div class="ui red top attached button" id="0113" >CPU</div>
-											</div>
-											<div class="column" th:remove="all">
-												<div class="ui red top attached button" id="0114" >CPU</div>
-											</div>
-										</div>
+												<div class="ui five column grid fixed-height" id="brief_point_id">
+													<div class="column" th:each="pointVO : ${pointVOS}">
+														<div class="ui red top attached button" id="0101" th:class="${pointVO.state}=='正常' ? 'ui green top attached button' : (${pointVO.state}=='警告' ? 'ui yellow top attached button' : 'ui red top attached button')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
+													</div>
+													<div class="column" th:remove="all">
+														<div class="ui red top attached button" id="0114" >CPU</div>
+													</div>
+													<div class="ui special popup">
+														<div class="ui relaxed divided list">
+															<div class="item">
+																<p class="header" id="point_name"></p>
+															</div>
+															<div class="item">
+																<div class="header" id="point_state"></div>
+															</div>
+															<div class="item">
+																<p class="header">监控项:
+																<div class="description">
+																	<table id="item_datas" class="ui very basic compact collapsing celled table no-padding">
+																	</table>
+																</div>
+																</p>
+															</div>
+														</div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -388,7 +373,14 @@
 							</div>
 							<div class="row" style="padding-top:20px; ">
 								<div id="flag_false"></div>
-								<div id="flag_true" ></div>
+								<div id="flag_true" ><!--Bar ChartArea Chart-->
+									<h4 class="ui horizontal divider header">
+										<i class="large icons">
+											<i class="area chart icon"></i>
+											<i class="inverted corner add icon"></i>
+										</i>
+										自定义监控项</h4> <div class="gridly" id="flag_true_content">
+								</div>
 							</div>
 						</div>
 					</div>
@@ -408,6 +400,9 @@
     <!--<th:block th:replace="${scripts}"></th:block>-->
 </th:block>
 <script type="text/javascript">
+    $('.button').popup({
+        inline: true
+    });
     //加载监控点悬浮框
     $('#brief_point_id').on('mouseover', '.button',function(e) {
         e.preventDefault();
@@ -418,26 +413,30 @@
             url: "/brief/point?point_id="+point_id,
             dataType: "json",
             success: function (result) {
-                var data = result.data;
+                var Color = ['red', 'yellow', 'green'];
+				var data = result.data;
                 var item_datas=data.item_datas;
                 var str_item_datas='';
                 for(var i=0; i<item_datas.length; i++){
-                    var tmp = ['<tr><td>' +item_datas[i].name+'</td>'
-                    +'<td>' +item_datas[i].state+'</td>'
-                    /*+'<td>' +item_datas[i].item_id+'</td>'*/
-                    +'<td>' +item_datas[i].value+'</td></tr>'].join('');
+                    if (item_datas[i].state == "正常"){ var myColor = Color[0] }
+                    if (item_datas[i].state == "严重"){ var myColor = Color[1] }
+                    if (item_datas[i].state == "警告"){ var myColor = Color[2] }
+                    var tmp = ['<tr><td>' +item_datas[i].item_name+'</td>'
+                    +'<td><a class="ui '+myColor+' header">' +item_datas[i].value+'</a></td></tr>'].join('');
                     str_item_datas=tmp+str_item_datas;
                 }
-                var str = ['<div class="ui relaxed divided list">'
-                +'<div class="item"><p class="header">名称：' +data.name+'</p></div>'
-                /*+'<div class="item"><p class="header">设备ID：' +data.host_id+'</p></div>'
-                +'<div class="item"><p class="header">监控点ID：' +data.point_id+'</p></div>'*/
-                +'<div class="item"><p class="header">状态：' +data.state+'</p></div>'
-                +'<div class="item"><p class="header">监控项：<div class="description">'
-                +'<table class="ui very basic compact collapsing celled table no-padding">'
-                +str_item_datas+'</table></div></p></div></div>'].join('');
-                $("#p"+point_id).attr("data-html",str);
-                $("#p"+point_id).popup('show');
+                if (data.state == "正常"){ var myColor = Color[0] }
+                if (data.state == "严重"){ var myColor = Color[1] }
+                if (data.state == "警告"){ var myColor = Color[2] }
+                $("#point_name").empty();
+                $("#point_name").append("名称:"+data.point_name);
+                $("#point_state").empty();
+                $("#point_state").append("状态:&nbsp&nbsp<div class='ui mini "+myColor+"horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                $("#item_datas").empty();
+                $("#item_datas").append(str_item_datas);
+                $("#p"+point_id).popup({
+                    popup: '.special.popup'
+                });
             },
             error: function (errorMsg) {
                 Lobibox.notify("error", {
@@ -451,14 +450,14 @@
             }
         })
     })
-    $('#brief_point_id').on('mouseout', '.button',function(e) {
+  /*  $('#brief_point_id').on('mouseout', '.button',function(e) {
         console.log("point_id"+this.id);
         $('#brief_point_id .button').popup('hide all');
-    })
+    })*/
 	//页面加载完后加载监控项的图形
     $(function(){
         var host_id = $("#host_id").text();
-        console.log("加载监控项图形的参数：host_id = " + host_id);
+        console.log("加载监控项图形的参数:host_id = " + host_id);
         $.ajax({
             type: "get",
             url: "/hostgraphs?host_id="+host_id,
@@ -470,20 +469,14 @@
                     var id = "i" + data[i].item_id;
                     if (data[i].flag==true)
                     {
-                        if($("#flag_true").children().length == 0)
-                        {
-                            $("#flag_true").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>自定义监控项</h4> <div class='gridly' id='flag_true_content'>");
-                            $("#flag_true_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                        }else {
-                            $("#flag_true_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                        }
+						$("#flag_true_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
                     }else {
                         if($("#flag_false").children().length == 0)
                         {
-                            $("#flag_false").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐严重监控项</h4> <div class='gridly ' id='flag_false_content'>");
-                            $("#flag_false_content").append("<div class='  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                            $("#flag_false").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐的严重监控项</h4> <div class='gridly' id='flag_false_content'>");
+                            $("#flag_false_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
                         }else {
-                            $("#flag_false_content").append("<div class='  brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
+                            $("#flag_false_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
                         }
                     }
 
@@ -521,9 +514,9 @@
                     myChart.setOption(option);
                 }
                 $('.gridly').gridly({
-                    base: 60, // px
-                    gutter: 20, // px
-                    columns: 12
+                    base: 55, // px
+                    gutter: 10, // px
+                    columns: 18
                 });
             },
             error: function (errorMsg) {
