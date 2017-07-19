@@ -9,6 +9,7 @@ import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Group;
 import com.ws.stoner.model.dto.*;
+import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.service.TemplateService;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class OverviewServiceImpl implements OverviewService {
     private OverviewGroupRepository overviewGroupRepository;
 
     @Autowired
-    private HostServiceImpl hostServiceImpl;
+    private HostService hostServiceImpl;
 
     @Autowired
     private TemplateService templateService;

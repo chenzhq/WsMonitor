@@ -11,6 +11,7 @@ import com.ws.stoner.service.PlatformService;
 import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.utils.RestResultGenerator;
+import com.ws.stoner.utils.StatusConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -117,14 +118,7 @@ public class DashboardRestController {
             hostVO.setName(hostDTO.getName());
             //ip
             hostVO.setIp(hostDTO.getInterfaces().get(0).getIp());
-            //state
-            if(StatusEnum.OK.code == hostDTO.getCustomState() && StatusEnum.OK.code == hostDTO.getCustomAvailableState()) {
-                hostVO.setState(StatusEnum.OK.getName());
-            }else if(StatusEnum.WARNING.code == hostDTO.getCustomState() && StatusEnum.OK.code == hostDTO.getCustomAvailableState()) {
-                hostVO.setState(StatusEnum.WARNING.getName());
-            }else {
-                hostVO.setState(StatusEnum.HIGH.getName());
-            }
+            hostVO.setState(StatusConverter.StatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState()));
             //type
             if(hostDTO.getParentTemplates().size() != 0) {
                 String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
@@ -175,14 +169,7 @@ public class DashboardRestController {
             platformVO.setPlatformId(platform.getPlatformId());
             platformVO.setName(platform.getName());
             platformVO.setAvailability(100);
-            //state
-            if(StatusEnum.WARNING.code == platform.getCustomState()) {
-                platformVO.setState(StatusEnum.WARNING.getName());
-            }else if(StatusEnum.HIGH.code == platform.getCustomState()) {
-                platformVO.setState(StatusEnum.HIGH.getName());
-            }else {
-                platformVO.setState(StatusEnum.OK.getName());
-            }
+            platformVO.setState(StatusConverter.StatusTransform(platform.getCustomState()));
             //allNum，warningNum,highNum
             int allNum = 0;
             int warningNum = 0;
@@ -221,14 +208,7 @@ public class DashboardRestController {
             pointVO.setName(point.getName());
             pointVO.setHostId(point.getHostId());
             pointVO.setHostName(point.getHost().getName());
-            //state
-            if(StatusEnum.WARNING.code == point.getCustomState()) {
-                pointVO.setState(StatusEnum.WARNING.getName());
-            }else if(StatusEnum.HIGH.code == point.getCustomState()){
-                pointVO.setState(StatusEnum.HIGH.getName());
-            }else {
-                pointVO.setState(StatusEnum.OK.getName());
-            }
+            pointVO.setState(StatusConverter.StatusTransform(point.getCustomState()));
             //lastTime
             List<BriefItemDTO> items = point.getItems();
             if(items.size() != 0) {

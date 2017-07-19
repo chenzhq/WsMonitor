@@ -16,6 +16,8 @@ import com.ws.stoner.model.view.HostDetailInterfaceVO;
 import com.ws.stoner.model.view.HostDetailPointVO;
 import com.ws.stoner.model.view.HostDetailVO;
 import com.ws.stoner.service.HostService;
+import com.ws.stoner.service.TemplateService;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,7 @@ public class HostServiceImpl implements HostService {
     private ZApi zApi;
 
     @Autowired
-    private TemplateServiceImpl templateServiceImpl;
+    private TemplateService templateServiceImpl;
 
 /*
  *count host
@@ -310,8 +312,7 @@ public class HostServiceImpl implements HostService {
                     hostDetailVO.setType(template.getTemplateGroups().get(0).getName());
                 }
             }
-        }
-        return hostDetailVO;
+        }        return hostDetailVO;
     }
 
     /**
@@ -361,14 +362,7 @@ public class HostServiceImpl implements HostService {
             HostDetailPointVO pointVO = new HostDetailPointVO();
             pointVO.setName(pointDTO.getName());
             pointVO.setPointId(pointDTO.getPointId());
-            //state
-            if(StatusEnum.WARNING.code == pointDTO.getCustomState()) {
-                pointVO.setState(StatusEnum.WARNING.getName());
-            }else if(StatusEnum.HIGH.code == pointDTO.getCustomState()){
-                pointVO.setState(StatusEnum.HIGH.getName());
-            }else {
-                pointVO.setState(StatusEnum.OK.getName());
-            }
+            pointVO.setState(StatusConverter.StatusTransform(pointDTO.getCustomState()));
             pointVOS.add(pointVO);
         }
         return pointVOS;

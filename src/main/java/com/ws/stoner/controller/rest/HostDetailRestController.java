@@ -1,21 +1,21 @@
 package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.constant.GraphTypeEnum;
+import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Item;
-import com.ws.stoner.model.dto.BriefHistoryDTO;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.RestResultGenerator;
+import com.ws.stoner.utils.StatusConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +37,6 @@ public class HostDetailRestController {
     @Autowired
     private GraphService graphService;
 
-    @Autowired
-    private HistoryService historyService;
 
     /**
      * 监控点悬浮框
@@ -61,14 +59,7 @@ public class HostDetailRestController {
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
             itemVO.setValue(itemDTO.getLastValue());
-            //state
-            if(StatusEnum.WARNING.code == itemDTO.getCustomState()) {
-                itemVO.setState(StatusEnum.WARNING.getName());
-            }else if(StatusEnum.HIGH.code == itemDTO.getCustomState()){
-                itemVO.setState(StatusEnum.HIGH.getName());
-            }else {
-                itemVO.setState(StatusEnum.OK.getName());
-            }
+            itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             //withTriggers
             if(itemIds.contains(itemDTO.getItemId())) {
                 itemVO.setWithTriggers(true);
@@ -104,80 +95,7 @@ public class HostDetailRestController {
      */
     @RequestMapping(value = "hostgraphs", method = RequestMethod.GET)
     public String listHostItemsGraph(@RequestParam("host_id") String hostId) throws ServiceException {
-        //取 BriefItemDTO list, 过滤出 value_type=0,3
-        List<String> hostIds = new ArrayList<>();
-        hostIds.add(hostId);
-        List<BriefItemDTO> itemDTOS = itemService.getItemsByHostIds(hostIds);
-        //取mongodb的所有hostid下的items
-        List<Item> mongoItems = itemService.getItemsByHostIdFromMongo(hostId);
-        //step3:循环 List BriefItemDTO，根据itemid取mongodb的 items，新建ItemVO对象
-        List<HostDetailItemVO> itemVOS = new ArrayList<>();
-        //用于组装既是问题也是自定义的itemIds
-        List<String> problemIds = new ArrayList<>();
-        //循环组装自定义item
-        for(BriefItemDTO itemDTO : itemDTOS) {
-            HostDetailItemVO itemVO = new HostDetailItemVO();
-            for(Item mongoItem :mongoItems) {
-                if(mongoItem.getItemId().equals(itemDTO.getItemId())) {
-                    // if 有匹配的，确定是用户自定义,flag赋给ItemVO的flag，用的是什么图形，graph_type赋给ItemVO的graph_type，graph_name赋给itemVO 的graph_name
-                    itemVO.setItemId(itemDTO.getItemId());
-                    itemVO.setItemName(itemDTO.getName());
-                    itemVO.setFlag(true);
-                    itemVO.setGraphName(mongoItem.getGraphName());
-                    itemVO.setGraphType(mongoItem.getGraphType());
-                    itemVO.setValueType(itemDTO.getValueType());
-                    //state
-                    if(StatusEnum.HIGH.code == itemDTO.getCustomState()) {
-                        itemVO.setState(StatusEnum.HIGH.getName());
-                        problemIds.add(itemDTO.getItemId());
-                    }else if(StatusEnum.WARNING.code == itemDTO.getCustomState()) {
-                        itemVO.setState(StatusEnum.WARNING.getName());
-                        problemIds.add(itemDTO.getItemId());
-                    }else {
-                        itemVO.setState(StatusEnum.OK.getName());
-                    }
-                    itemVOS.add(itemVO);
-                }
-            }
-        }
-        //循环组装问题item
-        for(BriefItemDTO itemDTO : itemDTOS) {
-            //问题item，且非用户自定义
-            if(itemDTO.getCustomState() != StatusEnum.OK.code && !problemIds.contains(itemDTO.getItemId())) {
-                HostDetailItemVO itemVO = new HostDetailItemVO();
-                itemVO.setItemId(itemDTO.getItemId());
-                itemVO.setItemName(itemDTO.getName());
-                itemVO.setFlag(false);
-                itemVO.setGraphName(itemDTO.getName());
-                itemVO.setGraphType("line");
-                itemVO.setValueType(itemDTO.getValueType());
-                //state
-                if(StatusEnum.HIGH.code == itemDTO.getCustomState()) {
-                    itemVO.setState(StatusEnum.HIGH.getName());
-                }else if(StatusEnum.WARNING.code == itemDTO.getCustomState()) {
-                    itemVO.setState(StatusEnum.WARNING.getName());
-                }else {
-                    itemVO.setState(StatusEnum.OK.getName());
-                }
-                itemVOS.add(itemVO);
-            }
-        }
-        //根据value_type取对应的history.get,时间区间为前1天的数据 得到 BriefHistory list
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        for(HostDetailItemVO itemVO : itemVOS) {
-            List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType());
-            List<Float> datas = new ArrayList<>();
-            List<String> dataTime = new ArrayList<>();
-            //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
-            for(BriefHistoryDTO historyDTO : historyDTOS) {
-                datas.add(historyDTO.getValue());
-                String dataTimeString = historyDTO.getLastTime().format(formatter);
-                dataTime.add(dataTimeString);
-            }
-            itemVO.setData(datas.toArray(new Float[0]));
-            itemVO.setDataTime(dataTime.toArray(new String[0]));
-        }
-
+        List<HostDetailItemVO> itemVOS = graphService.getGraphItemByHostId(hostId);
         return RestResultGenerator.genResult(itemVOS, REST_RESPONSE_SUCCESS).toString();
     }
 
@@ -189,6 +107,9 @@ public class HostDetailRestController {
         BriefHostDTO hostDTO = hostService.getHostsByHostIds(hostIds).get(0);
         //新建DetailHostVO对象,ItemVO对象 List,PointVO对象list,InterfaceVO对象
         List<HostDetailPointVO> pointVOS = hostService.getPointsByHostDTO(hostDTO);
+        for(HostDetailPointVO pointVO : pointVOS) {
+            pointVO.setState(null);
+        }
         return RestResultGenerator.genResult(pointVOS, REST_RESPONSE_SUCCESS).toString();
     }
 
@@ -211,7 +132,7 @@ public class HostDetailRestController {
     @RequestMapping(value = "hostgraphs/get_graphs", method = RequestMethod.GET)
     public String getGraphsByValueType(@RequestParam("value_type") String valueType) throws ServiceException {
 
-        List<String> graphTypes = graphService.getGraphTypeByValueType(valueType);
+        List<String> graphTypes = graphService.getGraphTypeByValueTypeFromMongo(valueType);
         List<HostDetailGraphVO> graphVOS = new ArrayList<>();
         for(String graphType : graphTypes) {
             HostDetailGraphVO graphVO = new HostDetailGraphVO();
@@ -236,5 +157,22 @@ public class HostDetailRestController {
            graphVOS.add(graphVO);
         }
         return RestResultGenerator.genResult(graphVOS, REST_RESPONSE_SUCCESS).toString();
+    }
+
+    /**
+     * 保存用户自定义图形配置
+     * @return
+     */
+    @RequestMapping(value = "hostgraphs/save_graph", method = RequestMethod.POST)
+    public String saveHostItemsGraph(
+            @RequestParam("graph_item") Item graphItem
+            ) throws ServiceException {
+        boolean success =  itemService.saveGraphItemFromMongo(graphItem);
+        if(success) {
+            List<HostDetailItemVO> itemVOS = graphService.getGraphItemByHostId(graphItem.getHostId());
+            return RestResultGenerator.genResult(itemVOS, REST_RESPONSE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.view.HostDetailItemVO;
 
 import java.util.List;
 
@@ -15,6 +16,14 @@ public interface GraphService {
      * @return
      * @throws ServiceException
      */
-    List<String> getGraphTypeByValueType(String valueType) throws ServiceException;
+    List<String> getGraphTypeByValueTypeFromMongo(String valueType) throws ServiceException;
+
+    /**
+     * 根据 hostIds 查询出指定设备的 图形监控项 graph item
+     * @param hostId
+     * @return
+     * @throws ServiceException
+     */
+    List<HostDetailItemVO> getGraphItemByHostId(String hostId) throws ServiceException;
 
 }
