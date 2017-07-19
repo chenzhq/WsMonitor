@@ -10,6 +10,9 @@ import com.ws.stoner.model.dto.BriefHistoryDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.view.HostDetailItemVO;
 import com.ws.stoner.service.GraphService;
+import com.ws.stoner.service.HistoryService;
+import com.ws.stoner.service.ItemService;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +35,10 @@ public class GraphServiceImpl implements GraphService {
     private MongoGraphDAO mongoGraphDAO;
 
     @Autowired
-    private ItemServiceImpl itemService;
+    private ItemService itemService;
 
     @Autowired
-    private HistoryServiceImpl historyService;
+    private HistoryService historyService;
 
 
 
@@ -114,14 +117,7 @@ public class GraphServiceImpl implements GraphService {
                 itemVO.setGraphName(itemDTO.getName());
                 itemVO.setGraphType("line");
                 itemVO.setValueType(itemDTO.getValueType());
-                //state
-                if(StatusEnum.HIGH.code == itemDTO.getCustomState()) {
-                    itemVO.setState(StatusEnum.HIGH.getName());
-                }else if(StatusEnum.WARNING.code == itemDTO.getCustomState()) {
-                    itemVO.setState(StatusEnum.WARNING.getName());
-                }else {
-                    itemVO.setState(StatusEnum.OK.getName());
-                }
+                itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
                 itemVOS.add(itemVO);
             }
         }

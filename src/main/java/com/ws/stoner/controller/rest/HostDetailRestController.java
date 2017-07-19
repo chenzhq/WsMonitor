@@ -10,6 +10,7 @@ import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.RestResultGenerator;
+import com.ws.stoner.utils.StatusConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,14 +59,7 @@ public class HostDetailRestController {
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
             itemVO.setValue(itemDTO.getLastValue());
-            //state
-            if(StatusEnum.WARNING.code == itemDTO.getCustomState()) {
-                itemVO.setState(StatusEnum.WARNING.getName());
-            }else if(StatusEnum.HIGH.code == itemDTO.getCustomState()){
-                itemVO.setState(StatusEnum.HIGH.getName());
-            }else {
-                itemVO.setState(StatusEnum.OK.getName());
-            }
+            itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             //withTriggers
             if(itemIds.contains(itemDTO.getItemId())) {
                 itemVO.setWithTriggers(true);
@@ -113,6 +107,9 @@ public class HostDetailRestController {
         BriefHostDTO hostDTO = hostService.getHostsByHostIds(hostIds).get(0);
         //新建DetailHostVO对象,ItemVO对象 List,PointVO对象list,InterfaceVO对象
         List<HostDetailPointVO> pointVOS = hostService.getPointsByHostDTO(hostDTO);
+        for(HostDetailPointVO pointVO : pointVOS) {
+            pointVO.setState(null);
+        }
         return RestResultGenerator.genResult(pointVOS, REST_RESPONSE_SUCCESS).toString();
     }
 

@@ -3,8 +3,6 @@ package com.ws.stoner.service;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPointDTO;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -96,6 +94,7 @@ public interface PointSerivce {
      * @throws ServiceException
      */
     List<BriefPointDTO> listHighPoint() throws ServiceException;
+
 
 
 }
