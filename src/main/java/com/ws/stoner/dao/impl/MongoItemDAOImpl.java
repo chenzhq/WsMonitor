@@ -30,4 +30,11 @@ public class MongoItemDAOImpl implements MongoItemDAO {
         List<Item> item = mongoTemplate.find(query, Item.class);
         return item;
     }
+
+    @Override
+    public void save(Item item) throws DAOException {
+
+        mongoTemplate.insert(item);
+
+    }
 }

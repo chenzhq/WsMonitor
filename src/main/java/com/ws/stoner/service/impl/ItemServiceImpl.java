@@ -162,4 +162,16 @@ public class ItemServiceImpl implements ItemService {
         }
         return mongoItems;
     }
+
+    @Override
+    public boolean saveGraphItemFromMongo(Item item) throws ServiceException {
+        try {
+            mongoItemDAO.save(item);
+        } catch (DAOException e) {
+            logger.error("保存 mongodb 的 item 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
+    }
 }

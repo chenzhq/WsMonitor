@@ -14,4 +14,9 @@ public interface MongoItemDAO {
      * 根据hostId，查询 items
      */
     List<Item> findItemByHostId(String hostId) throws DAOException;
+
+    /**
+     * 插入保存 item
+     */
+    void save(Item item) throws DAOException;
 }

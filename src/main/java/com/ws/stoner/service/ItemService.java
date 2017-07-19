@@ -67,4 +67,12 @@ item 在 mongodb下的业务方法
      * @throws ServiceException
      */
     List<Item> getItemsByHostIdFromMongo(String hostId) throws ServiceException;
+
+    /**
+     * 在mongodb数据库中 插入保存 item
+     * @param item
+     * @return
+     * @throws ServiceException
+     */
+    boolean saveGraphItemFromMongo(Item item) throws ServiceException;
 }
