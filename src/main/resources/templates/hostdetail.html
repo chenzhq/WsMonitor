@@ -16,7 +16,7 @@
 		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 			.no-padding-bottom{  padding-bottom: 0px;  }
 			.chart-style{  height: 200px  }
@@ -237,7 +237,7 @@
 						<div class="ui segment">
 							<div class="sixteen wide column">
 								<div class="ui grid">
-									<div class="four wide column">
+									<div class="five wide column">
 										<div class="ui top attached tabular menu">
 											<a class="active item" data-tab="first"><h3>配置详情</h3></a>
 											<a class="item" data-tab="second"><h3>连接详情</h3></a>
@@ -245,16 +245,22 @@
 										<div class="ui bottom attached active tab segment fixed-height" data-tab="first" style="margin-bottom: 0px;">
 											<div class="ui relaxed divided list">
 												<div class="item">
-													<div class="description">
-														<span>设备名: </span>
-														<span th:text="${hostDetailVO.hostName}">设备名称</span>
+                                                    <div class="right floated content">
+                                                        <span th:text="${hostDetailVO.hostName}">设备名称</span>
+                                                    </div>
+													<div class="content">
+                                                        <span>设备名: </span>
 													</div>
 												</div>
 												<div class="item">
-													<div class="description">
-														<span>IP:</span>
-														<span th:text="${hostDetailVO.ip}">ip</span>
-													</div>
+                                                    <div class="ui text fluid two item menu">
+                                                        <div class="item">
+                                                            <span>IP: </span>
+                                                        </div>
+                                                        <div class="left item">
+                                                            <span th:text="${hostDetailVO.ip}">ip</span>
+                                                        </div>
+                                                    </div>
 												</div>
 												<div class="item">
 													<div class="description">
@@ -331,7 +337,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="twelve wide column">
+									<div class="eleven wide column">
 										<div class="ui segments">
 											<div class="ui segment">
 												<h3 class="ui header">
@@ -500,11 +506,11 @@
                         } else {
                             $('.button.approve').removeClass('loading')
                             $('.modal').modal('hide')
-                            console.error('服务器错误')
+                            errorMsg_no_data("监控项 Modal");
                         }
 					},
-					error: function (e) {
-						console.error(e)
+					error: function () {
+                        errorMsg_no_connect("监控项 Modal");
 					}
 				})
 				return false;
@@ -521,37 +527,34 @@
             url: "/brief/point?point_id="+point_id,
             dataType: "json",
             success: function (result) {
-                var Color = ['red', 'yellow', 'green'];
-				var data = result.data;
-                var item_datas=data.item_datas;
-                var str_item_datas='';
-                for(var i=0; i<item_datas.length; i++){
-                    if (item_datas[i].state == "正常"){ var myColor = Color[0] }
-                    if (item_datas[i].state == "严重"){ var myColor = Color[1] }
-                    if (item_datas[i].state == "警告"){ var myColor = Color[2] }
-                    var tmp = ['<tr><td>' +item_datas[i].item_name+'</td>'
-                    +'<td><a class="ui '+myColor+' header">' +item_datas[i].value+'</a></td></tr>'].join('');
-                    str_item_datas=tmp+str_item_datas;
+                if(result.success) {
+                    var Color = ['red', 'yellow', 'green'];
+                    var data = result.data;
+                    var item_datas=data.item_datas;
+                    var str_item_datas='';
+                    for(var i=0; i<item_datas.length; i++){
+                        if (item_datas[i].state == "正常"){ var myColor = Color[0] }
+                        if (item_datas[i].state == "严重"){ var myColor = Color[1] }
+                        if (item_datas[i].state == "警告"){ var myColor = Color[2] }
+                        var tmp = ['<tr><td>' +item_datas[i].item_name+'</td>'
+                        +'<td><a class="ui '+myColor+' header">' +item_datas[i].value+'</a></td></tr>'].join('');
+                        str_item_datas=tmp+str_item_datas;
+                    }
+                    if (data.state == "正常"){ var myColor = Color[0] }
+                    if (data.state == "严重"){ var myColor = Color[1] }
+                    if (data.state == "警告"){ var myColor = Color[2] }
+                    $("#point_name").html("名称:"+data.point_name);
+                    $("#point_state").html("状态:&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                    $("#item_datas").html(str_item_datas);
+                    $("#p"+point_id).popup({
+                        popup: '.special.popup'
+                    });
+                } else {
+                    errorMsg_no_data("监控项 Button");
                 }
-                if (data.state == "正常"){ var myColor = Color[0] }
-                if (data.state == "严重"){ var myColor = Color[1] }
-                if (data.state == "警告"){ var myColor = Color[2] }
-                $("#point_name").html("名称:"+data.point_name);
-                $("#point_state").html("状态:&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
-                $("#item_datas").html(str_item_datas);
-                $("#p"+point_id).popup({
-                    popup: '.special.popup'
-                });
             },
-            error: function (errorMsg) {
-                Lobibox.notify("error", {
-                    size: "normal",
-                    rounded: false,
-                    delayIndicator: true,
-                    msg: "连接服务器失败！",
-                    icon: "warning icon",
-                    title: "监控点详情",
-                });
+            error: function () {
+                errorMsg_no_connect("监控点 Button");
             }
         })
     })
@@ -564,17 +567,15 @@
             url: "/hostgraphs?host_id="+host_id,
             dataType: "json",
             success: function (result) {
-                hostgraphs(result);
+                if(result.success) {
+                    hostgraphs(result);
+                }
+                else {
+                    errorMsg_no_data("监控项 Chart");
+                }
             },
-            error: function (errorMsg) {
-                Lobibox.notify("error", {
-                    size: "normal",
-                    rounded: false,
-                    delayIndicator: true,
-                    msg: "连接服务器失败！",
-                    icon: "warning icon",
-                    title: "监控项图形",
-                });
+            error: function () {
+                errorMsg_no_connect("监控项 Chart");
             }
         })
 	})
@@ -589,13 +590,21 @@
             },
             dataType: "json",
             success: function (result) {
-                var data=result.data;
-                var str = "";
-                for(var i=0;i<data.length;i++)
-                {
-                    str +=" <option value='"+data[i].point_id+"' data-color='"+data[i].state+"' >"+data[i].point_name+"</option> ";
+                if(result.success) {
+                    var data=result.data;
+                    var str = "";
+                    for(var i=0;i<data.length;i++)
+                    {
+                        str +=" <option value='"+data[i].point_id+"' data-color='"+data[i].state+"' >"+data[i].point_name+"</option> ";
+                    }
+                    $(".dropdown.points option").html(str);
                 }
-                $(".dropdown.points option").html(str);
+                else {
+                    errorMsg_no_data("监控点 Dropdown");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("监控点 Dropdown");
             }
         });
     };
@@ -608,13 +617,21 @@
             },
             dataType: "json",
             success: function (result) {
-                var data=result.data;
-                var str = "";
-                for(var i=0;i<data.length;i++)
-                {
-                    str +=" <option value='"+data[i].item_id+"' >"+data[i].item_name+"</option> ";
+                if(result.success) {
+                    var data=result.data;
+                    var str = "";
+                    for(var i=0;i<data.length;i++)
+                    {
+                        str +=" <option value='"+data[i].item_id+"' >"+data[i].item_name+"</option> ";
+                    }
+                    $(".dropdown.items option").html(str);
                 }
-                $(".dropdown.items option").html(str);
+                else {
+                    errorMsg_no_data("监控项 Dropdown");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("监控项 Dropdown");
             }
         });
     };
@@ -627,13 +644,21 @@
             },
             dataType: "json",
             success: function (result) {
-                var data=result.data;
-                var str = "";
-                for(var i=0;i<data.length;i++)
-                {
-                    str +=" <option value='"+data[i].graph_type+"' >"+data[i].graph_name+"</option> ";
+                if(result.success) {
+                    var data=result.data;
+                    var str = "";
+                    for(var i=0;i<data.length;i++)
+                    {
+                        str +=" <option value='"+data[i].graph_type+"' >"+data[i].graph_name+"</option> ";
+                    }
+                    $(".dropdown.type option").html(str);
                 }
-                $(".dropdown.type option").html(str);
+                else {
+                    errorMsg_no_data("图表类型 Dropdown");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("图表类型 Dropdown");
             }
         });
     };
@@ -696,6 +721,26 @@
             base: 55, // px
             gutter: 10, // px
             columns: 18
+        });
+    }
+    function errorMsg_no_connect(title) {
+        Lobibox.notify("error", {
+            size: "normal",
+            rounded: false,
+            delayIndicator: true,
+            msg: "连接服务器失败！",
+            icon: "warning icon",
+            title: title
+        });
+    }
+    function errorMsg_no_data(title) {
+        Lobibox.notify("error", {
+            size: "normal",
+            rounded: false,
+            delayIndicator: true,
+            msg: "解析数据失败！",
+            icon: "warning icon",
+            title: title
         });
     }
 </script>

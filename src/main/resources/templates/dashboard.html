@@ -471,26 +471,24 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            platform_myChart.hideLoading();
-            var data = result.data;
-            var dataList = data.stateNum;
-            var total = data.totalNum + "个";
-            if (dataList) {
-                platform_option.title.text = total;
-                platform_option.series[0].data = dataList;
-                // 重写指定图表的配置项和数据
-                platform_myChart.setOption(platform_option);
+            if(result.success) {
+                platform_myChart.hideLoading();
+                var data = result.data;
+                var dataList = data.stateNum;
+                var total = data.totalNum + "个";
+                if (dataList) {
+                    platform_option.title.text = total;
+                    platform_option.series[0].data = dataList;
+                    // 重写指定图表的配置项和数据
+                    platform_myChart.setOption(platform_option);
+                }
+            }
+            else {
+                errorMsg_no_data("业务系统 Pie");
             }
         },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "业务系统 Pie",
-            });
+        error: function () {
+            errorMsg_no_connect("业务系统 Pie");
         }
     })
     platform_myChart.on('click', function (param) {
@@ -549,25 +547,23 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            host_myChart.hideLoading();
-            var data = result.data;
-            var dataList = data.stateNum;
-            var total = data.totalNum + "台";
-            if (dataList) {
-                host_option.title.text = total;
-                host_option.series[0].data = dataList;
-                host_myChart.setOption(host_option);
+            if(result.success) {
+                host_myChart.hideLoading();
+                var data = result.data;
+                var dataList = data.stateNum;
+                var total = data.totalNum + "台";
+                if (dataList) {
+                    host_option.title.text = total;
+                    host_option.series[0].data = dataList;
+                    host_myChart.setOption(host_option);
+                }
+            }
+            else {
+                errorMsg_no_data("设备 Pie");
             }
         },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "设备 Pie",
-            });
+        error: function () {
+            errorMsg_no_connect("设备 Pie");
         }
     })
     host_myChart.on('click', function (param) {
@@ -626,25 +622,23 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            point_myChart.hideLoading();
-            var data = result.data;
-            var dataList = data.stateNum;
-            var total = data.totalNum + "个";
-            if (dataList) {
-                point_option.title.text = total;
-                point_option.series[0].data = dataList;
-                point_myChart.setOption(point_option);
+            if(result.success) {
+                point_myChart.hideLoading();
+                var data = result.data;
+                var dataList = data.stateNum;
+                var total = data.totalNum + "个";
+                if (dataList) {
+                    point_option.title.text = total;
+                    point_option.series[0].data = dataList;
+                    point_myChart.setOption(point_option);
+                }
+            }
+            else {
+                errorMsg_no_data("监控点 Pie");
             }
         },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "监控点 Pie",
-            });
+        error: function () {
+            errorMsg_no_connect("监控点 Pie");
         }
     })
     point_myChart.on('click', function (param) {
@@ -871,6 +865,27 @@
                 }
             }
         });
+
+    function errorMsg_no_connect(title) {
+        Lobibox.notify("error", {
+            size: "normal",
+            rounded: false,
+            delayIndicator: true,
+            msg: "连接服务器失败！",
+            icon: "warning icon",
+            title: title
+        });
+    }
+    function errorMsg_no_data(title) {
+        Lobibox.notify("error", {
+            size: "normal",
+            rounded: false,
+            delayIndicator: true,
+            msg: "解析数据失败！",
+            icon: "warning icon",
+            title: title
+        });
+    }
 </script>
 </body>
 </html>
