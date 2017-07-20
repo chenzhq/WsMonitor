@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head  th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
 	<title >监控系统</title>
@@ -16,7 +16,7 @@
 		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
 		<style type="text/css">
 			.no-padding-bottom{  padding-bottom: 0px;  }
 			.chart-style{  height: 200px  }
@@ -29,7 +29,7 @@
 				width: 360px;
 			}
 			.fixed-height{
-				height: 180px
+				height: 180px;
 			}
 		</style>
 	</th:block>
@@ -217,7 +217,6 @@
 					<a class="item labeled rightsidebar computer only">
 						<i class="ion-wrench large icon"></i>工具
 					</a>
-
 				</div>
 			</div>
 		</div>
@@ -347,44 +346,100 @@
 													<div class="column" th:remove="all">
 														<div class="ui red top attached button" id="0114" >CPU</div>
 													</div>
-													<div class="ui special popup">
-														<div class="ui relaxed divided list">
-															<div class="item">
-																<p class="header" id="point_name"></p>
-															</div>
-															<div class="item">
-																<div class="header" id="point_state"></div>
-															</div>
-															<div class="item">
-																<p class="header">监控项:
-																<div class="description">
-																	<table id="item_datas" class="ui very basic compact collapsing celled table no-padding">
-																	</table>
-																</div>
-																</p>
-															</div>
-														</div>
-													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+                            <div class="ui special popup" style="height: 260px;overflow:auto">
+                                <div class="ui relaxed divided list">
+                                    <div class="item">
+                                        <p class="header" id="point_name"></p>
+                                    </div>
+                                    <div class="item">
+                                        <div class="header" id="point_state"></div>
+                                    </div>
+                                    <div class="item">
+                                        <p class="header">监控项:
+                                        <div class="description">
+                                            <table id="item_datas" class="ui very basic compact collapsing celled table no-padding">
+                                            </table>
+                                        </div>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 							<div class="row" style="padding-top:20px; ">
 								<div id="flag_false"></div>
 								<div id="flag_true" ><!--Bar ChartArea Chart-->
 									<h4 class="ui horizontal divider header">
-										<i class="large icons">
-											<i class="area chart icon"></i>
-											<i class="inverted corner add icon"></i>
-										</i>
-										自定义监控项</h4> <div class="gridly" id="flag_true_content">
+										<div class="ui secondary menu">
+											<a class="header item addItems">
+												<i class="large icons">
+													<i class="area chart icon"></i>
+													<i class="inverted corner add icon"></i>
+												</i>
+												&nbsp&nbsp添加监控项图形
+											</a>
+										</div>
+										</h4>
+									<div class="gridly" id="flag_true_content">
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+
+					<!--modal-->
+					<div class="ui small modal">
+						<i class="close icon"></i>
+						<div class="header">
+							添加监控项图形
+						</div>
+						<div class="image content" style="padding-left: 150px;">
+							<div class="ui left floated image">
+								请定义图形的标题：
+								<p></p>
+								<div class="required field">
+									<div class="ui small input graph_name">
+										<input type="text" placeholder="请输入标题">
+									</div>
+								</div>
+								<div id="chart_icon">
+								<i class="massive area chart icon"></i>
+								</div>
+							</div>
+							<div class="description" id="test">
+								请选择图形的内容：
+								<p></p>
+								<form class="ui form">
+									<div class="required inline field" >
+										<label>监控项：</label>
+										<select class="ui dropdown points">
+											<option value="">请选择监控点</option>
+										</select>
+									</div>
+									<div class="required inline field">
+										<label>监控点：</label>
+										<select class="ui dropdown items">
+											<option value="">请选择监控项</option>
+										</select>
+									</div>
+									<div class="required inline field">
+										<label>图类别：</label>
+										<select class="ui dropdown type">
+											<option value="">请选择图类别</option>
+										</select>
+									</div>
+								</form>
+							</div>
+						</div>
+						<div class="actions">
+							<div class="ui button deny">取消</div>
+							<div class="ui green button approve">确认</div>
+						</div>
+					</div>
 				<!--Site Content-->
 			</div>
 		</div>
@@ -400,14 +455,67 @@
     <!--<th:block th:replace="${scripts}"></th:block>-->
 </th:block>
 <script type="text/javascript">
-    $('.button').popup({
-        inline: true
+    //点击添加监控项
+    $('a.addItems').on('click', function(e) {
+        e.preventDefault();
+        $('.ui.dropdown').dropdown();
+        dropdownPoints();
+        $('.dropdown.points')
+            .dropdown({
+                onChange: function(value, text, $selectedItem) {
+                    dropdownItems(value);
+                }
+            });
+        $('.dropdown.items')
+            .dropdown({
+                onChange: function(value, text, $selectedItem) {
+                    dropdownType(value);
+                }
+            });
+        $('.dropdown.type')
+            .dropdown({
+                onChange: function(value, text, $selectedItem) {
+                    //
+					$("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                }
+            });
+		$('.modal').modal({
+			onApprove: function () {
+				$('.button.approve').addClass('loading')
+				$.ajax({
+					type: "post",
+					url: "/hostgraphs/save_graph",
+					data: {
+                        graph_name: $('.input.graph_name input').val(),
+                        graph_type: $('.dropdown.type').dropdown('get value'),
+                        host_id: $('#host_id').text(),
+                        item_id: $('.dropdown.items').dropdown('get value')
+					},
+					dataType: "json",
+					success: function (result) {
+                        if(result.success) {
+                            $('.button.approve').removeClass('loading')
+                            hostgraphs(result);
+                            $('.modal').modal('hide')
+                        } else {
+                            $('.button.approve').removeClass('loading')
+                            $('.modal').modal('hide')
+                            console.error('服务器错误')
+                        }
+					},
+					error: function (e) {
+						console.error(e)
+					}
+				})
+				return false;
+			}
+		}).modal('show')
     });
     //加载监控点悬浮框
     $('#brief_point_id').on('mouseover', '.button',function(e) {
         e.preventDefault();
         var point_id=this.id.substring(1);
-        console.log("加载监控点悬浮框的 point_id = " + point_id);
+        /*console.log("加载监控点悬浮框的 point_id = " + point_id);*/
         $.ajax({
             type: "get",
             url: "/brief/point?point_id="+point_id,
@@ -428,12 +536,9 @@
                 if (data.state == "正常"){ var myColor = Color[0] }
                 if (data.state == "严重"){ var myColor = Color[1] }
                 if (data.state == "警告"){ var myColor = Color[2] }
-                $("#point_name").empty();
-                $("#point_name").append("名称:"+data.point_name);
-                $("#point_state").empty();
-                $("#point_state").append("状态:&nbsp&nbsp<div class='ui mini "+myColor+"horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
-                $("#item_datas").empty();
-                $("#item_datas").append(str_item_datas);
+                $("#point_name").html("名称:"+data.point_name);
+                $("#point_state").html("状态:&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                $("#item_datas").html(str_item_datas);
                 $("#p"+point_id).popup({
                     popup: '.special.popup'
                 });
@@ -450,74 +555,16 @@
             }
         })
     })
-  /*  $('#brief_point_id').on('mouseout', '.button',function(e) {
-        console.log("point_id"+this.id);
-        $('#brief_point_id .button').popup('hide all');
-    })*/
 	//页面加载完后加载监控项的图形
     $(function(){
         var host_id = $("#host_id").text();
-        console.log("加载监控项图形的参数:host_id = " + host_id);
+       /* console.log("加载监控项图形的参数:host_id = " + host_id);*/
         $.ajax({
             type: "get",
             url: "/hostgraphs?host_id="+host_id,
             dataType: "json",
             success: function (result) {
-                var data = result.data;
-                console.log(data);
-                for (var i=0; i<data.length; i++){
-                    var id = "i" + data[i].item_id;
-                    if (data[i].flag==true)
-                    {
-						$("#flag_true_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                    }else {
-                        if($("#flag_false").children().length == 0)
-                        {
-                            $("#flag_false").append("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐的严重监控项</h4> <div class='gridly' id='flag_false_content'>");
-                            $("#flag_false_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                        }else {
-                            $("#flag_false_content").append("<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>");
-                        }
-                    }
-
-                    var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
-                    if (data[i].state == "正常"){ var myColor = Color[0] }
-                    if (data[i].state == "严重"){ var myColor = Color[1] }
-                    if (data[i].state == "警告"){ var myColor = Color[2] }
-                    var myChart = echarts.init(document.getElementById(id));
-                    var option = {
-                        title: {
-                            text: data[i].item_name
-                        },
-                        tooltip: {},
-                        legend: {
-                            data:[]
-                        },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                magicType: {type: ['line', 'bar']},
-                            }
-                        },
-                        xAxis: {
-                            data: data[i].data_time
-                        },
-                        yAxis: {
-                        },
-                        series: [{
-                            name: data[i].graph_name,
-                            type: data[i].graph_type,
-                            data: data[i].data,
-                            color: [myColor]
-                        }]
-                    };
-                    myChart.setOption(option);
-                }
-                $('.gridly').gridly({
-                    base: 55, // px
-                    gutter: 10, // px
-                    columns: 18
-                });
+                hostgraphs(result);
             },
             error: function (errorMsg) {
                 Lobibox.notify("error", {
@@ -531,7 +578,126 @@
             }
         })
 	})
-</script>
 
+
+    function dropdownPoints(){
+        $.ajax({
+            type: "get",
+            url: "/hostgraphs/get_points",
+            data: {
+                host_id: $('#host_id').text()
+            },
+            dataType: "json",
+            success: function (result) {
+                var data=result.data;
+                var str = "";
+                for(var i=0;i<data.length;i++)
+                {
+                    str +=" <option value='"+data[i].point_id+"' data-color='"+data[i].state+"' >"+data[i].point_name+"</option> ";
+                }
+                $(".dropdown.points option").html(str);
+            }
+        });
+    };
+    function dropdownItems(value){
+        $.ajax({
+            type: "get",
+            url: "/hostgraphs/get_items",
+            data: {
+                point_id: value
+            },
+            dataType: "json",
+            success: function (result) {
+                var data=result.data;
+                var str = "";
+                for(var i=0;i<data.length;i++)
+                {
+                    str +=" <option value='"+data[i].item_id+"' >"+data[i].item_name+"</option> ";
+                }
+                $(".dropdown.items option").html(str);
+            }
+        });
+    };
+    function dropdownType(value){
+        $.ajax({
+            type: "get",
+            url: "/hostgraphs/get_graphs",
+            data: {
+                value_type: value
+            },
+            dataType: "json",
+            success: function (result) {
+                var data=result.data;
+                var str = "";
+                for(var i=0;i<data.length;i++)
+                {
+                    str +=" <option value='"+data[i].graph_type+"' >"+data[i].graph_name+"</option> ";
+                }
+                $(".dropdown.type option").html(str);
+            }
+        });
+    };
+
+    function hostgraphs(result) {
+        var data = result.data;
+        var str_true = "";
+        var str_false = "";
+        $("#flag_false").empty();
+        $("#flag_true_content").empty();
+        for (var i=0; i<data.length; i++){
+            var id = "i" + data[i].item_id;
+            if (data[i].flag==true)
+            {
+                str_true ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";
+                $("#flag_true_content").append(str_true);
+            }
+            if(data[i].flag==false){
+                if($("#flag_false").children().length == 0)
+                {
+                    $("#flag_false").html("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐的严重监控项</h4> <div class='gridly' id='flag_false_content'>");
+                }
+                str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";
+                $("#flag_false_content").append(str_false);
+            }
+            var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+            if (data[i].state == "正常"){ var myColor = Color[0] }
+            if (data[i].state == "严重"){ var myColor = Color[1] }
+            if (data[i].state == "警告"){ var myColor = Color[2] }
+            var myChart = echarts.init(document.getElementById(id));
+            var option = {
+                title: {
+                    text: data[i].item_name
+                },
+                tooltip: {},
+                legend: {
+                    data:[]
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        magicType: {type: ['line', 'bar']},
+                    }
+                },
+                xAxis: {
+                    data: data[i].data_time
+                },
+                yAxis: {
+                },
+                series: [{
+                    name: data[i].graph_name,
+                    type: data[i].graph_type,
+                    data: data[i].data,
+                    color: [myColor]
+                }]
+            };
+            myChart.setOption(option);
+        }
+        $('.gridly').gridly({
+            base: 55, // px
+            gutter: 10, // px
+            columns: 18
+        });
+    }
+</script>
 </body>
 </html>
