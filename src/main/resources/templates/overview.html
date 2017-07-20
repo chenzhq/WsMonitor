@@ -319,17 +319,13 @@
 </th:block>
 <script type="text/javascript">
     $(document).ready(function() {
-        var testflag = false;
         var host_table = $("#host_table").DataTable({
             "paging": false,
             "ordering": false,
             "initComplete": function () {
-				console.log('init')
-				testflag = true;
                 $('#host_table tr:eq(1)').treegrid('expand')
             },
             "drawCallback": function () {//初始化后回调
-				console.log('draw')
                 $("#host_table").treegrid({
 					'initialState': 'collapsed',
 //					'saveState': true
@@ -337,7 +333,6 @@
 //					'expanderExpandedClass': 'down',
 //					'expanderCollapsedClass': 'right'
 				});
-				console.log($('#host_table tr:eq(1)'))
 //				if(host_table !== undefined)
 //                console.log(host_table.isFirstInit)
 				if(host_table !== undefined && !host_table.isFirstInit)

@@ -4,7 +4,8 @@ import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.model.DO.mongo.Group;
-import com.ws.stoner.model.dto.*;
+import com.ws.stoner.model.dto.OverviewEditGroupDTO;
+import com.ws.stoner.model.dto.OverviewListGroupDTO;
 import com.ws.stoner.service.OverviewService;
 import org.junit.After;
 import org.junit.Before;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -138,18 +138,18 @@ public void testFindAll() throws Exception {
 
     @Test
     public void testDelOverviewGroup() throws Exception {
-        boolean odg = overviewService.deleteOverviewGroup("g2");
-        System.out.println(odg);
+//        boolean odg = overviewService.deleteOverviewGroup("g2");
+//        System.out.println(odg);
     }
 
     @Test
     public void testMoveOverviewGroup() throws Exception {
-        boolean omg = overviewService.moveOverviewGroup("g5","g1","g2");
+//        boolean omg = overviewService.moveOverviewGroup("g5","g1","g2");
     }
 
     @Test
     public void testMoveOverviewHost() throws Exception {
-        boolean omh = overviewService.moveOverviewHost("h10114","g0","g2");
+//        boolean omh = overviewService.moveOverviewHost("h10114","g0","g2");
     }
 
     @Test
