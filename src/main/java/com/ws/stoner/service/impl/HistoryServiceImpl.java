@@ -54,15 +54,42 @@ public class HistoryServiceImpl implements HistoryService {
      * @throws ServiceException
      */
     @Override
-    public List<BriefHistoryDTO> getHistoryByItemId(String itemId,Integer valueType) throws ServiceException {
+    public List<BriefHistoryDTO> getHistoryByItemId(String itemId,Integer valueType,int time) throws ServiceException {
         HistoryGetRequest historyGetRequest = new HistoryGetRequest();
         List<String> itemIds = new ArrayList<>();
         itemIds.add(itemId);
         historyGetRequest.getParams()
                 .setHistory(valueType)
                 .setItemIds(itemIds)
-                .setTimeFrom(String.valueOf(System.currentTimeMillis()/1000-1*24*3600))
+                .setTimeFrom(String.valueOf(System.currentTimeMillis()/1000-time*24*3600))
                 .setTimeTill(String.valueOf(System.currentTimeMillis()/1000));
+        List<BriefHistoryDTO> historyDTOS = listHistory(historyGetRequest);
+        return historyDTOS;
+    }
+
+    /**
+     * 根据指定的 itemIds 获取指定条数的 historys BriefHistoryDTO
+     * @param itemId
+     * @param valueType  指定用哪个历史数据库表，
+     * @param time  指定取多少条数据
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefHistoryDTO> getHistoryByItemIdLimit(String itemId, Integer valueType, int time) throws ServiceException {
+        List<String> sortFilter = new ArrayList<String>();
+        List<String> sortOrder = new ArrayList<String>();
+        sortFilter.add("clock");
+        sortOrder.add("DESC");
+        HistoryGetRequest historyGetRequest = new HistoryGetRequest();
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(itemId);
+        historyGetRequest.getParams()
+                .setHistory(valueType)
+                .setItemIds(itemIds)
+                .setSortField(sortFilter)
+                .setSortOrder(sortOrder)
+                .setLimit(time);
         List<BriefHistoryDTO> historyDTOS = listHistory(historyGetRequest);
         return historyDTOS;
     }

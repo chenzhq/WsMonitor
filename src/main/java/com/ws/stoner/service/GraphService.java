@@ -26,4 +26,12 @@ public interface GraphService {
      */
     List<HostDetailItemVO> getGraphItemByHostId(String hostId) throws ServiceException;
 
+    /**
+     * 根据 pointId 查询出指定 point 的 图形监控项 graph item
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    List<HostDetailItemVO> getGraphItemByPointId(String pointId,int time) throws ServiceException;
+
 }

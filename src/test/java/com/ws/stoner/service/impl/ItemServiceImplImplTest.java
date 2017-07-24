@@ -76,5 +76,13 @@ public void testListItem() throws Exception {
         System.out.println(briefItemDTOS);
     }
 
+    @Test
+    public void testgetValueItemByPointIds() throws Exception {
+        List<String> ids = new ArrayList<>();
+        ids.add("1087");
+        List<BriefItemDTO> itemDTOS = itemService.getValueItemsByPointIds(ids);
+        System.out.println(itemDTOS);
+    }
+
 
 } 

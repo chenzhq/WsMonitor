@@ -73,7 +73,7 @@ public class GraphServiceImpl implements GraphService {
         //取 BriefItemDTO list, 过滤出 value_type=0,3
         List<String> hostIds = new ArrayList<>();
         hostIds.add(hostId);
-        List<BriefItemDTO> itemDTOS = itemService.getItemsByHostIds(hostIds);
+        List<BriefItemDTO> itemDTOS = itemService.getValueItemsByHostIds(hostIds);
         //取mongodb的所有hostid下的items
         List<Item> mongoItems = itemService.getItemsByHostIdFromMongo(hostIds.get(0));
         //step3:循环 List BriefItemDTO，根据itemid取mongodb的 items，新建ItemVO对象
@@ -124,12 +124,60 @@ public class GraphServiceImpl implements GraphService {
         //根据value_type取对应的history.get,时间区间为前1天的数据 得到 BriefHistory list
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         for(HostDetailItemVO itemVO : itemVOS) {
-            List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType());
+            List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),1);
             List<Float> datas = new ArrayList<>();
             List<String> dataTime = new ArrayList<>();
             //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
             for(BriefHistoryDTO historyDTO : historyDTOS) {
-                datas.add(historyDTO.getValue());
+                datas.add(Float.parseFloat(historyDTO.getValue()));
+                String dataTimeString = historyDTO.getLastTime().format(formatter);
+                dataTime.add(dataTimeString);
+            }
+            itemVO.setData(datas.toArray(new Float[0]));
+            itemVO.setDataTime(dataTime.toArray(new String[0]));
+        }
+        return itemVOS;
+    }
+
+    /**
+     * 根据 pointId 查询出指定 point 的 图形监控项 graph item 图形报告 标签页
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<HostDetailItemVO> getGraphItemByPointId(String pointId,int time) throws ServiceException {
+        //取 BriefItemDTO list, 过滤出 value_type=0,3
+        List<String> pointIds = new ArrayList<>();
+        pointIds.add(pointId);
+        List<BriefItemDTO> itemDTOS = itemService.getValueItemsByPointIds(pointIds);
+        //step3:循环 List BriefItemDTO
+        List<HostDetailItemVO> itemVOS = new ArrayList<>();
+        //循环组装itemVO
+        for(BriefItemDTO itemDTO : itemDTOS) {
+                HostDetailItemVO itemVO = new HostDetailItemVO();
+                itemVO.setItemId(itemDTO.getItemId());
+                itemVO.setItemName(itemDTO.getName());
+                itemVO.setGraphName(itemDTO.getName());
+                itemVO.setGraphType("line");
+                itemVO.setValueType(itemDTO.getValueType());
+                itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+                itemVOS.add(itemVO);
+        }
+        //根据value_type取对应的history.get,时间区间为前 time 天的数据 得到 BriefHistory list
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        for(HostDetailItemVO itemVO : itemVOS) {
+            List<BriefHistoryDTO> historyDTOS = null;
+            if(time == 40) {
+                historyDTOS = historyService.getHistoryByItemIdLimit(itemVO.getItemId(),itemVO.getValueType(),time);
+            }else {
+                historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),time);
+            }
+            List<Float> datas = new ArrayList<>();
+            List<String> dataTime = new ArrayList<>();
+            //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
+            for(BriefHistoryDTO historyDTO : historyDTOS) {
+                datas.add(Float.parseFloat(historyDTO.getValue()));
                 String dataTimeString = historyDTO.getLastTime().format(formatter);
                 dataTime.add(dataTimeString);
             }

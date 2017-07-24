@@ -99,8 +99,13 @@ public class BriefItemDTO {
     }
 
     public BriefItemDTO setLastTime(int lastTime) {
-        Instant instant = Instant.ofEpochSecond(lastTime);
-        this.lastTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        if(lastTime == 0) {
+            this.lastTime = null;
+        }else {
+            Instant instant = Instant.ofEpochSecond(lastTime);
+            this.lastTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        }
+
         return this;
     }
 }

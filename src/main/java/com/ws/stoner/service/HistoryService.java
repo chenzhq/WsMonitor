@@ -23,8 +23,19 @@ public interface HistoryService {
      * 根据指定的 itemIds 获取 historys BriefHistoryDTO
      * @param itemId
      * @param valueType  指定用哪个历史数据库表，
+     * @param time  指定取多少天的数据
      * @return
      * @throws ServiceException
      */
-    List<BriefHistoryDTO> getHistoryByItemId(String itemId,Integer valueType) throws ServiceException;
+    List<BriefHistoryDTO> getHistoryByItemId(String itemId,Integer valueType,int time) throws ServiceException;
+
+    /**
+     * 根据指定的 itemIds 获取指定条数的 historys BriefHistoryDTO
+     * @param itemId
+     * @param valueType  指定用哪个历史数据库表，
+     * @param time  指定取多少条数据
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefHistoryDTO> getHistoryByItemIdLimit(String itemId,Integer valueType,int time) throws ServiceException;
 }

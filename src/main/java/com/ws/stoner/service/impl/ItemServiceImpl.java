@@ -18,10 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
 import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
@@ -92,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
      * @throws ServiceException
      */
     @Override
-    public List<BriefItemDTO> getItemsByHostIds(List<String> hostIds) throws ServiceException {
+    public List<BriefItemDTO> getValueItemsByHostIds(List<String> hostIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         Map<String,Object> itemFilter = new HashMap<>();
         itemFilter.put("value_type", Arrays.toString(new int[]{ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value,ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value}));
@@ -105,10 +103,29 @@ public class ItemServiceImpl implements ItemService {
         return itemDTOS;
     }
 
+    /**
+     * 根据指定的 pointids 获取相应的 items BriefItemDTO value_type =0,3
+     * @param pointIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefItemDTO> getValueItemsByPointIds(List<String> pointIds) throws ServiceException {
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        Map<String,Object> itemFilter = new HashMap<>();
+        itemFilter.put("value_type", Arrays.toString(new int[]{ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value,ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value}));
+        itemGetRequest.getParams()
+                .setMonitored(true)
+                .setApplicationIds(pointIds)
+                .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setFilter(itemFilter);
+        List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
+        return itemDTOS;
+    }
 
 
     /**
-     * pointIds 获取相应的 items BriefItemDTO
+     * pointIds 获取相应的所有类型 items BriefItemDTO
      * @param pointIds
      * @return
      * @throws ServiceException
@@ -143,6 +160,7 @@ public class ItemServiceImpl implements ItemService {
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
     }
+
 
     /**
      * 在mongodb数据库中根据hostid 查询出所有的 item

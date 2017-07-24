@@ -15,7 +15,7 @@ public class BriefHistoryDTO {
     private String itemId;
     @JSONField(name = "clock")
     private LocalDateTime lastTime;
-    private float value;
+    private String value;
 
     public static final String[] PROPERTY_NAMES = {"itemid", "clock","value"};
 
@@ -38,11 +38,11 @@ public class BriefHistoryDTO {
         return this;
     }
 
-    public float getValue() {
+    public String getValue() {
         return value;
     }
 
-    public BriefHistoryDTO setValue(float value) {
+    public BriefHistoryDTO setValue(String value) {
         this.value = value;
         return this;
     }

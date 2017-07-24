@@ -212,9 +212,15 @@ public class DashboardRestController {
             //lastTime
             List<BriefItemDTO> items = point.getItems();
             if(items.size() != 0) {
-                LocalDateTime lastTime = items.get(0).getLastTime();
+                LocalDateTime lastTime = null;
                 for(BriefItemDTO item : items) {
-                    if(lastTime.compareTo(item.getLastTime()) < 0) {
+                    if(item.getLastTime() != null) {
+                        lastTime = item.getLastTime();
+                        break;
+                    }
+                }
+                for(BriefItemDTO item : items) {
+                    if(item.getLastTime() != null && lastTime.compareTo(item.getLastTime()) < 0) {
                         lastTime = item.getLastTime();
                     }
                 }

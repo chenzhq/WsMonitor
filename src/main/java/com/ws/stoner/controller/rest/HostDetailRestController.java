@@ -2,7 +2,6 @@ package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.ResponseErrorEnum;
-import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.dto.BriefHostDTO;
@@ -10,7 +9,6 @@ import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.RestResultGenerator;
-import com.ws.stoner.utils.StatusConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +33,9 @@ public class HostDetailRestController {
     private HostService hostService;
 
     @Autowired
+    private PointSerivce pointSerivce;
+
+    @Autowired
     private GraphService graphService;
 
 
@@ -44,48 +45,7 @@ public class HostDetailRestController {
      */
     @RequestMapping(value = "brief/point", method = RequestMethod.GET)
     public String listPointItemsFlow(@RequestParam("point_id") String pointId) throws ServiceException {
-        List<String> pointIds = new ArrayList<>();
-        pointIds.add(pointId);
-        List<BriefItemDTO> itemDTOS = itemService.getItemsByPointIds(pointIds);
-        List<BriefItemDTO> withTriggersItemDTOS = itemService.getItemsWithTriggersByPointIds(pointIds);
-        List<String> itemIds = new ArrayList<>();
-        for(BriefItemDTO itemDTO : withTriggersItemDTOS) {
-            itemIds.add(itemDTO.getItemId());
-        }
-        List<HostDetailPointItemVO> itemVOS = new ArrayList<>();
-        HostDetailPointVO pointVO = new HostDetailPointVO();
-        for(BriefItemDTO itemDTO :itemDTOS) {
-            HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
-            itemVO.setItemId(itemDTO.getItemId());
-            itemVO.setName(itemDTO.getName());
-            itemVO.setValue(itemDTO.getLastValue());
-            itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
-            //withTriggers
-            if(itemIds.contains(itemDTO.getItemId())) {
-                itemVO.setWithTriggers(true);
-            }else  {
-                itemVO.setWithTriggers(false);
-            }
-            itemVOS.add(itemVO);
-        }
-        pointVO.setItems(itemVOS);
-        pointVO.setPointId(pointId);
-        if(itemDTOS.size() != 0) {
-            //point name
-            pointVO.setName(itemDTOS.get(0).getPoints().get(0).getName());
-            //point state
-            int customState = itemDTOS.get(0).getPoints().get(0).getCustomState();
-            if(StatusEnum.WARNING.code == customState) {
-                pointVO.setState(StatusEnum.WARNING.getName());
-            }else if(StatusEnum.HIGH.code == customState) {
-                pointVO.setState(StatusEnum.HIGH.getName());
-            }else {
-                pointVO.setState(StatusEnum.OK.getName());
-            }
-        }else {
-            pointVO.setName("监控点中没有监控项");
-            pointVO.setState(StatusEnum.OK.getName());
-        }
+        HostDetailPointVO pointVO = pointSerivce.getItemsByPointId(pointId);
         return RestResultGenerator.genResult(pointVO, REST_RESPONSE_SUCCESS).toString();
     }
 
