@@ -15,6 +15,8 @@ public class HostDetailPointItemVO {
     private String state;
     @JSONField(name = "with_triggers")
     private boolean withTriggers;
+    @JSONField(name = "last_time")
+    private String lastTime;
 
     public String getItemId() {
         return itemId;
@@ -23,17 +25,6 @@ public class HostDetailPointItemVO {
     public HostDetailPointItemVO setItemId(String itemId) {
         this.itemId = itemId;
         return this;
-    }
-
-    @Override
-    public String
-    toString() {
-        return "HostDetailPointItemVO{" +
-                "itemId='" + itemId + '\'' +
-                ", name='" + name + '\'' +
-                ", value='" + value + '\'' +
-                ", state='" + state + '\'' +
-                '}';
     }
 
     public boolean isWithTriggers() {
@@ -70,5 +61,26 @@ public class HostDetailPointItemVO {
     public HostDetailPointItemVO setState(String state) {
         this.state = state;
         return this;
+    }
+
+    public String getLastTime() {
+        return lastTime;
+    }
+
+    public HostDetailPointItemVO setLastTime(String lastTime) {
+        this.lastTime = lastTime;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "HostDetailPointItemVO{" +
+                "itemId='" + itemId + '\'' +
+                ", name='" + name + '\'' +
+                ", value='" + value + '\'' +
+                ", state='" + state + '\'' +
+                ", withTriggers=" + withTriggers +
+                ", lastTime='" + lastTime + '\'' +
+                '}';
     }
 }

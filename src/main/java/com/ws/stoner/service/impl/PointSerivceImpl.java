@@ -7,15 +7,19 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
+import com.ws.stoner.model.view.HostDetailPointItemVO;
+import com.ws.stoner.model.view.HostDetailPointVO;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.ItemService;
 import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -365,5 +369,51 @@ public class PointSerivceImpl implements PointSerivce {
         return problemPoints;
     }
 
+    /**
+     * 根据 pointId 组装监控点详情页面中的 概述 业务数据
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public HostDetailPointVO getDetailPointByPointId(String pointId) throws ServiceException {
+        List<String> pointIds = new ArrayList<>();
+        pointIds.add(pointId);
+        List<BriefItemDTO> itemDTOS = itemService.getItemsByPointIds(pointIds);
+        List<BriefItemDTO> withTriggersItemDTOS = itemService.getItemsWithTriggersByPointIds(pointIds);
+        List<String> itemIds = new ArrayList<>();
+        for(BriefItemDTO itemDTO : withTriggersItemDTOS) {
+            itemIds.add(itemDTO.getItemId());
+        }
+        List<HostDetailPointItemVO> itemVOS = new ArrayList<>();
+        HostDetailPointVO pointVO = new HostDetailPointVO();
+        for(BriefItemDTO itemDTO :itemDTOS) {
+            HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
+            itemVO.setItemId(itemDTO.getItemId());
+            itemVO.setName(itemDTO.getName());
+            itemVO.setValue(itemDTO.getLastValue());
+            itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+            //withTriggers
+            if(itemIds.contains(itemDTO.getItemId())) {
+                itemVO.setWithTriggers(true);
+            }else  {
+                itemVO.setWithTriggers(false);
+            }
+            itemVOS.add(itemVO);
+        }
+        pointVO.setItems(itemVOS);
+        pointVO.setPointId(pointId);
+        if(itemDTOS.size() != 0) {
+            //point name
+            pointVO.setName(itemDTOS.get(0).getPoints().get(0).getName());
+            //point state
+            int customState = itemDTOS.get(0).getPoints().get(0).getCustomState();
+            pointVO.setState(StatusConverter.StatusTransform(customState));
+        }else {
+            pointVO.setName("监控点中没有监控项");
+            pointVO.setState(StatusEnum.OK.getName());
+        }
+        return pointVO;
+    }
 
 }
