@@ -17,6 +17,10 @@ public class HostDetailPointItemVO {
     private boolean withTriggers;
     @JSONField(name = "last_time")
     private String lastTime;
+    @JSONField(name = "warning_point")
+    private Integer warningPoint;
+    @JSONField(name = "high_point")
+    private Integer highPoint;
 
     public String getItemId() {
         return itemId;
@@ -72,6 +76,24 @@ public class HostDetailPointItemVO {
         return this;
     }
 
+    public Integer getWarningPoint() {
+        return warningPoint;
+    }
+
+    public HostDetailPointItemVO setWarningPoint(Integer warningPoint) {
+        this.warningPoint = warningPoint;
+        return this;
+    }
+
+    public Integer getHighPoint() {
+        return highPoint;
+    }
+
+    public HostDetailPointItemVO setHighPoint(Integer highPoint) {
+        this.highPoint = highPoint;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "HostDetailPointItemVO{" +
@@ -81,6 +103,8 @@ public class HostDetailPointItemVO {
                 ", state='" + state + '\'' +
                 ", withTriggers=" + withTriggers +
                 ", lastTime='" + lastTime + '\'' +
+                ", warningPoint=" + warningPoint +
+                ", highPoint=" + highPoint +
                 '}';
     }
 }

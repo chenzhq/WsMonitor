@@ -10,21 +10,21 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.dto.BriefHistoryDTO;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.view.HostDetailPointItemVO;
 import com.ws.stoner.model.view.HostDetailPointVO;
-import com.ws.stoner.service.HostService;
-import com.ws.stoner.service.ItemService;
-import com.ws.stoner.service.PointSerivce;
-import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.model.view.PointDetailItemDatasVO;
+import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +51,9 @@ public class PointSerivceImpl implements PointSerivce {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private HistoryService historyService;
 
     /**
      * 根据request 获取监控点数量
@@ -370,13 +373,13 @@ public class PointSerivceImpl implements PointSerivce {
     }
 
     /**
-     * 根据 pointId 组装监控点详情页面中的 概述 业务数据
+     * 根据 pointId 组装设备详情页面中 监控点悬浮框 的业务数据
      * @param pointId
      * @return
      * @throws ServiceException
      */
     @Override
-    public HostDetailPointVO getDetailPointByPointId(String pointId) throws ServiceException {
+    public HostDetailPointVO getItemsByPointId(String pointId) throws ServiceException {
         List<String> pointIds = new ArrayList<>();
         pointIds.add(pointId);
         List<BriefItemDTO> itemDTOS = itemService.getItemsByPointIds(pointIds);
@@ -414,6 +417,101 @@ public class PointSerivceImpl implements PointSerivce {
             pointVO.setState(StatusEnum.OK.getName());
         }
         return pointVO;
+    }
+
+    /**
+     * 根据 pointId 组装监控点详情页面中 概述 的业务数据
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public HostDetailPointVO getDetailPointByPointId(String pointId) throws ServiceException {
+        List<String> pointIds = new ArrayList<>();
+        pointIds.add(pointId);
+        List<BriefItemDTO> itemDTOS = itemService.getItemsByPointIds(pointIds);
+        List<BriefItemDTO> withTriggersItemDTOS = itemService.getItemsWithTriggersByPointIds(pointIds);
+        List<String> itemIds = new ArrayList<>();
+        for(BriefItemDTO itemDTO : withTriggersItemDTOS) {
+            itemIds.add(itemDTO.getItemId());
+        }
+        List<HostDetailPointItemVO> itemVOS = new ArrayList<>();
+        HostDetailPointVO pointVO = new HostDetailPointVO();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        for(BriefItemDTO itemDTO :itemDTOS) {
+            HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
+            itemVO.setItemId(itemDTO.getItemId());
+            itemVO.setName(itemDTO.getName());
+            itemVO.setValue(itemDTO.getLastValue());
+            itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+            itemVO.setLastTime(itemDTO.getLastTime().format(formatter));
+            //withTriggers
+            if(itemIds.contains(itemDTO.getItemId())) {
+                itemVO.setWithTriggers(true);
+                //阀值赋值：highPoint,warningPoint
+
+            }else  {
+                itemVO.setWithTriggers(false);
+            }
+
+            itemVOS.add(itemVO);
+        }
+        pointVO.setItems(itemVOS);
+        pointVO.setPointId(pointId);
+        if(itemDTOS.size() != 0) {
+            //point name
+            pointVO.setName(itemDTOS.get(0).getPoints().get(0).getName());
+            //point state
+            int customState = itemDTOS.get(0).getPoints().get(0).getCustomState();
+            pointVO.setState(StatusConverter.StatusTransform(customState));
+        }else {
+            pointVO.setName("无监控项");
+            pointVO.setState(StatusEnum.OK.getName());
+        }
+        return pointVO;
+    }
+
+    /**
+     * 根据 pointId 组装监控点详情页面中 时序数据 的业务数据
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<PointDetailItemDatasVO> getItemDatasByPointId(String pointId,int time) throws ServiceException {
+        List<String> pointIds = new ArrayList<>();
+        pointIds.add(pointId);
+        //step1:取所有的 itemDTOS
+        List<BriefItemDTO> itemDTOS = itemService.getItemsByPointIds(pointIds);
+        //step2:循环 itemDTOS 取指定时间段 time 的历史数据，组装到 itemVO ,add到itemVOS
+        List<PointDetailItemDatasVO> pointDetailItemDatasVOS = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        for(BriefItemDTO itemDTO :itemDTOS) {
+            PointDetailItemDatasVO pointDetailItemDatasVO = new PointDetailItemDatasVO();
+            pointDetailItemDatasVO.setItemId(itemDTO.getItemId());
+            pointDetailItemDatasVO.setItemName(itemDTO.getName());
+            //state,value,last_time
+            List<BriefHistoryDTO> historyDTOS = null;
+            if(time == 40) {
+                historyDTOS = historyService.getHistoryByItemIdLimit(itemDTO.getItemId(),itemDTO.getValueType(),time);
+            }else {
+                historyDTOS = historyService.getHistoryByItemId(itemDTO.getItemId(),itemDTO.getValueType(),time);
+            }
+            //赋值 取list BriefHistory的 valueList，lastTimeList
+            List<PointDetailItemDatasVO.ItemDatasVO> itemDatasVOS = new ArrayList<>();
+            for(BriefHistoryDTO historyDTO : historyDTOS) {
+                PointDetailItemDatasVO.ItemDatasVO itemDatasVO = pointDetailItemDatasVO.new ItemDatasVO();
+                itemDatasVO.setValue(historyDTO.getValue());
+                itemDatasVO.setLastTime(historyDTO.getLastTime().format(formatter));
+                //state
+                itemDatasVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+                itemDatasVOS.add(itemDatasVO);
+            }
+            pointDetailItemDatasVO.setItemDatasVOS(itemDatasVOS);
+            pointDetailItemDatasVOS.add(pointDetailItemDatasVO);
+        }
+        return pointDetailItemDatasVOS;
+
     }
 
 }

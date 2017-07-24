@@ -38,7 +38,15 @@ public interface ItemService {
      * @return
      * @throws ServiceException
      */
-    List<BriefItemDTO> getItemsByHostIds(List<String> hostIds) throws ServiceException;
+    List<BriefItemDTO> getValueItemsByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
+     * 根据指定的 pointids 获取相应的 items BriefItemDTO value_type =0,3
+     * @param pointIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefItemDTO> getValueItemsByPointIds(List<String> pointIds) throws ServiceException;
 
     /**
      * pointIds 获取相应的 items BriefItemDTO
