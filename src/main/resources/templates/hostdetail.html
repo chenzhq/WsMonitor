@@ -575,73 +575,66 @@
 		}).modal('show')
     });
     //加载监控点悬浮框
+	var timer='';
     $('#brief_point_id').on('mouseover', '.button',function(e) {
         e.preventDefault();
         var point_id=this.id.substring(1);
-        /*console.log("加载监控点悬浮框的 point_id = " + point_id);*/
-        $.ajax({
-            type: "get",
-            url: "/brief/point?point_id="+point_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var Color = ['red', 'yellow', 'green'];
-                    var data = result.data;
-                    var item_datas=data.item_datas;
-                    var str_item_datas = '';
-                    var myColor = '';
-                    for(var i=0; i<item_datas.length; i++){
-                        if (item_datas[i].with_triggers == true) {
-                            if (item_datas[i].state == "正常") {
-                                myColor = Color[0]
+        timer=setTimeout(function () {
+            $.ajax({
+                type: "get",
+                url: "/brief/point?point_id="+point_id,
+                dataType: "json",
+                success: function (result) {
+                    if(result.success) {
+                        var Color = ['red', 'yellow', 'green'];
+                        var data = result.data;
+                        var item_datas=data.item_datas;
+                        var str_item_datas = '';
+                        var myColor = '';
+                        for(var i=0; i<item_datas.length; i++){
+                            if (item_datas[i].with_triggers == true) {
+                                if (item_datas[i].state == "正常") {
+                                    myColor = Color[0]
+                                }
+                                if (item_datas[i].state == "严重") {
+                                    myColor = Color[1]
+                                }
+                                if (item_datas[i].state == "警告") {
+                                    myColor = Color[2]
+                                }
+                            }else {
+                                myColor = ''
                             }
-                            if (item_datas[i].state == "严重") {
-                                myColor = Color[1]
-                            }
-                            if (item_datas[i].state == "警告") {
-                                myColor = Color[2]
-                            }
-                        }else {
-                            myColor = ''
+                            var tmp = ['<tr><td><span>'+item_datas[i].item_name+'</span></td>'
+                            +'<td><span class="ui '+myColor+' header text_over_hidden">' +item_datas[i].value+'</span></td></tr>'].join('');
+                            str_item_datas=tmp+str_item_datas;
                         }
-                        var tmp = ['<tr><td><span>'+item_datas[i].item_name+'</span></td>'
-                        +'<td><span class="ui '+myColor+' header text_over_hidden">' +item_datas[i].value+'</span></td></tr>'].join('');
-                        str_item_datas=tmp+str_item_datas;
+
+                        if (data.state == "正常"){ myColor = Color[0] }
+                        if (data.state == "严重"){ myColor = Color[1] }
+                        if (data.state == "警告"){ myColor = Color[2] }
+                        $("#point_name").html("名称："+data.point_name);
+                        $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                        $("#item_datas").html(str_item_datas);
+                        $("#p"+point_id).popup({
+                            popup: '.special.popup',
+                            on:'manual'
+                        });
+                        $("#p"+point_id).popup('show');
+                    } else {
+                        errorMsg_no_data("监控项 Button");
                     }
-
-					if (data.state == "正常"){ myColor = Color[0] }
-					if (data.state == "严重"){ myColor = Color[1] }
-					if (data.state == "警告"){ myColor = Color[2] }
-                    $("#point_name").html("名称："+data.point_name);
-                    $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
-                    $("#item_datas").html(str_item_datas);
-                   /* $("#p"+point_id).popup({
-                        popup: '.special.popup',
-                       /!* delay: {
-                            show: 100,
-                            hide: 0
-                        },*!/
-                        on: 'hover',
-
-                        addTouchEvents: function() {
-                            alert("1");
-						}
-                    });*/
-                } else {
-                    errorMsg_no_data("监控项 Button");
+                },
+                error: function () {
+                    errorMsg_no_connect("监控点 Button");
                 }
-            },
-            error: function () {
-                errorMsg_no_connect("监控点 Button");
-            }
-        })
-    }).popup({
-            popup: '.special.popup',
-			on: 'hover',
+            })
+		},2000);
     });
    $('#brief_point_id').on('mouseout', '.button',function() {
-       var point_id = this.id.substring(1);
-       $('.special.popup').popup('hide');
+       clearTimeout(timer);
+       var point_id=this.id.substring(1);
+       $("#p"+point_id).popup('hide');
    })
 	//页面加载完后加载监控项的图形
     $(function(){
