@@ -393,6 +393,7 @@ public class PointSerivceImpl implements PointSerivce {
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
             itemVO.setValue(itemDTO.getLastValue());
+            itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             //withTriggers
             if(itemIds.contains(itemDTO.getItemId())) {
@@ -443,6 +444,7 @@ public class PointSerivceImpl implements PointSerivce {
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
             itemVO.setValue(itemDTO.getLastValue());
+            itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             if(itemDTO.getLastTime() != null) {
                 itemVO.setLastTime(itemDTO.getLastTime().format(formatter));
@@ -545,8 +547,10 @@ public class PointSerivceImpl implements PointSerivce {
             for(BriefHistoryDTO historyDTO : historyDTOS) {
                 PointDetailItemDatasVO.ItemDatasVO itemDatasVO = pointDetailItemDatasVO.new ItemDatasVO();
                 itemDatasVO.setValue(historyDTO.getValue());
+                itemDatasVO.setUnits(itemDTO.getUnits());
                 itemDatasVO.setLastTime(historyDTO.getLastTime().format(formatter));
                 //state
+                //通过比较 historyDTO.getValue() 与 两个阀值的大小来确定状态
                 itemDatasVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
                 itemDatasVOS.add(itemDatasVO);
             }

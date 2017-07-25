@@ -20,12 +20,14 @@ public class BriefItemDTO {
     private LocalDateTime lastTime;
     @JSONField(name = "lastvalue")
     private String lastValue;
+    private String units;
     @JSONField(name = "value_type")
     private Integer valueType;
     @JSONField(name = "applications")
     private List<BriefPointDTO> points;
 
-    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type"};
+
+    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","units"};
 
     public int getCustomState() {
         return customState;
@@ -44,6 +46,7 @@ public class BriefItemDTO {
                 ", customState=" + customState +
                 ", lastTime=" + lastTime +
                 ", lastValue='" + lastValue + '\'' +
+                ", units='" + units + '\'' +
                 ", valueType=" + valueType +
                 ", points=" + points +
                 '}';
@@ -106,6 +109,15 @@ public class BriefItemDTO {
             this.lastTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         }
 
+        return this;
+    }
+
+    public String getUnits() {
+        return units;
+    }
+
+    public BriefItemDTO setUnits(String units) {
+        this.units = units;
         return this;
     }
 }

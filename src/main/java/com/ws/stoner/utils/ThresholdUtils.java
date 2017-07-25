@@ -9,7 +9,7 @@ package com.ws.stoner.utils;
 public class ThresholdUtils {
 
     public static String getThresholdValue(String expression) {
-        //expression='{16252}>1000'
+        //expression='{16252}>1000'  expression='{16252}>200M'
         String thresholdValue = "";
         if(expression.indexOf(">") != -1 && expression.indexOf(">=") == -1) {
             // '>'

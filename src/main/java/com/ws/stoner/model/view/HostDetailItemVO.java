@@ -17,9 +17,10 @@ public class HostDetailItemVO {
     @JSONField(name = "data_time")
     private String[] dataTime;
     private Float[] data;
+    private String units;
     @JSONField(name = "graph_name")
     private String graphName;
-    @JSONField(name = "GraphType")
+    @JSONField(name = "graph_type")
     private String graphType;
     private String state;
     private boolean flag;
@@ -33,6 +34,7 @@ public class HostDetailItemVO {
                 ", itemName='" + itemName + '\'' +
                 ", dataTime=" + Arrays.toString(dataTime) +
                 ", data=" + Arrays.toString(data) +
+                ", units='" + units + '\'' +
                 ", graphName='" + graphName + '\'' +
                 ", graphType='" + graphType + '\'' +
                 ", state='" + state + '\'' +
@@ -119,6 +121,15 @@ public class HostDetailItemVO {
 
     public HostDetailItemVO setFlag(boolean flag) {
         this.flag = flag;
+        return this;
+    }
+
+    public String getUnits() {
+        return units;
+    }
+
+    public HostDetailItemVO setUnits(String units) {
+        this.units = units;
         return this;
     }
 }

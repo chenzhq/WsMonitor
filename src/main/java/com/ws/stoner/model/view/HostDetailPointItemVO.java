@@ -12,6 +12,7 @@ public class HostDetailPointItemVO {
     @JSONField(name = "item_name")
     private String name;
     private String value;
+    private String units;
     private String state;
     @JSONField(name = "with_triggers")
     private boolean withTriggers;
@@ -21,6 +22,15 @@ public class HostDetailPointItemVO {
     private String warningPoint;
     @JSONField(name = "high_point")
     private String highPoint;
+
+    public String getUnits() {
+        return units;
+    }
+
+    public HostDetailPointItemVO setUnits(String units) {
+        this.units = units;
+        return this;
+    }
 
     public String getItemId() {
         return itemId;
@@ -100,11 +110,12 @@ public class HostDetailPointItemVO {
                 "itemId='" + itemId + '\'' +
                 ", name='" + name + '\'' +
                 ", value='" + value + '\'' +
+                ", units='" + units + '\'' +
                 ", state='" + state + '\'' +
                 ", withTriggers=" + withTriggers +
                 ", lastTime='" + lastTime + '\'' +
-                ", warningPoint=" + warningPoint +
-                ", highPoint=" + highPoint +
+                ", warningPoint='" + warningPoint + '\'' +
+                ", highPoint='" + highPoint + '\'' +
                 '}';
     }
 }

@@ -55,6 +55,7 @@ public class PointDetailItemDatasVO {
     public class ItemDatasVO {
         private String state;
         private String value;
+        private String units;
         @JSONField(name = "last_time")
         private String lastTime;
 
@@ -85,11 +86,21 @@ public class PointDetailItemDatasVO {
             return this;
         }
 
+        public String getUnits() {
+            return units;
+        }
+
+        public ItemDatasVO setUnits(String units) {
+            this.units = units;
+            return this;
+        }
+
         @Override
         public String toString() {
             return "ItemDatasVO{" +
                     "state='" + state + '\'' +
                     ", value='" + value + '\'' +
+                    ", units='" + units + '\'' +
                     ", lastTime='" + lastTime + '\'' +
                     '}';
         }

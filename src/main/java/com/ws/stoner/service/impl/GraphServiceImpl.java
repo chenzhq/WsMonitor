@@ -118,6 +118,7 @@ public class GraphServiceImpl implements GraphService {
                 itemVO.setGraphType("line");
                 itemVO.setValueType(itemDTO.getValueType());
                 itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+                itemVO.setUnits(itemDTO.getUnits());
                 itemVOS.add(itemVO);
             }
         }
@@ -161,6 +162,7 @@ public class GraphServiceImpl implements GraphService {
                 itemVO.setGraphName(itemDTO.getName());
                 itemVO.setGraphType("line");
                 itemVO.setValueType(itemDTO.getValueType());
+                itemVO.setUnits(itemDTO.getUnits());
                 itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
                 itemVOS.add(itemVO);
         }
