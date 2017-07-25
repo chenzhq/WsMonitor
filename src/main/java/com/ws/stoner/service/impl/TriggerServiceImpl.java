@@ -8,6 +8,7 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
 import com.ws.stoner.model.view.BriefProblemVO;
 import com.ws.stoner.service.TriggerService;
@@ -125,5 +126,22 @@ public class TriggerServiceImpl implements TriggerService {
                 .setOutput(BriefProblemVO.PROPERTY_NAMES)
                 .setFilter(triggerFilter);
         return listTrigger(request, BriefProblemVO.class);
+    }
+
+    /**
+     * 根据itemIds获取监控中的 trggierDTO list
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefTriggerDTO> getTriggersByItemIds(List<String> itemIds) throws ServiceException {
+        TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
+        triggerGetRequest.getParams()
+                .setMonitored(true)
+                .setItemIds(itemIds)
+                .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
+                .setOutput(BriefTriggerDTO.PROPERTY_NAMES);
+        return listTrigger(triggerGetRequest,BriefTriggerDTO.class);
     }
 }

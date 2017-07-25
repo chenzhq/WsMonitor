@@ -31,7 +31,7 @@ public class PointDetailRestController {
     private GraphService graphService;
 
     /**
-     * 监控点概述 标签页
+     * 监控点 概述 标签页
      * @return
      */
     @RequestMapping(value = "/pointdetail", method = RequestMethod.GET)

@@ -104,7 +104,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     /**
-     * 根据指定的 pointids 获取相应的 items BriefItemDTO value_type =0,3
+     * 根据指定的 pointids 获取相应数值型的 items BriefItemDTO value_type =0,3
      * @param pointIds
      * @return
      * @throws ServiceException

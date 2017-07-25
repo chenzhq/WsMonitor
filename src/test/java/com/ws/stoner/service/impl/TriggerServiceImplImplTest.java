@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -59,5 +60,13 @@ public void testListTrigger() throws Exception {
 //    List<TriggerDO> unknownTriggers = triggerService.listUnknownTrigger();
 //    System.out.println(unknownTriggers);
 }
+
+    @Test
+    public void testGetTriggersByItemIds() throws Exception {
+        List<String > itemIds = new ArrayList<>();
+        itemIds.add("37155");
+        List<BriefTriggerDTO> briefTriggerDTOS = triggerService.getTriggersByItemIds(itemIds);
+        System.out.println(briefTriggerDTOS);
+    }
 
 } 

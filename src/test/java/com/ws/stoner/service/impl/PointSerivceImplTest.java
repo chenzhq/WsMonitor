@@ -2,6 +2,7 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
+import com.ws.stoner.model.view.HostDetailPointVO;
 import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import org.junit.Test;
@@ -139,7 +140,12 @@ public void testListProblemPoint() throws Exception {
     System.out.println(pointSerivce.listWarningPoint());
     System.out.println(pointSerivce.listHighPoint());
 
-} 
+}
+
+    @Test
+    public void testgetDetailPointByPointId() throws  Exception {
+        System.out.println(pointSerivce.getDetailPointByPointId("1087"));
+    }
 
 
 } 

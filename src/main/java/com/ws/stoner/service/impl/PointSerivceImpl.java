@@ -10,15 +10,13 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.BriefHistoryDTO;
-import com.ws.stoner.model.dto.BriefHostDTO;
-import com.ws.stoner.model.dto.BriefItemDTO;
-import com.ws.stoner.model.dto.BriefPointDTO;
+import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.HostDetailPointItemVO;
 import com.ws.stoner.model.view.HostDetailPointVO;
 import com.ws.stoner.model.view.PointDetailItemDatasVO;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
+import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -435,6 +433,8 @@ public class PointSerivceImpl implements PointSerivce {
         for(BriefItemDTO itemDTO : withTriggersItemDTOS) {
             itemIds.add(itemDTO.getItemId());
         }
+        //根据含有触发器的itemIds获取相关触发器 triggerDTO list
+        List<BriefTriggerDTO> triggerDTOS = triggerService.getTriggersByItemIds(itemIds);
         List<HostDetailPointItemVO> itemVOS = new ArrayList<>();
         HostDetailPointVO pointVO = new HostDetailPointVO();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -444,11 +444,27 @@ public class PointSerivceImpl implements PointSerivce {
             itemVO.setName(itemDTO.getName());
             itemVO.setValue(itemDTO.getLastValue());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
-            itemVO.setLastTime(itemDTO.getLastTime().format(formatter));
+            if(itemDTO.getLastTime() != null) {
+                itemVO.setLastTime(itemDTO.getLastTime().format(formatter));
+            }
             //withTriggers
             if(itemIds.contains(itemDTO.getItemId())) {
                 itemVO.setWithTriggers(true);
                 //阀值赋值：highPoint,warningPoint
+                //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
+                for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+                    String expression = triggerDTO.getExpression();
+                    String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
+                    if(itemIdInfo.equals(itemDTO.getItemId())) {
+                        if(triggerDTO.getPriority() == 2) {
+                            // priority为2:警告阀值取expression的逻辑比较符号后面数据；
+                            itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
+                        }else if(triggerDTO.getPriority() == 4) {
+                            // priority为4:严重阀值取expression的逻辑比较符号后面数据；
+                            itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
+                        }
+                    }
+                }
 
             }else  {
                 itemVO.setWithTriggers(false);
@@ -483,6 +499,13 @@ public class PointSerivceImpl implements PointSerivce {
         pointIds.add(pointId);
         //step1:取所有的 itemDTOS
         List<BriefItemDTO> itemDTOS = itemService.getItemsByPointIds(pointIds);
+        List<BriefItemDTO> withTriggersItemDTOS = itemService.getItemsWithTriggersByPointIds(pointIds);
+        List<String> itemIds = new ArrayList<>();
+        for(BriefItemDTO itemDTO : withTriggersItemDTOS) {
+            itemIds.add(itemDTO.getItemId());
+        }
+        //根据含有触发器的itemIds获取相关触发器 triggerDTO list
+        List<BriefTriggerDTO> triggerDTOS = triggerService.getTriggersByItemIds(itemIds);
         //step2:循环 itemDTOS 取指定时间段 time 的历史数据，组装到 itemVO ,add到itemVOS
         List<PointDetailItemDatasVO> pointDetailItemDatasVOS = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -496,6 +519,26 @@ public class PointSerivceImpl implements PointSerivce {
                 historyDTOS = historyService.getHistoryByItemIdLimit(itemDTO.getItemId(),itemDTO.getValueType(),time);
             }else {
                 historyDTOS = historyService.getHistoryByItemId(itemDTO.getItemId(),itemDTO.getValueType(),time);
+            }
+            //获取阀值
+            String highPoint = "";
+            String warningPoint = "";
+            if(itemIds.contains(itemDTO.getItemId())) {
+                //阀值赋值：highPoint,warningPoint
+                //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
+                for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+                    String expression = triggerDTO.getExpression();
+                    String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
+                    if(itemIdInfo.equals(itemDTO.getItemId())) {
+                        if(triggerDTO.getPriority() == 2) {
+                            // priority为2:警告阀值取expression的逻辑比较符号后面数据；
+                            highPoint = ThresholdUtils.getThresholdValue(expression);
+                        }else if(triggerDTO.getPriority() == 4) {
+                            // priority为4:严重阀值取expression的逻辑比较符号后面数据；
+                            warningPoint = ThresholdUtils.getThresholdValue(expression);
+                        }
+                    }
+                }
             }
             //赋值 取list BriefHistory的 valueList，lastTimeList
             List<PointDetailItemDatasVO.ItemDatasVO> itemDatasVOS = new ArrayList<>();

@@ -5,6 +5,9 @@ import com.ws.stoner.constant.StatusEnum;
 /**
  * Created by zkf on 2017/7/19.
  */
+/*
+对象状态转换器
+ */
 public class StatusConverter {
     public static String StatusTransform(int customStatus) {
         String status = "";

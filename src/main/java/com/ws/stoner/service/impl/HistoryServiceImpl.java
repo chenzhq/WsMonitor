@@ -50,6 +50,7 @@ public class HistoryServiceImpl implements HistoryService {
      * 根据指定的 itemIds 获取 historys BriefHistoryDTO
      * @param itemId
      * @param valueType  指定用哪个历史数据库表，
+     * @param time  指定取多少天的数据
      * @return
      * @throws ServiceException
      */
@@ -77,8 +78,8 @@ public class HistoryServiceImpl implements HistoryService {
      */
     @Override
     public List<BriefHistoryDTO> getHistoryByItemIdLimit(String itemId, Integer valueType, int time) throws ServiceException {
-        List<String> sortFilter = new ArrayList<String>();
-        List<String> sortOrder = new ArrayList<String>();
+        List<String> sortFilter = new ArrayList<>();
+        List<String> sortOrder = new ArrayList<>();
         sortFilter.add("clock");
         sortOrder.add("DESC");
         HistoryGetRequest historyGetRequest = new HistoryGetRequest();

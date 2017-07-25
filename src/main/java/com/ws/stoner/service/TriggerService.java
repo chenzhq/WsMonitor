@@ -43,5 +43,13 @@ public interface TriggerService {
      */
     List<BriefProblemVO> listBriefProblems() throws ServiceException;
 
+    /**
+     * 根据itemIds获取监控中的 trggierDTO list
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefTriggerDTO> getTriggersByItemIds(List<String> itemIds) throws ServiceException;
+
 
 }
