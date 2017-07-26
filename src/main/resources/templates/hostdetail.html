@@ -715,11 +715,12 @@
 		}).modal('show')
     });
     //加载监控点悬浮框
-	var timer='';
+	var timerButton='';
+    var timerPopup='';
     $('#brief_point_id').on('mouseover', '.button',function(e) {
         e.preventDefault();
         var point_id=this.id.substring(1);
-        timer=setTimeout(function () {
+        /*timerButton=setTimeout(function () {*/
             $.ajax({
                 type: "get",
                 url: "/brief/point?point_id="+point_id,
@@ -758,9 +759,14 @@
                         $("#item_datas").html(str_item_datas);
                         $("#p"+point_id).popup({
                             popup: '.special.popup',
-                            on:'manual'
+                            /*on:'manual',
+                            inline: true,*/
+                            delay: {
+                                show: 100,
+                                hide: 200
+                            }
                         });
-                        $("#p"+point_id).popup('show');
+                        /*$("#p"+point_id).popup('show');*/
                     } else {
                         errorMsg_no_data("监控项 Button");
                     }
@@ -769,13 +775,23 @@
                     errorMsg_no_connect("监控点 Button");
                 }
             })
-		},2000);
+		/*},2000);*/
     });
-   $('#brief_point_id').on('mouseout', '.button',function() {
-       clearTimeout(timer);
-       var point_id=this.id.substring(1);
-       $("#p"+point_id).popup('hide');
-   })
+/*    $('#brief_point_id').on('mouseout', '.button',function() {
+        clearTimeout(timerButton);
+        var point_id=this.id.substring(1);
+        timerPopup = setTimeout(function () {
+            $("#p"+point_id).popup('hide');
+        },1500);
+    });
+    $('.special.popup').on('mouseover', function() {
+        clearTimeout(timerPopup);
+    })
+    $('.special.popup').on('mouseout', function() {
+        console.log("mouseout");
+        $('#brief_point_id .button').popup('hide');
+    })*/
+
 	//页面加载完后加载监控项的图形
     $(function(){
         var host_id = $("#host_id").text();
