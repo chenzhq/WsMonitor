@@ -523,8 +523,8 @@ public class PointSerivceImpl implements PointSerivce {
                 historyDTOS = historyService.getHistoryByItemId(itemDTO.getItemId(),itemDTO.getValueType(),time);
             }
             //获取阀值
-            String highPoint = "";
-            String warningPoint = "";
+            String highPoint = null;
+            String warningPoint = null;
             if(itemIds.contains(itemDTO.getItemId())) {
                 //阀值赋值：highPoint,warningPoint
                 //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,

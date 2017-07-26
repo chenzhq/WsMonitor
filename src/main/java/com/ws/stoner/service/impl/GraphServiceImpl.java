@@ -92,6 +92,7 @@ public class GraphServiceImpl implements GraphService {
                     itemVO.setGraphName(mongoItem.getGraphName());
                     itemVO.setGraphType(mongoItem.getGraphType());
                     itemVO.setValueType(itemDTO.getValueType());
+                    itemVO.setUnits(itemDTO.getUnits());
                     //state
                     if(StatusEnum.HIGH.code == itemDTO.getCustomState()) {
                         itemVO.setState(StatusEnum.HIGH.getName());
