@@ -301,70 +301,29 @@
 										<button id="1time_month" class="ui button">一月</button>
 									</div>
 								</a>
-								<a class="right item">
-									<div class="ui top attached buttons">
-										<button id="11time_today" class="ui button">全部</button>
-										<button id="11time_days" class="ui button">正常</button>
-										<button id="111time_week" class="ui button">危险</button>
-										<button id="11time_week" class="ui button">故障</button>
-										<button id="10time_week" class="ui button">其他</button>
-									</div>
-								</a>
+								<div class="right menu">
+									<a class="item">
+										监控项：
+										<select class="ui dropdown itemsTab">
+											<option value="">选择监控项</option>
+										</select>
+									</a>
+									<a class="item">
+										状态：
+										<select class="ui dropdown stateTab">
+											<option value="">选择状态</option>
+											<option>正常</option>
+											<option>危险</option>
+											<option>故障</option>
+											<option>其他</option>
+											<option>全部</option>
+										</select>
+									</a>
+								</div>
 							</div>
 						</div>
 						<div class="row">
 							<table id="tableData" class="ui compact celled table center aligned">
-								<thead>
-								<tr>
-									<th class="two wide">
-										<div class="ui checkbox">
-											<input type="checkbox" name="example">
-											<label>item_id</label>
-										</div>
-									</th>
-									<th class="four wide">item_name</th>
-									<th class="four wide">last_time</th>
-									<th class="two wide">state</th>
-									<th class="four wide">value</th>
-								</tr></thead>
-								<tbody>
-								<tr>
-									<td>
-										<div class="ui checkbox">
-											<input type="checkbox" name="example">
-											<label>item_id</label>
-										</div>
-									</td>
-									<td>item_name</td>
-									<td>last_time</td>
-									<td>state</td>
-									<td>value</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="ui checkbox">
-											<input type="checkbox" name="example">
-											<label>item_id</label>
-										</div>
-									</td>
-									<td>item_name</td>
-									<td>last_time</td>
-									<td>state</td>
-									<td>value</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="ui checkbox">
-											<input type="checkbox" name="example">
-											<label>item_id</label>
-										</div>
-									</td>
-									<td>item_name</td>
-									<td>last_time</td>
-									<td>state</td>
-									<td>value</td>
-								</tr>
-								</tbody>
 							</table>
 						</div>
 					</div>
@@ -715,12 +674,9 @@
 		}).modal('show')
     });
     //加载监控点悬浮框
-	var timerButton='';
-    var timerPopup='';
-    $('#brief_point_id').on('mouseover', '.button',function(e) {
-        e.preventDefault();
-        var point_id=this.id.substring(1);
-        /*timerButton=setTimeout(function () {*/
+    $('#brief_point_id .button').hover(
+        function() {
+            var point_id=this.id.substring(1);
             $.ajax({
                 type: "get",
                 url: "/brief/point?point_id="+point_id,
@@ -757,16 +713,6 @@
                         $("#point_name").html("名称："+data.point_name);
                         $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
                         $("#item_datas").html(str_item_datas);
-                        $("#p"+point_id).popup({
-                            popup: '.special.popup',
-                            /*on:'manual',
-                            inline: true,*/
-                            delay: {
-                                show: 100,
-                                hide: 200
-                            }
-                        });
-                        /*$("#p"+point_id).popup('show');*/
                     } else {
                         errorMsg_no_data("监控项 Button");
                     }
@@ -775,22 +721,15 @@
                     errorMsg_no_connect("监控点 Button");
                 }
             })
-		/*},2000);*/
+        }).popup({
+        popup: '.special.popup',
+		inline: true,
+        hoverable  : true,
+        delay: {
+            show: 800,
+            hide: 300
+        }
     });
-/*    $('#brief_point_id').on('mouseout', '.button',function() {
-        clearTimeout(timerButton);
-        var point_id=this.id.substring(1);
-        timerPopup = setTimeout(function () {
-            $("#p"+point_id).popup('hide');
-        },1500);
-    });
-    $('.special.popup').on('mouseover', function() {
-        clearTimeout(timerPopup);
-    })
-    $('.special.popup').on('mouseout', function() {
-        console.log("mouseout");
-        $('#brief_point_id .button').popup('hide');
-    })*/
 
 	//页面加载完后加载监控项的图形
     $(function(){
@@ -897,6 +836,34 @@
         });
     };
 
+    function dropdownitemsTab(value){
+        $.ajax({
+            type: "get",
+            url: "/hostgraphs/get_items",
+            data: {
+                point_id: value
+            },
+            dataType: "json",
+            success: function (result) {
+                if(result.success) {
+                    var data=result.data;
+                    var str = "";
+                    for(var i=0;i<data.length;i++)
+                    {
+                        str +=" <option value='"+data[i].value_type+"_"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
+                    }
+                    $(".dropdown.itemsTab option").html(str);
+                }
+                else {
+                    errorMsg_no_data("监控项 Dropdown");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("监控项 Dropdown");
+            }
+        });
+    };
+
     function hostgraphs(result) {
         var data = result.data;
         var str_true = "";
@@ -992,7 +959,10 @@
 					tabReport(point_id,days);
                 }
                 if (path === 'Data') {
-                    // tabData(point_id);
+                    var point_id=1087;
+                    var item_id=34493;
+					tabData(item_id);
+					dropdownitemsTab(point_id);
                 }
             }
         });
@@ -1090,42 +1060,63 @@
             }
         });
     }
-    function tabData(point_id) {
+    function tabData(item_id) {
+        $("#tableData").empty();
         var tableData = $("#tableData").DataTable({
             "createdRow": function (row, data, dataIndex) {
             },
             ajax: {
-                url: '/pointdetail/get_datas?point_id='+point_id+'&time=3',
+                url: '/pointdetail/get_datas?item_id='+item_id+'&time=3',
                 dataSrc: 'data'
             },
             columns: [
-                //item.item_id
+                //item_id
                 {
-                    "data": "item.item_name",
+                    "data": "item_name",
                     "width": "30%",
                     "title": "指标"
                 },
-                {
-                    "data": "item.item_datas.state",
+				{
+                    "data": "state",
                     "width": "10%",
                     "title": "状态",
                     "orderable":false,
                 },
                 {
-                    "data": "item.item_datas.value",
-                    "width": "30%",
+                    "data": "value",
+                    "width": "20%",
                     "title": "值",
                     "orderable":false,
                 },
                 {
-                    "data": "item.item_datas.last_time",
+                    "data": "units",
+                    "width": "10%",
+                    "title": "单位",
+                    "orderable":false,
+                },
+                {
+                    "data": "last_time",
                     "width": "30%",
                     "title": "最新时间",
                     "orderable":false,
                 },
             ],
         });
+        $('.dropdown.stateTab')
+            .dropdown({
+                onChange: function(value, text, $selectedItem) {
+                    tableData.search(text).draw();
+                }
+            });
     }
+    $('.dropdown.itemsTab')
+        .dropdown({
+            onChange: function(value, text, $selectedItem) {
+                var item_id = value.split("_")[1];
+                tabData(item_id);
+                $('.dropdown.stateTab').prop('selectedIndex', 0);
+            }
+        });
 </script>
 </body>
 </html>
