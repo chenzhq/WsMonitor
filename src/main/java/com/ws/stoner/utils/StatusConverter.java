@@ -32,4 +32,54 @@ public class StatusConverter {
         }
         return status;
     }
+
+    public static String getStatusByThresholdValue(Float value,Float warningPointValue,Float highPointValue,String symbol) {
+        String status = "";
+        Float point;
+        Boolean highLevel;
+       switch (symbol) {
+           case ">":
+               if(value < warningPointValue) {
+                   status = StatusEnum.OK.getName();
+               }else if(value >= warningPointValue && value <= highPointValue) {
+                   status = StatusEnum.WARNING.getName();
+               }else if(value > highPointValue) {
+                   status = StatusEnum.HIGH.getName();
+               }
+               break;
+           case "<":
+               if(value > warningPointValue) {
+                   status = StatusEnum.OK.getName();
+               }else if(value <= warningPointValue && value >= highPointValue) {
+                   status = StatusEnum.WARNING.getName();
+               }else if(value < highPointValue) {
+                   status = StatusEnum.HIGH.getName();
+               }
+               break;
+           case "<>":
+               point = warningPointValue != null ? warningPointValue : highPointValue;
+               highLevel = warningPointValue != null ? false : true;
+               if(value == point) {
+                   status = StatusEnum.OK.getName();
+               }else if(highLevel && value != point) {
+                   status = StatusEnum.HIGH.getName();
+               }else if(!highLevel && value != point) {
+                   status = StatusEnum.WARNING.getName();
+               }
+               break;
+           case "=":
+               point = warningPointValue != null ? warningPointValue : highPointValue;
+               highLevel = warningPointValue != null ? false : true;
+               if(value != point) {
+                   status = StatusEnum.OK.getName();
+               }else if(highLevel && value == point) {
+                   status = StatusEnum.HIGH.getName();
+               }else if(!highLevel && value == point) {
+                   status = StatusEnum.WARNING.getName();
+               }
+               break;
+       }
+       return status;
+    }
+
 }

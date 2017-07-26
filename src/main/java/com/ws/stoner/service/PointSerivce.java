@@ -115,11 +115,5 @@ public interface PointSerivce {
      */
     HostDetailPointVO getDetailPointByPointId(String pointId) throws ServiceException;
 
-    /**
-     * 根据 pointId 组装监控点详情页面中 时序数据 的业务数据
-     * @param pointId
-     * @return
-     * @throws ServiceException
-     */
-    List<PointDetailItemDatasVO> getItemDatasByPointId(String pointId, int time) throws ServiceException;
+
 }

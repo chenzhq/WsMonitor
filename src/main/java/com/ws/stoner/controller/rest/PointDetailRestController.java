@@ -2,9 +2,10 @@ package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.view.HostDetailItemVO;
+import com.ws.stoner.model.view.HostDetailPointItemVO;
 import com.ws.stoner.model.view.HostDetailPointVO;
-import com.ws.stoner.model.view.PointDetailItemDatasVO;
 import com.ws.stoner.service.GraphService;
+import com.ws.stoner.service.ItemService;
 import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 import static com.ws.stoner.constant.MessageConsts.REST_RESPONSE_SUCCESS;
@@ -29,6 +29,9 @@ public class PointDetailRestController {
 
     @Autowired
     private GraphService graphService;
+
+    @Autowired
+    private ItemService itemService;
 
     /**
      * 监控点 概述 标签页
@@ -55,9 +58,9 @@ public class PointDetailRestController {
      * @return
      */
     @RequestMapping(value = "/pointdetail/get_datas", method = RequestMethod.GET)
-    public String getPointDatas(@RequestParam("point_id") String pointId,@RequestParam("time") int time) throws ServiceException {
-        List<PointDetailItemDatasVO> pointDetailItemDatasVOS = pointSerivce.getItemDatasByPointId(pointId,time);
-        return RestResultGenerator.genResult(pointDetailItemDatasVOS, REST_RESPONSE_SUCCESS).toString();
+    public String getPointDatas(@RequestParam("item_id") String itemId,@RequestParam("time") int time) throws ServiceException {
+        List<HostDetailPointItemVO> itemDatas = itemService.getItemDatasByItemId(itemId,time);
+        return RestResultGenerator.genResult(itemDatas, REST_RESPONSE_SUCCESS).toString();
     }
 
 }

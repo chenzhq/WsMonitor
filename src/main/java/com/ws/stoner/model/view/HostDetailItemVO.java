@@ -26,6 +26,12 @@ public class HostDetailItemVO {
     private boolean flag;
     @JSONField(name = "value_type")
     private Integer valueType;
+    @JSONField(name = "warning_point")
+    private String warningPoint;
+    @JSONField(name = "high_point")
+    private String highPoint;
+    @JSONField(name = "with_triggers")
+    private boolean withTriggers;
 
     @Override
     public String toString() {
@@ -40,6 +46,9 @@ public class HostDetailItemVO {
                 ", state='" + state + '\'' +
                 ", flag=" + flag +
                 ", valueType=" + valueType +
+                ", warningPoint='" + warningPoint + '\'' +
+                ", highPoint='" + highPoint + '\'' +
+                ", withTriggers=" + withTriggers +
                 '}';
     }
 
@@ -130,6 +139,33 @@ public class HostDetailItemVO {
 
     public HostDetailItemVO setUnits(String units) {
         this.units = units;
+        return this;
+    }
+
+    public String getWarningPoint() {
+        return warningPoint;
+    }
+
+    public HostDetailItemVO setWarningPoint(String warningPoint) {
+        this.warningPoint = warningPoint;
+        return this;
+    }
+
+    public String getHighPoint() {
+        return highPoint;
+    }
+
+    public HostDetailItemVO setHighPoint(String highPoint) {
+        this.highPoint = highPoint;
+        return this;
+    }
+
+    public boolean isWithTriggers() {
+        return withTriggers;
+    }
+
+    public HostDetailItemVO setWithTriggers(boolean withTriggers) {
+        this.withTriggers = withTriggers;
         return this;
     }
 }

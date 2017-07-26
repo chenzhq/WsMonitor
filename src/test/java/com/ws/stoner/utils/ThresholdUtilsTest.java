@@ -38,5 +38,9 @@ public void testGetThresholdValue() throws Exception {
     System.out.println(ThresholdUtils.getThresholdValue("{16252}>1000"));
 } 
 
+    @Test
+    public void testGetgetTransformValue() throws Exception {
+        System.out.println(ThresholdUtils.getTransformValue(" 60m"));
+    }
 
 } 

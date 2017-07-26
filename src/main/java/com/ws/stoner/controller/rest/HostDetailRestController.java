@@ -59,6 +59,12 @@ public class HostDetailRestController {
         return RestResultGenerator.genResult(itemVOS, REST_RESPONSE_SUCCESS).toString();
     }
 
+    /**
+     * 获取指定主机的 point 下拉框列表
+     * @param hostId
+     * @return
+     * @throws ServiceException
+     */
     @RequestMapping(value = "hostgraphs/get_points", method = RequestMethod.GET)
     public String getPointsByHostId(@RequestParam("host_id") String hostId) throws ServiceException {
         //step1:根据 hostId 取对应 BreifHostDTO，单个 hostDTO
@@ -73,6 +79,12 @@ public class HostDetailRestController {
         return RestResultGenerator.genResult(pointVOS, REST_RESPONSE_SUCCESS).toString();
     }
 
+    /**
+     * 获取指定监控点的 item 下拉框列表
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
     @RequestMapping(value = "hostgraphs/get_items", method = RequestMethod.GET)
     public String getItemsByPointId(@RequestParam("point_id") String pointId) throws ServiceException {
         List<String> pointIds = new ArrayList<>();
@@ -89,6 +101,12 @@ public class HostDetailRestController {
         return RestResultGenerator.genResult(itemVOS, REST_RESPONSE_SUCCESS).toString();
     }
 
+    /**
+     * 获取指定 value_type 的 图形 graph 下拉框列表
+     * @param valueType
+     * @return
+     * @throws ServiceException
+     */
     @RequestMapping(value = "hostgraphs/get_graphs", method = RequestMethod.GET)
     public String getGraphsByValueType(@RequestParam("value_type") String valueType) throws ServiceException {
 

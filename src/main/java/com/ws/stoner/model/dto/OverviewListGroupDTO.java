@@ -18,7 +18,7 @@ public class OverviewListGroupDTO {
     @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String state;
     private String type;
-    private boolean enable;
+    private Boolean enable;
     @JSONField(name = "group_children")
     private String[] groupChildren;
 
@@ -35,11 +35,11 @@ public class OverviewListGroupDTO {
                 '}';
     }
 
-    public boolean isEnable() {
+    public Boolean isEnable() {
         return enable;
     }
 
-    public OverviewListGroupDTO setEnable(boolean enable) {
+    public OverviewListGroupDTO setEnable(Boolean enable) {
         this.enable = enable;
         return this;
     }

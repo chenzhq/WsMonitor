@@ -8,11 +8,14 @@ import com.ws.stoner.model.DO.mongo.GraphType;
 import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.dto.BriefHistoryDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
+import com.ws.stoner.model.dto.BriefTriggerDTO;
 import com.ws.stoner.model.view.HostDetailItemVO;
 import com.ws.stoner.service.GraphService;
 import com.ws.stoner.service.HistoryService;
 import com.ws.stoner.service.ItemService;
+import com.ws.stoner.service.TriggerService;
 import com.ws.stoner.utils.StatusConverter;
+import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,8 @@ public class GraphServiceImpl implements GraphService {
     @Autowired
     private HistoryService historyService;
 
+    @Autowired
+    private TriggerService triggerService;
 
 
     /**
@@ -63,7 +68,7 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
-     * 根据 hostIds 查询出指定设备的 图形监控项 graph item
+     * 根据 hostId 查询出指定设备的 图形监控项 graph item
      * @param hostId
      * @return
      * @throws ServiceException
@@ -74,8 +79,15 @@ public class GraphServiceImpl implements GraphService {
         List<String> hostIds = new ArrayList<>();
         hostIds.add(hostId);
         List<BriefItemDTO> itemDTOS = itemService.getValueItemsByHostIds(hostIds);
+        List<BriefItemDTO> withTriggersItemDTOS = itemService.getItemsWithTriggersByHostIds(hostIds);
+        List<String> itemIds = new ArrayList<>();
+        for(BriefItemDTO itemDTO : withTriggersItemDTOS) {
+            itemIds.add(itemDTO.getItemId());
+        }
+        //根据含有触发器的itemIds获取相关触发器 triggerDTO list
+        List<BriefTriggerDTO> triggerDTOS = triggerService.getTriggersByItemIds(itemIds);
         //取mongodb的所有hostid下的items
-        List<Item> mongoItems = itemService.getItemsByHostIdFromMongo(hostIds.get(0));
+        List<Item> mongoItems = itemService.getItemsByHostIdFromMongo(hostId);
         //step3:循环 List BriefItemDTO，根据itemid取mongodb的 items，新建ItemVO对象
         List<HostDetailItemVO> itemVOS = new ArrayList<>();
         //用于组装既是问题也是自定义的itemIds
@@ -83,6 +95,28 @@ public class GraphServiceImpl implements GraphService {
         //循环组装自定义item
         for(BriefItemDTO itemDTO : itemDTOS) {
             HostDetailItemVO itemVO = new HostDetailItemVO();
+
+            //阀值赋值：highPoint,warningPoint
+            if(itemIds.contains(itemDTO.getItemId())) {
+                itemVO.setWithTriggers(true);
+                //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
+                for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+                    String expression = triggerDTO.getExpression();
+                    String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
+                    if(itemIdInfo.equals(itemDTO.getItemId())) {
+                        if(triggerDTO.getPriority() == 2) {
+                            // priority为2:警告阀值取expression的逻辑比较符号后面数据；
+                            itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
+                        }else if(triggerDTO.getPriority() == 4) {
+                            // priority为4:严重阀值取expression的逻辑比较符号后面数据；
+                            itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
+                        }
+                    }
+                }
+            }else {
+                itemVO.setWithTriggers(false);
+            }
+
             for(Item mongoItem :mongoItems) {
                 if(mongoItem.getItemId().equals(itemDTO.getItemId())) {
                     // if 有匹配的，确定是用户自定义,flag赋给ItemVO的flag，用的是什么图形，graph_type赋给ItemVO的graph_type，graph_name赋给itemVO 的graph_name
@@ -112,6 +146,27 @@ public class GraphServiceImpl implements GraphService {
             //问题item，且非用户自定义
             if(itemDTO.getCustomState() != StatusEnum.OK.code && !problemIds.contains(itemDTO.getItemId())) {
                 HostDetailItemVO itemVO = new HostDetailItemVO();
+                //阀值赋值：highPoint,warningPoint
+                if(itemIds.contains(itemDTO.getItemId())) {
+                    itemVO.setWithTriggers(true);
+                    //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
+                    for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+                        String expression = triggerDTO.getExpression();
+                        String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
+                        if(itemIdInfo.equals(itemDTO.getItemId())) {
+                            if(triggerDTO.getPriority() == 2) {
+                                // priority为2:警告阀值取expression的逻辑比较符号后面数据；
+                                itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
+                            }else if(triggerDTO.getPriority() == 4) {
+                                // priority为4:严重阀值取expression的逻辑比较符号后面数据；
+                                itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
+                            }
+                        }
+                    }
+                }else {
+                    itemVO.setWithTriggers(false);
+                }
+
                 itemVO.setItemId(itemDTO.getItemId());
                 itemVO.setItemName(itemDTO.getName());
                 itemVO.setFlag(false);

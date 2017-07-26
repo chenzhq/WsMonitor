@@ -5,6 +5,7 @@ import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.BootApplication;
 import com.ws.stoner.model.dto.BriefItemDTO;
+import com.ws.stoner.model.view.HostDetailPointItemVO;
 import com.ws.stoner.service.ItemService;
 import org.junit.After;
 import org.junit.Before;
@@ -82,6 +83,12 @@ public void testListItem() throws Exception {
         ids.add("1087");
         List<BriefItemDTO> itemDTOS = itemService.getValueItemsByPointIds(ids);
         System.out.println(itemDTOS);
+    }
+
+    @Test
+    public void testgetItemDatasByItemId() throws Exception {
+        List<HostDetailPointItemVO> itemVOS = itemService.getItemDatasByItemId("37189",40);
+        System.out.println(itemVOS);
     }
 
 

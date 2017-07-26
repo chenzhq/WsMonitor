@@ -6,6 +6,7 @@ import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.dto.BriefItemDTO;
+import com.ws.stoner.model.view.HostDetailPointItemVO;
 
 import java.util.List;
 
@@ -33,6 +34,14 @@ public interface ItemService {
     List<ItemDO> listItemByTriggerIds(List<String> triggerIds) throws ServiceException;
 
     /**
+     * 根据 itemIds 获取指定的 itemDTOS
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefItemDTO> getItemsByItemIds(List<String> itemIds) throws ServiceException ;
+
+    /**
      * 根据指定的hostids 获取相应的 items BriefItemDTO
      * @param hostIds
      * @return
@@ -57,7 +66,15 @@ public interface ItemService {
     List<BriefItemDTO> getItemsByPointIds(List<String> pointIds) throws ServiceException;
 
     /**
-     * pointIds 获取附带有触发器的 items BriefItemDTO
+     * 根据 hostIds 获取附带有触发器的 items BriefItemDTO
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefItemDTO> getItemsWithTriggersByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
+     * 根据 pointIds 获取附带有触发器的 items BriefItemDTO
      * @param pointIds
      * @return
      * @throws ServiceException
@@ -83,4 +100,13 @@ item 在 mongodb下的业务方法
      * @throws ServiceException
      */
     boolean saveGraphItemFromMongo(Item item) throws ServiceException;
+
+
+    /**
+     * 根据 itemId 组装监控点详情页面中 时序数据 的业务数据
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    List<HostDetailPointItemVO> getItemDatasByItemId (String itemId, int time) throws ServiceException;
 }
