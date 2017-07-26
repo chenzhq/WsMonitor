@@ -392,7 +392,7 @@ public class PointSerivceImpl implements PointSerivce {
             HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
-            itemVO.setValue(itemDTO.getLastValue());
+            itemVO.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
             itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             //withTriggers

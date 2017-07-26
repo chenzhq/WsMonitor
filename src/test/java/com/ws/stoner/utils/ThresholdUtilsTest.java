@@ -43,4 +43,8 @@ public void testGetThresholdValue() throws Exception {
         System.out.println(ThresholdUtils.getTransformValue(" 60m"));
     }
 
+    @Test
+    public void testtransformValueUnits() throws Exception {
+        System.out.println(ThresholdUtils.transformValueUnits("32587","s"));
+    }
 } 

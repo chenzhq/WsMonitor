@@ -6,6 +6,7 @@ import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.dao.MongoItemDAO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.DAOException;
@@ -308,8 +309,10 @@ public class ItemServiceImpl implements ItemService {
             }
             Float valueInfo = Float.parseFloat(historyDTO.getValue());
             //状态转换
-            if(warningPointValue != null && highPointValue != null) {
+            if(warningPointValue != null || highPointValue != null) {
                 state = StatusConverter.getStatusByThresholdValue(valueInfo,warningPointValue,highPointValue,symbol);
+            }else{
+                state = StatusEnum.OK.getName();
             }
             itemHistoryData.setState(state);
             itemHistoryDatas.add(itemHistoryData);

@@ -1,5 +1,12 @@
 package com.ws.stoner.utils;
 
+import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Map;
+
 /**
  * Created by zkf on 2017/7/25.
  */
@@ -75,5 +82,47 @@ public class ThresholdUtils {
           value = thresholdValue;
       }
       return value;
+    }
+
+    public static String transformValueUnits(String valueInfo,String units) {
+        String valueUnits = "";
+        String multiple = "";
+        String UpUnits = units.toUpperCase();
+        if("B".equals(UpUnits) || "BPS".equals(UpUnits) || "BYTE".equals(UpUnits)) {
+            Float value = Float.parseFloat(valueInfo.trim());
+            if(value > 1024) {
+                value = value / 1024;
+                multiple = "K";
+                if(value > 1024) {
+                    value = value / 1024;
+                    multiple = "M";
+                    if(value > 1024) {
+                        value = value / 1024;
+                        multiple = "G";
+                    }
+                }
+            }
+            valueUnits = new DecimalFormat(".00").format(value) + multiple + units.toUpperCase();
+        }else if("UPTIME".equals(UpUnits) || "S".equals(UpUnits)) {
+            if(Float.parseFloat(valueInfo.trim()) < 0.001) {
+                valueUnits = "< 1 毫秒";
+            }else {
+                Long sec = Long.parseLong(valueInfo.trim());
+                int days = (int) (sec / (24 * 3600));
+                int hours = (int) (sec / 300 % 24);
+                int minute = (int) (sec / 60 % 60);
+                StringBuilder timeStringBuilder = new StringBuilder();
+                timeStringBuilder.append(days == 0 ? "" : days + "天");
+                timeStringBuilder.append(hours == 0 ? "" : hours + "小时");
+                timeStringBuilder.append(minute == 0 ? "" : minute + "分钟");
+                valueUnits = timeStringBuilder.toString();
+            }
+        }else if("UNIXTIME".equals(UpUnits)) {
+            //未处理解析
+            valueUnits = valueInfo + units;
+        }else {
+            valueUnits = valueInfo + units;
+        }
+        return valueUnits;
     }
 }
