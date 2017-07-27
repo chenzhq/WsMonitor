@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -96,6 +97,14 @@ public void testCountOKHost() throws Exception {
     int okhostNum = hostService.countOkHost();
     System.out.println(okhostNum);
 }
+
+    @Test
+    public void testgetHostInterfaceByHostDTO() throws Exception{
+        List<String> hostIds = new ArrayList<>();
+        hostIds.add("10084");
+        BriefHostDTO hostDTO = hostService.getHostsByHostIds(hostIds).get(0);
+        System.out.println(hostService.getHostInterfaceByHostDTO(hostDTO));
+    }
 
 
 } 

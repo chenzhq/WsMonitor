@@ -389,18 +389,18 @@
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
-																	<div class="field" th:class="${interfaceVO.IPMIIp} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.agentIp} == null ?  'disabled field': 'field'">
 																		IP:
-																		<span th:text="${interfaceVO.IPMIIp}">127.0.0.1</span>
+																		<span th:text="${interfaceVO.agentIp}">127.0.0.1</span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIDNS} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.agentDNS} == null ? 'disabled field': 'field'">
 																		DNS:
-																		<span  th:text="${interfaceVO.IPMIDNS} "></span>
+																		<span  th:text="${interfaceVO.agentDNS} "></span>
 
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIPort} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.agentPort} == null ? 'disabled field': 'field'">
 																		端口号:
-																		<span th:text="${interfaceVO.IPMIPort}">10050</span>
+																		<span th:text="${interfaceVO.agentPort}">10050</span>
 																	</div>
 																</div>
 															</div>
@@ -414,18 +414,18 @@
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
-																	<div class="field" th:class="${interfaceVO.IPMIIp} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.SNMPIp} == null ? 'disabled field': 'field'">
 																		IP:
-																		<span th:text="${interfaceVO.IPMIIp}">127.0.0.1</span>
+																		<span th:text="${interfaceVO.SNMPIp}">127.0.0.1</span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIDNS} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.SNMPDNS} == null ? 'disabled field': 'field'">
 																		DNS:
-																		<span  th:text="${interfaceVO.IPMIDNS} "></span>
+																		<span  th:text="${interfaceVO.SNMPDNS} "></span>
 
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIPort} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.SNMPPort} == null ? 'disabled field': 'field'">
 																		端口号:
-																		<span th:text="${interfaceVO.IPMIPort}">10050</span>
+																		<span th:text="${interfaceVO.SNMPPort}">10050</span>
 																	</div>
 																</div>
 															</div>
@@ -439,16 +439,16 @@
 														<div class="ui description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
-																	<div class="field" th:class="${interfaceVO.IPMIIp} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.IPMIIp} == null ? 'disabled field': 'field'">
 																		IP:
 																		<span th:text="${interfaceVO.IPMIIp}">127.0.0.1</span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIDNS} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.IPMIDNS} == null ? 'disabled field': 'field'">
 																		DNS:
 																		<span  th:text="${interfaceVO.IPMIDNS} "></span>
 
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIPort} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.IPMIPort} == null ? 'disabled field': 'field'">
 																		端口号:
 																		<span th:text="${interfaceVO.IPMIPort}">10050</span>
 																	</div>
@@ -464,18 +464,18 @@
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields no_margin_bottom" style="margin-bottom: 0px">
-																	<div class="field" th:class="${interfaceVO.IPMIIp} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.JMXIp} == null ? 'disabled field': 'field'">
 																		IP:
-																		<span th:text="${interfaceVO.IPMIIp}">127.0.0.1</span>
+																		<span th:text="${interfaceVO.JMXIp}">127.0.0.1</span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIDNS} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.JMXDNS} == null ? 'disabled field': 'field'">
 																		DNS:
-																		<span  th:text="${interfaceVO.IPMIDNS} "></span>
+																		<span  th:text="${interfaceVO.JMXDNS} "></span>
 
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIPort} ? 'field' : 'disabled field'">
+																	<div class="field" th:class="${interfaceVO.JMXPort} == null ? 'disabled field': 'field'">
 																		端口号:
-																		<span th:text="${interfaceVO.IPMIPort}">10050</span>
+																		<span th:text="${interfaceVO.JMXPort}">10050</span>
 																	</div>
 																</div>
 															</div>
