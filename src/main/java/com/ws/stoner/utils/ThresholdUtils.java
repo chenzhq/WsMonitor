@@ -121,7 +121,7 @@ public class ThresholdUtils {
             //未处理解析
             valueUnits = valueInfo + units;
         }else {
-            valueUnits = valueInfo + units;
+            valueUnits = new DecimalFormat(".00").format(Float.parseFloat(valueInfo.trim())) + units;
         }
         return valueUnits;
     }

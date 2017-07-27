@@ -291,7 +291,7 @@ public class ItemServiceImpl implements ItemService {
             itemHistoryData.setItemId(itemDTO.getItemId());
             itemHistoryData.setName(itemDTO.getName());
             itemHistoryData.setUnits(itemDTO.getUnits());
-            itemHistoryData.setValue(historyDTO.getValue());
+            itemHistoryData.setValue(ThresholdUtils.transformValueUnits(historyDTO.getValue(),itemDTO.getUnits()));
             itemHistoryData.setLastTime(historyDTO.getLastTime().format(formatter));
             itemHistoryData.setWithTriggers(withTrigger);
             itemHistoryData.setWarningPoint(warningPoint);
