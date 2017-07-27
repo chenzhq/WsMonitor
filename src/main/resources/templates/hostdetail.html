@@ -263,66 +263,64 @@
 						</div>
 					</div>
 					<div class="ui tab segment" data-tab="Report">
-						<div class="row">
-							<div class="ui secondary menu">
-								<a class="left item">
-									<div class="ui top attached buttons">
-										<button id="timetoday" class="ui button">最新40条</button>
-										<button id="10timetoday" class="ui button">今天</button>
-										<button id="timedays" class="ui button">三天</button>
-										<button id="timeweek" class="ui button">一周</button>
-										<button id="timemonth" class="ui button">一月</button>
+						<div class="ui padded grid">
+							<div class="row">
+								<div class="eight wide column">
+									<div class="ui top attached left floated buttons Time">
+										<button value="40" class="ui grey basic button">最新40条</button>
+										<button value="1" class="ui grey basic button">1天</button>
+										<button value="3" class="ui grey basic button">3天</button>
+										<button value="7" class="ui grey basic button">7天</button>
+										<button value="30" class="ui grey basic button">30天</button>
 									</div>
-								</a>
-								<a class="right item">
-									<div class="ui top attached buttons">
-										<button id="1timetoday" class="ui button">柱状图</button>
-										<button id="1timedays" class="ui button">线状图</button>
-										<button id="1timeweek" class="ui button">面积图</button>
+								</div>
+								<div class="eight wide column">
+									<div class="ui top attached right floated buttons Type">
+										<button class="ui grey basic button">柱状图</button>
+										<button class="ui grey basic button">线状图</button>
+										<button class="ui grey basic button">面积图</button>
 									</div>
-								</a>
-							</div>
-						</div>
-						<div class="row">
-							<div class="ui three column grid" id="chartReport">
-								图形展示区域
-							</div>
-						</div>
-					</div>
-					<div class="ui tab segment" data-tab="Data">
-						<div class="row">
-							<div class="ui secondary menu">
-								<a class="left item">
-									<div class="ui top attached buttons">
-										<button id="10time_today" class="ui button">最新40条</button>
-										<button id="1time_today" class="ui button">今天</button>
-										<button id="1time_days" class="ui button">三天</button>
-										<button id="1time_week" class="ui button">一周</button>
-										<button id="1time_month" class="ui button">一月</button>
-									</div>
-								</a>
-								<div class="right menu">
-									<a class="item">
-										监控项：
-										<select class="ui dropdown itemsTab">
-											<option value="">选择监控项</option>
-										</select>
-									</a>
-									<a class="item">
-										状态：
-										<select class="ui dropdown stateTab">
-											<option value="">选择状态</option>
-											<option>正常</option>
-											<option>危险</option>
-											<option>故障</option>
-											<option>其他</option>
-											<option>全部</option>
-										</select>
-									</a>
 								</div>
 							</div>
 						</div>
 						<div class="row">
+							<div class="ui three column grid" id="chartReport">
+								<p></p>
+							</div>
+						</div>
+					</div>
+					<div class="ui tab segment" data-tab="Data">
+						<div class="ui padded grid">
+							<div class="row">
+								<div class="eight wide column">
+									<div class="ui top attached left floated buttons Time">
+										<button value="40" class="ui grey basic button">最新40条</button>
+										<button value="1" class="ui grey basic button">1天</button>
+										<button value="3" class="ui grey basic button">3天</button>
+										<button value="7" class="ui grey basic button">7天</button>
+										<button value="30" class="ui grey basic button">30天</button>
+									</div>
+								</div>
+								<div class="right aligned four wide column">
+									监控项：
+									<select class="ui dropdown itemsTab" id="itemsTab">
+										<option value="">选择监控项</option>
+									</select>
+								</div>
+								<div class="right aligned four wide column">
+									状态：
+									<select class="ui dropdown stateTab">
+										<option value="">选择状态</option>
+										<option>正常</option>
+										<option>危险</option>
+										<option>故障</option>
+										<option>其他</option>
+										<option>全部</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row" >
 							<table id="tableData" class="ui compact celled table center aligned">
 							</table>
 						</div>
@@ -1025,12 +1023,79 @@
                     var days=3;
                     var point_id=1087;
 					tabReport(point_id,days);
+                    $('.ui.buttons.Time .button').on('click', function() {
+                        tabReport(point_id,this.value);
+                    })
+                    $('.ui.buttons.Type .button').on('click', function() {
+                        alert(this.value)
+                    })
                 }
                 if (path === 'Data') {
                     var point_id=1087;
                     var item_id=34493;
-					tabData(item_id);
+					/*tabData(item_id);*/
+                    var tableData = $("#tableData").DataTable({
+                        "createdRow": function (row, data, dataIndex) {
+                        },
+                        ajax: {
+                            url: '/pointdetail/get_datas?item_id='+item_id+'&time=3',
+                            dataSrc: 'data'
+                        },
+                        columns: [
+                            //item_id
+                            {
+                                "data": "last_time",
+                                "width": "30%",
+                                "title": "最新时间",
+                            },
+                            {
+                                "data": "item_name",
+                                "width": "30%",
+                                "title": "指标",
+                                "orderable":false,
+                            },
+                            {
+                                "data": "state",
+                                "width": "10%",
+                                "title": "状态",
+                                "orderable":false,
+                            },
+                            {
+                                "data": "value",
+                                "width": "20%",
+                                "title": "值",
+                                "orderable":false,
+                            },
+                            {
+                                "data": "units",
+                                "width": "10%",
+                                "title": "单位",
+                                "orderable":false,
+                            },
+                        ],
+                    });
 					dropdownitemsTab(point_id);
+                    $('.dropdown.stateTab')
+                        .dropdown({
+                            onChange: function(value, text, $selectedItem) {
+                                tableData.search(text).draw();
+                            }
+                        });
+                    $('.dropdown.itemsTab')
+                        .dropdown({
+                            onChange: function(value, text, $selectedItem) {
+                                var item_id = value.split("_")[1];
+                                var url=  "/pointdetail/get_datas?item_id="+item_id+"&time=3";
+                                tableData.ajax.url(url).load();
+                                $('.dropdown.stateTab').prop('selectedIndex', 0);
+                            }
+                        });
+                    $('.ui.buttons.Time .button').on('click', function() {
+                        var item_id = $('.dropdown.stateTab').dropdown('get text');
+                        alert(item_id);
+                        var url=  "/pointdetail/get_datas?item_id="+item_id+"&time=3"+this.value;
+                        tableData.ajax.url(url).load();
+                    })
                 }
             }
         });
@@ -1117,7 +1182,6 @@
 						};
 						myChart.setOption(option);
 					}
-                    /*$("#chartReport").html(str);*/
                 }
                 else {
                     errorMsg_no_data("监控点 Tab");
@@ -1128,63 +1192,6 @@
             }
         });
     }
-    function tabData(item_id) {
-        $("#tableData").empty();
-        var tableData = $("#tableData").DataTable({
-            "createdRow": function (row, data, dataIndex) {
-            },
-            ajax: {
-                url: '/pointdetail/get_datas?item_id='+item_id+'&time=3',
-                dataSrc: 'data'
-            },
-            columns: [
-                //item_id
-                {
-                    "data": "item_name",
-                    "width": "30%",
-                    "title": "指标"
-                },
-				{
-                    "data": "state",
-                    "width": "10%",
-                    "title": "状态",
-                    "orderable":false,
-                },
-                {
-                    "data": "value",
-                    "width": "20%",
-                    "title": "值",
-                    "orderable":false,
-                },
-                {
-                    "data": "units",
-                    "width": "10%",
-                    "title": "单位",
-                    "orderable":false,
-                },
-                {
-                    "data": "last_time",
-                    "width": "30%",
-                    "title": "最新时间",
-                    "orderable":false,
-                },
-            ],
-        });
-        $('.dropdown.stateTab')
-            .dropdown({
-                onChange: function(value, text, $selectedItem) {
-                    tableData.search(text).draw();
-                }
-            });
-    }
-    $('.dropdown.itemsTab')
-        .dropdown({
-            onChange: function(value, text, $selectedItem) {
-                var item_id = value.split("_")[1];
-                tabData(item_id);
-                $('.dropdown.stateTab').prop('selectedIndex', 0);
-            }
-        });
 </script>
 </body>
 </html>
