@@ -10,10 +10,8 @@ import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,9 +123,6 @@ public class HostDetailRestController {
                 case "area":
                     graphVO.setGraphName(GraphTypeEnum.AREA.name);
                     break;
-                case "table":
-                    graphVO.setGraphName(GraphTypeEnum.TABLE.name);
-                    break;
                 case "gauge":
                     graphVO.setGraphName(GraphTypeEnum.GAUGE.name);
                     break;
@@ -142,9 +137,7 @@ public class HostDetailRestController {
      * @return
      */
     @RequestMapping(value = "hostgraphs/save_graph", method = RequestMethod.POST)
-    public String saveHostItemsGraph(
-            @RequestParam("graph_item") Item graphItem
-            ) throws ServiceException {
+    public String saveHostItemsGraph( @RequestBody Item graphItem) throws ServiceException {
         boolean success =  itemService.saveGraphItemFromMongo(graphItem);
         if(success) {
             List<HostDetailItemVO> itemVOS = graphService.getGraphItemByHostId(graphItem.getHostId());

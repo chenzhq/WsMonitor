@@ -34,7 +34,7 @@ public class BriefProblemVO {
         Long sec = duration.getSeconds();
 
         int days = (int) (sec / (24 * 3600));
-        int hours = (int) (sec / 300 % 24);
+        int hours = (int) (sec / 3600 % 24);
         int minute = (int) (sec / 60 % 60);
         StringBuilder timeStringBuilder = new StringBuilder();
         timeStringBuilder.append(days == 0 ? "" : days + "天");

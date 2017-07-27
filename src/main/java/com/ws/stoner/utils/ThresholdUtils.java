@@ -1,20 +1,16 @@
 package com.ws.stoner.utils;
 
 import java.text.DecimalFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Map;
 
 /**
  * Created by zkf on 2017/7/25.
  */
 /*
-阀值解析器
+阀值解析 & 单位转换
  */
 public class ThresholdUtils {
 
+    //阀值解析 返回阀值
     public static String getThresholdValue(String expression) {
         //expression='{16252}>1000'  expression='{16252}>200M'
         String thresholdValue = "";
@@ -34,6 +30,7 @@ public class ThresholdUtils {
         return thresholdValue.trim();
     }
 
+    //返回比较符号
     public static String getThresholdSymbol(String expression) {
         //expression='{16252}>1000'  expression='{16252}>200M'
         String symbol = "";
@@ -53,6 +50,7 @@ public class ThresholdUtils {
         return symbol;
     }
 
+    // 返回原始数值
     public static String getTransformValue(String thresholdValue) {
         String value = "";
         thresholdValue = thresholdValue.trim();
@@ -84,6 +82,7 @@ public class ThresholdUtils {
       return value;
     }
 
+    //单位转换 返回转换后的带单位的数值
     public static String transformValueUnits(String valueInfo,String units) {
         String valueUnits = "";
         String multiple = "";
@@ -99,6 +98,10 @@ public class ThresholdUtils {
                     if(value > 1024) {
                         value = value / 1024;
                         multiple = "G";
+                        if(value > 1024) {
+                            value = value / 1024;
+                            multiple = "T";
+                        }
                     }
                 }
             }
@@ -109,7 +112,7 @@ public class ThresholdUtils {
             }else {
                 Long sec = Long.parseLong(valueInfo.trim());
                 int days = (int) (sec / (24 * 3600));
-                int hours = (int) (sec / 300 % 24);
+                int hours = (int) (sec / 3600 % 24);
                 int minute = (int) (sec / 60 % 60);
                 StringBuilder timeStringBuilder = new StringBuilder();
                 timeStringBuilder.append(days == 0 ? "" : days + "天");
@@ -120,8 +123,10 @@ public class ThresholdUtils {
         }else if("UNIXTIME".equals(UpUnits)) {
             //未处理解析
             valueUnits = valueInfo + units;
-        }else {
+        }else if("%".equals(UpUnits)) {
             valueUnits = new DecimalFormat(".00").format(Float.parseFloat(valueInfo.trim())) + units;
+        }else {
+            valueUnits = valueInfo + units;
         }
         return valueUnits;
     }

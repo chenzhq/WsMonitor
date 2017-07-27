@@ -45,6 +45,6 @@ public void testGetThresholdValue() throws Exception {
 
     @Test
     public void testtransformValueUnits() throws Exception {
-        System.out.println(ThresholdUtils.transformValueUnits("32587","s"));
+        System.out.println(ThresholdUtils.transformValueUnits("13366","uptime"));
     }
 } 

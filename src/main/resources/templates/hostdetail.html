@@ -16,7 +16,7 @@
 		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.no-padding-bottom{  padding-bottom: 0px;  }
 			.chart-style{  height: 200px  }
@@ -570,13 +570,13 @@
 								<p></p>
 								<form class="ui form">
 									<div class="required inline field" >
-										<label>监控项：</label>
+										<label>监控点：</label>
 										<select class="ui dropdown points">
 											<option value="">请选择监控点</option>
 										</select>
 									</div>
 									<div class="required inline field">
-										<label>监控点：</label>
+										<label>监控项：</label>
 										<select class="ui dropdown items">
 											<option value="">请选择监控项</option>
 										</select>
@@ -642,18 +642,20 @@
             });
 		$('.modal').modal({
 			onApprove: function () {
-				$('.button.approve').addClass('loading')
+				$('.button.approve').addClass('loading');
+				var dataInfo = {
+                    graphName: $('.input.graph_name input').val(),
+                    graphType: graph_type,
+                    hostId: $('#host_id').text(),
+                    itemId: item_id
+                };
 				console.log("graph_name:"+$('.input.graph_name input').val()+"graph_type:"+graph_type+"host_id:"+$('#host_id').text()+"item_id:"+item_id)
 				$.ajax({
 					type: "post",
 					url: "/hostgraphs/save_graph",
-					data: {
-                        graph_name: $('.input.graph_name input').val(),
-                        graph_type: graph_type,
-                        host_id: $('#host_id').text(),
-                        item_id: item_id
-					},
+					data: JSON.stringify(dataInfo),
 					dataType: "json",
+                    contentType : 'application/json',
 					success: function (result) {
                         if(result.success) {
                             $('.button.approve').removeClass('loading')
@@ -890,32 +892,98 @@
             if (data[i].state == "严重"){ var myColor = Color[1] }
             if (data[i].state == "警告"){ var myColor = Color[2] }
             var myChart = echarts.init(document.getElementById(id));
-            var option = {
-                title: {
-                    text: data[i].item_name
-                },
-                tooltip: {},
-                legend: {
-                    data:[]
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        magicType: {type: ['line', 'bar']},
-                    }
-                },
-                xAxis: {
-                    data: data[i].data_time
-                },
-                yAxis: {
-                },
-                series: [{
-                    name: data[i].graph_name,
-                    type: data[i].graph_type,
-                    data: data[i].data,
-                    color: [myColor]
-                }]
-            };
+            var option ;
+            console.log("图形类型： " + data[i].graph_type);
+            switch (data[i].graph_type) {
+                case "gauge":
+                    option = {
+                        tooltip : {
+                            formatter: "{a} <br/>{b} : {c}%"
+                        },
+                        toolbox: {
+                            feature: {
+                                restore: {},
+                                saveAsImage: {}
+                            }
+                        },
+                        series: [
+                            {
+                                name: data[i].graph_name,
+                                type: 'gauge',
+                                detail: {formatter:'{value}%'},
+                                data: [{value: data[i].data[0], name: data[i].item_name}]
+                            }
+                        ]
+                    };
+                    break;
+                case "area":
+                    console.log("进入到了area域：");
+                    option = {
+                        title: {
+                            text: data[i].graph_name
+                        },
+                        tooltip: {},
+                        legend: {
+                            data:[]
+                        },
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                magicType: {type: ['line', 'bar']},
+                            }
+                        },
+                        xAxis: {
+                            data: data[i].data_time
+                        },
+                        yAxis: {
+                        },
+                        series: [{
+                            name: data[i].graph_name,
+                            type: 'line',
+                            data: data[i].data,
+                            areaStyle: {
+                                normal: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                        offset: 0,
+                                        color: 'rgb(255, 158, 68)'
+                                    }, {
+                                        offset: 1,
+                                        color: 'rgb(255, 70, 131)'
+                                    }])
+                                }
+                            },
+                            color: [myColor]
+                        }]
+                    };
+                    break;
+                default:
+                    option = {
+                        title: {
+                            text: data[i].item_name
+                        },
+                        tooltip: {},
+                        legend: {
+                            data:[]
+                        },
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                magicType: {type: ['line', 'bar']},
+                            }
+                        },
+                        xAxis: {
+                            data: data[i].data_time
+                        },
+                        yAxis: {
+                        },
+                        series: [{
+                            name: data[i].graph_name,
+                            type: data[i].graph_type,
+                            data: data[i].data,
+                            color: [myColor]
+                        }]
+                    };
+            }
             myChart.setOption(option);
         }
         $('.gridly').gridly({
@@ -1032,7 +1100,7 @@
 							toolbox: {
 								show: true,
 								feature: {
-									magicType: {type: ['line', 'bar']},
+									magicType: {type: ['line', 'bar','area']},
 								}
 							},
 							xAxis: {

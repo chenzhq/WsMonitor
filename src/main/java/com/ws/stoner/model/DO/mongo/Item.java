@@ -1,5 +1,6 @@
 package com.ws.stoner.model.DO.mongo;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -17,7 +18,7 @@ public class Item {
     private String hostId;
     @Field("graph_name")
     private String graphName;
-    @Field("GraphType")
+    @Field("graph_type")
     private String graphType;
 
     @Override

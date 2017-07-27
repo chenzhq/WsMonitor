@@ -8,7 +8,6 @@ public enum GraphTypeEnum {
     LINE("折线图","line"),
     BAR("柱状图","bar"),
     AREA("面积图","area"),
-    TABLE("表格","table"),
     GAUGE("仪表盘","gauge");
 
     GraphTypeEnum(String name,String type) {
