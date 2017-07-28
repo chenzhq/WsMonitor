@@ -998,7 +998,20 @@
                             name: data[i].graph_name,
                             type: data[i].graph_type,
                             data: data[i].data,
-                            color: [myColor]
+                            color: [myColor],
+                           /* markArea: {
+                                data: [ [{
+                                    name: '早高峰',
+                                    yAxis: '60'
+                                }, {
+                                    yAxis: '80'
+                                }], [{
+                                    name: '晚高峰',
+                                    yAxis: '80'
+                                }, {
+                                    yAxis: '100'
+                                }] ]
+                            }*/
                         }]
                     };
             }
@@ -1200,7 +1213,8 @@
                 name: '',
                 type: '',
                 data: {},
-                color: []
+                color: [],
+                areaStyle:{}
             }]
         };
         $.ajax({
@@ -1244,14 +1258,14 @@
                         tabReport($('.top.attached.label').attr("data-id") ,this.value);
                     })
                     $('.ui.buttons.Type .button').on('click', function() {
+                        option.series[0].type = this.value;
                         if (this.value == "area")
 						{
                             $("div#chartReport .chart-style").each(function(){
                                 echarts.init(document.getElementById(this.id)).setOption(areaoption);
                             })
 						}else {
-                            option.series[0].type = this.value;
-                            /*option.series[0].areaStyle = "";*/
+                            option.series[0].areaStyle = "";
                             $("div#chartReport .chart-style").each(function(){
                                 echarts.init(document.getElementById(this.id)).setOption(option);
                             })
