@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="../static/css/jquery.treegrid.css" th:href="@{css/jquery.treegrid.css}">
 		<link rel="stylesheet" href="../static/css/jstree-default/style.min.css" th:href="@{css/jstree-default/style.min.css}">
 		<script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.ui.table.dataTable thead th {
 				border-left: 0px;
@@ -399,7 +399,7 @@
                             } else if(row.type === '监控点') {
                                 return '<i class="green circle icon"></i>' + row.name;
                             } else {
-                                return '<a href="hostDetail?host_id =' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
 									'<i class="green desktop icon"></i>' + row.name + '</a>';
                             }
                         } else if (data.state == "严重") {

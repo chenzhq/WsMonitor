@@ -708,13 +708,13 @@
                         var myColor = '';
                         for(var i=0; i<item_datas.length; i++){
                             if (item_datas[i].with_triggers == true) {
-                                if (item_datas[i].state == "正常") {
+                                if (item_datas[i].state == "严重") {
                                     myColor = Color[0]
                                 }
-                                if (item_datas[i].state == "严重") {
+                                if (item_datas[i].state == "警告") {
                                     myColor = Color[1]
                                 }
-                                if (item_datas[i].state == "警告") {
+                                if (item_datas[i].state == "正常") {
                                     myColor = Color[2]
                                 }
                             }else {
@@ -725,9 +725,9 @@
                             str_item_datas=tmp+str_item_datas;
                         }
 
-                        if (data.state == "正常"){ myColor = Color[0] }
-                        if (data.state == "严重"){ myColor = Color[1] }
-                        if (data.state == "警告"){ myColor = Color[2] }
+                        if (data.state == "正常"){ myColor = Color[2] }
+                        if (data.state == "严重"){ myColor = Color[0] }
+                        if (data.state == "警告"){ myColor = Color[1] }
                         $("#point_name").html("名称："+data.point_name);
                         $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
                         $("#item_datas").html(str_item_datas);
