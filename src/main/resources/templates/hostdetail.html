@@ -28,8 +28,16 @@
 				height: 200px;
 				width: 360px;
 			}
-			.fixed-height{
+			.modal-height{
+				height: 450px;
+				width: 100%;
+				overflow:auto
+			}
+			.tab-height{
 				height: 180px;
+			}
+			.nomarginbottom{
+				margin-bottom: -10px;
 			}
 			.ui.celled.grid > .row > .column {  padding: 0.5em  }
 			.text_over_hidden{
@@ -238,95 +246,6 @@
 		<div class="mainWrap navslide">
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
-				<!--modal0 start-->
-				<div class="sixteen wide column">
-					<div class="ui pointing secondary menu tab_points">
-						<a class="item active" data-tab="Summary">概述</a>
-						<a class="item" data-tab="Report">报告</a>
-						<a class="item" data-tab="Data">数据</a>
-					</div>
-					<div class="ui tab segment active" data-tab="Summary">
-						<div class="row">
-							<table class="ui very compact basic table center aligned">
-								<thead>
-								<tr><th>指标</th>
-									<th>是否自定义</th>
-									<th>状态</th>
-									<th>值</th>
-									<th>危险阈值</th>
-									<th>故障阈值</th>
-									<th>最新时间</th>
-								</tr></thead>
-								<tbody id="tableSummary" >
-								</tbody>
-							</table>
-						</div>
-					</div>
-					<div class="ui tab segment" data-tab="Report">
-						<div class="ui padded grid">
-							<div class="row">
-								<div class="eight wide column">
-									<div class="ui top attached left floated buttons Time">
-										<button value="40" class="ui grey basic button">最新40条</button>
-										<button value="1" class="ui grey basic button">1天</button>
-										<button value="3" class="ui grey basic button">3天</button>
-										<button value="7" class="ui grey basic button">7天</button>
-										<button value="30" class="ui grey basic button">30天</button>
-									</div>
-								</div>
-								<div class="eight wide column">
-									<div class="ui top attached right floated buttons Type">
-										<button class="ui grey basic button">柱状图</button>
-										<button class="ui grey basic button">线状图</button>
-										<button class="ui grey basic button">面积图</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="ui three column grid" id="chartReport">
-								<p></p>
-							</div>
-						</div>
-					</div>
-					<div class="ui tab segment" data-tab="Data">
-						<div class="ui padded grid">
-							<div class="row">
-								<div class="eight wide column">
-									<div class="ui top attached left floated buttons Time">
-										<button value="40" class="ui grey basic button">最新40条</button>
-										<button value="1" class="ui grey basic button">1天</button>
-										<button value="3" class="ui grey basic button">3天</button>
-										<button value="7" class="ui grey basic button">7天</button>
-										<button value="30" class="ui grey basic button">30天</button>
-									</div>
-								</div>
-								<div class="right aligned four wide column">
-									监控项：
-									<select class="ui dropdown itemsTab" id="itemsTab">
-										<option value="">选择监控项</option>
-									</select>
-								</div>
-								<div class="right aligned four wide column">
-									状态：
-									<select class="ui dropdown stateTab">
-										<option value="">选择状态</option>
-										<option>正常</option>
-										<option>危险</option>
-										<option>故障</option>
-										<option>其他</option>
-										<option>全部</option>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="row" >
-							<table id="tableData" class="ui compact celled table center aligned">
-							</table>
-						</div>
-					</div>
-				</div>
-				<!--modal0 end-->
 				<div class="sixteen wide column">
 					<div class="ui segments">
 						<div class="ui segment">
@@ -543,6 +462,105 @@
 					</div>
 				</div>
 
+					<!--modal-->
+					<div class="ui large modal">
+						<i class="close icon"></i>
+						<!--modal0 start-->
+						<div class="content">
+						<div class="sixteen wide column">
+							<div class="ui pointing secondary menu tab_points">
+								<a class="item active" data-tab="Summary">概述</a>
+								<a class="item" data-tab="Report">报告</a>
+								<a class="item" data-tab="Data">数据</a>
+							</div>
+							<div class="ui tab segment active modal-height" data-tab="Summary" style="margin-bottom: 0px;">
+								<div class="ui grid">
+									<div class="sixteen wide left aligned column">
+										<div class="ui top attached tabular menu points">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<table class="ui very compact basic fixed single line table center aligned">
+										<thead>
+										<tr><th width="20%">指标</th>
+											<th width="10%">是否自定义</th>
+											<th width="10%">状态</th>
+											<th width="20%">值</th>
+											<th width="10%">危险阈值</th>
+											<th width="10%">故障阈值</th>
+											<th width="20%">最新时间</th>
+										</tr></thead>
+										<tbody id="tableSummary" >
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="ui tab segment modal-height" data-tab="Report" style="margin-bottom: 0px;">
+								<div class="ui grid">
+									<div class="row">
+										<div class="eight wide column">
+											<div class="ui top attached left floated buttons Time">
+												<button value="40" class="ui grey basic button">最新40条</button>
+												<button value="1" class="ui grey basic button">1天</button>
+												<button value="3" class="ui grey basic button">3天</button>
+												<button value="7" class="ui grey basic button">7天</button>
+												<button value="30" class="ui grey basic button">30天</button>
+											</div>
+										</div>
+										<div class="eight wide column">
+											<div class="ui top attached right floated buttons Type">
+												<button value="bar" class="ui grey basic button">柱状图</button>
+												<button value="line" class="ui grey basic button">线状图</button>
+												<button value="area" class="ui grey basic button">面积图</button>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="ui three column grid" id="chartReport">
+											<p></p>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="ui tab segment modal-height" data-tab="Data">
+								<div class="ui grid">
+									<div class="eight wide column">
+										<div class="ui top attached left floated buttons Time">
+											<button value="40" class="ui grey basic button">最新40条</button>
+											<button value="1" class="ui grey basic button">1天</button>
+											<button value="3" class="ui grey basic button">3天</button>
+											<button value="7" class="ui grey basic button">7天</button>
+											<button value="30" class="ui grey basic button">30天</button>
+										</div>
+									</div>
+									<div class="right aligned four wide column">
+										监控项：
+										<select class="ui dropdown itemsTab">
+											<!--<option value="">选择监控项</option>-->
+										</select>
+									</div>
+									<div class="right aligned four wide column">
+										状态：
+										<select class="ui dropdown stateTab">
+											<option>全部</option>
+											<option>正常</option>
+											<option>危险</option>
+											<option>故障</option>
+											<option>其他</option>
+										</select>
+									</div>
+								</div>
+								<div class="row" >
+									<table id="tableData" class="ui compact celled table center aligned">
+									</table>
+								</div>
+							</div>
+						</div>
+						</div>
+						<!--modal0 end-->
+						</div>
+					</div>
 
 					<!--modal-->
 					<div class="ui small modal">
@@ -638,7 +656,7 @@
 					$("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
                 }
             });
-		$('.modal').modal({
+		$('.small.modal').modal({
 			onApprove: function () {
 				$('.button.approve').addClass('loading');
 				var dataInfo = {
@@ -658,10 +676,10 @@
                         if(result.success) {
                             $('.button.approve').removeClass('loading')
                             hostgraphs(result);
-                            $('.modal').modal('hide')
+                            $('small.modal').modal('hide')
                         } else {
                             $('.button.approve').removeClass('loading')
-                            $('.modal').modal('hide')
+                            $('small.modal').modal('hide')
                             errorMsg_no_data("监控项 Modal");
                         }
 					},
@@ -847,12 +865,14 @@
             success: function (result) {
                 if(result.success) {
                     var data=result.data;
-                    var str = "";
+                    var str = "<option value=''>选择监控项</option>";
                     for(var i=0;i<data.length;i++)
                     {
-                        str +=" <option value='"+data[i].value_type+"_"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
+                        str +=" <option value='"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
                     }
-                    $(".dropdown.itemsTab option").html(str);
+                    $(".dropdown.itemsTab select").html(str);
+					/*$(".dropdown.itemsTab option:first").attr("selected",true);
+                    $('.dropdown.itemsTab').dropdown('set selected', data[0].item_id)*/
                 }
                 else {
                     errorMsg_no_data("监控项 Dropdown");
@@ -1011,94 +1031,87 @@
         });
     }
 
-    //<!--modal0 start-->
+    //<!--modal0-->
     $('#brief_point_id').on('click', '.button',function() {
-        var point_id=this.id.substring(1);
+        var point_id = this.id.substring(1);
         tabSummary(point_id);
+        $('.large.modal').modal('show');
+        $('.tab_points.menu .item')
+            .tab({
+                'onFirstLoad': function (path) {
+                    if (path === 'Report') {
+                        tabReport( $('.top.attached.label').attr("data-id") ,40);
+                    }
+                    if (path === 'Data') {
+                        var point_id=1087;
+                        var item_id=34493;
+						/*tabData(item_id);*/
+                        var tableData = $("#tableData").DataTable({
+                            "paging": false,
+                            ajax: {
+                                url: '/pointdetail/get_datas?item_id='+item_id+'&time=3',
+                                dataSrc: 'data'
+                            },
+                            columns: [
+                                //item_id
+                                {
+                                    "data": "last_time",
+                                    "width": "30%",
+                                    "title": "最新时间",
+                                },
+                                {
+                                    "data": "item_name",
+                                    "width": "30%",
+                                    "title": "指标",
+                                    "orderable":false,
+                                },
+                                {
+                                    "data": "state",
+                                    "width": "10%",
+                                    "title": "状态",
+                                    "orderable":false,
+                                },
+                                {
+                                    "data": "value",
+                                    "width": "20%",
+                                    "title": "值",
+                                    "orderable":false,
+                                },
+                                {
+                                    "data": "units",
+                                    "width": "10%",
+                                    "title": "单位",
+                                    "orderable":false,
+                                },
+                            ],
+                        });
+                        dropdownitemsTab(point_id);
+                        $('.dropdown.stateTab')
+                            .dropdown({
+                                useLabels: false,
+                                onChange: function(value, text, $selectedItem) {
+                                    tableData.search(text).draw();
+                                }
+                            });
+                        $('.dropdown.itemsTab')
+                            .dropdown({
+                                useLabels: false,
+                                onChange: function(value, text, $selectedItem) {
+                                    alert(value);
+                                    var url=  "/pointdetail/get_datas?item_id="+value+"&time=3";
+                                    tableData.ajax.url(url).load();
+                                    $('.dropdown.stateTab').prop('selectedIndex', 0);
+                                }
+                            });
+                        $('.ui.buttons.Time .button').on('click', function() {
+                            var item_id = $('.dropdown.itemsTab').dropdown('get value');
+                            var url=  "/pointdetail/get_datas?item_id="+item_id+"&time="+this.value;
+                            tableData.ajax.url(url).load();
+                        })
+                    }
+                }
+            });
     });
-    $('.tab_points.menu .item')
-        .tab({
-            'onFirstLoad': function (path) {
-                if (path === 'Report') {
-                    var days=3;
-                    var point_id=1087;
-					tabReport(point_id,days);
-                    $('.ui.buttons.Time .button').on('click', function() {
-                        tabReport(point_id,this.value);
-                    })
-                    $('.ui.buttons.Type .button').on('click', function() {
-                        alert(this.value)
-                    })
-                }
-                if (path === 'Data') {
-                    var point_id=1087;
-                    var item_id=34493;
-					/*tabData(item_id);*/
-                    var tableData = $("#tableData").DataTable({
-                        "createdRow": function (row, data, dataIndex) {
-                        },
-                        ajax: {
-                            url: '/pointdetail/get_datas?item_id='+item_id+'&time=3',
-                            dataSrc: 'data'
-                        },
-                        columns: [
-                            //item_id
-                            {
-                                "data": "last_time",
-                                "width": "30%",
-                                "title": "最新时间",
-                            },
-                            {
-                                "data": "item_name",
-                                "width": "30%",
-                                "title": "指标",
-                                "orderable":false,
-                            },
-                            {
-                                "data": "state",
-                                "width": "10%",
-                                "title": "状态",
-                                "orderable":false,
-                            },
-                            {
-                                "data": "value",
-                                "width": "20%",
-                                "title": "值",
-                                "orderable":false,
-                            },
-                            {
-                                "data": "units",
-                                "width": "10%",
-                                "title": "单位",
-                                "orderable":false,
-                            },
-                        ],
-                    });
-					dropdownitemsTab(point_id);
-                    $('.dropdown.stateTab')
-                        .dropdown({
-                            onChange: function(value, text, $selectedItem) {
-                                tableData.search(text).draw();
-                            }
-                        });
-                    $('.dropdown.itemsTab')
-                        .dropdown({
-                            onChange: function(value, text, $selectedItem) {
-                                var item_id = value.split("_")[1];
-                                var url=  "/pointdetail/get_datas?item_id="+item_id+"&time=3";
-                                tableData.ajax.url(url).load();
-                                $('.dropdown.stateTab').prop('selectedIndex', 0);
-                            }
-                        });
-                    $('.ui.buttons.Time .button').on('click', function() {
-                        var item_id = $('.dropdown.stateTab').dropdown('get text');
-                        alert(item_id);
-                        var url=  "/pointdetail/get_datas?item_id="+item_id+"&time=3"+this.value;
-                        tableData.ajax.url(url).load();
-                    })
-                }
-            }
-        });
     function tabSummary(point_id) {
         $.ajax({
             type: "get",
@@ -1108,7 +1121,12 @@
             success: function (result) {
                 if(result.success) {
                     var data=result.data;
-                    var str = "";
+                    var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
+                    if (data.state == "正常"){ var myColor = Color[0] }
+                    if (data.state == "严重"){ var myColor = Color[1] }
+                    if (data.state == "警告"){ var myColor = Color[2] }
+                    $('.menu.points').html("<div class='ui "+myColor+" big top attached label' data-id='"+data.point_id+"'>"+data.point_name+"</div>")
+					var str = "";
                     for(var i=0;i<data.item_datas.length;i++)
                     {
                         str +=" <tr id='"+data.item_datas[i].item_id+"' ><td>"
@@ -1132,6 +1150,59 @@
         });
     }
     function tabReport(point_id,days) {
+        var areaoption = {
+            title: {
+                text: ""
+            },
+            tooltip: {},
+            legend: {
+                data:[]
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    magicType: {type: ['line', 'bar','area']},
+                }
+            },
+            xAxis: {
+                data: {}
+            },
+            yAxis: {
+            },
+            series: [{
+                name: '',
+                type: '',
+                areaStyle: {normal: {}},
+                data: {},
+                color: []
+            }]
+        };
+        var option = {
+            title: {
+                text: ""
+            },
+            tooltip: {},
+            legend: {
+                data:[]
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    magicType: {type: ['line', 'bar','area']},
+                }
+            },
+            xAxis: {
+                data: {}
+            },
+            yAxis: {
+            },
+            series: [{
+                name: '',
+                type: '',
+                data: {},
+                color: []
+            }]
+        };
         $.ajax({
             type: "get",
             url: "/pointdetail/get_graphs",
@@ -1153,35 +1224,39 @@
 						if (data[i].state == "正常"){ var myColor = Color[0] }
 						if (data[i].state == "严重"){ var myColor = Color[1] }
 						if (data[i].state == "警告"){ var myColor = Color[2] }
-						var myChart = echarts.init(document.getElementById(id));
-						var option = {
-							title: {
-								text: data[i].item_name + "(" + data[i].units +")"
-							},
-							tooltip: {},
-							legend: {
-								data:[]
-							},
-							toolbox: {
-								show: true,
-								feature: {
-									magicType: {type: ['line', 'bar','area']},
-								}
-							},
-							xAxis: {
-								data: data[i].data_time
-							},
-							yAxis: {
-							},
-							series: [{
-								name: data[i].graph_name,
-								type: data[i].graph_type,
-								data: data[i].data,
-								color: [myColor]
-							}]
-						};
-						myChart.setOption(option);
+						/*var myChart = echarts.init(document.getElementById(id));*/
+						option.title.text = data[i].item_name + "(" + data[i].units +")";
+                        option.xAxis.data = data[i].data_time;
+                        option.series[0].name = data[i].graph_name;
+                        option.series[0].type = data[i].graph_type;
+                        option.series[0].data = data[i].data;
+                        option.series[0].color[0] = myColor;
+                        //面积图存
+                        areaoption.title.text = data[i].item_name + "(" + data[i].units +")";
+                        areaoption.xAxis.data = data[i].data_time;
+                        areaoption.series[0].name = data[i].graph_name;
+                        areaoption.series[0].type = data[i].graph_type;
+                        areaoption.series[0].data = data[i].data;
+                        areaoption.series[0].color[0] = myColor;
+                        echarts.init(document.getElementById(id)).setOption(option);
 					}
+                    $('.ui.buttons.Time .button').on('click', function() {
+                        tabReport($('.top.attached.label').attr("data-id") ,this.value);
+                    })
+                    $('.ui.buttons.Type .button').on('click', function() {
+                        if (this.value == "area")
+						{
+                            $("div#chartReport .chart-style").each(function(){
+                                echarts.init(document.getElementById(this.id)).setOption(areaoption);
+                            })
+						}else {
+                            option.series[0].type = this.value;
+                            /*option.series[0].areaStyle = "";*/
+                            $("div#chartReport .chart-style").each(function(){
+                                echarts.init(document.getElementById(this.id)).setOption(option);
+                            })
+						}
+                    })
                 }
                 else {
                     errorMsg_no_data("监控点 Tab");
