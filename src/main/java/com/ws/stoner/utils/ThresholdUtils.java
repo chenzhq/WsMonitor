@@ -109,7 +109,9 @@ public class ThresholdUtils {
         }else if("UPTIME".equals(UpUnits) || "S".equals(UpUnits)) {
             if(Float.parseFloat(valueInfo.trim()) < 0.001) {
                 valueUnits = "< 1 毫秒";
-            }else {
+            }else if(Float.parseFloat(valueInfo.trim()) < 1) {
+                valueUnits = Float.parseFloat(valueInfo.trim()) * 1000 + "毫秒";
+            }else if(Float.parseFloat(valueInfo.trim()) >= 1) {
                 Long sec = Long.parseLong(valueInfo.trim());
                 int days = (int) (sec / (24 * 3600));
                 int hours = (int) (sec / 3600 % 24);

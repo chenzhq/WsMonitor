@@ -464,6 +464,8 @@
 
 					<!--modal-->
 					<div class="ui large modal">
+						<span style="display:none" id="pointDetailArea"></span>
+						<span style="display:none" id="pointDetailFirstItem"></span>
 						<i class="close icon"></i>
 						<!--modal0 start-->
 						<div class="content">
@@ -676,10 +678,10 @@
                         if(result.success) {
                             $('.button.approve').removeClass('loading')
                             hostgraphs(result);
-                            $('small.modal').modal('hide')
+                            $('.small.modal').modal('hide');
                         } else {
                             $('.button.approve').removeClass('loading')
-                            $('small.modal').modal('hide')
+                            $('.small.modal').modal('hide')
                             errorMsg_no_data("监控项 Modal");
                         }
 					},
@@ -857,10 +859,7 @@
     function dropdownitemsTab(value){
         $.ajax({
             type: "get",
-            url: "/hostgraphs/get_items",
-            data: {
-                point_id: value
-            },
+            url: "/hostgraphs/get_items?point_id=" + value,
             dataType: "json",
             success: function (result) {
                 if(result.success) {
@@ -1047,6 +1046,9 @@
     //<!--modal0-->
     $('#brief_point_id').on('click', '.button',function() {
         var point_id = this.id.substring(1);
+
+        //给弹出框赋值 point_id
+        $("#pointDetailArea").text(point_id);
         tabSummary(point_id);
         $('.large.modal').modal('show');
         $('.tab_points.menu .item')
@@ -1056,13 +1058,13 @@
                         tabReport( $('.top.attached.label').attr("data-id") ,40);
                     }
                     if (path === 'Data') {
-                        var point_id=1087;
-                        var item_id=34493;
+                        var point_id = $("#pointDetailArea").text();
+                        var item_id = $("#pointDetailFirstItem").text() ;
 						/*tabData(item_id);*/
                         var tableData = $("#tableData").DataTable({
                             "paging": false,
                             ajax: {
-                                url: '/pointdetail/get_datas?item_id='+item_id+'&time=3',
+                                url: '/pointdetail/get_datas?item_id='+item_id+'&time=1',
                                 dataSrc: 'data'
                             },
                             columns: [
@@ -1110,8 +1112,8 @@
                             .dropdown({
                                 useLabels: false,
                                 onChange: function(value, text, $selectedItem) {
-                                    alert(value);
-                                    var url=  "/pointdetail/get_datas?item_id="+value+"&time=3";
+                                    console.log("选择的值" + value);
+                                    var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
                                     tableData.ajax.url(url).load();
                                     $('.dropdown.stateTab').prop('selectedIndex', 0);
                                 }
@@ -1134,6 +1136,10 @@
             success: function (result) {
                 if(result.success) {
                     var data=result.data;
+                    //将第一个item赋值给弹出框
+					if(data.item_datas.length != 0) {
+                        $("#pointDetailFirstItem").text(data.item_datas[0].item_id);
+					}
                     var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
                     if (data.state == "正常"){ var myColor = Color[0] }
                     if (data.state == "严重"){ var myColor = Color[1] }
@@ -1219,27 +1225,23 @@
         };
         $.ajax({
             type: "get",
-            url: "/pointdetail/get_graphs",
-            data: {
-                point_id:point_id,
-                time: days
-            },
+            url: "/pointdetail/get_graphs?point_id=" + point_id + "&time="+days,
             dataType: "json",
             success: function (result) {
                 if(result.success) {
-					var data = result.data;
-					var str = '';
+                    var data = result.data;
+                    var str = '';
                     $("#chartReport").empty();
-					for (var i=0; i<data.length; i++){
-					    var id="i"+data[i].item_id;
-						str ="<div class='column'><div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
-						$("#chartReport").append(str);
-						var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
-						if (data[i].state == "正常"){ var myColor = Color[0] }
-						if (data[i].state == "严重"){ var myColor = Color[1] }
-						if (data[i].state == "警告"){ var myColor = Color[2] }
+                    for (var i=0; i<data.length; i++){
+                        var id="pi"+data[i].item_id;
+                        str ="<div class='column'><div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
+                        $("#chartReport").append(str);
+                        var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+                        if (data[i].state == "正常"){ var myColor = Color[0] }
+                        if (data[i].state == "严重"){ var myColor = Color[1] }
+                        if (data[i].state == "警告"){ var myColor = Color[2] }
 						/*var myChart = echarts.init(document.getElementById(id));*/
-						option.title.text = data[i].item_name + "(" + data[i].units +")";
+                        option.title.text = data[i].item_name + "(" + data[i].units +")";
                         option.xAxis.data = data[i].data_time;
                         option.series[0].name = data[i].graph_name;
                         option.series[0].type = data[i].graph_type;
@@ -1253,23 +1255,23 @@
                         areaoption.series[0].data = data[i].data;
                         areaoption.series[0].color[0] = myColor;
                         echarts.init(document.getElementById(id)).setOption(option);
-					}
+                    }
                     $('.ui.buttons.Time .button').on('click', function() {
                         tabReport($('.top.attached.label').attr("data-id") ,this.value);
                     })
                     $('.ui.buttons.Type .button').on('click', function() {
                         option.series[0].type = this.value;
                         if (this.value == "area")
-						{
+                        {
                             $("div#chartReport .chart-style").each(function(){
                                 echarts.init(document.getElementById(this.id)).setOption(areaoption);
                             })
-						}else {
+                        }else {
                             option.series[0].areaStyle = "";
                             $("div#chartReport .chart-style").each(function(){
                                 echarts.init(document.getElementById(this.id)).setOption(option);
                             })
-						}
+                        }
                     })
                 }
                 else {

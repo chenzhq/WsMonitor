@@ -1,6 +1,7 @@
 package com.ws.stoner.model.view;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * Created by pc on 2017/7/13.
@@ -18,9 +19,9 @@ public class HostDetailPointItemVO {
     private boolean withTriggers;
     @JSONField(name = "last_time")
     private String lastTime;
-    @JSONField(name = "warning_point")
+    @JSONField(name = "warning_point",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String warningPoint;
-    @JSONField(name = "high_point")
+    @JSONField(name = "high_point",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String highPoint;
 
     public String getUnits() {
