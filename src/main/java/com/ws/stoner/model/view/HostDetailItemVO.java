@@ -26,7 +26,7 @@ public class HostDetailItemVO {
     private String state;
     private boolean flag;
     @JSONField(name = "value_type")
-    private Integer valueType;
+    private String valueType;
     @JSONField(name = "warning_point",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String warningPoint;
     @JSONField(name = "high_point" ,serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
@@ -53,11 +53,11 @@ public class HostDetailItemVO {
                 '}';
     }
 
-    public Integer getValueType() {
+    public String getValueType() {
         return valueType;
     }
 
-    public HostDetailItemVO setValueType(Integer valueType) {
+    public HostDetailItemVO setValueType(String valueType) {
         this.valueType = valueType;
         return this;
     }

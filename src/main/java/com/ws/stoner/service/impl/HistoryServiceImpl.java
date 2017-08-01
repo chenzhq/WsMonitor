@@ -55,12 +55,12 @@ public class HistoryServiceImpl implements HistoryService {
      * @throws ServiceException
      */
     @Override
-    public List<BriefHistoryDTO> getHistoryByItemId(String itemId,Integer valueType,int time) throws ServiceException {
+    public List<BriefHistoryDTO> getHistoryByItemId(String itemId,String valueType,int time) throws ServiceException {
         HistoryGetRequest historyGetRequest = new HistoryGetRequest();
         List<String> itemIds = new ArrayList<>();
         itemIds.add(itemId);
         historyGetRequest.getParams()
-                .setHistory(valueType)
+                .setHistory(Integer.parseInt(valueType))
                 .setItemIds(itemIds)
                 .setTimeFrom(String.valueOf(System.currentTimeMillis()/1000-time*24*3600))
                 .setTimeTill(String.valueOf(System.currentTimeMillis()/1000));
@@ -77,7 +77,7 @@ public class HistoryServiceImpl implements HistoryService {
      * @throws ServiceException
      */
     @Override
-    public List<BriefHistoryDTO> getHistoryByItemIdLimit(String itemId, Integer valueType, int time) throws ServiceException {
+    public List<BriefHistoryDTO> getHistoryByItemIdLimit(String itemId, String valueType, int time) throws ServiceException {
         List<String> sortFilter = new ArrayList<>();
         List<String> sortOrder = new ArrayList<>();
         sortFilter.add("clock");
@@ -86,7 +86,7 @@ public class HistoryServiceImpl implements HistoryService {
         List<String> itemIds = new ArrayList<>();
         itemIds.add(itemId);
         historyGetRequest.getParams()
-                .setHistory(valueType)
+                .setHistory(Integer.parseInt(valueType))
                 .setItemIds(itemIds)
                 .setSortField(sortFilter)
                 .setSortOrder(sortOrder)
