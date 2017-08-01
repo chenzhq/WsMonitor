@@ -31,7 +31,14 @@
 			.modal-height{
 				height: 450px;
 				width: 100%;
-				overflow:auto
+				overflow:auto;
+				overflow-x:hidden
+			}
+			.fixed-height{
+				height: 180px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
 			}
 			.tab-height{
 				height: 180px;
@@ -263,7 +270,7 @@
 											<a class="active item" data-tab="first"><h3>配置详情</h3></a>
 											<a class="item" data-tab="second"><h3>连接详情</h3></a>
 										</div>
-										<div class="ui bottom attached active tab segment fixed-height" data-tab="first" style="margin-bottom: 0px;">
+										<div class="ui bottom attached active tab segment tab-height" data-tab="first" style="margin-bottom: 0px;">
 											<div class="ui internally celled grid">
 												<div class="row">
 													<div class="eight wide center aligned column">
@@ -297,7 +304,7 @@
 												</div>
 											</div>
 										</div>
-										<div class="ui bottom attached tab segment fixed-height" data-tab="second">
+										<div class="ui bottom attached tab segment tab-height" data-tab="second">
 											<div class="ui relaxed divided list">
 												<div class="item">
 													<i class="big green checkmark icon" th:class="(${interfaceVO.agentIp} == null and ${interfaceVO.agentDNS} == null and ${interfaceVO.agentPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
@@ -423,7 +430,7 @@
 									</div>
 								</div>
 							</div>
-                            <div class="ui special popup" style="height: 260px;width: 260px;overflow:auto">
+                            <div class="ui special popup" style="height: 260px;width: 260px;overflow:auto;z-index:20">
                                 <div class="ui relaxed divided list">
                                     <div class="item">
 										<div class="header" id="point_name"></div>
@@ -486,7 +493,6 @@
 									<table class="ui very compact basic fixed single line table center aligned">
 										<thead>
 										<tr><th width="20%">指标</th>
-											<th width="10%">是否自定义</th>
 											<th width="10%">状态</th>
 											<th width="20%">值</th>
 											<th width="10%">危险阈值</th>
@@ -502,19 +508,19 @@
 								<div class="ui grid">
 									<div class="row">
 										<div class="eight wide column">
-											<div class="ui top attached left floated buttons Time">
-												<button value="40" class="ui grey basic button">最新40条</button>
-												<button value="1" class="ui grey basic button">1天</button>
-												<button value="3" class="ui grey basic button">3天</button>
-												<button value="7" class="ui grey basic button">7天</button>
-												<button value="30" class="ui grey basic button">30天</button>
+											<div class="ui basic top attached left floated  buttons Time Report">
+												<button value="40" class="ui active button">最新40条</button>
+												<button value="1" class="ui button">1天</button>
+												<button value="3" class="ui button">3天</button>
+												<button value="7" class="ui button">7天</button>
+												<button value="30" class="ui button">30天</button>
 											</div>
 										</div>
 										<div class="eight wide column">
-											<div class="ui top attached right floated buttons Type">
-												<button value="bar" class="ui grey basic button">柱状图</button>
-												<button value="line" class="ui grey basic button">线状图</button>
-												<button value="area" class="ui grey basic button">面积图</button>
+											<div class="ui basic top attached right floated buttons Type Report">
+												<button value="bar" class="ui button">柱状图</button>
+												<button value="line" class="ui button">线状图</button>
+												<button value="area" class="ui button">面积图</button>
 											</div>
 										</div>
 									</div>
@@ -528,12 +534,12 @@
 							<div class="ui tab segment modal-height" data-tab="Data">
 								<div class="ui grid">
 									<div class="eight wide column">
-										<div class="ui top attached left floated buttons Time">
-											<button value="40" class="ui grey basic button">最新40条</button>
-											<button value="1" class="ui grey basic button">1天</button>
-											<button value="3" class="ui grey basic button">3天</button>
-											<button value="7" class="ui grey basic button">7天</button>
-											<button value="30" class="ui grey basic button">30天</button>
+										<div class="ui basic top attached left floated buttons Time Data">
+											<button value="40" class="ui active button">最新40条</button>
+											<button value="1" class="ui button">1天</button>
+											<button value="3" class="ui button">3天</button>
+											<button value="7" class="ui button">7天</button>
+											<button value="30" class="ui button">30天</button>
 										</div>
 									</div>
 									<div class="right aligned four wide column">
@@ -959,15 +965,7 @@
                             type: 'line',
                             data: data[i].data,
                             areaStyle: {
-                                normal: {
-                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                        offset: 0,
-                                        color: 'rgb(255, 158, 68)'
-                                    }, {
-                                        offset: 1,
-                                        color: 'rgb(255, 70, 131)'
-                                    }])
-                                }
+                                normal: { }
                             },
                             color: [myColor]
                         }]
@@ -998,19 +996,6 @@
                             type: data[i].graph_type,
                             data: data[i].data,
                             color: [myColor],
-                           /* markArea: {
-                                data: [ [{
-                                    name: '早高峰',
-                                    yAxis: '60'
-                                }, {
-                                    yAxis: '80'
-                                }], [{
-                                    name: '晚高峰',
-                                    yAxis: '80'
-                                }, {
-                                    yAxis: '100'
-                                }] ]
-                            }*/
                         }]
                     };
             }
@@ -1046,7 +1031,8 @@
     //<!--modal0-->
     $('#brief_point_id').on('click', '.button',function() {
         var point_id = this.id.substring(1);
-
+        $('.tab_points.menu .item').tab('change tab', 'Summary');
+        /*$('.button').addClass('active');*/
         //给弹出框赋值 point_id
         $("#pointDetailArea").text(point_id);
         tabSummary(point_id);
@@ -1061,10 +1047,11 @@
                         var point_id = $("#pointDetailArea").text();
                         var item_id = $("#pointDetailFirstItem").text() ;
 						/*tabData(item_id);*/
+                        $("#tableData").empty();
                         var tableData = $("#tableData").DataTable({
                             "paging": false,
                             ajax: {
-                                url: '/pointdetail/get_datas?item_id='+item_id+'&time=1',
+                                url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
                                 dataSrc: 'data'
                             },
                             columns: [
@@ -1073,12 +1060,6 @@
                                     "data": "last_time",
                                     "width": "30%",
                                     "title": "最新时间",
-                                },
-                                {
-                                    "data": "item_name",
-                                    "width": "30%",
-                                    "title": "指标",
-                                    "orderable":false,
                                 },
                                 {
                                     "data": "state",
@@ -1118,7 +1099,9 @@
                                     $('.dropdown.stateTab').prop('selectedIndex', 0);
                                 }
                             });
-                        $('.ui.buttons.Time .button').on('click', function() {
+                        $('.ui.buttons.Time.Data .button').on('click', function() {
+                            $('.buttons.Time.Data .button').removeClass('active');
+                            $(this).addClass('active');
                             var item_id = $('.dropdown.itemsTab').dropdown('get value');
                             var url=  "/pointdetail/get_datas?item_id="+item_id+"&time="+this.value;
                             tableData.ajax.url(url).load();
@@ -1150,7 +1133,6 @@
                     {
                         str +=" <tr id='"+data.item_datas[i].item_id+"' ><td>"
 							+ data.item_datas[i].item_name +"</td><td>"
-                            + data.item_datas[i].with_triggers +"</td><td>"
                             + data.item_datas[i].state +"</td><td>"
                             + data.item_datas[i].value +"</td><td>"
                             + data.item_datas[i].high_point +"</td><td>"
@@ -1256,10 +1238,14 @@
                         areaoption.series[0].color[0] = myColor;
                         echarts.init(document.getElementById(id)).setOption(option);
                     }
-                    $('.ui.buttons.Time .button').on('click', function() {
+                    $('.ui.buttons.Time.Report .button').on('click', function() {
+                        $('.buttons.Time.Report .button').removeClass('active');
+                        $(this).addClass('active');
                         tabReport($('.top.attached.label').attr("data-id") ,this.value);
                     })
-                    $('.ui.buttons.Type .button').on('click', function() {
+                    $('.ui.buttons.Type.Report .button').on('click', function() {
+                        $('.buttons.Type.Report .button').removeClass('active');
+                        $(this).addClass('active');
                         option.series[0].type = this.value;
                         if (this.value == "area")
                         {
