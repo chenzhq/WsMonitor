@@ -53,12 +53,12 @@
 				white-space: nowrap;/*强制不换行*/
 				width: 10em;/*不允许出现半汉字截断*/
 			}
-			/*.text_fixed_hidden{
-				overflow: hidden; !*自动隐藏文字*!
-				text-overflow: ellipsis;!*文字隐藏后添加省略号*!
-				white-space: nowrap;!*强制不换行*!
-				width: 5em;!*不允许出现半汉字截断*!
-			}*/
+			.button_points_hidden{
+				overflow: hidden; /*自动隐藏文字*/
+				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+				white-space: nowrap;/*强制不换行*/
+				width: 10em;/*不允许出现半汉字截断*/
+			}
 		</style>
 	</th:block>
 
@@ -419,7 +419,7 @@
 											<div class="ui segment">
 												<div class="ui five column grid fixed-height" id="brief_point_id">
 													<div class="column" th:each="pointVO : ${pointVOS}">
-														<div class="ui red top attached button" id="0101" th:class="${pointVO.state}=='正常' ? 'ui green top attached button' : (${pointVO.state}=='警告' ? 'ui yellow top attached button' : 'ui red top attached button')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
+														<div class="ui red top attached button" id="0101" th:class="${pointVO.state}=='正常' ? 'ui green top attached button button_points_hidden' : (${pointVO.state}=='警告' ? 'ui yellow top attached button button_points_hidden' : 'ui red top attached button button_points_hidden')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
 													</div>
 													<div class="column" th:remove="all">
 														<div class="ui red top attached button" id="0114" >CPU</div>
@@ -476,24 +476,19 @@
 						<i class="close icon"></i>
 						<!--modal0 start-->
 						<div class="content">
-						<div class="sixteen wide column">
+                        <div class="ui grid points">
+                            <div id="labelPoints"></div>
+                            <div class="sixteen wide column">
 							<div class="ui pointing secondary menu tab_points">
 								<a class="item active" data-tab="Summary">概述</a>
 								<a class="item" data-tab="Report">报告</a>
 								<a class="item" data-tab="Data">数据</a>
 							</div>
 							<div class="ui tab segment active modal-height" data-tab="Summary" style="margin-bottom: 0px;">
-								<div class="ui grid">
-									<div class="sixteen wide left aligned column">
-										<div class="ui top attached tabular menu points">
-										</div>
-									</div>
-								</div>
 								<div class="row">
-									<table class="ui very compact basic fixed single line table center aligned">
+									<table class="ui compact basic fixed single line table center aligned">
 										<thead>
 										<tr><th width="20%">指标</th>
-											<th width="10%">状态</th>
 											<th width="20%">值</th>
 											<th width="10%">危险阈值</th>
 											<th width="10%">故障阈值</th>
@@ -566,6 +561,7 @@
 							</div>
 						</div>
 						</div>
+                        </div>
 						<!--modal0 end-->
 						</div>
 					</div>
@@ -1127,13 +1123,21 @@
                     if (data.state == "正常"){ var myColor = Color[0] }
                     if (data.state == "严重"){ var myColor = Color[1] }
                     if (data.state == "警告"){ var myColor = Color[2] }
-                    $('.menu.points').html("<div class='ui "+myColor+" big top attached label' data-id='"+data.point_id+"'>"+data.point_name+"</div>")
+                    $('#labelPoints').html("<div class='ui "+myColor+" massive top right attached ribbon label' data-id='"+data.point_id+"'>"+data.point_name+"</div>")
 					var str = "";
                     for(var i=0;i<data.item_datas.length;i++)
                     {
-                        str +=" <tr id='"+data.item_datas[i].item_id+"' ><td>"
+                        var mytrColor = '';
+                        if (data.item_datas[i].with_triggers == true)
+                        {
+                            if (data.item_datas[i].state == "正常"){ mytrColor = Color[0] }
+                            if (data.item_datas[i].state == "严重"){ mytrColor = Color[1] }
+                            if (data.item_datas[i].state == "警告"){ mytrColor = Color[2] }
+                        }
+                        else {
+                        }
+                        str +=" <tr id='"+data.item_datas[i].item_id+"' class='"+mytrColor+" tr' ><td>"
 							+ data.item_datas[i].item_name +"</td><td>"
-                            + data.item_datas[i].state +"</td><td>"
                             + data.item_datas[i].value +"</td><td>"
                             + data.item_datas[i].high_point +"</td><td>"
                             + data.item_datas[i].warning_point +"</td><td>"

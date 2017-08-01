@@ -372,6 +372,7 @@
     $(document).ready(function () {
         var table = $('#problem_table').DataTable({
             "iDisplayLength" : 10,
+            order: [2, 'desc'],// 以升序排列此列
 		});
         $('#time_today').click(function(){
             drawsearch(1);
@@ -668,7 +669,7 @@
             {
                 "data": "availability",
                 "width": "100px",
-                "title": "可能性"
+                "title": "健康度"
             },
             {
                 "data": null,
