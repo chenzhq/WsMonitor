@@ -546,11 +546,11 @@
 									<div class="right aligned four wide column">
 										状态：
 										<select class="ui dropdown stateTab">
+											<option value="">请选择状态</option>
 											<option>全部</option>
 											<option>正常</option>
-											<option>危险</option>
-											<option>故障</option>
-											<option>其他</option>
+											<option>严重</option>
+											<option>警告</option>
 										</select>
 									</div>
 								</div>
@@ -872,22 +872,22 @@
         });
     };
 
-    function dropdownitemsTab(value){
+    function dropdownitemsTab(point_id,item_id){
         $.ajax({
             type: "get",
-            url: "/hostgraphs/get_items?point_id=" + value,
+            url: "/hostgraphs/get_items?point_id=" + point_id,
             dataType: "json",
             success: function (result) {
                 if(result.success) {
                     var data=result.data;
-                    var str = "<option value=''>选择监控项</option>";
+                    var str = '';
                     for(var i=0;i<data.length;i++)
                     {
-                        str +=" <option value='"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
+                        str +="<option value='"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
                     }
+                    console.log(str);
                     $(".dropdown.itemsTab select").html(str);
-					/*$(".dropdown.itemsTab option:first").attr("selected",true);
-                    $('.dropdown.itemsTab').dropdown('set selected', data[0].item_id)*/
+                    $(".dropdown.itemsTab .text").html(data[0].item_name);
                 }
                 else {
                     errorMsg_no_data("监控项 Dropdown");
@@ -927,34 +927,67 @@
 
             var myChart = echarts.init(document.getElementById(id));
             var option ;
+            var colorGreen = [0.6, '#5FB878'];
+            var colorYellow = [0.8, '#F7B824'];
+            var colorRed = [1, '#FF5722'];
+            if(data[i].units == "%"){
+                var ymax = 100;
+			}else {
+                var ymax = null;
+			}
             console.log("图形类型： " + data[i].graph_type);
             switch (data[i].graph_type) {
                 case "gauge":
-                    option = {
-                        tooltip : {
-                            formatter: "{a} <br/>{b} : {c}%"
-                        },
-                        toolbox: {
-                            feature: {
-                                restore: {},
-                                saveAsImage: {}
-                            }
-                        },
-                        series: [
-                            {
-                                name: data[i].graph_name,
-                                type: 'gauge',
-                                detail: {formatter:'{value}%'},
-                                data: [{value: data[i].data[0], name: data[i].item_name}]
-                            }
-                        ]
-                    };
+					option = {
+						 title: {
+						 text: data[i].item_name + "(" + data[i].units +")"},
+						 tooltip : {
+							 formatter: "{a} <br/>{b} : {c}%"
+							 },
+						 series: [
+							 {
+							 name: data[i].graph_name,
+							 type: 'gauge',
+							 min:0,
+							 max:100,
+							 splitNumber: 5,
+							 axisLine: {            // 坐标轴线
+							 lineStyle: {       // 属性lineStyle控制线条样式
+								 color: [colorGreen,colorYellow,colorRed],
+								 width: 13
+								 }
+							 },
+							 axisTick: {            // 坐标轴小标记
+								 length: 18,        // 属性length控制线长
+								 lineStyle: {       // 属性lineStyle控制线条样式
+									 color: 'auto'
+									 }
+							 },
+							 splitLine: {           // 分隔线
+								 length: 22,         // 属性length控制线长
+								 lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+									 color: 'auto'
+									 }
+							 },
+							 pointer: {
+								 width:5
+							 },
+							 detail: {
+							     formatter:'{value}%',
+								 offsetCenter:[0,'60%'],
+								 textStyle: {
+									 fontWeight: 'bolder', fontSize: 16,color: '#333',
+								 }},
+								 data: [{value: data[i].data[0], name: ''}]
+							 }
+						 ]
+					 };
                     break;
                 case "area":
                     console.log("进入到了area域：");
                     option = {
                         title: {
-                            text: data[i].graph_name
+                            text: data[i].item_name + "(" + data[i].units +")"
                         },
                         tooltip: {},
                         legend: {
@@ -970,6 +1003,7 @@
                             data: data[i].data_time
                         },
                         yAxis: {
+                            max: ymax,
                         },
                         series: [{
                             name: data[i].graph_name,
@@ -985,7 +1019,7 @@
                 default:
                     option = {
                         title: {
-                            text: data[i].item_name
+                            text: data[i].item_name + "(" + data[i].units +")"
                         },
                         tooltip: {},
                         legend: {
@@ -1001,12 +1035,27 @@
                             data: data[i].data_time
                         },
                         yAxis: {
+                            max: ymax,
+                            splitLine:{show: false},
                         },
                         series: [{
                             name: data[i].graph_name,
                             type: data[i].graph_type,
                             data: data[i].data,
                             color: [myColor],
+							/*markLine: {
+                                lineStyle: {
+                                    normal: {
+                                        color: 'gray',
+                                    }
+                                },
+                                data: [
+                                    {name: '危险阈值',
+                                        yAxis: 80},
+                                    {name: '警告阈值',
+                                        yAxis: 60},
+                                ]
+                            }*/
                         }]
                     };
             }
@@ -1065,6 +1114,9 @@
                                 url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
                                 dataSrc: 'data'
                             },
+                            "columnDefs": [ {
+                                "targets": [ 3 ],
+								"visible": false } ] ,
                             columns: [
                                 //item_id
                                 {
@@ -1073,36 +1125,54 @@
                                     "title": "最新时间",
                                 },
                                 {
-                                    "data": "state",
+                                    "data": null,
                                     "width": "10%",
                                     "title": "状态",
-                                    "orderable":false,
+                                    "orderable": false,
+                                    render: function (data, type, row, meta) {
+                                        var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
+                                        if (row.state == "正常") {
+                                            var myColor = Color[0]
+                                        }
+                                        if (row.state == "严重") {
+                                            var myColor = Color[1]
+                                        }
+                                        if (row.state == "警告") {
+                                            var myColor = Color[2]
+                                        }
+                                        return '<i class="'+ myColor + ' square icon"></i>';
+                                    }
                                 },
                                 {
                                     "data": "value",
-                                    "width": "20%",
+                                    "width": "30%",
                                     "title": "值",
                                     "orderable":false,
                                 },
                                 {
-                                    "data": "units",
-                                    "width": "10%",
-                                    "title": "单位",
+                                    "data": "state",
+                                    "width": "30%",
+                                    "title": "状态",
                                     "orderable":false,
                                 },
                             ],
                         });
-                        dropdownitemsTab(point_id);
+                        dropdownitemsTab(point_id,item_id);
                         $('.dropdown.stateTab')
                             .dropdown({
                                 useLabels: false,
                                 onChange: function(value, text, $selectedItem) {
-                                    tableData.search(text).draw();
+                                    if (text == '全部')
+									{
+                                        tableData.search('').draw();
+									}else {
+                                        tableData.search(text).draw();
+									}
                                 }
                             });
                         $('.dropdown.itemsTab')
                             .dropdown({
-                                useLabels: false,
+                                /*useLabels: false,*/
                                 onChange: function(value, text, $selectedItem) {
                                     console.log("选择的值" + value);
                                     var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
@@ -1215,6 +1285,7 @@
                 data: {}
             },
             yAxis: {
+                max:''
             },
             series: [{
                 name: '',
@@ -1241,7 +1312,11 @@
                         if (data[i].state == "正常"){ var myColor = Color[0] }
                         if (data[i].state == "严重"){ var myColor = Color[1] }
                         if (data[i].state == "警告"){ var myColor = Color[2] }
-						/*var myChart = echarts.init(document.getElementById(id));*/
+                        if(data[i].units == "%"){
+                            option.yAxis.max = 100;
+                        }else {
+                            option.yAxis.max = null;
+                        }
                         option.title.text = data[i].item_name + "(" + data[i].units +")";
                         option.xAxis.data = data[i].data_time;
                         option.series[0].name = data[i].graph_name;
