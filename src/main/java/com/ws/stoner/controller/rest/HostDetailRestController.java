@@ -93,7 +93,12 @@ public class HostDetailRestController {
             HostDetailItemVO itemVO = new HostDetailItemVO();
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setItemName(itemDTO.getName());
-            itemVO.setValueType(itemDTO.getValueType());
+            // 如何单位是 % ，采用value_type = % 的图形列表
+            if("%".equals(itemDTO.getUnits())) {
+                itemVO.setValueType(itemDTO.getUnits());
+            }else {
+                itemVO.setValueType(itemDTO.getValueType());
+            }
             itemVOS.add(itemVO);
         }
         return RestResultGenerator.genResult(itemVOS, REST_RESPONSE_SUCCESS).toString();

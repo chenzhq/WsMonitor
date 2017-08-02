@@ -22,7 +22,7 @@ public class BriefItemDTO {
     private String lastValue;
     private String units;
     @JSONField(name = "value_type")
-    private Integer valueType;
+    private String valueType;
     @JSONField(name = "applications")
     private List<BriefPointDTO> points;
 
@@ -61,11 +61,11 @@ public class BriefItemDTO {
         return this;
     }
 
-    public Integer getValueType() {
+    public String getValueType() {
         return valueType;
     }
 
-    public BriefItemDTO setValueType(Integer valueType) {
+    public BriefItemDTO setValueType(String valueType) {
         this.valueType = valueType;
         return this;
     }

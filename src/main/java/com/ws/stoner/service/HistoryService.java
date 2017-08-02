@@ -27,7 +27,7 @@ public interface HistoryService {
      * @return
      * @throws ServiceException
      */
-    List<BriefHistoryDTO> getHistoryByItemId(String itemId,Integer valueType,int time) throws ServiceException;
+    List<BriefHistoryDTO> getHistoryByItemId(String itemId,String valueType,int time) throws ServiceException;
 
     /**
      * 根据指定的 itemIds 获取指定条数的 historys BriefHistoryDTO
@@ -37,5 +37,5 @@ public interface HistoryService {
      * @return
      * @throws ServiceException
      */
-    List<BriefHistoryDTO> getHistoryByItemIdLimit(String itemId,Integer valueType,int time) throws ServiceException;
+    List<BriefHistoryDTO> getHistoryByItemIdLimit(String itemId,String valueType,int time) throws ServiceException;
 }

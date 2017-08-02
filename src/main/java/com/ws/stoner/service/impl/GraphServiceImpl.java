@@ -179,7 +179,7 @@ public class GraphServiceImpl implements GraphService {
             }
         }
         //根据value_type取对应的history.get,时间区间为前1天的数据 得到 BriefHistory list
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss");
         for(HostDetailItemVO itemVO : itemVOS) {
             List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),1);
             List<Float> datas = new ArrayList<>();
@@ -223,7 +223,7 @@ public class GraphServiceImpl implements GraphService {
                 itemVOS.add(itemVO);
         }
         //根据value_type取对应的history.get,时间区间为前 time 天的数据 得到 BriefHistory list
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss");
         for(HostDetailItemVO itemVO : itemVOS) {
             List<BriefHistoryDTO> historyDTOS = null;
             if(time == 40) {

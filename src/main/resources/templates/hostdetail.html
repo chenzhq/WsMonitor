@@ -638,8 +638,9 @@
         var graph_type = '';
         var item_id = '';
         var graph_type = '';
+        var host_id = $('#host_id').text();
         $('.ui.dropdown').dropdown();
-        dropdownPoints();
+        dropdownPoints(host_id);
         $('.dropdown.points')
             .dropdown({
                 onChange: function(value, text, $selectedItem) {
@@ -662,6 +663,13 @@
             });
 		$('.small.modal').modal({
 			onApprove: function () {
+			    alert("提交后校验item:" + $("#i"+ item_id).length);
+			    //校验判断 页面上是否已经存在相同监控项的图形了
+				if($("#i"+ item_id).length > 0 ) {
+				    alert("已存在图形监控项。。。");
+                    return;
+
+				}
 				$('.button.approve').addClass('loading');
 				var dataInfo = {
                     graphName: $('.input.graph_name input').val(),
@@ -690,7 +698,7 @@
 					error: function () {
                         errorMsg_no_connect("监控项 Modal");
 					}
-				})
+				});
 				return false;
 			}
 		}).modal('show')
@@ -756,6 +764,7 @@
 	//页面加载完后加载监控项的图形
     $(function(){
         var host_id = $("#host_id").text();
+        console.log("host_id"+host_id);
        /* console.log("加载监控项图形的参数:host_id = " + host_id);*/
         $.ajax({
             type: "get",
@@ -776,12 +785,12 @@
 	})
 
 
-    function dropdownPoints(){
+    function dropdownPoints(host_id){
         $.ajax({
             type: "get",
             url: "/hostgraphs/get_points",
             data: {
-                host_id: $('#host_id').text()
+                host_id: host_id
             },
             dataType: "json",
             success: function (result) {
@@ -817,7 +826,12 @@
                     var str = "";
                     for(var i=0;i<data.length;i++)
                     {
-                        str +=" <option value='"+data[i].value_type+"_"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
+                        if(data[i].value_type == "0" || data[i].value_type == "3" || data[i].value_type == "%") {
+                            str +=" <option value='"+data[i].value_type+"_"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
+						}else {
+                            str +=" <option disabled='disabled' value='"+data[i].value_type+"_"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
+						}
+
                     }
                     $(".dropdown.items option").html(str);
                 }
@@ -910,6 +924,7 @@
             if (data[i].state == "正常"){ var myColor = Color[0] }
             if (data[i].state == "严重"){ var myColor = Color[1] }
             if (data[i].state == "警告"){ var myColor = Color[2] }
+
             var myChart = echarts.init(document.getElementById(id));
             var option ;
             console.log("图形类型： " + data[i].graph_type);
@@ -1139,8 +1154,8 @@
                         str +=" <tr id='"+data.item_datas[i].item_id+"' class='"+mytrColor+" tr' ><td>"
 							+ data.item_datas[i].item_name +"</td><td>"
                             + data.item_datas[i].value +"</td><td>"
-                            + data.item_datas[i].high_point +"</td><td>"
                             + data.item_datas[i].warning_point +"</td><td>"
+                            + data.item_datas[i].high_point +"</td><td>"
 							+ data.item_datas[i].last_time +"</td></tr> ";
                     }
                     $("#tableSummary").html(str);
