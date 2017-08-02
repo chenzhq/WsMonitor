@@ -448,17 +448,30 @@
                                     </div>
                                 </div>
                             </div>
-							<div class="row" style="padding-top:20px; ">
-								<div id="flag_true" >
+							<div class="row" style="padding-top:20px; min-height : 220px;">
+                                <div class="column">
+                                </div>
+                                <div id="flag_true" >
 									<h4 class="ui horizontal divider header">
 										<div class="ui secondary menu">
-											<a class="header item addItems">
-												<i class="large icons">
-													<i class="area chart icon"></i>
-													<i class="inverted corner add icon"></i>
-												</i>
-												&nbsp&nbsp添加监控项图形
-											</a>
+                                            <a class="header item addItems">
+                                                <i class="large icons" data-tooltip="添加监控项" data-inverted="">
+                                                    <i class="area chart icon"></i>
+                                                    <i class="inverted corner add icon"></i>
+                                                </i>
+                                            </a>
+                                            <a class="header item editItems">
+                                                <i class="large icons" data-tooltip="编辑监控项" data-inverted="">
+                                                    <i class="area chart icon"></i>
+                                                    <i class="inverted corner write icon"></i>
+                                                </i>
+                                            </a>
+                                            <a class="header item deleteItems">
+                                                <i class="large icons" data-tooltip="删除监控项" data-inverted="">
+                                                    <i class="area chart icon"></i>
+                                                    <i class="inverted corner trash icon"></i>
+                                                </i>
+                                            </a>
 										</div>
 										</h4>
 									<div class="gridly" id="flag_true_content">
@@ -554,9 +567,8 @@
 										</select>
 									</div>
 								</div>
-								<div class="row" >
-									<table id="tableData" class="ui compact celled table center aligned">
-									</table>
+								<div class="row" id="rowData">
+
 								</div>
 							</div>
 						</div>
@@ -764,7 +776,6 @@
 	//页面加载完后加载监控项的图形
     $(function(){
         var host_id = $("#host_id").text();
-        console.log("host_id"+host_id);
        /* console.log("加载监控项图形的参数:host_id = " + host_id);*/
         $.ajax({
             type: "get",
@@ -885,7 +896,6 @@
                     {
                         str +="<option value='"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
                     }
-                    console.log(str);
                     $(".dropdown.itemsTab select").html(str);
                     $(".dropdown.itemsTab .text").html(data[0].item_name);
                 }
@@ -1092,6 +1102,8 @@
     $('#brief_point_id').on('click', '.button',function() {
         var point_id = this.id.substring(1);
         $('.tab_points.menu .item').tab('change tab', 'Summary');
+        $("#rowData").empty();
+        $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
         /*$('.button').addClass('active');*/
         //给弹出框赋值 point_id
         $("#pointDetailArea").text(point_id);
@@ -1106,8 +1118,6 @@
                     if (path === 'Data') {
                         var point_id = $("#pointDetailArea").text();
                         var item_id = $("#pointDetailFirstItem").text() ;
-						/*tabData(item_id);*/
-                        $("#tableData").empty();
                         var tableData = $("#tableData").DataTable({
                             "paging": false,
                             ajax: {
@@ -1174,7 +1184,6 @@
                             .dropdown({
                                 /*useLabels: false,*/
                                 onChange: function(value, text, $selectedItem) {
-                                    console.log("选择的值" + value);
                                     var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
                                     tableData.ajax.url(url).load();
                                     $('.dropdown.stateTab').prop('selectedIndex', 0);
