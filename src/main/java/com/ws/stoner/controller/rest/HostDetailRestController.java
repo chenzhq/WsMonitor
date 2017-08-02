@@ -138,7 +138,7 @@ public class HostDetailRestController {
     }
 
     /**
-     * 保存用户自定义图形配置
+     * 保存 用户自定义图形配置
      * @return
      */
     @RequestMapping(value = "hostgraphs/save_graph", method = RequestMethod.POST)
@@ -150,5 +150,30 @@ public class HostDetailRestController {
         }else {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
+    }
+
+    /**
+     * 删除 用户自定义图形配置
+     * @return
+     */
+    @RequestMapping(value = "hostgraphs/delete_graph", method = RequestMethod.GET)
+    public String deleteHostItemGraph( @RequestParam("item_id") String itemId,@RequestParam("host_id") String hostId) throws ServiceException {
+        boolean success =  itemService.deleteGraphItemFromMongo(itemId);
+        if(success) {
+            List<HostDetailItemVO> itemVOS = graphService.getGraphItemByHostId(hostId);
+            return RestResultGenerator.genResult(itemVOS, REST_RESPONSE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+    }
+
+    /**
+     * 获取 用户自定义图形修改 配置
+     * @return
+     */
+    @RequestMapping(value = "hostgraphs/get_itemgraph", method = RequestMethod.GET)
+    public String saveHostItemsGraph( @RequestParam("item_id") String itemId) throws ServiceException {
+        HostDetailItemGraphVO itemGraphVO =  graphService.getGraphItemByItemId(itemId);
+        return RestResultGenerator.genResult(itemGraphVO, REST_RESPONSE_SUCCESS).toString();
     }
 }

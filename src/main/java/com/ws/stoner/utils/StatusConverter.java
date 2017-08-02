@@ -43,20 +43,28 @@ public class StatusConverter {
         Boolean highLevel;
        switch (symbol) {
            case ">":
-               if(value < warningPointValue) {
+               if(warningPointValue != null && value < warningPointValue) {
                    status = StatusEnum.OK.getName();
-               }else if(value >= warningPointValue && value <= highPointValue) {
+               }else if(warningPointValue == null && value < highPointValue) {
+                   status = StatusEnum.OK.getName();
+               }else if(highPointValue == null && value > warningPointValue) {
                    status = StatusEnum.WARNING.getName();
-               }else if(value > highPointValue) {
+               }else if(warningPointValue != null && highPointValue != null && value >= warningPointValue && value <= highPointValue) {
+                   status = StatusEnum.WARNING.getName();
+               }else if(highPointValue != null && value > highPointValue) {
                    status = StatusEnum.HIGH.getName();
                }
                break;
            case "<":
-               if(value > warningPointValue) {
+               if(warningPointValue != null && value > warningPointValue) {
                    status = StatusEnum.OK.getName();
-               }else if(value <= warningPointValue && value >= highPointValue) {
+               }else if(warningPointValue == null && value > highPointValue) {
+                   status = StatusEnum.OK.getName();
+               }else if(highPointValue == null && value < warningPointValue) {
                    status = StatusEnum.WARNING.getName();
-               }else if(value < highPointValue) {
+               }else if(warningPointValue != null && highPointValue != null && value <= warningPointValue && value >= highPointValue) {
+                   status = StatusEnum.WARNING.getName();
+               }else if(highPointValue != null && value < highPointValue) {
                    status = StatusEnum.HIGH.getName();
                }
                break;

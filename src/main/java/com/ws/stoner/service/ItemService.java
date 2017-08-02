@@ -94,12 +94,28 @@ item 在 mongodb下的业务方法
     List<Item> getItemsByHostIdFromMongo(String hostId) throws ServiceException;
 
     /**
+     * 在mongodb数据库中根据 itemId 查询出所有的 item
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    Item getItemByItemIdFromMongo(String itemId) throws ServiceException;
+
+    /**
      * 在mongodb数据库中 插入保存 item
      * @param item
      * @return
      * @throws ServiceException
      */
     boolean saveGraphItemFromMongo(Item item) throws ServiceException;
+
+    /**
+     * 在mongodb数据库中 根据 itemid 删除 item
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    boolean deleteGraphItemFromMongo(String itemId) throws ServiceException;
 
 
     /**

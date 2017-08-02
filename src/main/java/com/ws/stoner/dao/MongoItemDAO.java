@@ -16,7 +16,24 @@ public interface MongoItemDAO {
     List<Item> findItemByHostId(String hostId) throws DAOException;
 
     /**
+     * 根据 itemId ，查询 item
+     * @param itemId
+     * @return
+     * @throws DAOException
+     */
+    Item getItemByItemId(String itemId) throws DAOException;
+
+
+    /**
      * 插入保存 item
      */
     void save(Item item) throws DAOException;
+
+    /**
+     * 根据 itemId 删除指定 item
+     * @param itemId
+     * @throws DAOException
+     */
+    void delete(String itemId) throws DAOException;
+
 }

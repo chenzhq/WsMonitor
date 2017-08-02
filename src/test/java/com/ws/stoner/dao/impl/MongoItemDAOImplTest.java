@@ -40,7 +40,9 @@ public void after() throws Exception {
 */ 
 @Test
 public void testFindItemByHostId() throws Exception { 
-//TODO: Test goes here... 
+//TODO: Test goes here...
+
+    System.out.println(mongoItemDAO.getItemByItemId("43154"));
 } 
 
 /** 
@@ -57,7 +59,16 @@ public void testSave() throws Exception {
     item.setHostId("10084");
     item.setItemId("34496");
     mongoItemDAO.save(item);
-} 
+}
+
+    @Test
+    public void testDelete() throws Exception {
+        //TODO: Test goes here...
+
+        mongoItemDAO.delete("43154");
+    }
+
+
 
 
 } 

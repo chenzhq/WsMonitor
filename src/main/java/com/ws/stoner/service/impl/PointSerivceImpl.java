@@ -51,7 +51,7 @@ public class PointSerivceImpl implements PointSerivce {
     private ItemService itemService;
 
     @Autowired
-    private HistoryService historyService;
+    private ValuemapService valuemapService;
 
     /**
      * 根据request 获取监控点数量
@@ -392,7 +392,11 @@ public class PointSerivceImpl implements PointSerivce {
             HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
-            itemVO.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
+            if(!"0".equals(itemDTO.getValuemapId())) {
+                itemVO.setValue(valuemapService.getNewValueById(itemDTO.getValuemapId(),itemDTO.getLastValue())) ;
+            }else {
+                itemVO.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
+            }
             itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             //withTriggers
@@ -443,7 +447,11 @@ public class PointSerivceImpl implements PointSerivce {
             HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
-            itemVO.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
+            if(!"0".equals(itemDTO.getValuemapId())) {
+                itemVO.setValue(valuemapService.getNewValueById(itemDTO.getValuemapId(),itemDTO.getLastValue())) ;
+            }else {
+                itemVO.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
+            }
             itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             if(itemDTO.getLastTime() != null) {

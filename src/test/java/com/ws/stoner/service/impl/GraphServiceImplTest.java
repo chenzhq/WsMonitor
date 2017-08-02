@@ -70,7 +70,12 @@ public void testGetGraphItemByHostId() throws Exception {
 @Test
 public void testGetGraphItemByPointId() throws Exception { 
 //TODO: Test goes here... 
-} 
+}
+
+    @Test
+    public void testgetGraphItemByItemId() throws Exception {
+        System.out.println(graphService.getGraphItemByItemId("43162"));
+    }
 
 
 } 

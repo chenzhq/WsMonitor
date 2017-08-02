@@ -9,6 +9,7 @@ import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.dto.BriefHistoryDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
+import com.ws.stoner.model.view.HostDetailItemGraphVO;
 import com.ws.stoner.model.view.HostDetailItemVO;
 import com.ws.stoner.service.GraphService;
 import com.ws.stoner.service.HistoryService;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -197,6 +199,32 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
+     * 根据 itemId 获取 HostDetailItemGraphVO 类型对象 获取指定 监控项图形 配置参数
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public HostDetailItemGraphVO getGraphItemByItemId(String itemId) throws ServiceException {
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(itemId);
+        Item itemMongo = itemService.getItemByItemIdFromMongo(itemId);
+        BriefItemDTO itemDTO = itemService.getItemsByItemIds(itemIds).get(0);
+        HostDetailItemGraphVO itemGraphVO = new HostDetailItemGraphVO();
+        itemGraphVO.setItemId(itemMongo.getItemId());
+        itemGraphVO.setGraphName(itemMongo.getGraphName());
+        itemGraphVO.setGraphType(itemMongo.getGraphType());
+        itemGraphVO.setPointId(itemDTO.getPoints().get(0).getPointId());
+        //valueType
+        if("%".equals(itemDTO.getUnits())) {
+            itemGraphVO.setValueType(itemDTO.getUnits());
+        }else {
+            itemGraphVO.setValueType(itemDTO.getValueType());
+        }
+        return itemGraphVO;
+    }
+
+    /**
      * 根据 pointId 查询出指定 point 的 图形监控项 graph item 图形报告 标签页
      * @param pointId
      * @return
@@ -231,6 +259,7 @@ public class GraphServiceImpl implements GraphService {
             }else {
                 historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),time);
             }
+            Collections.reverse(historyDTOS);
             List<Float> datas = new ArrayList<>();
             List<String> dataTime = new ArrayList<>();
             //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，

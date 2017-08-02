@@ -1,6 +1,7 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.view.HostDetailItemGraphVO;
 import com.ws.stoner.model.view.HostDetailItemVO;
 
 import java.util.List;
@@ -25,6 +26,14 @@ public interface GraphService {
      * @throws ServiceException
      */
     List<HostDetailItemVO> getGraphItemByHostId(String hostId) throws ServiceException;
+
+    /**
+     * 根据 itemId 获取 HostDetailItemGraphVO 类型对象 获取指定 监控项图形 配置参数
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    HostDetailItemGraphVO getGraphItemByItemId(String itemId) throws ServiceException;
 
     /**
      * 根据 pointId 查询出指定 point 的 图形监控项 graph item

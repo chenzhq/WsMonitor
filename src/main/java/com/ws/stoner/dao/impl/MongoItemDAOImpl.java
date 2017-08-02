@@ -31,10 +31,34 @@ public class MongoItemDAOImpl implements MongoItemDAO {
         return item;
     }
 
+    /**
+     * 根据 itemId ，查询 item
+     * @param itemId
+     * @return
+     * @throws DAOException
+     */
+    @Override
+    public Item getItemByItemId(String itemId) throws DAOException {
+        Query query=new Query(Criteria.where("itemId").is(itemId));
+        Item item = mongoTemplate.findOne(query, Item.class);
+        return item;
+    }
+
     @Override
     public void save(Item item) throws DAOException {
 
         mongoTemplate.insert(item);
 
+    }
+
+    /**
+     * 根据 itemId 删除指定 item
+     * @param itemId
+     * @throws DAOException
+     */
+    @Override
+    public void delete(String itemId) throws DAOException {
+        Query query=new Query(Criteria.where("itemId").is(itemId));
+        mongoTemplate.remove(query,Item.class);
     }
 }

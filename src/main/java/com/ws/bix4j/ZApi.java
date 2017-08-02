@@ -10,6 +10,7 @@ import com.ws.bix4j.access.problem.Problem;
 import com.ws.bix4j.access.template.Template;
 import com.ws.bix4j.access.trigger.Trigger;
 import com.ws.bix4j.access.user.*;
+import com.ws.bix4j.access.valuemap.Valuemap;
 import com.ws.bix4j.exception.ZApiException;
 
 import java.net.URI;
@@ -96,6 +97,9 @@ public class ZApi {
     }
     public HostInterface HostInterface() {
         return new HostInterface(uri.toString(), auth);
+    }
+    public Valuemap Valuemap() {
+        return new Valuemap(uri.toString(), auth);
     }
     public History History() {
         return new History(uri.toString(), auth);

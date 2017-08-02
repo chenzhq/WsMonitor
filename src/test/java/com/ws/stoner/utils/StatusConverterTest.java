@@ -46,7 +46,12 @@ public void testStatusTransformCustomStatus() throws Exception {
 @Test
 public void testStatusTransformForCustomStatusCustomAvailableState() throws Exception { 
 //TODO: Test goes here... 
-} 
+}
+
+    @Test
+    public void testgetStatusByThresholdValue() throws Exception {
+        System.out.println(StatusConverter.getStatusByThresholdValue(Float.parseFloat("100"),Float.parseFloat("20"),null,">"));
+    }
 
 
 } 

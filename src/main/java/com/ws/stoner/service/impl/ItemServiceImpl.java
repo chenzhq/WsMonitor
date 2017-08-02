@@ -18,6 +18,7 @@ import com.ws.stoner.model.view.PointDetailItemDatasVO;
 import com.ws.stoner.service.HistoryService;
 import com.ws.stoner.service.ItemService;
 import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.service.ValuemapService;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
@@ -49,6 +50,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private TriggerService triggerService;
+    @Autowired
+    private ValuemapService valuemapService;
 
 
     /**
@@ -108,6 +111,7 @@ public class ItemServiceImpl implements ItemService {
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setItemIds(itemIds)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
                 .setOutput(BriefItemDTO.PROPERTY_NAMES);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
@@ -229,12 +233,49 @@ public class ItemServiceImpl implements ItemService {
         return mongoItems;
     }
 
+    /**
+     * 在mongodb数据库中根据 itemId 查询出所有的 item
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public Item getItemByItemIdFromMongo(String itemId) throws ServiceException {
+        Item mongoItem = null;
+        try {
+
+            mongoItem  = mongoItemDAO.getItemByItemId(itemId);
+        } catch (DAOException e) {
+            logger.error("查询mongodb 的 item 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        return mongoItem;
+    }
+
     @Override
     public boolean saveGraphItemFromMongo(Item item) throws ServiceException {
         try {
             mongoItemDAO.save(item);
         } catch (DAOException e) {
             logger.error("保存 mongodb 的 item 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 在mongodb数据库中 根据 itemid 删除 item
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean deleteGraphItemFromMongo(String itemId) throws ServiceException {
+        try {
+            mongoItemDAO.delete(itemId);
+        } catch (DAOException e) {
+            logger.error("删除 mongodb 的 item 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
             return false;
         }
@@ -292,6 +333,13 @@ public class ItemServiceImpl implements ItemService {
             itemHistoryData.setName(itemDTO.getName());
             itemHistoryData.setUnits(itemDTO.getUnits());
             itemHistoryData.setValue(ThresholdUtils.transformValueUnits(historyDTO.getValue(),itemDTO.getUnits()));
+            //时序数据值映射 存在大量访问 api 问题，响应时间太长 先注释掉
+//            if(!"0".equals(itemDTO.getValuemapId())) {
+//                itemHistoryData.setValue(valuemapService.getNewValueById(itemDTO.getValuemapId(),itemDTO.getLastValue())) ;
+//            }else {
+//                itemHistoryData.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
+//            }
+            itemHistoryData.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
             itemHistoryData.setLastTime(historyDTO.getLastTime().format(formatter));
             itemHistoryData.setWithTriggers(withTrigger);
             itemHistoryData.setWarningPoint(warningPoint);
@@ -310,7 +358,7 @@ public class ItemServiceImpl implements ItemService {
             Float valueInfo = Float.parseFloat(historyDTO.getValue());
             //状态转换
             if(warningPointValue != null || highPointValue != null) {
-                state = StatusConverter.getStatusByThresholdValue(valueInfo,warningPointValue,highPointValue,symbol);
+                state = StatusConverter.getStatusByThresholdValue(Float.parseFloat(historyDTO.getValue()),warningPointValue,highPointValue,symbol);
             }else{
                 state = StatusEnum.OK.getName();
             }

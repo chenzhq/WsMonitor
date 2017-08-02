@@ -14,6 +14,8 @@ public class BriefItemDTO {
     @JSONField(name = "itemid")
     private String itemId;
     private String name;
+    @JSONField(name = "valuemapid")
+    private String valuemapId;
     @JSONField(name = "custom_state")
     private int customState;
     @JSONField(name = "lastclock",format = "yyyy-MM-dd HH:mm:ss")
@@ -27,7 +29,7 @@ public class BriefItemDTO {
     private List<BriefPointDTO> points;
 
 
-    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","units"};
+    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","units","valuemapid"};
 
     public int getCustomState() {
         return customState;
@@ -38,19 +40,6 @@ public class BriefItemDTO {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return "BriefItemDTO{" +
-                "itemId='" + itemId + '\'' +
-                ", name='" + name + '\'' +
-                ", customState=" + customState +
-                ", lastTime=" + lastTime +
-                ", lastValue='" + lastValue + '\'' +
-                ", units='" + units + '\'' +
-                ", valueType=" + valueType +
-                ", points=" + points +
-                '}';
-    }
 
     public List<BriefPointDTO> getPoints() {
         return points;
@@ -119,5 +108,29 @@ public class BriefItemDTO {
     public BriefItemDTO setUnits(String units) {
         this.units = units;
         return this;
+    }
+
+    public String getValuemapId() {
+        return valuemapId;
+    }
+
+    public BriefItemDTO setValuemapId(String valuemapId) {
+        this.valuemapId = valuemapId;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "BriefItemDTO{" +
+                "itemId='" + itemId + '\'' +
+                ", name='" + name + '\'' +
+                ", valuemapId='" + valuemapId + '\'' +
+                ", customState=" + customState +
+                ", lastTime=" + lastTime +
+                ", lastValue='" + lastValue + '\'' +
+                ", units='" + units + '\'' +
+                ", valueType='" + valueType + '\'' +
+                ", points=" + points +
+                '}';
     }
 }
