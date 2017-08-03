@@ -157,6 +157,26 @@ public class ItemServiceImpl implements ItemService {
         return itemDTOS;
     }
 
+    /**
+     * 根据指定的 itemIds 获取相应的 items BriefItemDTO value_type =0,3
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefItemDTO> getValueItemsByItemIds(List<String> itemIds) throws ServiceException {
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        Map<String,Object> itemFilter = new HashMap<>();
+        itemFilter.put("value_type",  new String[]{String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value),String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value)});
+        itemGetRequest.getParams()
+                .setMonitored(true)
+                .setItemIds(itemIds)
+                .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setFilter(itemFilter);
+        List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
+        return itemDTOS;
+    }
+
 
     /**
      * pointIds 获取相应的所有类型 items BriefItemDTO
@@ -319,6 +339,7 @@ public class ItemServiceImpl implements ItemService {
             historyDTOS = historyService.getHistoryByItemIdLimit(itemDTO.getItemId(),itemDTO.getValueType(),time);
         }else {
             historyDTOS = historyService.getHistoryByItemId(itemDTO.getItemId(),itemDTO.getValueType(),time);
+            Collections.reverse(historyDTOS);
         }
         //step3:根据itemIds获取相关触发器 triggerDTO list 来获取阀值
         List<BriefTriggerDTO> triggerDTOS = triggerService.getTriggersByItemIds(itemIds);
@@ -349,15 +370,15 @@ public class ItemServiceImpl implements ItemService {
             HostDetailPointItemVO itemHistoryData = new HostDetailPointItemVO();
             itemHistoryData.setItemId(itemDTO.getItemId());
             itemHistoryData.setName(itemDTO.getName());
-            itemHistoryData.setUnits(itemDTO.getUnits());
-            itemHistoryData.setValue(ThresholdUtils.transformValueUnits(historyDTO.getValue(),itemDTO.getUnits()));
+            Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),itemDTO.getUnits());
+            itemHistoryData.setUnits(valueUnits.entrySet().iterator().next().getKey());
+            itemHistoryData.setValue(valueUnits.entrySet().iterator().next().getValue() + valueUnits.entrySet().iterator().next().getKey());
             //时序数据值映射 存在大量访问 api 问题，响应时间太长 先注释掉
 //            if(!"0".equals(itemDTO.getValuemapId())) {
 //                itemHistoryData.setValue(valuemapService.getNewValueById(itemDTO.getValuemapId(),itemDTO.getLastValue())) ;
 //            }else {
 //                itemHistoryData.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
 //            }
-            itemHistoryData.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
             itemHistoryData.setLastTime(historyDTO.getLastTime().format(formatter));
             itemHistoryData.setWithTriggers(withTrigger);
             itemHistoryData.setWarningPoint(warningPoint);
@@ -368,12 +389,11 @@ public class ItemServiceImpl implements ItemService {
             Float highPointValue = null;
             String state = null;
             if(warningPoint != null) {
-                warningPointValue =Float.parseFloat(ThresholdUtils.getTransformValue(warningPoint));
+                warningPointValue =ThresholdUtils.getTransformValue(warningPoint).entrySet().iterator().next().getValue();
             }
             if(highPoint != null) {
-                highPointValue =Float.parseFloat(ThresholdUtils.getTransformValue(highPoint));
+                highPointValue =ThresholdUtils.getTransformValue(highPoint).entrySet().iterator().next().getValue();
             }
-            Float valueInfo = Float.parseFloat(historyDTO.getValue());
             //状态转换
             if(warningPointValue != null || highPointValue != null) {
                 state = StatusConverter.getStatusByThresholdValue(Float.parseFloat(historyDTO.getValue()),warningPointValue,highPointValue,symbol);

@@ -395,7 +395,8 @@ public class PointSerivceImpl implements PointSerivce {
             if(!"0".equals(itemDTO.getValuemapId())) {
                 itemVO.setValue(valuemapService.getNewValueById(itemDTO.getValuemapId(),itemDTO.getLastValue())) ;
             }else {
-                itemVO.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
+                Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits());
+                itemVO.setValue(valueUnits.entrySet().iterator().next().getValue()+valueUnits.entrySet().iterator().next().getKey());
             }
             itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
@@ -450,7 +451,8 @@ public class PointSerivceImpl implements PointSerivce {
             if(!"0".equals(itemDTO.getValuemapId())) {
                 itemVO.setValue(valuemapService.getNewValueById(itemDTO.getValuemapId(),itemDTO.getLastValue())) ;
             }else {
-                itemVO.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
+                Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits());
+                itemVO.setValue(valueUnits.entrySet().iterator().next().getValue()+valueUnits.entrySet().iterator().next().getKey());
             }
             itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));

@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import java.util.Map;
 
 /** 
 * ThresholdUtils Tester. 
@@ -40,11 +41,12 @@ public void testGetThresholdValue() throws Exception {
 
     @Test
     public void testGetgetTransformValue() throws Exception {
-        System.out.println(ThresholdUtils.getTransformValue(" 60m"));
+        Map<String,Float> map = ThresholdUtils.getTransformValue("34K");
+        System.out.println(map.entrySet().iterator().next().getKey());
     }
 
     @Test
     public void testtransformValueUnits() throws Exception {
-        System.out.println(ThresholdUtils.transformValueUnits("13366","uptime"));
+        System.out.println(ThresholdUtils.transformValueUnits("322312323","B"));
     }
 } 

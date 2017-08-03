@@ -24,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by pc on 2017/7/18.
@@ -71,7 +68,7 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
-     * 根据 hostId 查询出指定设备的 图形监控项 graph item
+     * 根据 hostId 查询出指定设备的 图形监控项 graph item  设备详情 图形展示
      * @param hostId
      * @return
      * @throws ServiceException
@@ -187,9 +184,17 @@ public class GraphServiceImpl implements GraphService {
             List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),1);
             List<Float> datas = new ArrayList<>();
             List<String> dataTime = new ArrayList<>();
+            String upUnits = itemVO.getUnits().toUpperCase();
             //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
             for(BriefHistoryDTO historyDTO : historyDTOS) {
-                datas.add(Float.parseFloat(historyDTO.getValue()));
+                if("B".equals(upUnits) || "BPS".equals(upUnits) || "BYTE".equals(upUnits)) {
+                    Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),upUnits);
+
+                    itemVO.setUnits(valueUnits.entrySet().iterator().next().getKey());
+                    datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
+                }else {
+                    datas.add(Float.parseFloat(historyDTO.getValue()));
+                }
                 String dataTimeString = historyDTO.getLastTime().format(formatter);
                 dataTime.add(dataTimeString);
             }
@@ -200,7 +205,7 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
-     * 根据 itemId 获取 HostDetailItemGraphVO 类型对象 获取指定 监控项图形 配置参数
+     * 根据 itemId 获取 HostDetailItemGraphVO 类型对象 获取指定 设备详情 图形配置参数
      * @param itemId
      * @return
      * @throws ServiceException
@@ -229,7 +234,7 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
-     * 根据 pointId 查询出指定 point 的 图形监控项 graph item 图形报告 标签页
+     * 根据 pointId 查询出 图形监控项 graph item  监控点详情 图形报告 标签页
      * @param pointId
      * @return
      * @throws ServiceException
@@ -260,15 +265,24 @@ public class GraphServiceImpl implements GraphService {
             List<BriefHistoryDTO> historyDTOS = null;
             if(time == 40) {
                 historyDTOS = historyService.getHistoryByItemIdLimit(itemVO.getItemId(),itemVO.getValueType(),time);
+                Collections.reverse(historyDTOS);
             }else {
                 historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),time);
             }
-            Collections.reverse(historyDTOS);
             List<Float> datas = new ArrayList<>();
             List<String> dataTime = new ArrayList<>();
+            String upUnits = itemVO.getUnits().toUpperCase();
             //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
             for(BriefHistoryDTO historyDTO : historyDTOS) {
-                datas.add(Float.parseFloat(historyDTO.getValue()));
+                if("B".equals(upUnits) || "BPS".equals(upUnits) || "BYTE".equals(upUnits)) {
+                    Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),upUnits);
+
+                    itemVO.setUnits(valueUnits.entrySet().iterator().next().getKey());
+                    datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
+                }else {
+                    datas.add(Float.parseFloat(historyDTO.getValue()));
+                }
+
                 String dataTimeString = historyDTO.getLastTime().format(formatter);
                 dataTime.add(dataTimeString);
             }
