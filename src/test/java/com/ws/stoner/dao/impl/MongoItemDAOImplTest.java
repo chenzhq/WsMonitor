@@ -68,6 +68,16 @@ public void testSave() throws Exception {
         mongoItemDAO.delete("43154");
     }
 
+    @Test
+    public void testUpdate() throws Exception {
+        //TODO: Test goes here...
+        Item item = new Item();
+        item.setGraphName("ceshi111");
+        item.setGraphType("area");
+        item.setHostId("10300");
+        item.setItemId("43151");
+        mongoItemDAO.update(item);
+    }
 
 
 

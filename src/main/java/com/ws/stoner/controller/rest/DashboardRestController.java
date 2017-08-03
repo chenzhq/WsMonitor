@@ -12,12 +12,14 @@ import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.utils.RestResultGenerator;
 import com.ws.stoner.utils.StatusConverter;
+import javafx.scene.input.DataFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -201,6 +203,7 @@ public class DashboardRestController {
         allPointDTO = pointSerivce.listAllPoint();
         //step2:新建List<DashboardPointVO>，循环allPointDTO，新建DashboardPointVO，分别赋值
         List<DashboardPointVO> pointVOS = new ArrayList<>();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         for(BriefPointDTO point :allPointDTO) {
             DashboardPointVO pointVO = new DashboardPointVO();
             //赋值 id,name,hostid,hostname
@@ -224,7 +227,9 @@ public class DashboardRestController {
                         lastTime = item.getLastTime();
                     }
                 }
-                pointVO.setLastTime(lastTime);
+                if(lastTime != null) {
+                    pointVO.setLastTime(lastTime.format(dateTimeFormatter));
+                }
             }
             pointVOS.add(pointVO);
         }

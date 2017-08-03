@@ -30,10 +30,16 @@ public interface MongoItemDAO {
     void save(Item item) throws DAOException;
 
     /**
+     * 更新保存 item
+     */
+    void update(Item item) throws DAOException;
+
+    /**
      * 根据 itemId 删除指定 item
      * @param itemId
      * @throws DAOException
      */
     void delete(String itemId) throws DAOException;
+
 
 }

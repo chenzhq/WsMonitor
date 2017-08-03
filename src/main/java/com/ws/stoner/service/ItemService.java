@@ -110,6 +110,14 @@ item 在 mongodb下的业务方法
     boolean saveGraphItemFromMongo(Item item) throws ServiceException;
 
     /**
+     * 在mongodb数据库中 更新保存 item
+     * @param item
+     * @return
+     * @throws ServiceException
+     */
+    boolean updateGraphItemFromMongo(Item item) throws ServiceException;
+
+    /**
      * 在mongodb数据库中 根据 itemid 删除 item
      * @param itemId
      * @return

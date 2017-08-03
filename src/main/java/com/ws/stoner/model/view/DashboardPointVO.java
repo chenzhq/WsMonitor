@@ -1,6 +1,7 @@
 package com.ws.stoner.model.view;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -18,8 +19,8 @@ public class DashboardPointVO {
     private String state;
     private String hostId;
     private String hostName;
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime lastTime;
+    @JSONField(format="yyyy-MM-dd HH:mm:ss",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
+    private String lastTime;
 
     @Override
     public String toString() {
@@ -33,12 +34,12 @@ public class DashboardPointVO {
                 '}';
     }
 
-    public LocalDateTime getLastTime() {
+    public String getLastTime() {
         return lastTime;
     }
 
-    public DashboardPointVO setLastTime(LocalDateTime lastTime) {
-       this.lastTime = lastTime;
+    public DashboardPointVO setLastTime(String lastTime) {
+        this.lastTime = lastTime;
         return this;
     }
 

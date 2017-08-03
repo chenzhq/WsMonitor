@@ -8,12 +8,18 @@ import com.alibaba.fastjson.annotation.JSONField;
 public class HostDetailItemGraphVO {
     @JSONField(name = "item_id")
     private String itemId;
+    @JSONField(name = "item_name")
+    private String itemName;
     @JSONField(name = "point_id")
     private String pointId;
+    @JSONField(name = "point_name")
+    private String pointName;
     @JSONField(name = "graph_name")
     private String graphName;
     @JSONField(name = "graph_type")
     private String graphType;
+    @JSONField(name = "graph_value")
+    private String graphValue;
     @JSONField(name = "value_type")
     private String valueType;
 
@@ -62,13 +68,43 @@ public class HostDetailItemGraphVO {
         return this;
     }
 
+    public String getItemName() {
+        return itemName;
+    }
+
+    public HostDetailItemGraphVO setItemName(String itemName) {
+        this.itemName = itemName;
+        return this;
+    }
+
+    public String getPointName() {
+        return pointName;
+    }
+
+    public HostDetailItemGraphVO setPointName(String pointName) {
+        this.pointName = pointName;
+        return this;
+    }
+
+    public String getGraphValue() {
+        return graphValue;
+    }
+
+    public HostDetailItemGraphVO setGraphValue(String graphValue) {
+        this.graphValue = graphValue;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "HostDetailItemGraphVO{" +
                 "itemId='" + itemId + '\'' +
+                ", itemName='" + itemName + '\'' +
                 ", pointId='" + pointId + '\'' +
+                ", pointName='" + pointName + '\'' +
                 ", graphName='" + graphName + '\'' +
                 ", graphType='" + graphType + '\'' +
+                ", graphValue='" + graphValue + '\'' +
                 ", valueType='" + valueType + '\'' +
                 '}';
     }
