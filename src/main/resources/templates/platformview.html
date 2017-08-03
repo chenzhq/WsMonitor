@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="common_head(title, links)">
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
-	<title th:replace="${title}">业务方块</title>
+	<title>业务方块</title>
 	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
 	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
@@ -12,18 +12,23 @@
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 
-	<th:block th:replace="${links}"></th:block>
+	<th:block th:fragment="supplement">
+		<link href="../static/css/TimeCircles.css" rel="stylesheet" th:href="@{css/TimeCircles.css}"/>
+		<script src="../static/js/TimeCircles.js" th:src="@{js/TimeCircles.js}"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<style type="text/css">
+		</style>
+	</th:block>
 </head>
 <body>
 <!--header start-->
 <div id="contextWrap">
 	<!--sidebar-->
 	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
-		 th:fragment="left_menu">
-		<a class="item logo" href="#">
-			<img src="../static/images/logo.png" th:src="@{images/logo.png}" alt="whstone"/><img
-				src="../static/images/thumblogo.png" th:src="@{images/thumblogo.png}" alt="whstone"
-				class="displaynone"/>
+		 th:replace="layout::left_menu">
+		<a class="item logo" href="index.html">
+			<img src="../static/images/logo.png" alt="stagblogo"/><img src="../static/images/thumblogo.png"
+																	   alt="stagblogo" class="displaynone"/>
 		</a>
 		<div class="ui accordion inverted">
 			<div class="title item">
@@ -134,7 +139,7 @@
 
 	<div class="pusher">
 		<!--navbar-->
-		<div class="navslide navwrap" th:fragment="top_nav">
+		<div class="navslide navwrap" th:replace="layout::top_nav">
 			<div class="ui menu icon borderless grid" data-color="inverted white">
 				<a class="item labeled openbtn">
 					<i class="ion-navicon-round big icon"></i>
@@ -198,6 +203,28 @@
 		<div class="mainWrap navslide">
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
+				<div class="sixteen wide column">
+					<div class="ui segments">
+						<div class="ui segment">
+							<h3 class="ui header">
+								业务方块
+							</h3>
+						</div>
+						<div class="ui segment" style=" min-height : 500px;">
+							<div class="ui container" style="padding-top:10%">
+								<div class="ui grid center aligned">
+									<div class="row">
+										<div class="sixteen wide tablet six wide computer column">
+											<h1 class="ui header center aligned inverted">
+											</h1>
+											<div id="DateCountdown" data-date="2016-5-17 00:00:00" style="width: 100%;"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				<!--Site Content-->
 			</div>
 		</div>
@@ -212,5 +239,40 @@
 
     <th:block th:replace="${scripts}"></th:block>
 </th:block>
+<script>
+    $("#DateCountdown").TimeCircles({
+        "animation": "smooth",
+        "bg_width": 0.2,
+        "fg_width": 0.02666666666666667,
+        "circle_bg_color": "#000",
+        "time": {
+            "Days": {
+                "text": "Days",
+                "color": "#FFE066",
+                "show": true
+            },
+            "Hours": {
+                "text": "Hours",
+                "color": "#F25F5C",
+                "show": true
+            },
+            "Minutes": {
+                "text": "Minutes",
+                "color": "#247BA0",
+                "show": true
+            },
+            "Seconds": {
+                "text": "Seconds",
+                "color": "#32936F",
+                "show": true
+            }
+        }
+    });
+</script>
+<script>
+    var colors = ["#F25F5C", "#247BA0", "#8e44ad", "#ED6A5A", "#32936F", "#2c3e50", "#E83F6F", "#32936F", "#2E294E"];
+    var rand = Math.floor(Math.random() * colors.length);
+    $('body').css("background-color", colors[rand]);
+</script>
 </body>
 </html>

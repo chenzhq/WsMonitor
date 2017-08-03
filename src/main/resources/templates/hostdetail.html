@@ -190,7 +190,7 @@
 
 	<div class="pusher">
 		<!--navbar-->
-		<div class="navslide navwrap" th:fragment="top_nav">
+		<div class="navslide navwrap" th:replace="layout::top_nav">
 			<div class="ui menu icon borderless grid" data-color="inverted white">
 				<a class="item labeled openbtn">
 					<i class="ion-navicon-round big icon"></i>
@@ -487,7 +487,7 @@
 						<span style="display:none" id="pointDetailArea"></span>
 						<span style="display:none" id="pointDetailFirstItem"></span>
 						<i class="close icon"></i>
-						<!--modal0 start-->
+						<!--监控点modal start-->
 						<div class="content">
                         <div class="ui grid points">
                             <div id="labelPoints"></div>
@@ -574,7 +574,7 @@
 						</div>
 						</div>
                         </div>
-						<!--modal0 end-->
+						<!--监控点modal end-->
 						</div>
 					</div>
 
@@ -1283,6 +1283,7 @@
         });
     }
 
+    //<!--监控点modal-->
 
 
     //<!--modal0--> 点击监控点按钮 进入监控点详情

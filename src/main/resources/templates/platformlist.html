@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="common_head(title, links)">
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
-	<title th:replace="${title}">业务列表</title>
+	<title>业务列表</title>
 	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
 	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
@@ -12,7 +12,13 @@
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 
-	<th:block th:replace="${links}"></th:block>
+	<th:block th:fragment="supplement">
+		<link href="#" rel="stylesheet" th:href="@{}"/>
+		<script src="#" th:src="@{}"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<style type="text/css">
+		</style>
+	</th:block>
 </head>
 <body>
 <!--header start-->
@@ -134,7 +140,7 @@
 
 	<div class="pusher">
 		<!--navbar-->
-		<div class="navslide navwrap" th:fragment="top_nav">
+		<div class="navslide navwrap" th:replace="layout::top_nav">
 			<div class="ui menu icon borderless grid" data-color="inverted white">
 				<a class="item labeled openbtn">
 					<i class="ion-navicon-round big icon"></i>
@@ -198,6 +204,58 @@
 		<div class="mainWrap navslide">
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
+				<div class="sixteen wide column">
+					<div class="ui segments">
+						<div class="ui segment">
+							<h3 class="ui header">
+								业务列表
+							</h3>
+						</div>
+						<div class="ui segment" style=" min-height : 500px;">
+							<div class="row">
+								<table class="ui compact  very basic table center aligned">
+									<thead>
+									<tr><th width="20%">指标</th>
+										<th width="20%">值</th>
+										<th width="10%">危险阈值</th>
+										<th width="10%">故障阈值</th>
+										<th width="20%">最新时间</th>
+									</tr></thead>
+									<tbody id="tableSummary" >
+									<tr>
+										<td width="20%">指标</td>
+										<td width="20%">值</td>
+										<td width="10%">危险阈值</td>
+										<td width="10%">故障阈值</td>
+										<td width="20%">最新时间</td>
+									</tr>
+									<tr>
+										<td width="20%">指标</td>
+										<td width="20%">值</td>
+										<td width="10%">危险阈值</td>
+										<td width="10%">故障阈值</td>
+										<td width="20%">最新时间</td>
+									</tr>
+									<tr>
+										<td width="20%">指标</td>
+										<td width="20%"><a  href="javascript:;" style="color: rgba(0, 0, 0, 0.87);"> 80%</a></td>
+										<td width="10%">危险阈值</td>
+										<td width="10%">故障阈值</td>
+										<td width="20%">最新时间</td>
+									</tr>
+									<tr>
+										<td width="20%">指标</td>
+										<td width="20%"><a  href="javascript:;" style="color: red;"> 80%</a></td>
+										<td width="10%">危险阈值</td>
+										<td width="10%">故障阈值</td>
+										<td width="20%">最新时间</td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
 				<!--Site Content-->
 			</div>
 		</div>
@@ -212,5 +270,10 @@
 
     <th:block th:replace="${scripts}"></th:block>
 </th:block>
+<script type="text/javascript">
+    $("a").click(function(){
+        alert("需要弹出框？");
+    });
+</script>
 </body>
 </html>
