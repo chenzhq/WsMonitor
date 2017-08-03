@@ -1122,7 +1122,7 @@
 
     //修改图形 function
 	function editGraph(id) {
-        console.log("ITEMID:" + id);
+        //console.log("ITEMID:" + id);
         var host_id = $("#host_id").text();
         var item_id = id.substring(1);
         var item_name = "";
@@ -1217,12 +1217,12 @@
                         contentType : 'application/json',
                         success: function (result) {
                             if(result.success) {
-                                $('.button.approve').removeClass('loading')
+                                $('.button.approve').removeClass('loading');
                                 hostgraphs(result);
                                 $('.small.modal').modal('hide');
                             } else {
-                                $('.button.approve').removeClass('loading')
-                                $('.small.modal').modal('hide')
+                                $('.button.approve').removeClass('loading');
+                                $('.small.modal').modal('hide');
                                 errorMsg_no_data("监控项 Modal");
                             }
                         },
@@ -1240,7 +1240,7 @@
         if (!confirm("确定删除吗？")){
             return false;
         }
-		console.log(id);
+		//console.log(id);
 		var host_id = $("#host_id").text();
         var item_id = id.substring(1);
         $.ajax({
