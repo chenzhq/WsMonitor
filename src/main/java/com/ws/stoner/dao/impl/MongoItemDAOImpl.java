@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -48,6 +49,17 @@ public class MongoItemDAOImpl implements MongoItemDAO {
     public void save(Item item) throws DAOException {
 
         mongoTemplate.insert(item);
+
+    }
+
+    /**
+     * 更新保存 item
+     */
+    @Override
+    public void update(Item item) throws DAOException {
+        Query query = Query.query(Criteria.where("item_id").is(item.getItemId()));
+        Update update = Update.update("item_id",item.getItemId()).set("host_id",item.getHostId()).set("graph_name",item.getGraphName()).set("graph_type",item.getGraphType());
+        mongoTemplate.updateFirst(query, update, Item.class);
 
     }
 

@@ -127,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
     public List<BriefItemDTO> getValueItemsByHostIds(List<String> hostIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         Map<String,Object> itemFilter = new HashMap<>();
-        itemFilter.put("value_type", Arrays.toString(new int[]{ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value,ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value}));
+        itemFilter.put("value_type", new String[]{String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value),String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value)});
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setHostIds(hostIds)
@@ -147,7 +147,7 @@ public class ItemServiceImpl implements ItemService {
     public List<BriefItemDTO> getValueItemsByPointIds(List<String> pointIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         Map<String,Object> itemFilter = new HashMap<>();
-        itemFilter.put("value_type", Arrays.toString(new int[]{ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value,ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value}));
+        itemFilter.put("value_type",  new String[]{String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value),String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value)});
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setApplicationIds(pointIds)
@@ -258,6 +258,24 @@ public class ItemServiceImpl implements ItemService {
             mongoItemDAO.save(item);
         } catch (DAOException e) {
             logger.error("保存 mongodb 的 item 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 在mongodb数据库中 更新保存 item
+     * @param item
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean updateGraphItemFromMongo(Item item) throws ServiceException {
+        try {
+            mongoItemDAO.update(item);
+        } catch (DAOException e) {
+            logger.error("更新保存 mongodb 的 item 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
             return false;
         }

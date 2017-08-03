@@ -118,20 +118,7 @@ public class HostDetailRestController {
         for(String graphType : graphTypes) {
             HostDetailGraphVO graphVO = new HostDetailGraphVO();
             graphVO.setGraphType(graphType);
-            switch (graphType) {
-                case "line":
-                    graphVO.setGraphName(GraphTypeEnum.LINE.name);
-                    break;
-                case "bar":
-                    graphVO.setGraphName(GraphTypeEnum.BAR.name);
-                    break;
-                case "area":
-                    graphVO.setGraphName(GraphTypeEnum.AREA.name);
-                    break;
-                case "gauge":
-                    graphVO.setGraphName(GraphTypeEnum.GAUGE.name);
-                    break;
-            }
+            graphVO.setGraphName(GraphTypeEnum.getName(graphType));
            graphVOS.add(graphVO);
         }
         return RestResultGenerator.genResult(graphVOS, REST_RESPONSE_SUCCESS).toString();
@@ -172,8 +159,24 @@ public class HostDetailRestController {
      * @return
      */
     @RequestMapping(value = "hostgraphs/get_itemgraph", method = RequestMethod.GET)
-    public String saveHostItemsGraph( @RequestParam("item_id") String itemId) throws ServiceException {
+    public String getHostItemGraph( @RequestParam("item_id") String itemId) throws ServiceException {
         HostDetailItemGraphVO itemGraphVO =  graphService.getGraphItemByItemId(itemId);
         return RestResultGenerator.genResult(itemGraphVO, REST_RESPONSE_SUCCESS).toString();
+    }
+
+    /**
+     * 更新保存 用户自定义图形修改 配置
+     * @return
+     */
+    @RequestMapping(value = "hostgraphs/update_graph", method = RequestMethod.POST)
+    public String updateHostItemGraph( @RequestBody Item graphItem) throws ServiceException {
+        boolean success = itemService.updateGraphItemFromMongo(graphItem);
+        if(success) {
+            List<HostDetailItemVO> itemVOS = graphService.getGraphItemByHostId(graphItem.getHostId());
+            return RestResultGenerator.genResult(itemVOS, REST_RESPONSE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+
     }
 }

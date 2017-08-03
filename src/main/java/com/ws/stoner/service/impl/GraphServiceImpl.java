@@ -1,5 +1,6 @@
 package com.ws.stoner.service.impl;
 
+import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.dao.MongoGraphDAO;
 import com.ws.stoner.exception.DAOException;
@@ -212,9 +213,12 @@ public class GraphServiceImpl implements GraphService {
         BriefItemDTO itemDTO = itemService.getItemsByItemIds(itemIds).get(0);
         HostDetailItemGraphVO itemGraphVO = new HostDetailItemGraphVO();
         itemGraphVO.setItemId(itemMongo.getItemId());
+        itemGraphVO.setItemName(itemDTO.getName());
         itemGraphVO.setGraphName(itemMongo.getGraphName());
         itemGraphVO.setGraphType(itemMongo.getGraphType());
         itemGraphVO.setPointId(itemDTO.getPoints().get(0).getPointId());
+        itemGraphVO.setPointName(itemDTO.getPoints().get(0).getName());
+        itemGraphVO.setGraphValue(GraphTypeEnum.getName(itemMongo.getGraphType()));
         //valueType
         if("%".equals(itemDTO.getUnits())) {
             itemGraphVO.setValueType(itemDTO.getUnits());
