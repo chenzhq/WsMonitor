@@ -7,6 +7,7 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.view.HostDetailPointItemVO;
+import com.ws.stoner.model.view.HostDetailPointVO;
 
 import java.util.List;
 
@@ -132,6 +133,22 @@ item 在 mongodb下的业务方法
      * @throws ServiceException
      */
     boolean deleteGraphItemFromMongo(String itemId) throws ServiceException;
+
+    /**
+     * 根据 pointId 组装设备详情页面中 监控点悬浮框 的业务数据
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    HostDetailPointVO getItemsByPointId(String pointId) throws ServiceException;
+
+    /**
+     * 根据 pointId 组装监控点详情页面中 概述 的业务数据
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    HostDetailPointVO getDetailPointByPointId(String pointId) throws ServiceException;
 
 
     /**

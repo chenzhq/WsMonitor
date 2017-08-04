@@ -98,21 +98,7 @@ public class GraphServiceImpl implements GraphService {
 
             //阀值赋值：highPoint,warningPoint
             if(itemIds.contains(itemDTO.getItemId())) {
-                itemVO.setWithTriggers(true);
-                //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
-                for(BriefTriggerDTO triggerDTO : triggerDTOS) {
-                    String expression = triggerDTO.getExpression();
-                    String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
-                    if(itemIdInfo.equals(itemDTO.getItemId())) {
-                        if(triggerDTO.getPriority() == 2) {
-                            // priority为2:警告阀值取expression的逻辑比较符号后面数据；
-                            itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
-                        }else if(triggerDTO.getPriority() == 4) {
-                            // priority为4:严重阀值取expression的逻辑比较符号后面数据；
-                            itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
-                        }
-                    }
-                }
+                itemVO = ThresholdUtils.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
             }else {
                 itemVO.setWithTriggers(false);
             }
@@ -148,21 +134,7 @@ public class GraphServiceImpl implements GraphService {
                 HostDetailItemVO itemVO = new HostDetailItemVO();
                 //阀值赋值：highPoint,warningPoint
                 if(itemIds.contains(itemDTO.getItemId())) {
-                    itemVO.setWithTriggers(true);
-                    //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
-                    for(BriefTriggerDTO triggerDTO : triggerDTOS) {
-                        String expression = triggerDTO.getExpression();
-                        String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
-                        if(itemIdInfo.equals(itemDTO.getItemId())) {
-                            if(triggerDTO.getPriority() == 2) {
-                                // priority为2:警告阀值取expression的逻辑比较符号后面数据；
-                                itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
-                            }else if(triggerDTO.getPriority() == 4) {
-                                // priority为4:严重阀值取expression的逻辑比较符号后面数据；
-                                itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
-                            }
-                        }
-                    }
+                    itemVO = ThresholdUtils.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
                 }else {
                     itemVO.setWithTriggers(false);
                 }
@@ -182,19 +154,15 @@ public class GraphServiceImpl implements GraphService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss");
         for(HostDetailItemVO itemVO : itemVOS) {
             List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),1);
+            Collections.reverse(historyDTOS);
             List<Float> datas = new ArrayList<>();
             List<String> dataTime = new ArrayList<>();
-            String upUnits = itemVO.getUnits().toUpperCase();
             //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
+            String upUnits = itemVO.getUnits();
             for(BriefHistoryDTO historyDTO : historyDTOS) {
-                if("B".equals(upUnits) || "BPS".equals(upUnits) || "BYTE".equals(upUnits)) {
-                    Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),upUnits);
-
-                    itemVO.setUnits(valueUnits.entrySet().iterator().next().getKey());
-                    datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
-                }else {
-                    datas.add(Float.parseFloat(historyDTO.getValue()));
-                }
+                Map<String,String> valueUnits = ThresholdUtils.transformGraphValue(historyDTO.getValue(),upUnits);
+                itemVO.setUnits(valueUnits.entrySet().iterator().next().getKey());
+                datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
                 String dataTimeString = historyDTO.getLastTime().format(formatter);
                 dataTime.add(dataTimeString);
             }
@@ -265,24 +233,19 @@ public class GraphServiceImpl implements GraphService {
             List<BriefHistoryDTO> historyDTOS = null;
             if(time == 40) {
                 historyDTOS = historyService.getHistoryByItemIdLimit(itemVO.getItemId(),itemVO.getValueType(),time);
-                Collections.reverse(historyDTOS);
+
             }else {
                 historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),time);
             }
+            Collections.reverse(historyDTOS);
             List<Float> datas = new ArrayList<>();
             List<String> dataTime = new ArrayList<>();
-            String upUnits = itemVO.getUnits().toUpperCase();
+            String upUnits = itemVO.getUnits();
             //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
             for(BriefHistoryDTO historyDTO : historyDTOS) {
-                if("B".equals(upUnits) || "BPS".equals(upUnits) || "BYTE".equals(upUnits)) {
-                    Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),upUnits);
-
-                    itemVO.setUnits(valueUnits.entrySet().iterator().next().getKey());
-                    datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
-                }else {
-                    datas.add(Float.parseFloat(historyDTO.getValue()));
-                }
-
+                Map<String,String> valueUnits = ThresholdUtils.transformGraphValue(historyDTO.getValue(),upUnits);
+                itemVO.setUnits(valueUnits.entrySet().iterator().next().getKey());
+                datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
                 String dataTimeString = historyDTO.getLastTime().format(formatter);
                 dataTime.add(dataTimeString);
             }

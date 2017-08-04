@@ -39,7 +39,7 @@ public class PointDetailRestController {
      */
     @RequestMapping(value = "/pointdetail", method = RequestMethod.GET)
     public String listPointDetail(@RequestParam("point_id") String pointId) throws ServiceException {
-        HostDetailPointVO pointVO = pointSerivce.getDetailPointByPointId(pointId);
+        HostDetailPointVO pointVO = itemService.getDetailPointByPointId(pointId);
         return RestResultGenerator.genResult(pointVO, REST_RESPONSE_SUCCESS).toString();
     }
 

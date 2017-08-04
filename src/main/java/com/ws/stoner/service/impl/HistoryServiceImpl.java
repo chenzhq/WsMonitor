@@ -57,13 +57,19 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public List<BriefHistoryDTO> getHistoryByItemId(String itemId,String valueType,int time) throws ServiceException {
         HistoryGetRequest historyGetRequest = new HistoryGetRequest();
+        List<String> sortFilter = new ArrayList<>();
+        List<String> sortOrder = new ArrayList<>();
+        sortFilter.add("clock");
+        sortOrder.add("DESC");
         List<String> itemIds = new ArrayList<>();
         itemIds.add(itemId);
         historyGetRequest.getParams()
                 .setHistory(Integer.parseInt(valueType))
                 .setItemIds(itemIds)
                 .setTimeFrom(String.valueOf(System.currentTimeMillis()/1000-time*24*3600))
-                .setTimeTill(String.valueOf(System.currentTimeMillis()/1000));
+                .setTimeTill(String.valueOf(System.currentTimeMillis()/1000))
+                .setSortField(sortFilter)
+                .setSortOrder(sortOrder);
         List<BriefHistoryDTO> historyDTOS = listHistory(historyGetRequest);
         return historyDTOS;
     }

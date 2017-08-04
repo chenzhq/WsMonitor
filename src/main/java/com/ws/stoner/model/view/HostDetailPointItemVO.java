@@ -17,7 +17,7 @@ public class HostDetailPointItemVO {
     private String state;
     @JSONField(name = "with_triggers")
     private boolean withTriggers;
-    @JSONField(name = "last_time")
+    @JSONField(name = "last_time",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String lastTime;
     @JSONField(name = "warning_point",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String warningPoint;

@@ -258,8 +258,8 @@
 						<div class="ui segment">
 							<h3 class="ui header">
 								<span style="display: none" id="host_id" th:text="${hostDetailVO.hostId}">10110</span>
-								<span th:text="${hostDetailVO.hostName}">设备名称</span>(
-								<span th:text="${hostDetailVO.state}">设备状态</span>)
+
+								<span th:class="${hostDetailVO.state}=='正常' ? 'ui green top attached button button_points_hidden' : (${hostDetailVO.state}=='警告' ? 'ui yellow top attached button button_points_hidden' : 'ui red top attached button button_points_hidden')  "  th:text="${hostDetailVO.hostName}">设备名称</span>
 							</h3>
 						</div>
 						<div class="ui segment">
@@ -459,18 +459,7 @@
                                                     <i class="area chart icon"></i>
                                                     <i class="inverted corner add icon"></i>
                                                 </i>
-                                            </a>
-                                            <a class="header item editItems">
-                                                <i class="large icons" data-tooltip="编辑监控项" data-inverted="">
-                                                    <i class="area chart icon"></i>
-                                                    <i class="inverted corner write icon"></i>
-                                                </i>
-                                            </a>
-                                            <a class="header item deleteItems">
-                                                <i class="large icons" data-tooltip="删除监控项" data-inverted="">
-                                                    <i class="area chart icon"></i>
-                                                    <i class="inverted corner trash icon"></i>
-                                                </i>
+												自定义监控视图
                                             </a>
 										</div>
 										</h4>
@@ -1107,7 +1096,7 @@
             if(data[i].flag==false){
                 if($("#flag_false").children().length == 0)
                 {
-                    $("#flag_false").html("<h4 class='ui horizontal divider header'><i class='tag icon'></i>推荐的严重监控项</h4> <div class='gridly' id='flag_false_content'>");
+                    $("#flag_false").html("<h4 class='ui horizontal divider header'><i class='tag icon'></i>问题图形视图</h4> <div class='gridly' id='flag_false_content'>");
                 }
                 str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";
                 $("#flag_false_content").append(str_false);
@@ -1127,12 +1116,19 @@
 			}else {
                 var ymax = null;
 			}
+			//图形值
+			var title = "";
+			if(data[i].units == "") {
+                title = data[i].graph_name;
+			}else {
+			    title =data[i].graph_name + "(" + data[i].units +")";
+			}
             /*console.log("图形类型： " + data[i].graph_type);*/
             switch (data[i].graph_type) {
                 case "gauge":
 					option = {
 						 title: {
-						 text: data[i].graph_name + "(" + data[i].units +")"},
+						 text: title},
 						 tooltip : {
 							 formatter: "{a} <br/>{b} : {c}%"
 							 },
@@ -1179,7 +1175,7 @@
                     /*console.log("进入到了area域：");*/
                     option = {
                         title: {
-                            text: data[i].graph_name + "(" + data[i].units +")"
+                            text: title
                         },
                         tooltip: {},
                         legend: {
@@ -1211,7 +1207,7 @@
                 default:
                     option = {
                         title: {
-                            text: data[i].graph_name + "(" + data[i].units +")"
+                            text: title
                         },
                         tooltip: {},
                         legend: {
@@ -1305,6 +1301,7 @@
                         var point_id = $("#pointDetailArea").text();
                         var item_id = $("#pointDetailFirstItem").text() ;
                         var tableData = $("#tableData").DataTable({
+                            "orderFixed": [ 0, 'desc' ],
                             "paging": false,
                             ajax: {
                                 url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
@@ -1516,14 +1513,20 @@
                         }else {
                             option.yAxis.max = null;
                         }
-                        option.title.text = data[i].item_name + "(" + data[i].units +")";
+                        var title = "";
+                        if(data[i].units == "") {
+                            title = data[i].item_name;
+						}else {
+                            title = data[i].item_name + "(" + data[i].units +")";
+						}
+                        option.title.text = title;
                         option.xAxis.data = data[i].data_time;
                         option.series[0].name = data[i].graph_name;
                         option.series[0].type = data[i].graph_type;
                         option.series[0].data = data[i].data;
                         option.series[0].color[0] = myColor;
                         //面积图存
-                        areaoption.title.text = data[i].item_name + "(" + data[i].units +")";
+                        areaoption.title.text = title;
                         areaoption.xAxis.data = data[i].data_time;
                         areaoption.series[0].name = data[i].graph_name;
                         areaoption.series[0].type = data[i].graph_type;

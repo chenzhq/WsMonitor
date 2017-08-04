@@ -41,4 +41,13 @@ public interface ValuemapService {
      */
     String getNewValueById(String valuemapId,String value) throws ServiceException;
 
+    /**
+     * 根据 接收到的 valueInfo 转换成可显示的数值
+     * @param valuemapId
+     * @param valueInfo
+     * @param unitsInfo
+     * @return
+     */
+    String getTransformValue(String valuemapId,String valueInfo , String unitsInfo) throws ServiceException;
+
 }

@@ -3,9 +3,6 @@ package com.ws.stoner.service;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPointDTO;
-import com.ws.stoner.model.view.HostDetailPointItemVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
-import com.ws.stoner.model.view.PointDetailItemDatasVO;
 
 import java.util.List;
 
@@ -98,22 +95,6 @@ public interface PointSerivce {
      */
     List<BriefPointDTO> listHighPoint() throws ServiceException;
 
-
-    /**
-     * 根据 pointId 组装设备详情页面中 监控点悬浮框 的业务数据
-     * @param pointId
-     * @return
-     * @throws ServiceException
-     */
-    HostDetailPointVO getItemsByPointId(String pointId) throws ServiceException;
-
-    /**
-     * 根据 pointId 组装监控点详情页面中 概述 的业务数据
-     * @param pointId
-     * @return
-     * @throws ServiceException
-     */
-    HostDetailPointVO getDetailPointByPointId(String pointId) throws ServiceException;
 
 
 }
