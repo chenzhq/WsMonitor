@@ -71,22 +71,22 @@ public class StatusConverter {
            case "<>":
                point = warningPointValue != null ? warningPointValue : highPointValue;
                highLevel = warningPointValue != null ? false : true;
-               if(value == point) {
+               if(Float.compare(value,point) == 0) {
                    status = StatusEnum.OK.getName();
-               }else if(highLevel && value != point) {
+               }else if(highLevel && Float.compare(value,point) != 0) {
                    status = StatusEnum.HIGH.getName();
-               }else if(!highLevel && value != point) {
+               }else if(!highLevel && Float.compare(value,point) != 0) {
                    status = StatusEnum.WARNING.getName();
                }
                break;
            case "=":
                point = warningPointValue != null ? warningPointValue : highPointValue;
                highLevel = warningPointValue != null ? false : true;
-               if(value != point) {
+               if(Float.compare(value,point) != 0) {
                    status = StatusEnum.OK.getName();
-               }else if(highLevel && value == point) {
+               }else if(highLevel && Float.compare(value,point) == 0) {
                    status = StatusEnum.HIGH.getName();
-               }else if(!highLevel && value == point) {
+               }else if(!highLevel && Float.compare(value,point) == 0) {
                    status = StatusEnum.WARNING.getName();
                }
                break;

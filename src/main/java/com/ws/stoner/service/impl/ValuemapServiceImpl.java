@@ -9,6 +9,7 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefValuemapDTO;
 import com.ws.stoner.service.ValuemapService;
+import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,5 +99,28 @@ public class ValuemapServiceImpl implements ValuemapService{
             newValue = value;
         }
         return newValue;
+    }
+
+    /**
+     * 根据 接收到的 valueInfo 转换成可显示的数值
+     * @param valuemapId
+     * @param valueInfo
+     * @param unitsInfo
+     * @return
+     */
+    @Override
+    public String getTransformValue(String valuemapId, String valueInfo, String unitsInfo) throws ServiceException{
+        String value ;
+        if(!"0".equals(valuemapId)) {
+            value = getNewValueById(valuemapId,valueInfo);
+        }else {
+            Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(valueInfo,unitsInfo);
+            if("UPTIME".equals(unitsInfo.toUpperCase()) || "S".equals(unitsInfo.toUpperCase())) {
+                value = valueUnits.entrySet().iterator().next().getValue();
+            }else {
+                value = valueUnits.entrySet().iterator().next().getValue()+valueUnits.entrySet().iterator().next().getKey();
+            }
+        }
+        return value;
     }
 }

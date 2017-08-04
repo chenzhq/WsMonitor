@@ -14,7 +14,7 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.HostDetailPointItemVO;
-import com.ws.stoner.model.view.PointDetailItemDatasVO;
+import com.ws.stoner.model.view.HostDetailPointVO;
 import com.ws.stoner.service.HistoryService;
 import com.ws.stoner.service.ItemService;
 import com.ws.stoner.service.TriggerService;
@@ -322,6 +322,128 @@ public class ItemServiceImpl implements ItemService {
 
 
     /**
+     * 根据 pointId 组装设备详情页面中 监控点悬浮框 的业务数据
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public HostDetailPointVO getItemsByPointId(String pointId) throws ServiceException {
+        List<String> pointIds = new ArrayList<>();
+        pointIds.add(pointId);
+        List<BriefItemDTO> itemDTOS = getItemsByPointIds(pointIds);
+        List<BriefItemDTO> withTriggersItemDTOS = getItemsWithTriggersByPointIds(pointIds);
+        List<String> itemIds = new ArrayList<>();
+        for(BriefItemDTO itemDTO : withTriggersItemDTOS) {
+            itemIds.add(itemDTO.getItemId());
+        }
+        List<HostDetailPointItemVO> itemVOS = new ArrayList<>();
+        HostDetailPointVO pointVO = new HostDetailPointVO();
+        for(BriefItemDTO itemDTO :itemDTOS) {
+            HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
+            itemVO.setItemId(itemDTO.getItemId());
+            itemVO.setName(itemDTO.getName());
+            //值转换
+            itemVO.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits()));
+            itemVO.setUnits(itemDTO.getUnits());
+            itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+            //withTriggers
+            if(itemIds.contains(itemDTO.getItemId())) {
+                itemVO.setWithTriggers(true);
+            }else  {
+                itemVO.setWithTriggers(false);
+            }
+            itemVOS.add(itemVO);
+        }
+        pointVO.setItems(itemVOS);
+        pointVO.setPointId(pointId);
+        if(itemDTOS.size() != 0) {
+            //point name
+            pointVO.setName(itemDTOS.get(0).getPoints().get(0).getName());
+            //point state
+            int customState = itemDTOS.get(0).getPoints().get(0).getCustomState();
+            pointVO.setState(StatusConverter.StatusTransform(customState));
+        }else {
+            pointVO.setName("监控点中没有监控项");
+            pointVO.setState(StatusEnum.OK.getName());
+        }
+        return pointVO;
+    }
+
+    /**
+     * 根据 pointId 组装监控点详情页面中 概述 的业务数据
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public HostDetailPointVO getDetailPointByPointId(String pointId) throws ServiceException {
+        List<String> pointIds = new ArrayList<>();
+        pointIds.add(pointId);
+        List<BriefItemDTO> itemDTOS = getItemsByPointIds(pointIds);
+        List<BriefItemDTO> withTriggersItemDTOS = getItemsWithTriggersByPointIds(pointIds);
+        List<String> itemIds = new ArrayList<>();
+        for(BriefItemDTO itemDTO : withTriggersItemDTOS) {
+            itemIds.add(itemDTO.getItemId());
+        }
+        //根据含有触发器的itemIds获取相关触发器 triggerDTO list
+        List<BriefTriggerDTO> triggerDTOS = triggerService.getTriggersByItemIds(itemIds);
+        List<HostDetailPointItemVO> itemVOS = new ArrayList<>();
+        HostDetailPointVO pointVO = new HostDetailPointVO();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        for(BriefItemDTO itemDTO :itemDTOS) {
+            HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
+            itemVO.setItemId(itemDTO.getItemId());
+            itemVO.setName(itemDTO.getName());
+            //值转换
+            itemVO.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits()));
+            itemVO.setUnits(itemDTO.getUnits());
+            itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+            if(itemDTO.getLastTime() != null) {
+                itemVO.setLastTime(itemDTO.getLastTime().format(formatter));
+            }
+            //withTriggers
+            if(itemIds.contains(itemDTO.getItemId())) {
+                itemVO.setWithTriggers(true);
+                //阀值赋值：highPoint,warningPoint
+                //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
+                for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+                    String expression = triggerDTO.getExpression();
+                    String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
+                    if(itemIdInfo.equals(itemDTO.getItemId())) {
+                        if(triggerDTO.getPriority() == 2) {
+                            // priority为2:警告阀值取expression的逻辑比较符号后面数据；
+                            itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
+                        }else if(triggerDTO.getPriority() == 4) {
+                            // priority为4:严重阀值取expression的逻辑比较符号后面数据；
+                            itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
+                        }
+                    }
+                }
+
+            }else  {
+                itemVO.setWithTriggers(false);
+            }
+
+            itemVOS.add(itemVO);
+        }
+        pointVO.setItems(itemVOS);
+        pointVO.setPointId(pointId);
+        if(itemDTOS.size() != 0) {
+            //point name
+            pointVO.setName(itemDTOS.get(0).getPoints().get(0).getName());
+            //point state
+            int customState = itemDTOS.get(0).getPoints().get(0).getCustomState();
+            pointVO.setState(StatusConverter.StatusTransform(customState));
+        }else {
+            pointVO.setName("无监控项");
+            pointVO.setState(StatusEnum.OK.getName());
+        }
+        return pointVO;
+    }
+
+
+    /**
      * 根据 itemId 组装监控点详情页面中 时序数据 的业务数据
      * @param itemId
      * @return
@@ -339,7 +461,7 @@ public class ItemServiceImpl implements ItemService {
             historyDTOS = historyService.getHistoryByItemIdLimit(itemDTO.getItemId(),itemDTO.getValueType(),time);
         }else {
             historyDTOS = historyService.getHistoryByItemId(itemDTO.getItemId(),itemDTO.getValueType(),time);
-            Collections.reverse(historyDTOS);
+
         }
         //step3:根据itemIds获取相关触发器 triggerDTO list 来获取阀值
         List<BriefTriggerDTO> triggerDTOS = triggerService.getTriggersByItemIds(itemIds);
@@ -372,7 +494,8 @@ public class ItemServiceImpl implements ItemService {
             itemHistoryData.setName(itemDTO.getName());
             Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),itemDTO.getUnits());
             itemHistoryData.setUnits(valueUnits.entrySet().iterator().next().getKey());
-            itemHistoryData.setValue(valueUnits.entrySet().iterator().next().getValue() + valueUnits.entrySet().iterator().next().getKey());
+            //值转换
+            itemHistoryData.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),historyDTO.getValue(),itemDTO.getUnits()));
             //时序数据值映射 存在大量访问 api 问题，响应时间太长 先注释掉
 //            if(!"0".equals(itemDTO.getValuemapId())) {
 //                itemHistoryData.setValue(valuemapService.getNewValueById(itemDTO.getValuemapId(),itemDTO.getLastValue())) ;
