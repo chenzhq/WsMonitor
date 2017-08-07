@@ -14,7 +14,7 @@
 
 	<th:block th:fragment="supplement">
 		<link href="#" rel="stylesheet" th:href="@{}"/>
-		<script src="#" th:src="@{}"></script>
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 		</style>
@@ -206,11 +206,109 @@
 				<div class="sixteen wide column">
 					<div class="ui segments">
 						<div class="ui segment">
-							<h3 class="ui header">
-								业务详情
-							</h3>
-						</div>
-						<div class="ui segment" style=" min-height : 500px;">
+							<div class="ui top attached tabular menu">
+								<a class="active item" data-tab="first">业务详情</a>
+								<a class="item" data-tab="second">第二</a>
+								<a class="item" data-tab="third">第三</a>
+							</div>
+							<div class="ui bottom attached active tab segment" data-tab="first" style=" min-height : 500px;">
+								<div class="row">
+									<div class="sixteen wide column">
+										<div class="ui grid">
+											<div class="six wide column">
+												<div class="ui segment center aligned" style="height: 160px">
+													<h2 class="ui left aligned header">健康度</h2>
+													<div class="ui huge statistic" >
+														<div class="value">
+															<span class="counter">57.6</span> %
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="ten wide column">
+												<div class="ui segment left aligned"  style="height: 160px">
+													<div id="platformBar" class="flotchart" style="height: 140px"></div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="sixteen wide column">
+										<div class="ui grid">
+											<div class="three wide column">
+												<div class="ui pointing secondary vertical menu">
+													<a class="active item" data-tab="first">第一</a>
+													<a class="item" data-tab="second">第二</a>
+													<a class="item" data-tab="third">第三</a>
+												</div>
+											</div>
+											<div class="thirteen wide column">
+												<div class="ui active tab segment" data-tab="first">
+													<div class="sixteen wide column">
+														<div class="ui grid">
+															<div class="three wide column">
+																<div class="ui top attached tabular vertical menu">
+																	<a class="active item" data-tab="first/a">1A</a>
+																	<a class="item" data-tab="first/b">1B</a>
+																	<a class="item" data-tab="first/c">1C</a>
+																</div>
+															</div>
+															<div class="thirteen wide column">
+																<div class="ui bottom attached active tab segment" data-tab="first/a">1A</div>
+																<div class="ui bottom attached tab segment" data-tab="first/b">1B</div>
+																<div class="ui bottom attached tab segment" data-tab="first/c">1C</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="ui tab segment" data-tab="second">
+													<div class="sixteen wide column">
+														<div class="ui grid">
+															<div class="three wide column">
+															<div class="ui top attached tabular vertical menu">
+																<a class="item" data-tab="second/a">2A</a>
+																<a class="item" data-tab="second/b">2B</a>
+																<a class="item" data-tab="second/c">2C</a>
+															</div>
+														</div>
+															<div class="thirteen wide column">
+																<div class="ui bottom attached tab segment" data-tab="second/a">2A</div>
+																<div class="ui bottom attached tab segment" data-tab="second/b">2B</div>
+																<div class="ui bottom attached tab segment" data-tab="second/c">2C</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="ui tab segment" data-tab="third">
+													<div class="sixteen wide column">
+														<div class="ui grid">
+															<div class="three wide column">
+																<div class="ui top attached tabular vertical menu">
+																	<a class="item" data-tab="third/a">3A</a>
+																	<a class="item" data-tab="third/b">3B</a>
+																	<a class="item" data-tab="third/c">3C</a>
+																</div>
+															</div>
+															<div class="thirteen wide column">
+																<div class="ui bottom attached tab segment" data-tab="third/a">3A</div>
+																<div class="ui bottom attached tab segment" data-tab="third/b">3B</div>
+																<div class="ui bottom attached tab segment" data-tab="third/c">3C</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="ui bottom attached tab segment" data-tab="second">
+								第二
+							</div>
+							<div class="ui bottom attached tab segment" data-tab="third">
+								第三
+							</div>
 						</div>
 					</div>
 				</div>
@@ -229,6 +327,120 @@
     <th:block th:replace="${scripts}"></th:block>
 </th:block>
 <script type="text/javascript">
+</script>
+<script>
+	//健康度线状图
+    var myChart = echarts.init(document.getElementById('platformHealth'));
+    var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+    var option = {
+        xAxis: {
+            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+        },
+        yAxis: {},
+        series: [{
+            name: '销量',
+            type: 'line',
+            data: [5, 20, 36, 10, 10, 20]
+        }]
+    };
+    myChart.setOption(option);
+</script>
+<script>
+	//设备状态堆叠柱状图
+    var myChart = echarts.init(document.getElementById('platformBar'));
+    var option = {
+        title: {
+            show:true,
+            text: '设备状态堆叠柱状图',
+			top:'-5px'
+        },
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {
+                type : 'shadow'
+            }
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'right',
+			y: 'center',
+            data:['严重','警告','正常','其他']
+        },
+        grid: {
+            left: '2%',
+            right: '10%',
+            bottom: '0%',
+			top:'20%',
+            containLabel: true
+        },
+        xAxis:  {
+            type: 'category',
+            data: ['服务器','网络设备','数据库','虚拟机']
+        },
+        yAxis: {
+            type: 'value',
+            splitLine:{show: false},
+        },
+        series: [
+            {
+                name: '严重',
+                type: 'bar',
+                stack: '总量',
+                barWidth : 50,
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [3, 3, 3, 3],
+				color: ['#DB2828']
+            },
+            {
+                name: '警告',
+                type: 'bar',
+                stack: '总量',
+                barWidth : 50,
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [2, 3, 1, ],
+                color: ['#F7B824']
+            },
+            {
+                name: '正常',
+                type: 'bar',
+                stack: '总量',
+                barWidth : 50,
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [2, 2, 1, ],
+                color: ['#5FB878']
+            },
+            {
+                name: '其他',
+                type: 'bar',
+                stack: '总量',
+                barWidth : 50,
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'insideRight'
+                    }
+                },
+                data: [1, 2, 2, 5],
+                color: ['#d2d2d2']
+            },
+        ]
+    };
+    myChart.setOption(option);
 </script>
 </body>
 </html>
