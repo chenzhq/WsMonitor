@@ -412,6 +412,16 @@
 									'<i class="red desktop icon"></i>' + row.name + '</a>';
 							}
 
+                        } else if (data.state == "警告") {
+                            if (row.type === '组') {
+                                return '<i class="yellow folder icon"></i>' + row.name;
+                            } else if(row.type === '监控点') {
+                                return '<i class="yellow circle icon"></i>' + row.name;
+                            } else {
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+                                    '<i class="yellow desktop icon"></i>' + row.name + '</a>';
+                            }
+
                         } else {
                             return '<i class="list green layout icon"></i>' + row.name;
                         }
