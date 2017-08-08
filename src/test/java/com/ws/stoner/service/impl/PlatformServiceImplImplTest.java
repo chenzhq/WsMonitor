@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** 
@@ -143,4 +144,20 @@ public void testListProblemPlatform() throws Exception {
 } 
 
 
+    @Test
+    public void testGetHealthByPlatformIds() throws Exception {
+        List<String> ids = new ArrayList<>();
+        ids.add("35");
+        System.out.println(platformService.getHealthByPlatformIds(ids));
+    }
+
+    @Test
+    public void testgetPlatformList() throws Exception {
+        System.out.println(platformService.getPlatformList());
+    }
+
+    @Test
+    public void testgetPlatformBlock() throws Exception {
+        System.out.println(platformService.getPlatformBlock());
+    }
 } 

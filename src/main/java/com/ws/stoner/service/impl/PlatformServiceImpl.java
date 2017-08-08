@@ -6,18 +6,24 @@ import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
-import com.ws.stoner.service.HostService;
-import com.ws.stoner.service.PlatformService;
-import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.model.dto.BriefTemplateDTO;
+import com.ws.stoner.model.view.PlatformBlockVO;
+import com.ws.stoner.model.view.PlatformListVO;
+import com.ws.stoner.service.*;
+import com.ws.stoner.utils.BaseUtils;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
@@ -36,7 +42,13 @@ public class PlatformServiceImpl implements PlatformService {
     private HostService hostService;
 
     @Autowired
+    private ItemService itemService;
+
+    @Autowired
     private TriggerService triggerService;
+
+    @Autowired
+    private TemplateService templateService;
 
     @Override
     public List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ServiceException {
@@ -153,7 +165,7 @@ public class PlatformServiceImpl implements PlatformService {
 
     /**
      * 获取警告业务平台数量 warning
-     * 根据custom_state字段判断
+     * 根据 custom_state 字段判断
      * @return
      * @throws ServiceException
      */
@@ -272,4 +284,194 @@ public class PlatformServiceImpl implements PlatformService {
         List<BriefPlatformDTO> problemPlatforms  = listPlatform(groupRequest);
         return problemPlatforms;
     }
+
+    /**
+     * 根据 业务平台Ids 获取 健康值  Map<key:platformId ,value:health>
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public Map<String, Float> getHealthByPlatformIds(List<String> platformIds) throws ServiceException {
+        //health  = 1 - problemWeight / allWeight
+        Map<String, Float> healthMap = new HashMap<>();
+        Float health ;
+        for(String platformId : platformIds) {
+            List<String> ids = new ArrayList<>();
+            ids.add(platformId);
+            List<BriefItemDTO> itemDTOS = itemService.getItemsWithTriggersByPlatfromIds(ids);
+            //初始化值
+            Float allWeight = 0.0f;
+            Float problemWeight = 0.0f;
+            for(BriefItemDTO itemDTO : itemDTOS) {
+                allWeight += itemDTO.getWeight();
+                problemWeight += itemDTO.getWeight() * (itemDTO.getCustomState() / 2.0f);
+            }
+            health = (1 -  problemWeight / allWeight) * 100;
+            healthMap.put(platformId,health);
+        }
+        return healthMap;
+    }
+
+    /**
+     * 获取页面展示上的 业务平台列表
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<PlatformListVO> getPlatformList() throws ServiceException {
+        List<BriefPlatformDTO> allPlatformDTO = null;
+        List<BriefHostDTO> hostDTOS = null;
+        //step1:获取BriefPlatformDTO 类型的所有业务平台 allPlatformDTO
+        allPlatformDTO = listAllPlatform();
+        //step2:取所有监控中的主机，组装hostIds
+        hostDTOS = hostService.listAllHost();
+        List<String> hostIds = new ArrayList<>();
+        List<String> platformIds = new ArrayList<>();
+        for (BriefHostDTO host : hostDTOS) {
+            hostIds.add(host.getHostId());
+        }
+        for(BriefPlatformDTO platformDTO : allPlatformDTO) {
+            platformIds.add(platformDTO.getPlatformId());
+        }
+        //获取 健康值 的map对象
+        Map<String,Float> healthMap = getHealthByPlatformIds(platformIds);
+        //step3:新建List<PlatformListVO>，循环allplatformDTO，新建DashboardPlatformVO，分别赋值
+        List<PlatformListVO> platformVOS = new ArrayList<>();
+        for (BriefPlatformDTO platform : allPlatformDTO) {
+            PlatformListVO platformVO = new PlatformListVO();
+            //赋值 id,name,availability
+            platformVO.setPlatformId(platform.getPlatformId());
+            platformVO.setPlatformName(platform.getName());
+            platformVO.setHealth(healthMap.get(platform.getPlatformId()));
+            platformVO.setState(StatusConverter.StatusTransform(platform.getCustomState()));
+            //allNum，warningNum,highNum
+            int allNum = 0;
+            int warningNum = 0;
+            int highNum = 0;
+            for (BriefHostDTO host : platform.getHosts()) {
+                if (hostIds.contains(host.getHostId())) {
+                    allNum++;
+                }
+                if (StatusEnum.WARNING.code == host.getCustomState() && StatusEnum.OK.code == host.getCustomAvailableState()) {
+                    warningNum++;
+                }
+                if (StatusEnum.HIGH.code == host.getCustomState() || StatusEnum.WARNING.code == host.getCustomAvailableState()) {
+                    highNum++;
+                }
+            }
+            platformVO.setAllNum(allNum);
+            platformVO.setWarningNum(warningNum);
+            platformVO.setHighNum(highNum);
+            platformVOS.add(platformVO);
+        }
+        return platformVOS;
+    }
+
+
+    /**
+     * 获取业务监控的 业务方块 PlatformBlockVO
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<PlatformBlockVO> getPlatformBlock() throws ServiceException {
+        //所有业务平台
+        List<BriefPlatformDTO> allPlatformDTOS = listAllPlatform();
+        //所有设备
+        List<BriefHostDTO> allHostDTOS = hostService.listAllHost();
+        //所有模板，用于匹配 type
+        List<BriefTemplateDTO> allTemplateDTOS = templateService.listAllTemplate();
+        List<String> platformIds = new ArrayList<>();
+        for(BriefPlatformDTO platformDTO : allPlatformDTOS) {
+            platformIds.add(platformDTO.getPlatformId());
+        }
+        //获取 健康值 的map对象
+        Map<String,Float> healthMap = getHealthByPlatformIds(platformIds);
+        List<PlatformBlockVO> platformBlockVOS = new ArrayList<>();
+        for(BriefPlatformDTO platformDTO : allPlatformDTOS) {
+            //匹配着组装 type和对应state数量
+            Map<String,Map<String,Integer>> typeMap = new HashMap<>();
+            String type = "";
+            List<String> typeList = new ArrayList<>();
+            List<Integer> stateList = new ArrayList<>();
+            List<List<Integer>> datasList = new ArrayList<>();
+            PlatformBlockVO platformBlockVO = new PlatformBlockVO();
+            //id,name
+            platformBlockVO.setPlatformId(platformDTO.getPlatformId());
+            platformBlockVO.setPlatformName(platformDTO.getName());
+            //health
+            platformBlockVO.setHealth(healthMap.get(platformDTO.getPlatformId()));
+            //type[],datas[][]
+            List<String> hostIds = new ArrayList<>();
+            for(BriefHostDTO hostDTO : platformDTO.getHosts()) {
+                hostIds.add(hostDTO.getHostId());
+            }
+            //循环设备 hostDTOS 获取typeMap值
+            for(BriefHostDTO hostDTO : allHostDTOS) {
+                if(hostIds.contains(hostDTO.getHostId())) {
+                    if(hostDTO.getParentTemplates().size() != 0) {
+                        String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
+                        for(BriefTemplateDTO template : allTemplateDTOS) {
+                            if(template.getTemplateId().equals(DTOTemplateId)) {
+                                type = template.getTemplateGroups().get(0).getName();
+                            }
+                        }
+                    }else {
+                        type = "未定义模板类型";
+                    }
+                    if(typeMap.get(type) == null) {
+                        //循环取到 之前没有的 type 添加到 typeMap 中 并初始化
+                        Map<String,Integer> stateMap = new HashMap<>();
+                        Integer okNum = 0;
+                        Integer warningNum = 0;
+                        Integer highNum = 0;
+                        String state = StatusConverter.StatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                        if(StatusEnum.OK.getName().equals(state)) {
+                            okNum += 1;
+                        }else if(StatusEnum.WARNING.getName().equals(state)) {
+                            warningNum += 1;
+                        }else{
+                            highNum += 1;
+                        }
+                        stateMap.put(StatusEnum.OK.getName(),okNum);
+                        stateMap.put(StatusEnum.WARNING.getName(),warningNum);
+                        stateMap.put(StatusEnum.HIGH.getName(),highNum);
+                        typeMap.put(type,stateMap);
+                    }else {
+                        //typeMap 中存在 type 各个状态的主机数 + 1
+                        Map<String,Integer> stateMap = typeMap.get(type);
+                        String state = StatusConverter.StatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                        if(StatusEnum.OK.getName().equals(state)) {
+                            stateMap.put(StatusEnum.OK.getName(),stateMap.get(StatusEnum.OK.getName()) + 1);
+                        }else if(StatusEnum.WARNING.getName().equals(state)) {
+                            stateMap.put(StatusEnum.WARNING.getName(),stateMap.get(StatusEnum.WARNING.getName()) + 1);
+                        }else{
+                            stateMap.put(StatusEnum.HIGH.getName(),stateMap.get(StatusEnum.HIGH.getName()) + 1);
+                        }
+                        typeMap.put(type,stateMap);
+                    }
+                }
+            }
+            //循环map值做转换成数组
+            for(String key : typeMap.keySet()) {
+                //组装 typesList 类型list
+                typeList.add(key);
+                Map<String,Integer> stateMap = typeMap.get(key);
+                for(String stateKey : stateMap.keySet()) {
+                    //组装状态数据
+                    stateList.add(stateMap.get(stateKey));
+                }
+                datasList.add(stateList);
+            }
+            platformBlockVO.setTypes(typeList.toArray(new String[0]));
+            platformBlockVO.setDatas(BaseUtils.listsToArrays(datasList,Integer.class));
+            platformBlockVOS.add(platformBlockVO);
+
+        }
+        return platformBlockVOS;
+    }
+
+
+
 }

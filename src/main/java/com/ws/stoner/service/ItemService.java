@@ -27,6 +27,11 @@ public interface ItemService {
      */
     List<BriefItemDTO> listItem(ItemGetRequest request) throws ServiceException;
 
+/*
+ *ZABBIX API 方法
+  */
+
+
     /**
      * 获取满足触发器在提供的 TriggerIds 内的所有item
      * @return
@@ -75,6 +80,14 @@ public interface ItemService {
     List<BriefItemDTO> getItemsByPointIds(List<String> pointIds) throws ServiceException;
 
     /**
+     * 根据 platformIds 获取附带有触发器的 items BriefItemDTO
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefItemDTO> getItemsWithTriggersByPlatfromIds(List<String> platformIds) throws ServiceException;
+
+    /**
      * 根据 hostIds 获取附带有触发器的 items BriefItemDTO
      * @param hostIds
      * @return
@@ -89,6 +102,7 @@ public interface ItemService {
      * @throws ServiceException
      */
     List<BriefItemDTO> getItemsWithTriggersByPointIds(List<String> pointIds) throws ServiceException;
+
 
 
 /*
@@ -133,6 +147,11 @@ item 在 mongodb下的业务方法
      * @throws ServiceException
      */
     boolean deleteGraphItemFromMongo(String itemId) throws ServiceException;
+
+/*
+ *设备详情功能页面
+ */
+
 
     /**
      * 根据 pointId 组装设备详情页面中 监控点悬浮框 的业务数据

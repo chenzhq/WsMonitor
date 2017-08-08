@@ -771,7 +771,7 @@
             "   graph_value:" + graph_value +
             "   value_type:" + value_type
         );
-        $('.ui.dropdown').dropdown();
+        //$('.ui.dropdown').dropdown();
         dropdownType(value_type);
         //初始化
         $(".small.input.graph_name input").val(graph_name);
@@ -782,9 +782,9 @@
         $(".dropdown.type select").dropdown("set value", graph_type);
         $(".dropdown.type select").dropdown("set text", graph_value);
 
-        $('.dropdown.points').dropdown("remove active");
-        $('.dropdown.items').dropdown("remove active");
-        $('.dropdown.type')
+        $(".dropdown.points select").dropdown("remove active");
+        $(".dropdown.items select").dropdown("remove active");
+        $(".dropdown.type select")
             .dropdown({
                 onChange: function(value, text, $selectedItem) {
                     graph_type = value;

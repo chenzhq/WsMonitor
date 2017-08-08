@@ -197,6 +197,24 @@ public class ItemServiceImpl implements ItemService {
     }
 
     /**
+     * 根据 platformIds 获取附带有触发器的 items BriefItemDTO
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefItemDTO> getItemsWithTriggersByPlatfromIds(List<String> platformIds) throws ServiceException {
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        itemGetRequest.getParams()
+                .setMonitored(true)
+                .setGroupIds(platformIds)
+                .setWithTriggers(true)
+                .setOutput(BriefItemDTO.PROPERTY_NAMES);
+        List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
+        return itemDTOS;
+    }
+
+    /**
      * 根据 hostIds 获取附带有触发器的 items BriefItemDTO
      * @param hostIds
      * @return
@@ -494,14 +512,13 @@ public class ItemServiceImpl implements ItemService {
             itemHistoryData.setName(itemDTO.getName());
             Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),itemDTO.getUnits());
             itemHistoryData.setUnits(valueUnits.entrySet().iterator().next().getKey());
-            //值转换
-            itemHistoryData.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),historyDTO.getValue(),itemDTO.getUnits()));
-            //时序数据值映射 存在大量访问 api 问题，响应时间太长 先注释掉
-//            if(!"0".equals(itemDTO.getValuemapId())) {
-//                itemHistoryData.setValue(valuemapService.getNewValueById(itemDTO.getValuemapId(),itemDTO.getLastValue())) ;
-//            }else {
-//                itemHistoryData.setValue(ThresholdUtils.transformValueUnits(itemDTO.getLastValue(),itemDTO.getUnits()));
-//            }
+            //值转换   时序数据值映射 存在大量访问 api 问题，响应时间太长 先注释掉
+            //itemHistoryData.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),historyDTO.getValue(),itemDTO.getUnits()));
+            if("UPTIME".equals(itemDTO.getUnits().toUpperCase()) || "S".equals(itemDTO.getUnits().toUpperCase())) {
+                itemHistoryData.setValue(valueUnits.entrySet().iterator().next().getValue());
+            }else {
+                itemHistoryData.setValue(valueUnits.entrySet().iterator().next().getValue()+valueUnits.entrySet().iterator().next().getKey());
+            }
             itemHistoryData.setLastTime(historyDTO.getLastTime().format(formatter));
             itemHistoryData.setWithTriggers(withTrigger);
             itemHistoryData.setWarningPoint(warningPoint);
