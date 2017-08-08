@@ -4,8 +4,11 @@ import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
+import com.ws.stoner.model.view.PlatformBlockVO;
+import com.ws.stoner.model.view.PlatformListVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zkf on 2017/6/1.
@@ -93,5 +96,31 @@ public interface PlatformService {
      * @throws ServiceException
      */
     List<BriefPlatformDTO> listHighPlatform() throws ServiceException;
+
+/*
+ * 业务监控模块  仪表板业务系统list 标签页部分
+ */
+
+    /**
+     * 根据 业务平台Ids 获取 健康值  Map<key:platformId ,value:health>
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    Map<String,Float> getHealthByPlatformIds(List<String> platformIds) throws ServiceException;
+
+    /**
+     * 获取页面展示上的 业务平台列表
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatformListVO> getPlatformList() throws ServiceException;
+
+    /**
+     * 获取业务监控的 业务方块 PlatformBlockVO
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatformBlockVO> getPlatformBlock() throws ServiceException;
 
 }

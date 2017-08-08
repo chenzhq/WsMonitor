@@ -5,7 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import java.util.List;
 
 /**
- * Created by pc on 2017/6/20.
+ * Created by zkf on 2017/6/20.
  */
 public class BriefTriggerDTO {
     @JSONField(name = "triggerid")
@@ -16,18 +16,8 @@ public class BriefTriggerDTO {
     private Integer priority;
     private List<BriefItemDTO> items;
 
-    public static final String[] PROPERTY_NAMES = {"triggerid", "description","expression","priority"};
 
-    @Override
-    public String toString() {
-        return "BriefTriggerDTO{" +
-                "triggerId='" + triggerId + '\'' +
-                ", name='" + name + '\'' +
-                ", expression='" + expression + '\'' +
-                ", priority=" + priority +
-                ", items=" + items +
-                '}';
-    }
+    public static final String[] PROPERTY_NAMES = {"triggerid", "description","expression","priority"};
 
     public String getTriggerId() {
         return triggerId;
@@ -72,5 +62,17 @@ public class BriefTriggerDTO {
     public BriefTriggerDTO setItems(List<BriefItemDTO> items) {
         this.items = items;
         return this;
+    }
+
+
+    @Override
+    public String toString() {
+        return "BriefTriggerDTO{" +
+                "triggerId='" + triggerId + '\'' +
+                ", name='" + name + '\'' +
+                ", expression='" + expression + '\'' +
+                ", priority=" + priority +
+                ", items=" + items +
+                '}';
     }
 }

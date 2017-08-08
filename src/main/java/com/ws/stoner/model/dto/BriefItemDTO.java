@@ -25,11 +25,13 @@ public class BriefItemDTO {
     private String units;
     @JSONField(name = "value_type")
     private String valueType;
+
+    private Integer weight;
     @JSONField(name = "applications")
     private List<BriefPointDTO> points;
 
 
-    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","units","valuemapid"};
+    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","units","valuemapid","weight"};
 
     public int getCustomState() {
         return customState;
@@ -119,6 +121,15 @@ public class BriefItemDTO {
         return this;
     }
 
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public BriefItemDTO setWeight(Integer weight) {
+        this.weight = weight;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "BriefItemDTO{" +
@@ -130,6 +141,7 @@ public class BriefItemDTO {
                 ", lastValue='" + lastValue + '\'' +
                 ", units='" + units + '\'' +
                 ", valueType='" + valueType + '\'' +
+                ", weight=" + weight +
                 ", points=" + points +
                 '}';
     }
