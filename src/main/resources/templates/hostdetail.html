@@ -47,11 +47,10 @@
 				margin-bottom: -10px;
 			}
 			.ui.celled.grid > .row > .column {  padding: 0.5em  }
-			.text_over_hidden{
+			.textOverflow{
 				overflow: hidden; /*自动隐藏文字*/
 				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
 				white-space: nowrap;/*强制不换行*/
-				width: 10em;/*不允许出现半汉字截断*/
 			}
 			.button_points_hidden{
 				overflow: hidden; /*自动隐藏文字*/
@@ -259,7 +258,7 @@
 							<h3 class="ui header">
 								<span style="display: none" id="host_id" th:text="${hostDetailVO.hostId}">10110</span>
 
-								<span th:class="${hostDetailVO.state}=='正常' ? 'ui green top attached button button_points_hidden' : (${hostDetailVO.state}=='警告' ? 'ui yellow top attached button button_points_hidden' : 'ui red top attached button button_points_hidden')  "  th:text="${hostDetailVO.hostName}">设备名称</span>
+								<span th:class="${hostDetailVO.state}=='正常' ? 'ui green top attached button textOverflow' : (${hostDetailVO.state}=='警告' ? 'ui yellow top attached button textOverflow' : 'ui red top attached button textOverflow')  "  th:text="${hostDetailVO.hostName}">设备名称</span>
 							</h3>
 						</div>
 						<div class="ui segment">
@@ -419,7 +418,7 @@
 											<div class="ui segment">
 												<div class="ui five column grid fixed-height" id="brief_point_id">
 													<div class="column" th:each="pointVO : ${pointVOS}">
-														<div class="ui red top attached button" id="0101" th:class="${pointVO.state}=='正常' ? 'ui green top attached button button_points_hidden' : (${pointVO.state}=='警告' ? 'ui yellow top attached button button_points_hidden' : 'ui red top attached button button_points_hidden')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
+														<div class="ui red top attached button" id="0101" th:class="${pointVO.state}=='正常' ? 'ui green top attached button textOverflow' : (${pointVO.state}=='警告' ? 'ui yellow top attached button textOverflow' : 'ui red top attached button textOverflow')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
 													</div>
 													<div class="column" th:remove="all">
 														<div class="ui red top attached button" id="0114" >CPU</div>
@@ -441,7 +440,7 @@
                                     <div class="item">
                                         <p class="header">监控项：
                                         <div class="description">
-                                            <table id="item_datas" class="ui very basic compact collapsing celled table no-padding">
+                                            <table id="item_datas" class="ui very basic compact collapsing celled fixed single line table" style="width: 220px">
                                             </table>
                                         </div>
                                         </p>
@@ -897,9 +896,19 @@
                             }else {
                                 myColor = ''
                             }
-                            var tmp = ['<tr><td><span>'+item_datas[i].item_name+'</span></td>'
-                            +'<td><span class="ui '+myColor+' header text_over_hidden">' +item_datas[i].value+'</span></td></tr>'].join('');
-                            str_item_datas=tmp+str_item_datas;
+                            if(strlen(item_datas[i].item_name) > 16)
+							{
+                                var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
+							}else {
+                                var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
+							}
+                            if(strlen(item_datas[i].value) > 16)
+                            {
+                                var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+                            }else {
+                                var item_value= "<td><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+							}
+                            str_item_datas +="<tr>"+item_name+item_value+"</tr>";
                         }
 
                         if (data.state == "正常"){ myColor = Color[2] }
@@ -1564,6 +1573,23 @@
                 errorMsg_no_connect("监控点 Tab");
             }
         });
+    }
+</script>
+<script>
+	//判断字符串长度
+    function strlen(str){
+        var len = 0;
+        for (var i=0; i<str.length; i++) {
+            var c = str.charCodeAt(i);
+            //单字节加1
+            if ((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {
+                len++;
+            }
+            else {
+                len+=2;
+            }
+        }
+        return len;
     }
 </script>
 </body>

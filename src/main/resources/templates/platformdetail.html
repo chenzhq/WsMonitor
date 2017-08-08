@@ -19,6 +19,37 @@
 		<style type="text/css">
 		</style>
 	</th:block>
+	<style type="text/css">
+	.textOverflow{
+	overflow: hidden; /*自动隐藏文字*/
+	text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+	white-space: nowrap;/*强制不换行*/
+	}
+	.ui.tab.segment.noMargin{ margin: 0px; }
+	.ui.tab.segment.noBorder{ border:0; }
+	.ui.tab.segment.noPadding{ padding: 0px; }
+	.ui.tab.segment.fixedHeight{ height: 500px; }
+	.ui.segment.row1Height{ height: 160px; }
+	.chartBar{ height: 140px; }
+	.ui.menu.row2_1Height{
+		height: 300px;
+		/*width: 100%;
+		overflow:auto;
+		overflow-x:hidden*/
+	}
+	.ui.menu.row2_2Height{
+		height: 275px;
+		/*width: 100%;
+		overflow:auto;
+		overflow-x:hidden*/
+	}
+	.ui.tab.segment.row2_3Height{
+		height: 260px;
+		width: 100%;
+		overflow:auto;
+		overflow-x:hidden
+	}
+	</style>
 </head>
 <body>
 <!--header start-->
@@ -211,12 +242,12 @@
 								<a class="item" data-tab="second">第二</a>
 								<a class="item" data-tab="third">第三</a>
 							</div>
-							<div class="ui bottom attached active tab segment" data-tab="first" style=" min-height : 500px;">
+							<div class="ui bottom attached active tab segment noMargin fixedHeight" data-tab="first">
 								<div class="row">
 									<div class="sixteen wide column">
 										<div class="ui grid">
 											<div class="six wide column">
-												<div class="ui segment center aligned" style="height: 160px">
+												<div class="ui segment center aligned row1Height">
 													<h2 class="ui left aligned header">健康度</h2>
 													<div class="ui huge statistic" >
 														<div class="value">
@@ -226,74 +257,125 @@
 												</div>
 											</div>
 											<div class="ten wide column">
-												<div class="ui segment left aligned"  style="height: 160px">
-													<div id="platformBar" class="flotchart" style="height: 140px"></div>
+												<div class="ui segment left aligned row1Height">
+													<div id="platformBar" class="chartBar"></div>
 												</div>
 											</div>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="sixteen wide column">
-										<div class="ui grid">
-											<div class="three wide column">
-												<div class="ui pointing secondary vertical menu">
-													<a class="active item" data-tab="first">第一</a>
-													<a class="item" data-tab="second">第二</a>
-													<a class="item" data-tab="third">第三</a>
-												</div>
-											</div>
-											<div class="thirteen wide column">
-												<div class="ui active tab segment" data-tab="first">
-													<div class="sixteen wide column">
-														<div class="ui grid">
-															<div class="three wide column">
-																<div class="ui top attached tabular vertical menu">
-																	<a class="active item" data-tab="first/a">1A</a>
-																	<a class="item" data-tab="first/b">1B</a>
-																	<a class="item" data-tab="first/c">1C</a>
+											<div class="sixteen wide column">
+												<div  id="pointsTab"><!--class="ui segment"-->
+													<div class="ui grid">
+														<div class="three wide column" >
+															<div class="ui pointing vertical menu row2_1Height">
+																<a class="active item textOverflow" data-tab="first">第一</a>
+																<a class="item textOverflow" data-tab="second">第二</a>
+																<a class="item textOverflow" data-tab="third" data-tooltip="第三(超超超超超超超超超超超超超级长的文字)">第三(超超超超超超超超超超超超超级长的文字)</a>
+															</div>
+														</div>
+														<div class="thirteen wide column"  style="padding-left: 0px">
+															<div class="ui active tab segment noMargin" data-tab="first">
+																<div class="ui grid">
+																	<div class="four wide column">
+																		<div class="ui vertical fluid tabular menu row2_2Height">
+																			<a class="active item" data-tab="first/a">1A</a>
+																			<a class="item" data-tab="first/b">1B</a>
+																			<a class="item textOverflow" data-tab="first/c" data-tooltip="1C(超超超超超超超超超超超超超级长的文字)">1C(超超超超超超超超超超超超超级长的文字)</a>
+																		</div>
+																	</div>
+																	<div class="twelve wide column" style="padding-left: 0px">
+																		<div class="ui active bottom attached tab segment noBorder noPadding row2_3Height" data-tab="first/a">
+																			<div class="ui inverted  menu">
+																				<a class="active red item">标题</a>
+																				<div class="right menu">
+																					<a class="yellow item">权值>></a>
+																				</div>
+																			</div>
+																			<div class="ui grid">
+																				<div class="row">
+																					<!--<div class="eight wide column">
+																						<h3>标题</h3>
+																					</div>
+																					<div class="eight wide column">
+																						<button class="ui top attached right floated button">权值>></button>
+																					</div>-->
+																					<div class="sixteen wide column">
+																						<table class="ui very basic fixed single line table">
+																							<thead>
+																							<tr>
+																								<th>Name</th>
+																								<th>Status</th>
+																								<th>Notes</th>
+																							</tr>
+																							</thead>
+																							<tbody>
+																							<tr>
+																								<td>John</td>
+																								<td title="Approved">Approved</td>
+																								<td  title="None(超超超超超超超超超超超超超级长的文字)">None(超超超超超超超超超超超超超级长的文字)</td>
+																							</tr>
+																							<tr>
+																								<td>Jamie</td>
+																								<td>Approved</td>
+																								<td>Requires call</td>
+																							</tr>
+																							<tr>
+																								<td>Jill</td>
+																								<td>Denied</td>
+																								<td>None</td>
+																							</tr>
+																							</tbody>
+																						</table>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="first/b">
+																			<p>1B</p>
+																			<p>1B</p>
+																			<p>1B</p>
+																			<p>1B</p>
+																			<p>1B</p>
+																			<p>1B</p>
+																			<p>1B</p>
+																		</div>
+																		<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="first/c">1C</div>
+																	</div>
 																</div>
 															</div>
-															<div class="thirteen wide column">
-																<div class="ui bottom attached active tab segment" data-tab="first/a">1A</div>
-																<div class="ui bottom attached tab segment" data-tab="first/b">1B</div>
-																<div class="ui bottom attached tab segment" data-tab="first/c">1C</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="ui tab segment" data-tab="second">
-													<div class="sixteen wide column">
-														<div class="ui grid">
-															<div class="three wide column">
-															<div class="ui top attached tabular vertical menu">
-																<a class="item" data-tab="second/a">2A</a>
-																<a class="item" data-tab="second/b">2B</a>
-																<a class="item" data-tab="second/c">2C</a>
-															</div>
-														</div>
-															<div class="thirteen wide column">
-																<div class="ui bottom attached tab segment" data-tab="second/a">2A</div>
-																<div class="ui bottom attached tab segment" data-tab="second/b">2B</div>
-																<div class="ui bottom attached tab segment" data-tab="second/c">2C</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												<div class="ui tab segment" data-tab="third">
-													<div class="sixteen wide column">
-														<div class="ui grid">
-															<div class="three wide column">
-																<div class="ui top attached tabular vertical menu">
-																	<a class="item" data-tab="third/a">3A</a>
-																	<a class="item" data-tab="third/b">3B</a>
-																	<a class="item" data-tab="third/c">3C</a>
+															<div class="ui tab segment noMargin" data-tab="second">
+																<div class="sixteen wide column">
+																	<div class="ui grid">
+																		<div class="four wide column">
+																		<div class="ui vertical fluid tabular menu row2_2Height">
+																			<a class="item" data-tab="second/a">2A</a>
+																			<a class="item" data-tab="second/b">2B</a>
+																			<a class="item" data-tab="second/c">2C</a>
+																		</div>
+																	</div>
+																		<div class="twelve wide column">
+																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="second/a">2A</div>
+																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="second/b">2B</div>
+																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="second/c">2C</div>
+																		</div>
+																	</div>
 																</div>
 															</div>
-															<div class="thirteen wide column">
-																<div class="ui bottom attached tab segment" data-tab="third/a">3A</div>
-																<div class="ui bottom attached tab segment" data-tab="third/b">3B</div>
-																<div class="ui bottom attached tab segment" data-tab="third/c">3C</div>
+															<div class="ui tab segment noMargin" data-tab="third">
+																<div class="sixteen wide column">
+																	<div class="ui grid">
+																		<div class="four wide column">
+																			<div class="ui vertical fluid tabular menu row2_2Height">
+																				<a class="item" data-tab="third/a">3A</a>
+																				<a class="item" data-tab="third/b">3B</a>
+																				<a class="item" data-tab="third/c">3C</a>
+																			</div>
+																		</div>
+																		<div class="twelve wide column">
+																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="third/a">3A</div>
+																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="third/b">3B</div>
+																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="third/c">3C</div>
+																		</div>
+																	</div>
+																</div>
 															</div>
 														</div>
 													</div>
@@ -303,10 +385,10 @@
 									</div>
 								</div>
 							</div>
-							<div class="ui bottom attached tab segment" data-tab="second">
+							<div class="ui bottom attached tab segment noMargin fixedHeight" data-tab="second">
 								第二
 							</div>
-							<div class="ui bottom attached tab segment" data-tab="third">
+							<div class="ui bottom attached tab segment noMargin fixedHeight" data-tab="third">
 								第三
 							</div>
 						</div>
@@ -327,11 +409,17 @@
     <th:block th:replace="${scripts}"></th:block>
 </th:block>
 <script type="text/javascript">
+	//初始化选项页
+    $('#pointsTab .menu .item')
+        .tab({
+            // special keyword works same as above
+            context: $('#pointsTab')
+        })
+    ;
 </script>
 <script>
 	//健康度线状图
     var myChart = echarts.init(document.getElementById('platformHealth'));
-    var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
     var option = {
         xAxis: {
             data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
