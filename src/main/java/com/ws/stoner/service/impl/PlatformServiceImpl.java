@@ -393,8 +393,6 @@ public class PlatformServiceImpl implements PlatformService {
             //匹配着组装 type和对应state数量
             Map<String,Map<String,Integer>> typeMap = new HashMap<>();
             String type = "";
-            List<String> typeList = new ArrayList<>();
-            List<Integer> stateList = new ArrayList<>();
             List<List<Integer>> datasList = new ArrayList<>();
             PlatformBlockVO platformBlockVO = new PlatformBlockVO();
             //id,name
@@ -454,10 +452,12 @@ public class PlatformServiceImpl implements PlatformService {
                 }
             }
             //循环map值做转换成数组
+            List<String> typeList = new ArrayList<>();
             for(String key : typeMap.keySet()) {
                 //组装 typesList 类型list
                 typeList.add(key);
                 Map<String,Integer> stateMap = typeMap.get(key);
+                List<Integer> stateList = new ArrayList<>();
                 for(String stateKey : stateMap.keySet()) {
                     //组装状态数据
                     stateList.add(stateMap.get(stateKey));
