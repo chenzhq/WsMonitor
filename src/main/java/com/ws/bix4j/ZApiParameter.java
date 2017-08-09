@@ -13,6 +13,20 @@ public class ZApiParameter {
     }
 
 /**
+ * 主机组参数
+  */
+public static enum HOSTGROUP_INTERNAL {
+    NOT_INTERNAL(0),INTERNAL(1);
+
+    public int value = 0;
+
+    private HOSTGROUP_INTERNAL(int value) {
+        this.value = value;
+    }
+
+}
+
+/**
  *主机参数
  */
     /**

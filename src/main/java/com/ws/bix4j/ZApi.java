@@ -76,7 +76,6 @@ public class ZApi {
     public Host Host() {
         return new Host(uri.toString(), auth);
     }
-
     public HostGroup Group() {
         return new HostGroup(uri.toString(), auth);
     }

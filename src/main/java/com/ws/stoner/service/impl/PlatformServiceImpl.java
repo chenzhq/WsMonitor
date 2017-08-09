@@ -99,6 +99,7 @@ public class PlatformServiceImpl implements PlatformService {
         Map<String, Integer> statusFilter = new HashMap<>();
         statusFilter.put("status", ZApiParameter.HOST_MONITOR_STATUS.MONITORED_HOST.value);
         hostGetRequest.getParams()
+
                 .setGroupIds(platformIds)
                 .setFilter(statusFilter)
                 .setCountOutput(true);
@@ -156,9 +157,12 @@ public class PlatformServiceImpl implements PlatformService {
     @Override
     public int countAllPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        Map<String , Object> groupFilter = new HashMap<>();
+        groupFilter.put("internal",ZApiParameter.HOSTGROUP_INTERNAL.NOT_INTERNAL.value);
         groupRequest.getParams()
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
+                .setFilter(groupFilter)
                 .setCountOutput(true);
         int hostGroupNum  = countPlatform(groupRequest);
         return hostGroupNum;
@@ -176,6 +180,7 @@ public class PlatformServiceImpl implements PlatformService {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String,Object> groupFilter = new HashMap<>();
         groupFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_WARNING.value);
+        groupFilter.put("internal",ZApiParameter.HOSTGROUP_INTERNAL.NOT_INTERNAL.value);
         groupRequest.getParams()
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
@@ -197,6 +202,7 @@ public class PlatformServiceImpl implements PlatformService {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String,Object> groupFilter = new HashMap<>();
         groupFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT.value);
+        groupFilter.put("internal",ZApiParameter.HOSTGROUP_INTERNAL.NOT_INTERNAL.value);
         groupRequest.getParams()
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
@@ -217,6 +223,7 @@ public class PlatformServiceImpl implements PlatformService {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String,Object> groupFilter = new HashMap<>();
         groupFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_OK.value);
+        groupFilter.put("internal",ZApiParameter.HOSTGROUP_INTERNAL.NOT_INTERNAL.value);
         groupRequest.getParams()
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
@@ -239,11 +246,14 @@ public class PlatformServiceImpl implements PlatformService {
     @Override
     public List<BriefPlatformDTO> listAllPlatform() throws ServiceException {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
+        Map<String , Object> groupFilter = new HashMap<>();
+        groupFilter.put("internal",ZApiParameter.HOSTGROUP_INTERNAL.NOT_INTERNAL.value);
         groupRequest.getParams()
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
-                .setOutput(BriefPlatformDTO.PROPERTY_NAMES);
+                .setOutput(BriefPlatformDTO.PROPERTY_NAMES)
+                .setFilter(groupFilter);
         List<BriefPlatformDTO> platforms  = listPlatform(groupRequest);
         return platforms;
     }
@@ -258,6 +268,7 @@ public class PlatformServiceImpl implements PlatformService {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String, Object> platformFilter = new HashMap<>();
         platformFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_WARNING);
+        platformFilter.put("internal",ZApiParameter.HOSTGROUP_INTERNAL.NOT_INTERNAL.value);
         groupRequest.getParams()
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
@@ -277,6 +288,7 @@ public class PlatformServiceImpl implements PlatformService {
         HostGroupGetRequest groupRequest = new HostGroupGetRequest();
         Map<String, Object> platformFilter = new HashMap<>();
         platformFilter.put("custom_state",ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT);
+        platformFilter.put("internal",ZApiParameter.HOSTGROUP_INTERNAL.NOT_INTERNAL.value);
         groupRequest.getParams()
                 .setMonitoredHosts(true)
                 .setRealHosts(true)
