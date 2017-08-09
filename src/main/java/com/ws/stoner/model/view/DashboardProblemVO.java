@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by chenzheqi on 2017/6/12.
  */
-public class BriefProblemVO {
+public class DashboardProblemVO {
     @JSONField(name = "lastchange", format = "yyyy/MM/dd HH:mm:ss")
     private LocalDateTime time;
     private String priority;
@@ -28,7 +28,7 @@ public class BriefProblemVO {
         return time;
     }
 
-    public BriefProblemVO setTime(int time) {
+    public DashboardProblemVO setTime(int time) {
         this.time = LocalDateTime.ofInstant(Instant.ofEpochSecond(time), ZoneId.systemDefault());
         Duration duration = Duration.between(this.time, LocalDateTime.now());
         Long sec = duration.getSeconds();
@@ -48,7 +48,7 @@ public class BriefProblemVO {
         return priority;
     }
 
-    public BriefProblemVO setPriority(String priority) {
+    public DashboardProblemVO setPriority(String priority) {
         this.priority = priority;
         return this;
     }
@@ -57,7 +57,7 @@ public class BriefProblemVO {
         return hosts;
     }
 
-    public BriefProblemVO setHosts(List<BriefHostDTO> hosts) {
+    public DashboardProblemVO setHosts(List<BriefHostDTO> hosts) {
         this.hosts = hosts;
         return this;
     }
@@ -66,7 +66,7 @@ public class BriefProblemVO {
         return description;
     }
 
-    public BriefProblemVO setDescription(String description) {
+    public DashboardProblemVO setDescription(String description) {
         this.description = description;
         return this;
     }

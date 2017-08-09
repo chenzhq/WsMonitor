@@ -20,7 +20,7 @@ public class PlatformController {
     @Autowired
     private PlatformService platformService;
 
-    @RequestMapping(value = {"/", ""})
+    @RequestMapping(value = {"/platformlist", ""})
     public ModelAndView platformList() throws ServiceException {
         List<PlatformListVO> platformListVOS = platformService.getPlatformList();
         ModelAndView mav = new ModelAndView("platformlist");
@@ -28,12 +28,12 @@ public class PlatformController {
         return mav;
     }
 
-    @RequestMapping(value = {"/block", ""})
+    @RequestMapping(value = {"/platformview", ""})
     public String platformBlock() {
         return "platformview";
     }
 
-    @RequestMapping(value = {"/detail", ""})
+    @RequestMapping(value = {"/platformdetail", ""})
     public String platformDetail() {
         return "platformdetail";
     }

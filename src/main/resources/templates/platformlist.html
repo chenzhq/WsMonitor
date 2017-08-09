@@ -13,8 +13,8 @@
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 
 	<th:block th:fragment="supplement">
-		<link href="#" rel="stylesheet" th:href="@{}"/>
-		<script src="#" th:src="@{}"></script>
+		<!--<link href="#" rel="stylesheet" th:href="@{}"/>-->
+		<!--<script src="#" th:src="@{}"></script>-->
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 		</style>
@@ -215,41 +215,26 @@
 							<div class="row">
 								<table class="ui compact  very basic table center aligned">
 									<thead>
-									<tr><th width="20%">指标</th>
-										<th width="20%">值</th>
-										<th width="10%">危险阈值</th>
-										<th width="10%">故障阈值</th>
-										<th width="20%">最新时间</th>
+									<tr><th width="20%">名称</th>
+										<th width="20%">状态</th>
+										<th width="10%">健康度（%）</th>
+										<th width="10%">严重设备数量</th>
+										<th width="20%">警告设备数量</th>
+										<th width="20%">总设备数量</th>
 									</tr></thead>
 									<tbody id="tableSummary" >
-									<tr>
-										<td width="20%">指标</td>
-										<td width="20%">值</td>
-										<td width="10%">危险阈值</td>
-										<td width="10%">故障阈值</td>
-										<td width="20%">最新时间</td>
+									<tr th:each="platformListVO : ${platformListVOS}" >
+
+										<td th:text="${platformListVO.platformName}" width="20%">
+											<input text="hidden" th:id="${platformListVO.platformId}" />
+											OA</td>
+										<td width="20%"><i th:class="${platformListVO.state} == '正常' ? 'green square icon' :(${platformListVO.state} =='警告' ? 'yellow square icon' : 'red square icon') " class="red square icon"></i></td>
+										<td th:text="${#numbers.formatDecimal(platformListVO.health, 0, 2)} " width="10%">%</td>
+										<td th:text="${platformListVO.highNum}" width="10%">30</td>
+										<td th:text="${platformListVO.warningNum}" width="20%">30</td>
+										<td th:text="${platformListVO.allNum}" width="20%">30</td>
 									</tr>
-									<tr>
-										<td width="20%">指标</td>
-										<td width="20%">值</td>
-										<td width="10%">危险阈值</td>
-										<td width="10%">故障阈值</td>
-										<td width="20%">最新时间</td>
-									</tr>
-									<tr>
-										<td width="20%">指标</td>
-										<td width="20%"><a  href="javascript:;" style="color: rgba(0, 0, 0, 0.87);"> 80%</a></td>
-										<td width="10%">危险阈值</td>
-										<td width="10%">故障阈值</td>
-										<td width="20%">最新时间</td>
-									</tr>
-									<tr>
-										<td width="20%">指标</td>
-										<td width="20%"><a  href="javascript:;" style="color: red;"> 80%</a></td>
-										<td width="10%">危险阈值</td>
-										<td width="10%">故障阈值</td>
-										<td width="20%">最新时间</td>
-									</tr>
+
 									</tbody>
 								</table>
 							</div>
@@ -268,7 +253,7 @@
 	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
 
-    <th:block th:replace="${scripts}"></th:block>
+    <!--<th:block th:replace="${scripts}"></th:block>-->
 </th:block>
 <script type="text/javascript">
     $("a").click(function(){

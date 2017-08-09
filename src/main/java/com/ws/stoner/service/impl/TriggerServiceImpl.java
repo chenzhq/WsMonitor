@@ -9,9 +9,8 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
-import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
-import com.ws.stoner.model.view.BriefProblemVO;
+import com.ws.stoner.model.view.DashboardProblemVO;
 import com.ws.stoner.service.TriggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +114,7 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     @Override
-    public List<BriefProblemVO> listBriefProblems() {
+    public List<DashboardProblemVO> listBriefProblems() {
         TriggerGetRequest request = new TriggerGetRequest();
         Map<String, Integer> triggerFilter = new HashMap<>();
         triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
@@ -124,9 +123,9 @@ public class TriggerServiceImpl implements TriggerService {
                 .setOnlyTrue(true)
                 .setExpandDescription(true)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
-                .setOutput(BriefProblemVO.PROPERTY_NAMES)
+                .setOutput(DashboardProblemVO.PROPERTY_NAMES)
                 .setFilter(triggerFilter);
-        return listTrigger(request, BriefProblemVO.class);
+        return listTrigger(request, DashboardProblemVO.class);
     }
 
     /**

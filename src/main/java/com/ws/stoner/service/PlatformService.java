@@ -4,8 +4,7 @@ import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
-import com.ws.stoner.model.view.PlatformBlockVO;
-import com.ws.stoner.model.view.PlatformListVO;
+import com.ws.stoner.model.view.*;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ public interface PlatformService {
     int countAllPlatform() throws ServiceException;
 
     /**
-     * 获取告警业务平台数量  warning number
+     * 获取警告业务平台数量  warning number
      * @return
      * @throws ServiceException
      */
@@ -98,8 +97,16 @@ public interface PlatformService {
     List<BriefPlatformDTO> listHighPlatform() throws ServiceException;
 
 /*
- * 业务监控模块  仪表板业务系统list 标签页部分
+ * 业务监控模块
  */
+
+    /**
+     * 根据 platformId 获取指定业务平台数据 其中包括 其下设备 hostDTOS
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    BriefPlatformDTO getPlatformByPlatformId(String platformId) throws ServiceException;
 
     /**
      * 根据 业务平台Ids 获取 健康值  Map<key:platformId ,value:health>
@@ -117,10 +124,41 @@ public interface PlatformService {
     List<PlatformListVO> getPlatformList() throws ServiceException;
 
     /**
-     * 获取业务监控的 业务方块 PlatformBlockVO
+     * 获取业务监控的 所有 业务方块 PlatformBlockVO
      * @return
      * @throws ServiceException
      */
     List<PlatformBlockVO> getPlatformBlock() throws ServiceException;
+
+    /**
+     * 获取业务监控的 指定id的 业务方块 PlatformBlockVO
+     * @return
+     * @throws ServiceException
+     */
+    PlatformBlockVO getPlatformBlockById(String platformId) throws ServiceException;
+
+    /**
+     * 获取指定 platformId 的 List<PlatDetailHostVO> 用于分类菜单显示
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatDetailHostVO> getHostsByPlatformId(String platformId) throws ServiceException;
+
+    /**
+     * 获取指定 hostId 的 List<PlatDetailItemVO> 用于分类菜单 显示
+     * @param hostId
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatDetailPointVO> getPointsByHostId(String hostId) throws ServiceException;
+
+    /**
+     * 获取指定 pointId 的 List<PlatDetailPointVO> 用于分类菜单 显示
+     * @param pointId
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatDetailItemVO> getItemsByPointId(String pointId) throws ServiceException;
 
 }

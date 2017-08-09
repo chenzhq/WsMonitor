@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.ws.stoner.constant.MessageConsts.REST_RESPONSE_SUCCESS;
 
@@ -163,6 +164,12 @@ public class DashboardRestController {
         for(BriefHostDTO host : hostDTOS) {
             hostIds.add(host.getHostId());
         }
+        List<String> platformIds = new ArrayList<>();
+        for(BriefPlatformDTO platformDTO : allPlatformDTO) {
+            platformIds.add(platformDTO.getPlatformId());
+        }
+        //获取 健康值 的map对象
+        Map<String,Float> healthMap = platformService.getHealthByPlatformIds(platformIds);
         //step3:新建List<DashboardPlatformVO>，循环allplatformDTO，新建DashboardPlatformVO，分别赋值
         List<DashboardPlatformVO> platformVOS = new ArrayList<>();
         for(BriefPlatformDTO platform : allPlatformDTO) {
@@ -170,7 +177,7 @@ public class DashboardRestController {
             //赋值 id,name,availability
             platformVO.setPlatformId(platform.getPlatformId());
             platformVO.setName(platform.getName());
-            platformVO.setAvailability(100);
+            platformVO.setAvailability(healthMap.get(platform.getPlatformId()));
             platformVO.setState(StatusConverter.StatusTransform(platform.getCustomState()));
             //allNum，warningNum,highNum
             int allNum = 0;

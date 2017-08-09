@@ -36,8 +36,12 @@ public interface HostService {
     List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException;
 
 /*
-仪表板页面下的 count 数据获取的业务方法
+ *zabbix api方法
  */
+
+    /*
+     count 数据获取的方法
+     */
 
     /**
      * 获取主机总数量，排除停用主机，filter： status:0
@@ -75,9 +79,9 @@ public interface HostService {
      */
     int countOkHost() throws ServiceException;
 
-/*
- *仪表板页面下的 list 数据获取的业务方法
- */
+    /*
+     *list 数据获取的方法
+     */
 
     /**
      *  获取简约所有主机list 剔除停用的
@@ -116,6 +120,14 @@ public interface HostService {
      */
     List<BriefHostDTO> getHostsByHostIds(List<String> hostIds) throws ServiceException;
 
+    /**
+     * 根据指定的 platformIds 获取 List<BriefHostDTO> list  用于 分类菜单 显示设备
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefHostDTO> getHostByPlatformIds(List<String> platformIds) throws ServiceException;
+
 /*
 设备详情页面下的业务方法
  */
@@ -140,5 +152,7 @@ public interface HostService {
      * @throws ServiceException
      */
     List<HostDetailPointVO> getPointsByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
+
+
 
 }
