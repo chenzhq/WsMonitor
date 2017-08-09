@@ -14,6 +14,7 @@
 
 	<th:block th:fragment="supplement">
 		<link href="#" rel="stylesheet" th:href="@{}"/>
+		<script src="https://gw.alipayobjects.com/as/g/datavis/g6/1.1.3/index.js"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
@@ -239,7 +240,7 @@
 						<div class="ui segment">
 							<div class="ui top attached tabular menu">
 								<a class="active item" data-tab="first">业务详情</a>
-								<a class="item" data-tab="second">第二</a>
+								<a class="item" data-tab="second">紧凑树</a>
 								<a class="item" data-tab="third">第三</a>
 							</div>
 							<div class="ui bottom attached active tab segment noMargin fixedHeight" data-tab="first">
@@ -268,7 +269,7 @@
 															<div class="ui pointing vertical menu row2_1Height">
 																<a class="active item textOverflow" data-tab="first">第一</a>
 																<a class="item textOverflow" data-tab="second">第二</a>
-																<a class="item textOverflow" data-tab="third" data-tooltip="第三(超超超超超超超超超超超超超级长的文字)">第三(超超超超超超超超超超超超超级长的文字)</a>
+																<a class="item textOverflow" data-tab="third">第三(超超超超超超超超超超超超超级长的文字)</a>
 															</div>
 														</div>
 														<div class="thirteen wide column"  style="padding-left: 0px">
@@ -278,7 +279,7 @@
 																		<div class="ui vertical fluid tabular menu row2_2Height">
 																			<a class="active item" data-tab="first/a">1A</a>
 																			<a class="item" data-tab="first/b">1B</a>
-																			<a class="item textOverflow" data-tab="first/c" data-tooltip="1C(超超超超超超超超超超超超超级长的文字)">1C(超超超超超超超超超超超超超级长的文字)</a>
+																			<a class="item textOverflow" data-tab="first/c">1C(超超超超超超超超超超超超超级长的文字)</a>
 																		</div>
 																	</div>
 																	<div class="twelve wide column" style="padding-left: 0px">
@@ -386,7 +387,7 @@
 								</div>
 							</div>
 							<div class="ui bottom attached tab segment noMargin fixedHeight" data-tab="second">
-								第二
+								<div id="c1"  class="sixteen wide column"></div>
 							</div>
 							<div class="ui bottom attached tab segment noMargin fixedHeight" data-tab="third">
 								第三
@@ -405,7 +406,6 @@
 	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
 	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
-
     <th:block th:replace="${scripts}"></th:block>
 </th:block>
 <script type="text/javascript">
@@ -529,6 +529,94 @@
         ]
     };
     myChart.setOption(option);
+</script>
+<script type="text/javascript">
+	//紧凑树图
+    //$.getJSON('../../../static/data/g6-npm-ls-tiny-tree.json',function(data){
+        var tree = new G6.Tree({
+            id: 'c1',            // 容器ID
+            width: 1000,    // 画布宽
+            height: 480 ,   // 画布高
+            fitView: 'autoZoom', // 自动缩放
+            layoutCfg: {
+                direction: 'TB', // 方向（LR/RL/H/TB/BT/V）
+                getHGap: function(/* d */) { // 横向间距
+                    return 10;
+                },
+                getVGap: function(/* d */) { // 竖向间距
+                    return 50;
+                },
+            },
+        });
+        //tree.source(data);
+        tree.source({
+            label: 'G6',
+            children: [{
+                label: '图类',
+                children: [
+                    {
+                        label: 'Graph'
+                    },
+                    {
+                        label: 'Net'
+                    },
+                    {
+                        label: 'Tree'
+                    },
+                    {
+                        label: '……'
+                    }
+                ]
+            },
+                {
+                    label: '基础类',
+                    //isCollapsed: true,
+                    children: [
+                        {
+                            label: 'Canvas'
+                        },
+                        {
+                            label: 'Handler'
+                        },
+                        {
+                            label: 'Layout'
+                        },
+                        {
+                            label: 'Global'
+                        }
+                    ]
+                },
+                {
+                    label: '工具类',
+                    children: [
+                        {
+                            label: 'Matrix',
+                            color: 'red',
+                            id:'000'
+                        },
+                        {
+                            label: 'Color'
+                        },
+                        {
+                            label: 'Util',
+                            size: 30
+                        }
+                    ]
+                }]
+        });
+        tree.node()
+            .label(function (obj) {
+                return obj.name;
+            })
+            .style({
+                fillOpacity: 1
+            })
+        tree.edge().shape('smooth');
+        tree.render();
+        tree.on('click', function(ev){
+            alert("击中" + ev.item.get('model').id + "!");
+        });
+    //});
 </script>
 </body>
 </html>
