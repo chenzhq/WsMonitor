@@ -33,22 +33,25 @@
 	.ui.segment.row1Height{ height: 160px; }
 	.chartBar{ height: 140px; }
 	.ui.menu.row2_1Height{
-		height: 300px;
+		height: 265px;
 		/*width: 100%;
 		overflow:auto;
 		overflow-x:hidden*/
+		margin:10px 0px 0px 10px;
 	}
 	.ui.menu.row2_2Height{
-		height: 275px;
+		height: 265px;
 		/*width: 100%;
 		overflow:auto;
 		overflow-x:hidden*/
 	}
 	.ui.tab.segment.row2_3Height{
-		height: 260px;
+		height: 253px;
 		width: 100%;
 		overflow:auto;
 		overflow-x:hidden
+	}
+	.ui.grid>.column+.divider, .ui.grid>.row>.column+.divider {
 	}
 	</style>
 </head>
@@ -238,12 +241,19 @@
 				<div class="sixteen wide column">
 					<div class="ui segments">
 						<div class="ui segment">
-							<div class="ui top attached tabular menu">
-								<a class="active item" data-tab="first">业务详情</a>
-								<a class="item" data-tab="second">紧凑树</a>
-								<a class="item" data-tab="third">第三</a>
+							<div class="ui secondary pointing menu">
+								<a class="active item" data-tab="detail">业务详情</a>
+								<a class="item" data-tab="tree">紧凑树</a>
+								<a class="item" data-tab="report">第三</a>
+								<div class="right menu">
+									<select class="ui mini dropdown ">
+										<option value="">选择业务平台</option>
+										<option value="0">OA系统</option>
+										<option value="1">ITSS系统</option>
+									</select>
+								</div>
 							</div>
-							<div class="ui bottom attached active tab segment noMargin fixedHeight" data-tab="first">
+							<div class="ui active tab segment noMargin fixedHeight" data-tab="detail">
 								<div class="row">
 									<div class="sixteen wide column">
 										<div class="ui grid">
@@ -263,20 +273,20 @@
 												</div>
 											</div>
 											<div class="sixteen wide column">
-												<div  id="pointsTab"><!--class="ui segment"-->
+												<div  id="pointsTab" class="ui segment" style="padding: 0px">
 													<div class="ui grid">
-														<div class="three wide column" >
-															<div class="ui pointing vertical menu row2_1Height">
+														<div class="three wide column" style="padding-right: 10px;">
+															<div class="ui secondary vertical pointing menu row2_1Height">
 																<a class="active item textOverflow" data-tab="first">第一</a>
 																<a class="item textOverflow" data-tab="second">第二</a>
 																<a class="item textOverflow" data-tab="third">第三(超超超超超超超超超超超超超级长的文字)</a>
 															</div>
 														</div>
 														<div class="thirteen wide column"  style="padding-left: 0px">
-															<div class="ui active tab segment noMargin" data-tab="first">
+															<div class="ui active tab segment noMargin noBorder" data-tab="first">
 																<div class="ui grid">
 																	<div class="four wide column">
-																		<div class="ui vertical fluid tabular menu row2_2Height">
+																		<div class="ui secondary vertical pointing menu row2_2Height">
 																			<a class="active item" data-tab="first/a">1A</a>
 																			<a class="item" data-tab="first/b">1B</a>
 																			<a class="item textOverflow" data-tab="first/c">1C(超超超超超超超超超超超超超级长的文字)</a>
@@ -342,11 +352,11 @@
 																	</div>
 																</div>
 															</div>
-															<div class="ui tab segment noMargin" data-tab="second">
+															<div class="ui tab segment noMargin noBorder" data-tab="second">
 																<div class="sixteen wide column">
 																	<div class="ui grid">
 																		<div class="four wide column">
-																		<div class="ui vertical fluid tabular menu row2_2Height">
+																		<div class="ui secondary vertical pointing menu row2_2Height">
 																			<a class="item" data-tab="second/a">2A</a>
 																			<a class="item" data-tab="second/b">2B</a>
 																			<a class="item" data-tab="second/c">2C</a>
@@ -360,11 +370,11 @@
 																	</div>
 																</div>
 															</div>
-															<div class="ui tab segment noMargin" data-tab="third">
+															<div class="ui tab segment noMargin noBorder" data-tab="third">
 																<div class="sixteen wide column">
 																	<div class="ui grid">
 																		<div class="four wide column">
-																			<div class="ui vertical fluid tabular menu row2_2Height">
+																			<div class="ui secondary vertical pointing menu row2_2Height">
 																				<a class="item" data-tab="third/a">3A</a>
 																				<a class="item" data-tab="third/b">3B</a>
 																				<a class="item" data-tab="third/c">3C</a>
@@ -386,10 +396,22 @@
 									</div>
 								</div>
 							</div>
-							<div class="ui bottom attached tab segment noMargin fixedHeight" data-tab="second">
-								<div id="c1"  class="sixteen wide column"></div>
+							<div class="ui tab segment noMargin fixedHeight" data-tab="tree">
+								<div class="row">
+									<div class="ui grid">
+									<div class="sixteen wide column">
+										<div class="ui segment">
+											<div id="c1"  class="sixteen wide column"></div>
+										</div>
+									</div>
+									<div class="sixteen wide column">
+										<div class="ui segment">
+												详情
+										</div>
+									</div>
+								</div>
 							</div>
-							<div class="ui bottom attached tab segment noMargin fixedHeight" data-tab="third">
+							<div class="ui tab segment noMargin fixedHeight" data-tab="report">
 								第三
 							</div>
 						</div>
@@ -410,6 +432,7 @@
 </th:block>
 <script type="text/javascript">
 	//初始化选项页
+    $('.menu .item').tab();
     $('#pointsTab .menu .item')
         .tab({
             // special keyword works same as above
@@ -445,7 +468,7 @@
         tooltip : {
             trigger: 'axis',
             axisPointer : {
-                type : 'shadow'
+                type : false
             }
         },
         legend: {
@@ -534,16 +557,16 @@
 	//紧凑树图
     //$.getJSON('../../../static/data/g6-npm-ls-tiny-tree.json',function(data){
         var tree = new G6.Tree({
-            id: 'c1',            // 容器ID
-            width: 1000,    // 画布宽
-            height: 480 ,   // 画布高
-            fitView: 'autoZoom', // 自动缩放
+            id: 'c1',
+            width: 1000,
+            height: 240 ,
+            fitView: 'autoZoom',
             layoutCfg: {
-                direction: 'TB', // 方向（LR/RL/H/TB/BT/V）
-                getHGap: function(/* d */) { // 横向间距
+                direction: 'TB',
+                getHGap: function(/* d */) {
                     return 10;
                 },
-                getVGap: function(/* d */) { // 竖向间距
+                getVGap: function(/* d */) {
                     return 50;
                 },
             },
