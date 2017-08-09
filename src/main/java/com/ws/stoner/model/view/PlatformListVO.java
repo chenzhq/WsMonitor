@@ -20,6 +20,16 @@ public class PlatformListVO {
     @JSONField(name = "all_num")
     private int allNum;
 
+    public PlatformListVO(String platformId, String platformName, String state, Float health, int warningNum,  int highNum,  int allNum) {
+        this.platformId = platformId;
+        this.platformName = platformName;
+        this.state = state;
+        this.health = health;
+        this.highNum = highNum;
+        this.warningNum = warningNum;
+        this.allNum = allNum;
+    }
+
     public String getPlatformId() {
         return platformId;
     }

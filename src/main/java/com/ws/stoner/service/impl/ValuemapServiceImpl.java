@@ -112,8 +112,10 @@ public class ValuemapServiceImpl implements ValuemapService{
     public String getTransformValue(String valuemapId, String valueInfo, String unitsInfo) throws ServiceException{
         String value ;
         if(!"0".equals(valuemapId)) {
+            //存在映射值，直接显示映射值
             value = getNewValueById(valuemapId,valueInfo);
         }else {
+            //不存在映射值，交给值转换工具 ThresholdUtils 处理
             Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(valueInfo,unitsInfo);
             if("UPTIME".equals(unitsInfo.toUpperCase()) || "S".equals(unitsInfo.toUpperCase())) {
                 value = valueUnits.entrySet().iterator().next().getValue();

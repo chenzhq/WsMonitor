@@ -4,7 +4,7 @@ package com.ws.stoner.service;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
-import com.ws.stoner.model.view.BriefProblemVO;
+import com.ws.stoner.model.view.DashboardProblemVO;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public interface TriggerService {
      * @return
      * @throws ServiceException
      */
-    List<BriefProblemVO> listBriefProblems() throws ServiceException;
+    List<DashboardProblemVO> listBriefProblems() throws ServiceException;
 
     /**
      * 根据itemIds获取监控中的 trggierDTO list

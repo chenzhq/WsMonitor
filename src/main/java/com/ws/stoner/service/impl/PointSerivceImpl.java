@@ -359,6 +359,21 @@ public class PointSerivceImpl implements PointSerivce {
         return problemPoints;
     }
 
+    /**
+     * 根据 hostIds 获取  List<BriefPointDTO> list 用于 分类菜单 显示
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefPointDTO> getPointsByHostIds(List<String> hostIds) throws ServiceException {
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        appRequest.getParams()
+                .setHostIds(hostIds)
+                .setOutput(BriefPointDTO.PROPERTY_NAMES);
+        List<BriefPointDTO> points = listPoint(appRequest);
+        return points;
+    }
 
 
 }

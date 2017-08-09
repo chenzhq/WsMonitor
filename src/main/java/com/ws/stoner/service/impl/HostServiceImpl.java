@@ -281,6 +281,23 @@ public class HostServiceImpl implements HostService {
     }
 
     /**
+     * 根据指定的 platformIds 获取 List<BriefHostDTO> list 用于 分类菜单 显示设备
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefHostDTO> getHostByPlatformIds(List<String> platformIds) throws ServiceException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        hostGetRequest.getParams()
+                .setMonitoredHosts(true)
+                .setGroupIds(platformIds)
+                .setOutput(BriefHostDTO.PROPERTY_NAMES);
+        List<BriefHostDTO> hostDTOS = listHost(hostGetRequest);
+        return hostDTOS;
+    }
+
+    /**
      * 根据 BriefHostDTO hostDTO 组装 基本信息的 HostDetailVO
      * @return
      * @throws ServiceException

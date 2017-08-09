@@ -13,8 +13,18 @@ public class PlatformBlockVO {
     @JSONField(name = "platform_name")
     private String platformName;
     private Float health;
+    private String state;
     private String[] types;
     private Integer[][] datas;
+
+    public PlatformBlockVO(String platformId, String platformName, Float health, String state, String[] types, Integer[][] datas) {
+        this.platformId = platformId;
+        this.platformName = platformName;
+        this.health = health;
+        this.state = state;
+        this.types = types;
+        this.datas = datas;
+    }
 
     public String getPlatformId() {
         return platformId;
@@ -61,6 +71,15 @@ public class PlatformBlockVO {
         return this;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public PlatformBlockVO setState(String state) {
+        this.state = state;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "PlatformBlockVO{" +
@@ -69,6 +88,7 @@ public class PlatformBlockVO {
                 ", health=" + health +
                 ", types=" + Arrays.toString(types) +
                 ", datas=" + Arrays.deepToString(datas) +
+                ", state=" + state +
                 '}';
     }
 }

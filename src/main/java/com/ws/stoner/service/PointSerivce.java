@@ -11,6 +11,10 @@ import java.util.List;
  */
 public interface PointSerivce {
 
+/*
+ *基础方法
+ */
+
     /**
      * 根据 request 获取监控点数量
      * @param request
@@ -26,7 +30,9 @@ public interface PointSerivce {
      * @throws ServiceException the auth expire exception
      */
     List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws ServiceException;
-
+/*
+ *zabbix api方法
+ */
     /**
      * 获取所有的监控点
      * @return
@@ -70,9 +76,9 @@ public interface PointSerivce {
      */
     int countProblemPointByHostIds(List<String> hostIds) throws ServiceException;
 
-/*
- * list point
- */
+    /*
+     * list point
+     */
 
     /**
      * 获取简约监控点application list
@@ -94,6 +100,14 @@ public interface PointSerivce {
      * @throws ServiceException
      */
     List<BriefPointDTO> listHighPoint() throws ServiceException;
+
+    /**
+     * 根据 hostIds 获取  List<BriefPointDTO> list 用于 分类菜单 显示
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefPointDTO> getPointsByHostIds(List<String> hostIds) throws ServiceException;
 
 
 

@@ -149,7 +149,7 @@ item 在 mongodb下的业务方法
     boolean deleteGraphItemFromMongo(String itemId) throws ServiceException;
 
 /*
- *设备详情功能页面
+ *设备详情功能业务service
  */
 
 

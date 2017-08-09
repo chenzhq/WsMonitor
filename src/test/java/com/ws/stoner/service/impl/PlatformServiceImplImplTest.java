@@ -160,4 +160,9 @@ public void testListProblemPlatform() throws Exception {
     public void testgetPlatformBlock() throws Exception {
         System.out.println(platformService.getPlatformBlock());
     }
+
+    @Test
+    public void testgetPlatformBlockById() throws Exception {
+        System.out.println(platformService.getPlatformBlockById("35"));
+    }
 } 
