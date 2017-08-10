@@ -13,6 +13,7 @@
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 
 	<th:block th:fragment="supplement">
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
         <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 		</style>
@@ -209,14 +210,33 @@
 							</h3>
 						</div>
 						<div class="ui segment" style=" min-height : 500px;">
-
-							<div class="ui container" style="padding-top:10%">
-								<div class="ui grid center aligned">
-									<div class="row">
-										<div class="sixteen wide tablet six wide computer column">
-											<h1 class="ui header center aligned inverted">
-											</h1>
-											<div id="DateCountdown" data-date="2016-5-17 00:00:00" style="width: 100%;"></div>
+							<div class="row">
+								<div class="ui three column grid">
+									<div class="column">
+										<div class="ui segment">
+											<div class="ui green borderless fluid inverted two item menu">
+												<a class="fitted item">
+													名称
+												</a>
+												<div class="red fitted item">
+													<div class="ui active fluid indicating progress" data-percent="94" data-total="74" id="example1" style="width:160px;margin-bottom: 0px;padding-bottom: 0px">
+														<div class="bar">
+															<div class="progress"></div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div id="platformBar" style="height:150px;"></div>
+										</div>
+									</div>
+									<div class="column">
+										<div class="ui segment" style="height:222px;">
+											图二
+										</div>
+									</div>
+									<div class="column">
+										<div class="ui segment" style="height:222px;">
+											图三
 										</div>
 									</div>
 								</div>
@@ -239,124 +259,108 @@
     <th:block th:replace="${scripts}"></th:block>
 </th:block>
 <script>
-    $("#DateCountdown").TimeCircles({
-        "animation": "smooth",
-        "bg_width": 0.2,
-        "fg_width": 0.02666666666666667,
-        "circle_bg_color": "#000",
-        "time": {
-            "Days": {
-                "text": "Days",
-                "color": "#FFE066",
-                "show": true
-            },
-            "Hours": {
-                "text": "Hours",
-                "color": "#F25F5C",
-                "show": true
-            },
-            "Minutes": {
-                "text": "Minutes",
-                "color": "#247BA0",
-                "show": true
-            },
-            "Seconds": {
-                "text": "Seconds",
-                "color": "#32936F",
-                "show": true
-            }
+    $('#example1').progress({
+        label: 'ratio',
+        text: {
+            ratio: '健康度：{percent} %'
         }
     });
 </script>
 <script>
-    var colors = ["#F25F5C", "#247BA0", "#8e44ad", "#ED6A5A", "#32936F", "#2c3e50", "#E83F6F", "#32936F", "#2E294E"];
-    var rand = Math.floor(Math.random() * colors.length);
-    $('body').css("background-color", colors[rand]);
-</script>
-<script>
-    var myChart = echarts.init(document.getElementById(id));
+    //设备状态堆叠柱状图
+    var myChart = echarts.init(document.getElementById('platformBar'));
     var option = {
+        title: {
+            show:true,
+            text: '',
+            top:'-5px'
+        },
         tooltip : {
             trigger: 'axis',
-            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            axisPointer : {
+                type : false
             }
         },
+        /*legend: {
+            orient: 'vertical',
+            x: 'right',
+            y: 'center',
+            itemWidth: '2',
+            data: ['严重','警告','正常','其他']
+        },*/
         grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
+            left: '2%',
+            right: '2%',
+            bottom: '2%',
+            top:'2%',
             containLabel: true
         },
         xAxis:  {
             type: 'category',
-            data: ['服务器','网络设备','数据库','虚拟机','web']
-
+            data: ['服务器','网络设备','数据库','虚拟机']
+            //data: ['服务','网络','数据','虚拟']
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
+            splitLine:{show: false},
         },
         series: [
             {
                 name: '严重',
                 type: 'bar',
                 stack: '总量',
+                barWidth : 25,
                 label: {
                     normal: {
                         show: true,
                         position: 'insideRight'
                     }
                 },
-                data: [320, 302, 301, 334, 390]
+                data: [3, 3, 3, 3],
+                color: ['#DB2828']
             },
             {
                 name: '警告',
                 type: 'bar',
                 stack: '总量',
+                barWidth : 25,
                 label: {
                     normal: {
                         show: true,
                         position: 'insideRight'
                     }
                 },
-                data: [120, 132, 101, 134, 90]
+                data: [2, 3, 1, ],
+                color: ['#F7B824']
             },
             {
                 name: '正常',
                 type: 'bar',
                 stack: '总量',
+                barWidth : 25,
                 label: {
                     normal: {
                         show: true,
                         position: 'insideRight'
                     }
                 },
-                data: [220, 182, 191, 234, 290]
+                data: [2, 2, 1, ],
+                color: ['#5FB878']
             },
             {
                 name: '其他',
                 type: 'bar',
                 stack: '总量',
+                barWidth : 25,
                 label: {
                     normal: {
                         show: true,
                         position: 'insideRight'
                     }
                 },
-                data: [150, 212, 201, 154, 190]
+                data: [1, 2, 2, 5],
+                color: ['#d2d2d2']
             },
-            {
-                name: '未知',
-                type: 'bar',
-                stack: '总量',
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'insideRight'
-                    }
-                },
-                data: [820, 832, 901, 934, 1290]
-            }
         ]
     };
     myChart.setOption(option);
