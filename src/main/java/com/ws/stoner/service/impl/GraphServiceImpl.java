@@ -1,21 +1,20 @@
 package com.ws.stoner.service.impl;
 
 import com.ws.stoner.constant.GraphTypeEnum;
+import com.ws.stoner.constant.PlatformTreeTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.dao.MongoGraphDAO;
+import com.ws.stoner.dao.MongoPlatformTreeDAO;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.GraphType;
 import com.ws.stoner.model.DO.mongo.Item;
-import com.ws.stoner.model.dto.BriefHistoryDTO;
-import com.ws.stoner.model.dto.BriefItemDTO;
-import com.ws.stoner.model.dto.BriefTriggerDTO;
+import com.ws.stoner.model.DO.mongo.PlatformTree;
+import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.HostDetailItemGraphVO;
 import com.ws.stoner.model.view.HostDetailItemVO;
-import com.ws.stoner.service.GraphService;
-import com.ws.stoner.service.HistoryService;
-import com.ws.stoner.service.ItemService;
-import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.model.view.PlatformTreeVO;
+import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
@@ -38,6 +37,12 @@ public class GraphServiceImpl implements GraphService {
     private MongoGraphDAO mongoGraphDAO;
 
     @Autowired
+    private MongoPlatformTreeDAO mongoPlatformTreeDAO;
+
+    @Autowired
+    private HostService hostService;
+
+    @Autowired
     private ItemService itemService;
 
     @Autowired
@@ -45,6 +50,12 @@ public class GraphServiceImpl implements GraphService {
 
     @Autowired
     private TriggerService triggerService;
+
+    @Autowired
+    private TemplateService templateService;
+
+    @Autowired
+    private PlatformService platformService;
 
 
     /**
@@ -253,6 +264,193 @@ public class GraphServiceImpl implements GraphService {
             itemVO.setDataTime(dataTime.toArray(new String[0]));
         }
         return itemVOS;
+    }
+
+    /**
+     * 根据 platformId 组装页面 业务树  PlatformTreeVO 渲染
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public PlatformTreeVO getPlatTreeByPlatformId(String platformId) throws ServiceException {
+        List<String> platformIds = new ArrayList<>();
+        platformIds.add(platformId);
+        //判断mongodb中是否有业务平台数据，没有，则初始化
+        List<PlatformTree> platformTrees = null;
+        try {
+             platformTrees = mongoPlatformTreeDAO.findAll();
+        } catch (DAOException e) {
+            logger.error("查询所有 platformTrees 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        if(platformTrees.size() == 0) {
+            //初始化
+
+
+        }
+        //获取mongodb中 对应业务结构数据
+        PlatformTree platform = null;
+        try {
+            platform = mongoPlatformTreeDAO.findById(platformId);
+        } catch (DAOException e) {
+            logger.error("根据 platformId 查询 platformTree 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        //获取指定业务平台所有设备 hostDTO
+        List<BriefHostDTO> hostDTOS = hostService.getHostByPlatformIds(platformIds);
+        //获取所有Template 用于指定type
+        List<BriefTemplateDTO> allTemplateDTOS = templateService.listAllTemplate();
+        //id,label
+        String platformLabel = platform.getLabel();
+        //所有集群
+        List<PlatformTree> platformchildren = platform.getChildren();
+        //用于组装集群VO
+        List<PlatformTreeVO> clusterList = new ArrayList<>();
+        for(PlatformTree cluster : platformchildren) {
+            if(cluster.getChildren() == null) {
+                //是设备
+                //color,type
+                String type = "";
+                String color = "";
+                for(BriefHostDTO hostDTO : hostDTOS) {
+                    if(cluster.getId().equals(hostDTO.getHostId())) {
+                        color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                        if(hostDTO.getParentTemplates().size() != 0) {
+                            String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
+                            for(BriefTemplateDTO template : allTemplateDTOS) {
+                                if(template.getTemplateId().equals(DTOTemplateId)) {
+                                    type = template.getTemplateGroups().get(0).getName();
+                                }
+                            }
+                        }else {
+                            type = "其他";
+                        }
+                    }
+                }
+                PlatformTreeVO hostTreeVO = new PlatformTreeVO(
+                        cluster.getId(),
+                        cluster.getLabel(),
+                        color,
+                        type
+                );
+                clusterList.add(hostTreeVO);
+            }else {
+                List<PlatformTreeVO> hostList = new ArrayList<>();
+                for(PlatformTree hostTree : cluster.getChildren()) {
+                    String type = "";
+                    String color = "";
+                    for(BriefHostDTO hostDTO : hostDTOS) {
+                        if(hostTree.getId().equals(hostDTO.getHostId())) {
+                            color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                            if(hostDTO.getParentTemplates().size() != 0) {
+                                String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
+                                for(BriefTemplateDTO template : allTemplateDTOS) {
+                                    if(template.getTemplateId().equals(DTOTemplateId)) {
+                                        type = template.getTemplateGroups().get(0).getName();
+                                    }
+                                }
+                            }else {
+                                type = "其他";
+                            }
+                        }
+                    }
+                    PlatformTreeVO hostTreeVO = new PlatformTreeVO(
+                            hostTree.getId(),
+                            hostTree.getLabel(),
+                            color,
+                            type
+                    );
+                    hostList.add(hostTreeVO);
+                }
+                String clusterColor = "";
+                List<String> colors = new ArrayList<>();
+                for(PlatformTreeVO hostTree : hostList) {
+                    colors.add(hostTree.getColor());
+                }
+                if(colors.contains(StatusEnum.HIGH.color)) {
+                    clusterColor = StatusEnum.HIGH.color;
+                }else if(colors.contains(StatusEnum.WARNING.color)) {
+                    clusterColor = StatusEnum.WARNING.color;
+                }else {
+                    clusterColor = StatusEnum.OK.color;
+                }
+                PlatformTreeVO clusterTree = new PlatformTreeVO(
+                        cluster.getId(),
+                        cluster.getLabel(),
+                        clusterColor,
+                        PlatformTreeTypeEnum.CLUSTER.getName(),
+                        hostList
+                );
+                clusterList.add(clusterTree);
+            }
+        }
+        //查询业务平台状态
+        BriefPlatformDTO platformDTO = platformService.getPlatformByPlatformId(platformId);
+        String platformColor = StatusConverter.colorTransform(platformDTO.getCustomState());
+        PlatformTreeVO platformTreeVO = new PlatformTreeVO(
+                platformId,
+                platform.getLabel(),
+                platformColor,
+                PlatformTreeTypeEnum.PLATFORM.getName(),
+                clusterList
+        );
+        return platformTreeVO;
+    }
+
+    /**
+     * 初始化业务树 并返回可视化业务树对象 PlatformTreeVO
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<PlatformTreeVO> initPlatTree(List<BriefTemplateDTO> allTemplateDTOS) throws ServiceException {
+
+        List<BriefPlatformDTO> allPlatformDTOS = platformService.listAllPlatform();
+        List<PlatformTreeVO> platformTreeVOS = new ArrayList<>();
+        for(BriefPlatformDTO platformDTO : allPlatformDTOS) {
+            List<BriefHostDTO> hostDTOS = platformDTO.getHosts();
+            List<PlatformTree> hostList = new ArrayList<>();
+            List<PlatformTreeVO> hostListVO = new ArrayList<>();
+            for(BriefHostDTO hostDTO : hostDTOS) {
+                String color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                PlatformTree hostTree = new PlatformTree(
+                        hostDTO.getHostId(),
+                        hostDTO.getName(),
+                        PlatformTreeTypeEnum.HOST.getName()
+                );
+                hostList.add(hostTree);
+                PlatformTreeVO hostTreeVO = new PlatformTreeVO(
+                        hostDTO.getHostId(),
+                        hostDTO.getName(),
+                        color,
+                        PlatformTreeTypeEnum.HOST.getName()
+                );
+                hostListVO.add(hostTreeVO);
+            }
+            PlatformTree platformTree = new PlatformTree(
+                    platformDTO.getPlatformId(),
+                    platformDTO.getName(),
+                    PlatformTreeTypeEnum.PLATFORM.getName(),
+                    hostList
+            );
+            try {
+                mongoPlatformTreeDAO.save(platformTree);
+            } catch (DAOException e) {
+                logger.error("保存 platformTree 错误！{}", e.getMessage());
+                new ServiceException(e.getMessage());
+            }
+            PlatformTreeVO platformTreeVO = new PlatformTreeVO(
+                    platformDTO.getPlatformId(),
+                    platformDTO.getName(),
+                    StatusConverter.colorTransform(platformDTO.getCustomState()),
+                    PlatformTreeTypeEnum.PLATFORM.getName(),
+                    hostListVO
+            );
+            platformTreeVOS.add(platformTreeVO);
+
+        }
+        return platformTreeVOS;
     }
 
 }

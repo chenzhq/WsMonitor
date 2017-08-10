@@ -1,8 +1,10 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.view.HostDetailItemGraphVO;
 import com.ws.stoner.model.view.HostDetailItemVO;
+import com.ws.stoner.model.view.PlatformTreeVO;
 
 import java.util.List;
 
@@ -11,6 +13,9 @@ import java.util.List;
  */
 public interface GraphService {
 
+    /*
+    设备详情业务方法
+     */
     /**
      * 根据 valueType 查询出对应支持的图形插件名称
      * @param valueType
@@ -42,5 +47,24 @@ public interface GraphService {
      * @throws ServiceException
      */
     List<HostDetailItemVO> getGraphItemByPointId(String pointId,int time) throws ServiceException;
+
+    /*
+    业务树
+     */
+
+    /**
+     * 根据 platformId 组装页面 业务树  PlatformTreeVO 渲染
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    PlatformTreeVO getPlatTreeByPlatformId(String platformId) throws ServiceException;
+
+    /**
+     * 初始化业务树 并返回可视化业务树对象 PlatformTreeVO
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatformTreeVO> initPlatTree(List<BriefTemplateDTO> allTemplateDTOS) throws ServiceException;
 
 }

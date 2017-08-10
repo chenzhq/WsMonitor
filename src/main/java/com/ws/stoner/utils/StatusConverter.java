@@ -24,17 +24,45 @@ public class StatusConverter {
     public static String StatusTransform(int customStatus,int customAvailableState) {
         String status = "";
         if(StatusEnum.OK.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            status = StatusEnum.OK.getName();
+            status = StatusEnum.OK.color;
         }else if(StatusEnum.WARNING.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            status = StatusEnum.WARNING.getName();
+            status = StatusEnum.WARNING.color;
         }else if(StatusEnum.HIGH.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            status = StatusEnum.HIGH.getName();
+            status = StatusEnum.HIGH.color;
         }else if(StatusEnum.WARNING.code == customAvailableState) {
-            status = StatusEnum.HIGH.getName();
+            status = StatusEnum.HIGH.color;
         }else {
-            status = StatusEnum.OK.getName();
+            status = StatusEnum.OK.color;
         }
         return status;
+    }
+
+    public static String colorTransform(int customStatus) {
+        String color = "";
+        if(StatusEnum.WARNING.code == customStatus) {
+            color = StatusEnum.WARNING.color;
+        }else if(StatusEnum.HIGH.code == customStatus){
+            color = StatusEnum.HIGH.color;
+        }else if(StatusEnum.OK.code == customStatus) {
+            color = StatusEnum.OK.color;
+        }
+        return color;
+    }
+
+    public static String colorTransform(int customStatus,int customAvailableState) {
+        String color = "";
+        if(StatusEnum.OK.code == customStatus && StatusEnum.OK.code == customAvailableState) {
+            color = StatusEnum.OK.getName();
+        }else if(StatusEnum.WARNING.code == customStatus && StatusEnum.OK.code == customAvailableState) {
+            color = StatusEnum.WARNING.getName();
+        }else if(StatusEnum.HIGH.code == customStatus && StatusEnum.OK.code == customAvailableState) {
+            color = StatusEnum.HIGH.getName();
+        }else if(StatusEnum.WARNING.code == customAvailableState) {
+            color = StatusEnum.HIGH.getName();
+        }else {
+            color = StatusEnum.OK.getName();
+        }
+        return color;
     }
 
     public static String getStatusByThresholdValue(Float value,Float warningPointValue,Float highPointValue,String symbol) {

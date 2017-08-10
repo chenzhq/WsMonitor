@@ -2,9 +2,13 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.stoner.BootApplication;
+import com.ws.stoner.model.DO.mongo.PlatformTree;
+import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.view.HostDetailItemVO;
 import com.ws.stoner.service.GraphService;
 import com.ws.stoner.service.HostService;
+import com.ws.stoner.service.TemplateService;
+import com.ws.stoner.utils.RestResultGenerator;
 import org.junit.Test;
 import org.junit.Before; 
 import org.junit.After;
@@ -14,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+
+import static com.ws.stoner.constant.MessageConsts.REST_UPDATE_SUCCESS;
 
 /** 
 * GraphServiceImpl Tester. 
@@ -30,10 +36,13 @@ public class GraphServiceImplTest {
     private GraphService graphService;
 
     @Autowired
+    private TemplateService templateService;
+
+    @Autowired
     private ZApi zApi;
 @Before
 public void before() throws Exception {
-    zApi.cacheLogin("f558f7da83dea947f7c2d0def347b4f0");
+    zApi.cacheLogin("2d9cab00c19070e3fae36b8b83387e6a");
 } 
 
 @After
@@ -76,6 +85,18 @@ public void testGetGraphItemByPointId() throws Exception {
     public void testgetGraphItemByItemId() throws Exception {
         System.out.println(graphService.getGraphItemByItemId("43162"));
     }
+
+    @Test
+    public void testgetPlatTreeByPlatformId() throws  Exception {
+        System.out.println(graphService.getPlatTreeByPlatformId("35"));
+    }
+
+    @Test
+    public void testinitPlatTree() throws Exception {
+        List<BriefTemplateDTO> templateDTOS = templateService.listAllTemplate();
+        System.out.println(graphService.initPlatTree(templateDTOS));
+    }
+
 
 
 } 

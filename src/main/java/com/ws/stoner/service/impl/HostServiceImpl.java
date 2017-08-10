@@ -292,6 +292,7 @@ public class HostServiceImpl implements HostService {
         hostGetRequest.getParams()
                 .setMonitoredHosts(true)
                 .setGroupIds(platformIds)
+                .setSelectParentTemplates(BriefPointDTO.PROPERTY_NAMES)
                 .setOutput(BriefHostDTO.PROPERTY_NAMES);
         List<BriefHostDTO> hostDTOS = listHost(hostGetRequest);
         return hostDTOS;
@@ -329,7 +330,8 @@ public class HostServiceImpl implements HostService {
                     hostDetailVO.setType(template.getTemplateGroups().get(0).getName());
                 }
             }
-        }        return hostDetailVO;
+        }
+        return hostDetailVO;
     }
 
     /**
