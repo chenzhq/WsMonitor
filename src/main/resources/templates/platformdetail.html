@@ -13,10 +13,9 @@
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 
 	<th:block th:fragment="supplement">
-		<link href="#" rel="stylesheet" th:href="@{}"/>
 		<script src="https://gw.alipayobjects.com/as/g/datavis/g6/1.1.3/index.js"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
 		<style type="text/css">
 		</style>
 	</th:block>
@@ -32,7 +31,7 @@
 	.ui.tab.segment.fixedHeight{ height: 500px; }
 	.ui.segment.row1Height{ height: 160px; }
 	.chartBar{ height: 140px; }
-	.ui.menu.row2_1Height{
+	.ui.menu.hostsTab{
 		height: 265px;
 		/*width: 100%;
 		overflow:auto;
@@ -273,122 +272,64 @@
 												</div>
 											</div>
 											<div class="sixteen wide column">
-												<div  id="pointsTab" class="ui segment" style="padding: 0px">
+												<div  class="ui segment" style="padding: 0px">
 													<div class="ui grid">
-														<div class="three wide column" style="padding-right: 10px;">
-															<div class="ui secondary vertical pointing menu row2_1Height">
-																<a class="active item textOverflow" data-tab="first">第一</a>
-																<a class="item textOverflow" data-tab="second">第二</a>
-																<a class="item textOverflow" data-tab="third">第三(超超超超超超超超超超超超超级长的文字)</a>
+														<div class="four wide column" style="padding-right: 10px;">
+															<div class="ui secondary vertical pointing menu" id="hostsMenu">
+																<a class="active item textOverflow">设备列表第一</a>
+																<a class="item textOverflow">设备列表第二</a>
+																<a class="item textOverflow">设备列表第三(超超超超超超超超超超超超超级长的文字)</a>
 															</div>
 														</div>
-														<div class="thirteen wide column"  style="padding-left: 0px">
-															<div class="ui active tab segment noMargin noBorder" data-tab="first">
+														<div class="four wide column">
+															<div class="ui secondary vertical pointing menu" id="pointsMenu">
+																<a class="item" data-tab="second/a">2A</a>
+																<a class="item" data-tab="second/b">2B</a>
+																<a class="item" data-tab="second/c">2C</a>
+															</div>
+														</div>
+														<div class="eight wide column">
+															<div class="ui segment noBorder noPadding"  id="itemsMenu">
+																<div class="ui inverted menu">
+																	<a class="active red item" id="itemTitle">标题</a>
+																</div>
 																<div class="ui grid">
-																	<div class="four wide column">
-																		<div class="ui secondary vertical pointing menu row2_2Height">
-																			<a class="active item" data-tab="first/a">1A</a>
-																			<a class="item" data-tab="first/b">1B</a>
-																			<a class="item textOverflow" data-tab="first/c">1C(超超超超超超超超超超超超超级长的文字)</a>
-																		</div>
-																	</div>
-																	<div class="twelve wide column" style="padding-left: 0px">
-																		<div class="ui active bottom attached tab segment noBorder noPadding row2_3Height" data-tab="first/a">
-																			<div class="ui inverted  menu">
-																				<a class="active red item">标题</a>
-																				<div class="right menu">
-																					<a class="yellow item">权值>></a>
-																				</div>
-																			</div>
-																			<div class="ui grid">
-																				<div class="row">
-																					<!--<div class="eight wide column">
-																						<h3>标题</h3>
-																					</div>
-																					<div class="eight wide column">
-																						<button class="ui top attached right floated button">权值>></button>
-																					</div>-->
-																					<div class="sixteen wide column">
-																						<table class="ui very basic fixed single line table">
-																							<thead>
-																							<tr>
-																								<th>Name</th>
-																								<th>Status</th>
-																								<th>Notes</th>
-																							</tr>
-																							</thead>
-																							<tbody>
-																							<tr>
-																								<td>John</td>
-																								<td title="Approved">Approved</td>
-																								<td  title="None(超超超超超超超超超超超超超级长的文字)">None(超超超超超超超超超超超超超级长的文字)</td>
-																							</tr>
-																							<tr>
-																								<td>Jamie</td>
-																								<td>Approved</td>
-																								<td>Requires call</td>
-																							</tr>
-																							<tr>
-																								<td>Jill</td>
-																								<td>Denied</td>
-																								<td>None</td>
-																							</tr>
-																							</tbody>
-																						</table>
-																					</div>
-																				</div>
-																			</div>
-																		</div>
-																		<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="first/b">
-																			<p>1B</p>
-																			<p>1B</p>
-																			<p>1B</p>
-																			<p>1B</p>
-																			<p>1B</p>
-																			<p>1B</p>
-																			<p>1B</p>
-																		</div>
-																		<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="first/c">1C</div>
-																	</div>
-																</div>
-															</div>
-															<div class="ui tab segment noMargin noBorder" data-tab="second">
-																<div class="sixteen wide column">
-																	<div class="ui grid">
-																		<div class="four wide column">
-																		<div class="ui secondary vertical pointing menu row2_2Height">
-																			<a class="item" data-tab="second/a">2A</a>
-																			<a class="item" data-tab="second/b">2B</a>
-																			<a class="item" data-tab="second/c">2C</a>
-																		</div>
-																	</div>
-																		<div class="twelve wide column">
-																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="second/a">2A</div>
-																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="second/b">2B</div>
-																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="second/c">2C</div>
-																		</div>
-																	</div>
-																</div>
-															</div>
-															<div class="ui tab segment noMargin noBorder" data-tab="third">
-																<div class="sixteen wide column">
-																	<div class="ui grid">
-																		<div class="four wide column">
-																			<div class="ui secondary vertical pointing menu row2_2Height">
-																				<a class="item" data-tab="third/a">3A</a>
-																				<a class="item" data-tab="third/b">3B</a>
-																				<a class="item" data-tab="third/c">3C</a>
-																			</div>
-																		</div>
-																		<div class="twelve wide column">
-																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="third/a">3A</div>
-																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="third/b">3B</div>
-																			<div class="ui bottom attached tab segment noBorder noPadding row2_3Height" data-tab="third/c">3C</div>
+																	<div class="row">
+																		<div class="sixteen wide column">
+																			<table class="ui very basic fixed single line table">
+																				<thead>
+																				<tr>
+																					<th>名字</th>
+																					<th>状态</th>
+																					<th>单位</th>
+																					<th>值</th>
+																					<th>权值</th>
+																				</tr>
+																				</thead>
+																				<tbody id="itemsTable">
+																				<tr>
+																					<td>John</td>
+																					<td title="Approved">Approved</td>
+																					<td  title="None(超超超超超超超超超超超超超级长的文字)">None(超超超超超超超超超超超超超级长的文字)</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
+																				<tr>
+																					<td>Jill</td>
+																					<td>Denied</td>
+																					<td>None</td>
+																				</tr>
+																				</tbody>
+																			</table>
 																		</div>
 																	</div>
 																</div>
 															</div>
 														</div>
+													</div>
 													</div>
 												</div>
 											</div>
@@ -399,14 +340,15 @@
 							<div class="ui tab segment noMargin fixedHeight" data-tab="tree">
 								<div class="row">
 									<div class="ui grid">
-									<div class="sixteen wide column">
-										<div class="ui segment">
-											<div id="c1"  class="sixteen wide column"></div>
+										<div class="sixteen wide column">
+											<div class="ui segment">
+												<div id="c1"  class="sixteen wide column"></div>
+											</div>
 										</div>
-									</div>
-									<div class="sixteen wide column">
-										<div class="ui segment">
-												详情
+										<div class="sixteen wide column">
+											<div class="ui segment">
+													详情
+											</div>
 										</div>
 									</div>
 								</div>
@@ -433,12 +375,111 @@
 <script type="text/javascript">
 	//初始化选项页
     $('.menu .item').tab();
-    $('#pointsTab .menu .item')
-        .tab({
-            // special keyword works same as above
-            context: $('#pointsTab')
+    //加载设备列表
+    $(function(){
+        var platform_id = 1220;
+        var host_id = 1233;
+        var point_id = 1233;
+        hostsMenu(platform_id);
+        pointsMenu(host_id);
+        itemsMenu(point_id)
+    })
+    function hostsMenu(platform_id) {
+        $.ajax({
+            type: "get",
+            url: "/plaformdetail/get_hosts?platform_id="+platform_id,
+            dataType: "json",
+            success: function (result) {
+                if(result.success) {
+                    var data = result.data;
+                    gethostsMenu(data);
+                }
+                else {
+                    errorMsg_no_data("设备列表 Menu");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("设备列表 Menu");
+            }
         })
-    ;
+    }
+    function gethostsMenu(data) {
+        var str = '';
+        for(var i=0;i<data.length;i++)
+        {
+            if (i==0){
+                str +="<a class='active item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+"</a> ";
+			}else {
+                str +="<a class='item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+"</a> ";
+			}
+        }
+        $("#hostsMenu").html(str);
+    }
+    function pointsMenu(host_id) {
+        $.ajax({
+            type: "get",
+            url: " /platformdetail/get_points?host_id="+host_id,
+            dataType: "json",
+            success: function (result) {
+                if(result.success) {
+                    var data = result.data;
+                    getpointsMenu(data);
+                }
+                else {
+                    errorMsg_no_data("监控点列表 Menu");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("监控点列表 Menu");
+            }
+        })
+    }
+    function getpointsMenu(data) {
+        var str = '';
+        console.log("name:"+data[0].point_name)
+        for(var i=0;i<data.length;i++)
+        {
+            if (i==0){
+                str +="<a class='active item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+"</a> ";
+            }else {
+                str +="<a class='item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+"</a> ";
+            }
+        }
+        $("#pointsMenu").html(str);
+        $("#itemTitle").html(data[0].point_name);
+    }
+    function itemsMenu(point_id) {
+        $.ajax({
+            type: "get",
+            url: "/platformdetail/get_items?point_id="+point_id,
+            dataType: "json",
+            success: function (result) {
+                if(result.success) {
+                    var data = result.data;
+                    getitemsMenu(data);
+                }
+                else {
+                    errorMsg_no_data("监控项列表 Menu");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("监控项列表 Menu");
+            }
+        })
+    }
+    function getitemsMenu(data) {
+        var str = '';
+        for(var i=0;i<data.length;i++)
+        {
+			str +="<tr id='"+data[i].item_id+"' ><td>"
+				+data[i].item_name +"</td><td> "
+				+data[i].state+"</td><td> "
+                +data[i].units+"</td><td> "
+                +data[i].value+"</td><td> "
+                +data[i].weight+"</td></tr> ";
+        }
+        $("#itemsTable").html(str);
+	}
 </script>
 <script>
 	//健康度线状图
@@ -457,101 +498,125 @@
     myChart.setOption(option);
 </script>
 <script>
-	//设备状态堆叠柱状图
-    var myChart = echarts.init(document.getElementById('platformBar'));
-    var option = {
-        title: {
-            show:true,
-            text: '设备状态堆叠柱状图',
-			top:'-5px'
-        },
-        tooltip : {
-            trigger: 'axis',
-            axisPointer : {
-                type : false
+    //加载设备状态堆叠柱状图数据
+    $(function(){
+        //var platform = $("#platform_id").text();
+		/* console.log("加载监控项图形的参数:host_id = " + host_id);*/
+        $.ajax({
+            type: "get",
+            url: "/platformview/get_platforms",
+            dataType: "json",
+            success: function (result) {
+                if(result.success) {
+                    var data = result.data[0];
+                    platformsChart(data);
+                }
+                else {
+                    errorMsg_no_data("业务详情 Chart");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("业务详情 Chart");
             }
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'right',
-			y: 'center',
-            data:['严重','警告','正常','其他']
-        },
-        grid: {
-            left: '2%',
-            right: '10%',
-            bottom: '0%',
-			top:'20%',
-            containLabel: true
-        },
-        xAxis:  {
-            type: 'category',
-            data: ['服务器','网络设备','数据库','虚拟机']
-        },
-        yAxis: {
-            type: 'value',
-            splitLine:{show: false},
-        },
-        series: [
-            {
-                name: '严重',
-                type: 'bar',
-                stack: '总量',
-                barWidth : 50,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'insideRight'
-                    }
-                },
-                data: [3, 3, 3, 3],
-				color: ['#DB2828']
+        })
+    })
+    //设备状态堆叠柱状图
+	function platformsChart(data) {
+        var myChart = echarts.init(document.getElementById('platformBar'));
+        var option = {
+            title: {
+                show:true,
+                text: '设备状态堆叠柱状图',
+                top:'-5px'
             },
-            {
-                name: '警告',
-                type: 'bar',
-                stack: '总量',
-                barWidth : 50,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'insideRight'
-                    }
-                },
-                data: [2, 3, 1, ],
-                color: ['#F7B824']
+            tooltip : {
+                trigger: 'axis',
+                axisPointer : {
+                    type : false
+                }
             },
-            {
-                name: '正常',
-                type: 'bar',
-                stack: '总量',
-                barWidth : 50,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'insideRight'
-                    }
-                },
-                data: [2, 2, 1, ],
-                color: ['#5FB878']
+            legend: {
+                orient: 'vertical',
+                x: 'right',
+                y: 'center',
+                data:['严重','警告','正常','其他']
             },
-            {
-                name: '其他',
-                type: 'bar',
-                stack: '总量',
-                barWidth : 50,
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'insideRight'
-                    }
-                },
-                data: [1, 2, 2, 5],
-                color: ['#d2d2d2']
+            grid: {
+                left: '2%',
+                right: '10%',
+                bottom: '0%',
+                top:'20%',
+                containLabel: true
             },
-        ]
-    };
-    myChart.setOption(option);
+            xAxis:  {
+                type: 'category',
+                data: ['服务器','网络设备','数据库','虚拟机']
+            },
+            yAxis: {
+                type: 'value',
+                splitLine:{show: false},
+            },
+            series: [
+                {
+                    name: '严重',
+                    type: 'bar',
+                    stack: '总量',
+                    barWidth : 50,
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'insideRight'
+                        }
+                    },
+                    data: [3, 3, 3, 3],
+                    color: ['#DB2828']
+                },
+                {
+                    name: '警告',
+                    type: 'bar',
+                    stack: '总量',
+                    barWidth : 50,
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'insideRight'
+                        }
+                    },
+                    data: [2, 3, 1, ],
+                    color: ['#F7B824']
+                },
+                {
+                    name: '正常',
+                    type: 'bar',
+                    stack: '总量',
+                    barWidth : 50,
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'insideRight'
+                        }
+                    },
+                    data: [2, 2, 1, ],
+                    color: ['#5FB878']
+                },
+                {
+                    name: '其他',
+                    type: 'bar',
+                    stack: '总量',
+                    barWidth : 50,
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'insideRight'
+                        }
+                    },
+                    data: [1, 2, 2, 5],
+                    color: ['#d2d2d2']
+                },
+            ]
+        };
+        myChart.setOption(option);
+    }
 </script>
 <script type="text/javascript">
 	//紧凑树图
