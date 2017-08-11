@@ -4,6 +4,7 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.view.HostDetailItemGraphVO;
 import com.ws.stoner.model.view.HostDetailItemVO;
+import com.ws.stoner.model.view.PlatformGraphVO;
 import com.ws.stoner.model.view.PlatformTreeVO;
 
 import java.util.List;
@@ -65,6 +66,14 @@ public interface GraphService {
      * @return
      * @throws ServiceException
      */
-    List<PlatformTreeVO> initPlatTree(List<BriefTemplateDTO> allTemplateDTOS) throws ServiceException;
+    List<PlatformTreeVO> initPlatTree() throws ServiceException;
+
+    /**
+     * 根据 hostIds 获取业务平台监控项图形数据 PlatformGraphVO list
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatformGraphVO> getPlatformGraphByhostIds(List<String> hostIds) throws ServiceException;
 
 }

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ws.stoner.constant.MessageConsts.REST_UPDATE_SUCCESS;
@@ -88,13 +89,19 @@ public void testGetGraphItemByPointId() throws Exception {
 
     @Test
     public void testgetPlatTreeByPlatformId() throws  Exception {
-        System.out.println(graphService.getPlatTreeByPlatformId("35"));
+        System.out.println(graphService.getPlatTreeByPlatformId("17"));
     }
 
     @Test
     public void testinitPlatTree() throws Exception {
-        List<BriefTemplateDTO> templateDTOS = templateService.listAllTemplate();
-        System.out.println(graphService.initPlatTree(templateDTOS));
+        System.out.println(graphService.initPlatTree());
+    }
+
+    @Test
+    public void testgetPlatformGraphByhostIds() throws Exception {
+        List<String> hostIds = new ArrayList<>();
+        hostIds.add("10205");
+        System.out.println(graphService.getPlatformGraphByhostIds(hostIds));
     }
 
 
