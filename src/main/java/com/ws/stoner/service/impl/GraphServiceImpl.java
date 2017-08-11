@@ -4,15 +4,18 @@ import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.PlatformTreeTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.dao.MongoGraphDAO;
+import com.ws.stoner.dao.MongoPlatformGraphDAO;
 import com.ws.stoner.dao.MongoPlatformTreeDAO;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.GraphType;
 import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.DO.mongo.PlatformTree;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.HostDetailItemGraphVO;
 import com.ws.stoner.model.view.HostDetailItemVO;
+import com.ws.stoner.model.view.PlatformGraphVO;
 import com.ws.stoner.model.view.PlatformTreeVO;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
@@ -37,6 +40,9 @@ public class GraphServiceImpl implements GraphService {
     private MongoGraphDAO mongoGraphDAO;
 
     @Autowired
+    private MongoPlatformGraphDAO mongoPlatformGraphDAO;
+
+    @Autowired
     private MongoPlatformTreeDAO mongoPlatformTreeDAO;
 
     @Autowired
@@ -50,9 +56,6 @@ public class GraphServiceImpl implements GraphService {
 
     @Autowired
     private TriggerService triggerService;
-
-    @Autowired
-    private TemplateService templateService;
 
     @Autowired
     private PlatformService platformService;
@@ -162,23 +165,14 @@ public class GraphServiceImpl implements GraphService {
             }
         }
         //根据value_type取对应的history.get,时间区间为前1天的数据 得到 BriefHistory list
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss");
         for(HostDetailItemVO itemVO : itemVOS) {
             List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),1);
             Collections.reverse(historyDTOS);
-            List<Float> datas = new ArrayList<>();
-            List<String> dataTime = new ArrayList<>();
-            //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
-            String upUnits = itemVO.getUnits();
-            for(BriefHistoryDTO historyDTO : historyDTOS) {
-                Map<String,String> valueUnits = ThresholdUtils.transformGraphValue(historyDTO.getValue(),upUnits);
-                itemVO.setUnits(valueUnits.entrySet().iterator().next().getKey());
-                datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
-                String dataTimeString = historyDTO.getLastTime().format(formatter);
-                dataTime.add(dataTimeString);
-            }
-            itemVO.setData(datas.toArray(new Float[0]));
-            itemVO.setDataTime(dataTime.toArray(new String[0]));
+            //将历史线性数据转换成图形对应数据
+            Map<String ,Object> historyDatasMap = transformHistoryDatas(historyDTOS,itemVO.getUnits());
+            itemVO.setData((Float[])historyDatasMap.get("datas"));
+            itemVO.setDataTime((String[])historyDatasMap.get("dataTime"));
+            itemVO.setUnits((String)historyDatasMap.get("units"));
         }
         return itemVOS;
     }
@@ -239,7 +233,6 @@ public class GraphServiceImpl implements GraphService {
                 itemVOS.add(itemVO);
         }
         //根据value_type取对应的history.get,时间区间为前 time 天的数据 得到 BriefHistory list
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss");
         for(HostDetailItemVO itemVO : itemVOS) {
             List<BriefHistoryDTO> historyDTOS = null;
             if(time == 40) {
@@ -249,19 +242,11 @@ public class GraphServiceImpl implements GraphService {
                 historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),time);
             }
             Collections.reverse(historyDTOS);
-            List<Float> datas = new ArrayList<>();
-            List<String> dataTime = new ArrayList<>();
-            String upUnits = itemVO.getUnits();
-            //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
-            for(BriefHistoryDTO historyDTO : historyDTOS) {
-                Map<String,String> valueUnits = ThresholdUtils.transformGraphValue(historyDTO.getValue(),upUnits);
-                itemVO.setUnits(valueUnits.entrySet().iterator().next().getKey());
-                datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
-                String dataTimeString = historyDTO.getLastTime().format(formatter);
-                dataTime.add(dataTimeString);
-            }
-            itemVO.setData(datas.toArray(new Float[0]));
-            itemVO.setDataTime(dataTime.toArray(new String[0]));
+            //将历史线性数据转换成图形对应数据
+            Map<String ,Object> historyDatasMap = transformHistoryDatas(historyDTOS,itemVO.getUnits());
+            itemVO.setData((Float[])historyDatasMap.get("datas"));
+            itemVO.setDataTime((String[])historyDatasMap.get("dataTime"));
+            itemVO.setUnits((String)historyDatasMap.get("units"));
         }
         return itemVOS;
     }
@@ -286,7 +271,12 @@ public class GraphServiceImpl implements GraphService {
         }
         if(platformTrees.size() == 0) {
             //初始化
-
+            List<PlatformTreeVO> platformTreeVOSinit = initPlatTree();
+            for(PlatformTreeVO platformTreeVO : platformTreeVOSinit) {
+                if(platformTreeVO.getId().equals(platformId)) {
+                    return platformTreeVO;
+                }
+            }
 
         }
         //获取mongodb中 对应业务结构数据
@@ -299,8 +289,6 @@ public class GraphServiceImpl implements GraphService {
         }
         //获取指定业务平台所有设备 hostDTO
         List<BriefHostDTO> hostDTOS = hostService.getHostByPlatformIds(platformIds);
-        //获取所有Template 用于指定type
-        List<BriefTemplateDTO> allTemplateDTOS = templateService.listAllTemplate();
         //id,label
         String platformLabel = platform.getLabel();
         //所有集群
@@ -311,21 +299,11 @@ public class GraphServiceImpl implements GraphService {
             if(cluster.getChildren() == null) {
                 //是设备
                 //color,type
-                String type = "";
+                String type = PlatformTreeTypeEnum.HOST.getName();
                 String color = "";
                 for(BriefHostDTO hostDTO : hostDTOS) {
                     if(cluster.getId().equals(hostDTO.getHostId())) {
                         color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
-                        if(hostDTO.getParentTemplates().size() != 0) {
-                            String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
-                            for(BriefTemplateDTO template : allTemplateDTOS) {
-                                if(template.getTemplateId().equals(DTOTemplateId)) {
-                                    type = template.getTemplateGroups().get(0).getName();
-                                }
-                            }
-                        }else {
-                            type = "其他";
-                        }
                     }
                 }
                 PlatformTreeVO hostTreeVO = new PlatformTreeVO(
@@ -343,16 +321,7 @@ public class GraphServiceImpl implements GraphService {
                     for(BriefHostDTO hostDTO : hostDTOS) {
                         if(hostTree.getId().equals(hostDTO.getHostId())) {
                             color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
-                            if(hostDTO.getParentTemplates().size() != 0) {
-                                String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
-                                for(BriefTemplateDTO template : allTemplateDTOS) {
-                                    if(template.getTemplateId().equals(DTOTemplateId)) {
-                                        type = template.getTemplateGroups().get(0).getName();
-                                    }
-                                }
-                            }else {
-                                type = "其他";
-                            }
+                            type = PlatformTreeTypeEnum.HOST.getName();
                         }
                     }
                     PlatformTreeVO hostTreeVO = new PlatformTreeVO(
@@ -363,7 +332,7 @@ public class GraphServiceImpl implements GraphService {
                     );
                     hostList.add(hostTreeVO);
                 }
-                String clusterColor = "";
+                String clusterColor ;
                 List<String> colors = new ArrayList<>();
                 for(PlatformTreeVO hostTree : hostList) {
                     colors.add(hostTree.getColor());
@@ -404,7 +373,7 @@ public class GraphServiceImpl implements GraphService {
      * @throws ServiceException
      */
     @Override
-    public List<PlatformTreeVO> initPlatTree(List<BriefTemplateDTO> allTemplateDTOS) throws ServiceException {
+    public List<PlatformTreeVO> initPlatTree() throws ServiceException {
 
         List<BriefPlatformDTO> allPlatformDTOS = platformService.listAllPlatform();
         List<PlatformTreeVO> platformTreeVOS = new ArrayList<>();
@@ -451,6 +420,75 @@ public class GraphServiceImpl implements GraphService {
 
         }
         return platformTreeVOS;
+    }
+
+    /**
+     * 根据 hostIds 获取业务平台监控项图形数据 PlatformGraphVO list
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<PlatformGraphVO> getPlatformGraphByhostIds(List<String> hostIds) throws ServiceException {
+        List<PlatformGraph> platformGraphs = null;
+        try {
+            platformGraphs = mongoPlatformGraphDAO.findGraphsByHostIds(hostIds);
+        } catch (DAOException e) {
+            logger.error("根据 hostIds 获取 platformGraphs 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        List<BriefItemDTO> itemDTOS = itemService.getValueItemsByHostIds(hostIds);
+        List<PlatformGraphVO> platformGraphVOS = new ArrayList<>();
+        for(BriefItemDTO itemDTO : itemDTOS) {
+           for(PlatformGraph platformGraph : platformGraphs) {
+               if(platformGraph.getItemId().equals(itemDTO.getItemId())) {
+                   //组装数据
+                   PlatformGraphVO platformGraphVO = new PlatformGraphVO();
+                   platformGraphVO.setItemId(platformGraph.getItemId());
+                   platformGraphVO.setItemName(itemDTO.getName());
+                   platformGraphVO.setHostId(platformGraph.getHostId());
+                   platformGraphVO.setGraphName(platformGraph.getGraphName());
+                   platformGraphVO.setGraphType(platformGraph.getGraphType());
+                   platformGraphVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+                   //data , dataTime, units
+                   List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemDTO.getItemId(),itemDTO.getValueType(),1);
+                   //降序 转 升序 时间轴
+                   Collections.reverse(historyDTOS);
+                   //将历史线性数据转换成图形对应数据
+                   Map<String ,Object> historyDatasMap = transformHistoryDatas(historyDTOS,itemDTO.getUnits());
+                   platformGraphVO.setDatas((Float[])historyDatasMap.get("datas"));
+                   platformGraphVO.setDataTime((String[])historyDatasMap.get("dataTime"));
+                   platformGraphVO.setUnits((String)historyDatasMap.get("units"));
+                   platformGraphVOS.add(platformGraphVO);
+               }
+           }
+        }
+
+        return platformGraphVOS;
+    }
+
+    /**
+     * 注意返回的map 的key有三个 "units",  "datas",  "dataTime"
+     * @param historyDTOS 需要转换的历史数据
+     * @param units
+     * @return
+     */
+    private Map<String,Object> transformHistoryDatas(List<BriefHistoryDTO> historyDTOS,String units) {
+        Map<String,Object> historyDatasMap = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss");
+        List<Float> datas = new ArrayList<>();
+        List<String> dataTime = new ArrayList<>();
+        //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
+        for(BriefHistoryDTO historyDTO : historyDTOS) {
+            Map<String,String> valueUnits = ThresholdUtils.transformGraphValue(historyDTO.getValue(),units);
+            historyDatasMap.put("units",valueUnits.entrySet().iterator().next().getKey());
+            datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
+            String dataTimeString = historyDTO.getLastTime().format(formatter);
+            dataTime.add(dataTimeString);
+        }
+        historyDatasMap.put("datas",datas.toArray(new Float[0]));
+        historyDatasMap.put("dataTime",dataTime.toArray(new String[0]));
+        return historyDatasMap;
     }
 
 }

@@ -1,10 +1,8 @@
 package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.view.PlatDetailHostVO;
-import com.ws.stoner.model.view.PlatDetailItemVO;
-import com.ws.stoner.model.view.PlatDetailPointVO;
-import com.ws.stoner.model.view.PlatformBlockVO;
+import com.ws.stoner.model.view.*;
+import com.ws.stoner.service.GraphService;
 import com.ws.stoner.service.PlatformService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.ws.stoner.constant.MessageConsts.*;
@@ -25,6 +24,9 @@ public class PlatformRestController {
 
     @Autowired
     private PlatformService platformService;
+
+    @Autowired
+    private GraphService graphService;
 
     /**
      * 业务方块  block 展示
@@ -86,6 +88,31 @@ public class PlatformRestController {
     public String getPlatformItems(@RequestParam("point_id") String pointId) throws ServiceException {
         List<PlatDetailItemVO> itemVOS = platformService.getItemsByPointId(pointId);
         return RestResultGenerator.genResult(itemVOS, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 获取指定 platformId 的 业务树 数据和结构
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "platformtree/get_tree",method = RequestMethod.GET)
+    public String getPlatformTrees(@RequestParam("platform_id") String platformId) throws ServiceException {
+        PlatformTreeVO platformTreeVO = graphService.getPlatTreeByPlatformId(platformId);
+        return RestResultGenerator.genResult(platformTreeVO, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 获取指定 hostIds 的 业务平台监控项图形 数据
+     * @param hostIdsArr
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "platformdetail/get_graphs",method = RequestMethod.POST)
+    public String getPlatformGraphs(@RequestParam("host_ids") String[] hostIdsArr) throws ServiceException {
+        List<String> hostIds = Arrays.asList(hostIdsArr);
+        List<PlatformGraphVO> platformGraphVOS = graphService.getPlatformGraphByhostIds(hostIds);
+        return RestResultGenerator.genResult(platformGraphVOS, REST_UPDATE_SUCCESS).toString();
     }
 
 }

@@ -31,9 +31,6 @@ public class HostDetailRestController {
     private HostService hostService;
 
     @Autowired
-    private PointSerivce pointSerivce;
-
-    @Autowired
     private GraphService graphService;
 
 

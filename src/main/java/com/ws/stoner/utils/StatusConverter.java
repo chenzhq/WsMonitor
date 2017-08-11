@@ -50,17 +50,17 @@ public class StatusConverter {
     }
 
     public static String colorTransform(int customStatus,int customAvailableState) {
-        String color = "";
+        String color ;
         if(StatusEnum.OK.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            color = StatusEnum.OK.getName();
+            color = StatusEnum.OK.color;
         }else if(StatusEnum.WARNING.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            color = StatusEnum.WARNING.getName();
+            color = StatusEnum.WARNING.color;
         }else if(StatusEnum.HIGH.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            color = StatusEnum.HIGH.getName();
+            color = StatusEnum.HIGH.color;
         }else if(StatusEnum.WARNING.code == customAvailableState) {
-            color = StatusEnum.HIGH.getName();
+            color = StatusEnum.HIGH.color;
         }else {
-            color = StatusEnum.OK.getName();
+            color = StatusEnum.OK.color;
         }
         return color;
     }

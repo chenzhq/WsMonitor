@@ -14,7 +14,7 @@ import java.util.List;
  * Created by zkf on 2017/8/8.
  */
 @Controller
-@RequestMapping("/platform")
+@RequestMapping("")
 public class PlatformController {
 
     @Autowired
