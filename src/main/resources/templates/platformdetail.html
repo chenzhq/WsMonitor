@@ -15,7 +15,8 @@
 	<th:block th:fragment="supplement">
 		<script src="https://gw.alipayobjects.com/as/g/datavis/g6/1.1.3/index.js"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 		</style>
 	</th:block>
@@ -25,32 +26,21 @@
 	text-overflow: ellipsis;/*文字隐藏后添加省略号*/
 	white-space: nowrap;/*强制不换行*/
 	}
-	.ui.tab.segment.noMargin{ margin: 0px; }
-	.ui.tab.segment.noBorder{ border:0; }
-	.ui.tab.segment.noPadding{ padding: 0px; }
+	.ui.segment.noBorder{ border:0; }
 	.ui.tab.segment.fixedHeight{ height: 500px; }
 	.ui.segment.row1Height{ height: 160px; }
 	.chartBar{ height: 140px; }
-	.ui.menu.hostsTab{
+	.ui.menu.row2Height{
 		height: 265px;
-		/*width: 100%;
-		overflow:auto;
-		overflow-x:hidden*/
-		margin:10px 0px 0px 10px;
-	}
-	.ui.menu.row2_2Height{
-		height: 265px;
-		/*width: 100%;
-		overflow:auto;
-		overflow-x:hidden*/
-	}
-	.ui.tab.segment.row2_3Height{
-		height: 253px;
 		width: 100%;
 		overflow:auto;
 		overflow-x:hidden
 	}
-	.ui.grid>.column+.divider, .ui.grid>.row>.column+.divider {
+	.ui.segment.row2_3Height{
+		height: 253px;
+		width: 100%;
+		overflow:auto;
+		overflow-x:hidden
 	}
 	</style>
 </head>
@@ -274,25 +264,32 @@
 											<div class="sixteen wide column">
 												<div  class="ui segment" style="padding: 0px">
 													<div class="ui grid">
-														<div class="four wide column" style="padding-right: 10px;">
-															<div class="ui secondary vertical pointing menu" id="hostsMenu">
-																<a class="active item textOverflow">设备列表第一</a>
+														<div class="three wide column" style="padding-left: 15px;padding-right: 0px;">
+															<div class="ui secondary vertical menu row2Height" id="hostsMenu">
+																<a class="active item textOverflow">设备列表第一<i class="green desktop icon"></i></a>
+																<a class="item textOverflow">设备列表第二<i class="red desktop icon"></i></a>
+																<a class="item textOverflow">设备列表第一<i class="yellow desktop icon"></i></a>
 																<a class="item textOverflow">设备列表第二</a>
-																<a class="item textOverflow">设备列表第三(超超超超超超超超超超超超超级长的文字)</a>
+																<a class="item textOverflow">设备列表第一</a>
+																<a class="item textOverflow">设备列表第二</a>
+																<a class="item textOverflow">设备列表第一</a>
+																<a class="item textOverflow">设备列表第二</a>
 															</div>
 														</div>
-														<div class="four wide column">
-															<div class="ui secondary vertical pointing menu" id="pointsMenu">
-																<a class="item" data-tab="second/a">2A</a>
-																<a class="item" data-tab="second/b">2B</a>
-																<a class="item" data-tab="second/c">2C</a>
+														<div class="three wide column"  style="padding-left: 0px;">
+															<div class="ui secondary vertical menu row2Height" id="pointsMenu" style="margin: 0px">
+																<a class="active item">2A<i class="green circle icon"></i></a>
+																<a class="item">2B<i class="red circle icon"></i></a>
+																<a class="item">2A<i class="yellow circle icon"></i></a>
+																<a class="item">2B</a>
+																<a class="item">2A</a>
+																<a class="item">2B</a>
+																<a class="item">2A</a>
+																<a class="item">2B</a>
 															</div>
 														</div>
-														<div class="eight wide column">
-															<div class="ui segment noBorder noPadding"  id="itemsMenu">
-																<div class="ui inverted menu">
-																	<a class="active red item" id="itemTitle">标题</a>
-																</div>
+														<div class="ten wide column">
+															<div class="ui segment noBorder row2_3Height"  id="itemsMenu">
 																<div class="ui grid">
 																	<div class="row">
 																		<div class="sixteen wide column">
@@ -321,6 +318,26 @@
 																					<td>Jill</td>
 																					<td>Denied</td>
 																					<td>None</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
 																				</tr>
 																				</tbody>
 																			</table>
@@ -393,6 +410,11 @@
                 if(result.success) {
                     var data = result.data;
                     gethostsMenu(data);
+                    $('#hostsMenu a').on('click',function () {
+						$('#hostsMenu a').removeClass('active');
+						$(this).addClass('active');
+                        pointsMenu(this.id);
+                    })
                 }
                 else {
                     errorMsg_no_data("设备列表 Menu");
@@ -418,12 +440,17 @@
     function pointsMenu(host_id) {
         $.ajax({
             type: "get",
-            url: " /platformdetail/get_points?host_id="+host_id,
+            url: "/platformdetail/get_points?host_id="+host_id,
             dataType: "json",
             success: function (result) {
                 if(result.success) {
                     var data = result.data;
                     getpointsMenu(data);
+                    $('#pointsMenu a').on('click',function () {
+                        $('#pointsMenu a').removeClass('active');
+                        $(this).addClass('active');
+                        itemsMenu(this.id);
+                    })
                 }
                 else {
                     errorMsg_no_data("监控点列表 Menu");
@@ -446,7 +473,6 @@
             }
         }
         $("#pointsMenu").html(str);
-        $("#itemTitle").html(data[0].point_name);
     }
     function itemsMenu(point_id) {
         $.ajax({
@@ -480,6 +506,7 @@
         }
         $("#itemsTable").html(str);
 	}
+
 </script>
 <script>
 	//健康度线状图
@@ -705,6 +732,29 @@
             alert("击中" + ev.item.get('model').id + "!");
         });
     //});
+</script>
+<script type="text/javascript">
+	//告警消息
+	function errorMsg_no_connect(title) {
+		Lobibox.notify("error", {
+		size: "normal",
+		rounded: false,
+		delayIndicator: true,
+		msg: "连接服务器失败！",
+		icon: "warning icon",
+		title: title
+		});
+	}
+	function errorMsg_no_data(title) {
+		Lobibox.notify("error", {
+		size: "normal",
+		rounded: false,
+		delayIndicator: true,
+		msg: "解析数据失败！",
+		icon: "warning icon",
+		title: title
+		});
+	}
 </script>
 </body>
 </html>
