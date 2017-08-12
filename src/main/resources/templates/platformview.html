@@ -251,110 +251,136 @@
 <th:block th:replace="layout::bottom_script(~{::supple})">
     <th:block th:fragment="supple">
 		<script>
-            $('#example1').progress({
-                label: 'ratio',
-                text: {
-                    ratio: '健康度：{percent} %'
-                }
-            });
+            //进入页面加载业务方块图
+			$(function() {
+                $.ajax({
+                    type: "get",
+                    url: "/platformview/get_platforms",
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            //console.log("length: " + result.data.length);
+                            var blocks = result.data;
+                            $(".ui.three.column.grid").empty();
+                            var block_str = "";
+                            for(var i=0 ;i < blocks.length; i++) {
+                                block_str =
+									"<div class='column'> " +
+									  "<div class='ui segment'> " +
+                                   		 " <div class='ui green borderless fluid inverted two item menu'> " +
+                                    		"<a class='fitted item'> " + blocks[i].platform_name + "  </a> " +
+                                    		" <div class='red fitted item'> " +
+                                   			    " <div class='ui active fluid indicating progress' data-percent='" + blocks[i].health + "' data-total='100' id='health_" + blocks[i].platform_id + "' style='width:160px;margin-bottom: 0px;padding-bottom: 0px'> " +
+													" <div class='bar'> " +
+														"<div class='progress'></div> " +
+													"</div> " +
+                                    			"</div> " +
+									        "</div> " +
+                                         "</div> " +
+                                         "<div id='graph_"+ blocks[i].platform_id +"' style='height:150px;'></div> " +
+                                      "</div> " +
+									" </div> " ;
+								$(".ui.three.column.grid").append(block_str);
+								//绘制健康度进度条
+								//console.log("#health_"+blocks[i].platform_id);
+                                $("#health_"+ blocks[i].platform_id ).progress({
+                                    label: 'ratio',
+                                    text: {
+                                        ratio: '健康度：{percent} %'
+                                    }
+                                });
+                                //绘制图标数据
+                                var myChart = echarts.init(document.getElementById("graph_"+blocks[i].platform_id));
+								//配置option
+                                var option = {
+                                    title: {
+                                        show:true,
+                                        text: '',
+                                        top:'-5px'
+                                    },
+                                    tooltip : {
+                                        trigger: 'axis',
+                                        axisPointer : {
+                                            type : false
+                                        }
+                                    },
+                                    grid: {
+                                        left: '2%',
+                                        right: '2%',
+                                        bottom: '2%',
+                                        top:'2%',
+                                        containLabel: true
+                                    },
+                                    xAxis:  {
+                                        type: 'category',
+                                        data: blocks[i].types
+                                    },
+                                    yAxis: {
+                                        type: 'value',
+                                        splitLine:{show: false},
+                                    },
+                                    series: [
+                                        {
+											name: '正常',
+											type: 'bar',
+											stack: '设备总数',
+											barWidth : 25,
+											label: {
+												normal: {
+													show: true,
+													position: 'insideRight'
+												}
+											},
+											data: blocks[i].datas[0],
+											color: ['#5FB878']
+                                   	 	},
+										{
+											name: '警告',
+											type: 'bar',
+											stack: '设备总数',
+											barWidth : 25,
+											label: {
+												normal: {
+													show: true,
+													position: 'insideRight'
+												}
+                                			},
+                                    		data: blocks[i].datas[1],
+                                       		color: ['#F7B824']
+                                		},
+                               			{
+											name: '严重',
+											type: 'bar',
+											stack: '设备总数',
+											barWidth : 25,
+											label: {
+												normal: {
+													show: true,
+													position: 'insideRight'
+												}
+											},
+											data: blocks[i].datas[2],
+											color: ['#DB2828']
+										}
+									]
+                                };
+								//根据配置绘制图形
+                                myChart.setOption(option);
 
-            //设备状态堆叠柱状图
-            var myChart = echarts.init(document.getElementById('platformBar'));
-            var option = {
-                title: {
-                    show:true,
-                    text: '',
-                    top:'-5px'
-                },
-                tooltip : {
-                    trigger: 'axis',
-                    axisPointer : {
-                        type : false
+							}
+
+                        }
+                        else {
+                            errorMsg_no_data("监控项 Chart");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控项 Chart");
                     }
-                },
-				/*legend: {
-				 orient: 'vertical',
-				 x: 'right',
-				 y: 'center',
-				 itemWidth: '2',
-				 data: ['严重','警告','正常','其他']
-				 },*/
-                grid: {
-                    left: '2%',
-                    right: '2%',
-                    bottom: '2%',
-                    top:'2%',
-                    containLabel: true
-                },
-                xAxis:  {
-                    type: 'category',
-                    data: ['服务器','网络设备','数据库','虚拟机']
-                    //data: ['服务','网络','数据','虚拟']
-                },
-                yAxis: {
-                    type: 'value',
-                    splitLine:{show: false},
-                },
-                series: [
-                    {
-                        name: '严重',
-                        type: 'bar',
-                        stack: '总量',
-                        barWidth : 25,
-                        label: {
-                            normal: {
-                                show: true,
-                                position: 'insideRight'
-                            }
-                        },
-                        data: [3, 3, 3, 3],
-                        color: ['#DB2828']
-                    },
-                    {
-                        name: '警告',
-                        type: 'bar',
-                        stack: '总量',
-                        barWidth : 25,
-                        label: {
-                            normal: {
-                                show: true,
-                                position: 'insideRight'
-                            }
-                        },
-                        data: [2, 3, 1, ],
-                        color: ['#F7B824']
-                    },
-                    {
-                        name: '正常',
-                        type: 'bar',
-                        stack: '总量',
-                        barWidth : 25,
-                        label: {
-                            normal: {
-                                show: true,
-                                position: 'insideRight'
-                            }
-                        },
-                        data: [2, 2, 1, ],
-                        color: ['#5FB878']
-                    },
-                    {
-                        name: '其他',
-                        type: 'bar',
-                        stack: '总量',
-                        barWidth : 25,
-                        label: {
-                            normal: {
-                                show: true,
-                                position: 'insideRight'
-                            }
-                        },
-                        data: [1, 2, 2, 5],
-                        color: ['#d2d2d2']
-                    },
-                ]
-            };
-            myChart.setOption(option);
+                })
+			})
+
+
 		</script>
 	</th:block>
 </th:block>

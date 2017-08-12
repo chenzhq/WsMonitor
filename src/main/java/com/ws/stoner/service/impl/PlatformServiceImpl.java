@@ -586,7 +586,6 @@ public class PlatformServiceImpl implements PlatformService {
     public static Map<List<String>,List<List<Integer>>> getTypeStateDatas(List<BriefHostDTO> allHostDTOS,List<BriefTemplateDTO> allTemplateDTOS,List<String> hostIds) throws ServiceException {
         Map<String,Map<String,Integer>> typeMap = new HashMap<>();
         String type = "";
-        List<List<Integer>> datasList = new ArrayList<>();
         //循环设备 hostDTOS 获取typeMap值
         for(BriefHostDTO hostDTO : allHostDTOS) {
             if(hostIds.contains(hostDTO.getHostId())) {
@@ -635,19 +634,23 @@ public class PlatformServiceImpl implements PlatformService {
         }
         //循环map值做转换成数组
         List<String> typeList = new ArrayList<>();
+        List<Integer> oKList = new ArrayList<>();
+        List<Integer> warningList = new ArrayList<>();
+        List<Integer> highList = new ArrayList<>();
         for(String key : typeMap.keySet()) {
             //组装 typesList 类型list
             typeList.add(key);
             Map<String,Integer> stateMap = typeMap.get(key);
-            List<Integer> stateList = new ArrayList<>();
-            for(String stateKey : stateMap.keySet()) {
-                //组装状态数据
-                stateList.add(stateMap.get(stateKey));
-            }
-            datasList.add(stateList);
+            oKList.add(stateMap.get(StatusEnum.OK.getName()));
+            warningList.add(stateMap.get(StatusEnum.WARNING.getName()));
+            highList.add(stateMap.get(StatusEnum.HIGH.getName()));
         }
+        List<List<Integer>> dataList = new ArrayList<>();
+        dataList.add(oKList);
+        dataList.add(warningList);
+        dataList.add(highList);
         Map<List<String> ,List<List<Integer>>> typeStateMap = new HashMap<>();
-        typeStateMap.put(typeList,datasList);
+        typeStateMap.put(typeList,dataList);
         return typeStateMap;
     }
 

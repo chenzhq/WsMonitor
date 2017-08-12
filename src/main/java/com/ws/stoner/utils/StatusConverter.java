@@ -24,15 +24,15 @@ public class StatusConverter {
     public static String StatusTransform(int customStatus,int customAvailableState) {
         String status = "";
         if(StatusEnum.OK.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            status = StatusEnum.OK.color;
+            status = StatusEnum.OK.getName();
         }else if(StatusEnum.WARNING.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            status = StatusEnum.WARNING.color;
+            status = StatusEnum.WARNING.getName();
         }else if(StatusEnum.HIGH.code == customStatus && StatusEnum.OK.code == customAvailableState) {
-            status = StatusEnum.HIGH.color;
+            status = StatusEnum.HIGH.getName();
         }else if(StatusEnum.WARNING.code == customAvailableState) {
-            status = StatusEnum.HIGH.color;
+            status = StatusEnum.HIGH.getName();
         }else {
-            status = StatusEnum.OK.color;
+            status = StatusEnum.OK.getName();
         }
         return status;
     }
