@@ -4,6 +4,14 @@
 <head th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
 	<title>业务列表</title>
+	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
+	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
+	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 	<th:block th:fragment="supplement">
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 	</th:block>
