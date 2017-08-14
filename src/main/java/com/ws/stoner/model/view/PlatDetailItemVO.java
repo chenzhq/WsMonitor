@@ -1,6 +1,7 @@
 package com.ws.stoner.model.view;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * Created by zkf on 2017/8/9.
@@ -9,12 +10,15 @@ public class PlatDetailItemVO {
 
     @JSONField(name = "item_id")
     private String itemId;
-    @JSONField(name = "item_name")
+    @JSONField(name = "item_name",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String itemName;
+    @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String state;
+    @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String value;
-    @JSONField(name = "with_triggers")
+    @JSONField(name = "with_triggers",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private boolean withTriggers;
+    @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private Integer weight;
 
     public PlatDetailItemVO(String itemId, String itemName, String state, String value, boolean withTriggers, Integer weight) {

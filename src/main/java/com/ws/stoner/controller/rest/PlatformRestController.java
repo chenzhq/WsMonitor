@@ -90,17 +90,6 @@ public class PlatformRestController {
         return RestResultGenerator.genResult(itemVOS, REST_UPDATE_SUCCESS).toString();
     }
 
-    /**
-     * 获取指定 platformId 的 业务树 数据和结构
-     * @param platformId
-     * @return
-     * @throws ServiceException
-     */
-    @RequestMapping(value = "platformtree/get_tree",method = RequestMethod.GET)
-    public String getPlatformTrees(@RequestParam("platform_id") String platformId) throws ServiceException {
-        PlatformTreeVO platformTreeVO = graphService.getPlatTreeByPlatformId(platformId);
-        return RestResultGenerator.genResult(platformTreeVO, REST_UPDATE_SUCCESS).toString();
-    }
 
     /**
      * 获取指定 hostIds 的 业务平台监控项图形 数据
@@ -114,5 +103,29 @@ public class PlatformRestController {
         List<PlatformGraphVO> platformGraphVOS = graphService.getPlatformGraphByhostIds(hostIds);
         return RestResultGenerator.genResult(platformGraphVOS, REST_UPDATE_SUCCESS).toString();
     }
+
+    /**
+     * 获取业务平台下拉框
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "platformdetail/get_platforms",method = RequestMethod.GET)
+    public String getPlatformsSelect() throws ServiceException {
+        List<PlatDetailPlatformVO> platDetailPlatformVOS = platformService.getPlatDetailSelect();
+        return RestResultGenerator.genResult(platDetailPlatformVOS, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 获取指定 platformId 的 业务树 数据和结构
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "platformtree/get_tree",method = RequestMethod.GET)
+    public String getPlatformTrees(@RequestParam("platform_id") String platformId) throws ServiceException {
+        PlatformTreeVO platformTreeVO = graphService.getPlatTreeByPlatformId(platformId);
+        return RestResultGenerator.genResult(platformTreeVO, REST_UPDATE_SUCCESS).toString();
+    }
+
 
 }

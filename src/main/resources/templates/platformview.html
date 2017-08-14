@@ -249,6 +249,10 @@
 	</div>
 </div>
 <th:block th:replace="layout::bottom_script(~{::supple})">
+	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
+	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
+	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
+	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
     <th:block th:fragment="supple">
 		<script>
             //进入页面加载业务方块图

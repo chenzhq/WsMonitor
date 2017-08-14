@@ -117,6 +117,13 @@ public interface PlatformService {
     Map<String,Float> getHealthByPlatformIds(List<String> platformIds) throws ServiceException;
 
     /**
+     * 获取 业务平台 下拉框列表 id key ,name value
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatDetailPlatformVO> getPlatDetailSelect() throws ServiceException;
+
+    /**
      * 获取页面展示上的 业务平台列表
      * @return
      * @throws ServiceException

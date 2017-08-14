@@ -353,6 +353,25 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     /**
+     * 获取 业务平台 下拉框列表 id key ,name value
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<PlatDetailPlatformVO> getPlatDetailSelect() throws ServiceException {
+        List<BriefPlatformDTO> platformDTOS = listAllPlatform();
+        List<PlatDetailPlatformVO> platDetailPlatformVOS = new ArrayList<>();
+        for(BriefPlatformDTO platformDTO : platformDTOS) {
+            PlatDetailPlatformVO platDetailPlatformVO = new PlatDetailPlatformVO(
+                    platformDTO.getPlatformId(),
+                    platformDTO.getName()
+            );
+            platDetailPlatformVOS.add(platDetailPlatformVO);
+        }
+        return platDetailPlatformVOS;
+    }
+
+    /**
      * 获取页面展示上的 业务平台列表
      * @return
      * @throws ServiceException
