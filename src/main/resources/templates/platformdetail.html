@@ -18,39 +18,40 @@
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
 		<style type="text/css">
+			.textOverflow{
+				overflow: hidden; /*自动隐藏文字*/
+				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+				white-space: nowrap;/*强制不换行*/
+			}
+			.ui.tab.segment.noMargin{ margin:0; }
+			.ui.segment.noBorder{ border:0; }
+			.ui.tab.segment.fixedHeight{ height: 500px; }
+			.chartBar{ height: 140px; }
+			.ui.row1Height{ height: 160px; }
+			.ui.row2Height{
+				height: 285px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
+			}
+			.ui.row3Height{
+				height: 500px;
+			}
+			.ui.row4Height{
+				height: 173px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
+			}
+			.modal-height{
+				height: 450px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
+			}
 		</style>
 	</th:block>
-	<style type="text/css">
-	.textOverflow{
-	overflow: hidden; /*自动隐藏文字*/
-	text-overflow: ellipsis;/*文字隐藏后添加省略号*/
-	white-space: nowrap;/*强制不换行*/
-	}
-	.ui.tab.segment.noMargin{ margin:0; }
-	.ui.segment.noBorder{ border:0; }
-	.ui.tab.segment.fixedHeight{ height: 500px; }
-	.chartBar{ height: 140px; }
-	.row1Height{ height: 160px; }
-	.row2Height{
-		height: 289px;
-		width: 100%;
-		overflow:auto;
-		overflow-x:hidden
-	}
-	.row3Height{  height: 250px;  }
-	.row4Height{
-		height: 173px;
-		width: 100%;
-		overflow:auto;
-		overflow-x:hidden
-	}
-	.modal-height{
-		height: 450px;
-		width: 100%;
-		overflow:auto;
-		overflow-x:hidden
-	}
-	</style>
+
 </head>
 <body>
 <!--header start-->
@@ -243,10 +244,7 @@
 								<a class="item" data-tab="tree">业务树</a>
 								<a class="item" data-tab="report">业务图形报告</a>
 								<div class="right menu">
-									<select class="ui mini dropdown" id="platform_select">
-										<option value="">选择业务平台</option>
-										<option value="0">OA系统</option>
-										<option value="1">ITSS系统</option>
+									<select id="platform_select" class="ui mini dropdown ">
 									</select>
 								</div>
 							</div>
@@ -502,924 +500,763 @@
 		</div>
 		<!--maincontent-->
 	</div>
-</div>
+
 <th:block th:replace="layout::bottom_script(~{::supple})">
 	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
 	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
 	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
 	<th:block th:fragment="supple">
-	<th:block th:fragment="specialScript">
-		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
-		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
-	</th:block>
-</th:block>
-<script type="text/javascript">
-    //页面加载完加载基础数据
-    $(function() {
-        //初始化选项页
-        $('.menu .item').tab();
+		<script type="text/javascript">
 
-        //初始化业务平台下拉框
-        selectPlaltform();
-        //加载健康度和图形数据
-        getPlatDates();
-        //加载分类菜单数据 诠释权值含义
-       // initWeightMenu();
+            //页面加载完加载基础数据
+			$(function() {
+                //初始化选项页
+                $('.secondary.pointing.menu .item').tab();
+
+                //初始化业务平台下拉框
+                selectPlaltform();
+                //加载健康度和图形数据
+                getPlatDates();
+				//加载分类菜单数据 诠释权值含义
+				initWeightMenu();
+                //加载业务树
+                platformTree();
 
 
-    })
+			})
 
-    //加载 业务平台 下拉框
-    function selectPlaltform() {
-        $.ajax({
-            async: false,
-            type: "get",
-            url: "/platformdetail/get_platforms",
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data=result.data;
-                    var str = "";
-                    for(var i=0;i<data.length;i++)
-                    {
-                        str +=" <option value='"+data[i].platform_id+"'  >"+data[i].platform_name+"</option> ";
-                    }
-                    //console.log("str:"+str);
-                    $("#platform_select").html(str);
-                    $("#platform_select").dropdown("set value", data[0].platform_id);
-                    $("#platform_select").dropdown("set text", data[0].platform_name);
-                }
-                else {
-                    errorMsg_no_data("业务平台 Dropdown");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("业务平台 Dropdown");
-            }
-        });
-    }
-
-    //加载健康度和图形数据
-    function getPlatDates() {
-        var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
-        //console.log("platform_id:::" + platform_id);
-        $.ajax({
-            type: "get",
-            url: "/platformdetail/get_datas?platform_id="+platform_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var platform_data = result.data;
-                    $("#health_value").text(platform_data.health);
-                    //绘制图标数据
-                    var platform_chart = echarts.init(document.getElementById("platform_graph"));
-                    //配置option
-                    var option = {
-                        title: {
-                            show:true,
-                            text: '',
-                            top:'-5px'
-                        },
-                        tooltip : {
-                            trigger: 'axis',
-                            axisPointer : {
-                                type : false
+			//加载 业务平台 下拉框
+			function selectPlaltform() {
+                $.ajax({
+                    async: false,
+                    type: "get",
+                    url: "/platformdetail/get_platforms",
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data=result.data;
+                            var str = "";
+                            for(var i=0;i<data.length;i++)
+                            {
+                                str +=" <option value='"+data[i].platform_id+"'  >"+data[i].platform_name+"</option> ";
                             }
-                        },
-                        grid: {
-                            left: '2%',
-                            right: '2%',
-                            bottom: '2%',
-                            top:'2%',
-                            containLabel: true
-                        },
-                        xAxis:  {
-                            type: 'category',
-                            data: platform_data.types
-                        },
-                        yAxis: {
-                            type: 'value',
-                            splitLine:{show: false},
-                        },
-                        series: [
-                            {
-                                name: '正常',
-                                type: 'bar',
-                                stack: '设备总数',
-                                barWidth : 25,
-                                label: {
-                                    normal: {
-                                        show: true,
-                                        position: 'insideRight'
-                                    }
-                                },
-                                data: platform_data.datas[0],
-                                color: ['#5FB878']
-                            },
-                            {
-                                name: '警告',
-                                type: 'bar',
-                                stack: '设备总数',
-                                barWidth : 25,
-                                label: {
-                                    normal: {
-                                        show: true,
-                                        position: 'insideRight'
-                                    }
-                                },
-                                data: platform_data.datas[1],
-                                color: ['#F7B824']
-                            },
-                            {
-                                name: '严重',
-                                type: 'bar',
-                                stack: '设备总数',
-                                barWidth : 25,
-                                label: {
-                                    normal: {
-                                        show: true,
-                                        position: 'insideRight'
-                                    }
-                                },
-                                data: platform_data.datas[2],
-                                color: ['#DB2828']
-                            }
-                        ]
-                    };
-                    //根据配置绘制图形
-                    platform_chart.setOption(option);
-                }
-                else {
-                    errorMsg_no_data("业务平台基础数据获取 失败");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("服务器连接 失败");
-            }
-        });
-    }
-
-    //加载分类菜单数据 诠释权值含义
-    function initWeightMenu() {
-        //var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
-        //加载设备列表
-        alert("initWeightMenu");
-        var platform_id = 123124;
-        hostsMenu(platform_id);
-        //加载监控点列表
-        //var host_id = $("#hostsMenu").children(".item.textOverflow.active").attr("id");
-        //console.log("host_id:::" + host_id);
-        pointsMenu(host_id);
-        //加载监控项列表
-        //var point_id = $("#pointsMenu").children(".item.textOverflow.active").attr("id");
-        //console.log("point_id:::" + point_id);
-        itemsMenu(point_id);
-    }
-    </script>
-<script type="text/javascript">
-	//初始化选项页
-    $('.secondary.pointing.menu .item').tab();
-    //加载设备列表
-    $(function(){
-        var platform_id = 1220;
-        var host_id = 1233;
-        var point_id = 1233;
-        hostsMenu(platform_id);
-        pointsMenu(host_id);
-        itemsMenu(point_id)
-    })
-    function hostsMenu(platform_id) {
-        $.ajax({
-            type: "get",
-            url: "/platformdetail/get_hosts?platform_id="+platform_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data = result.data;
-                    gethostsMenu(data);
-                    $('#hostsMenu a').on('click',function () {
-						$('#hostsMenu a').removeClass('active');
-						$(this).addClass('active');
-                        pointsMenu(this.id);
-                    })
-                }
-                else {
-                    errorMsg_no_data("设备列表 Menu");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("设备列表 Menu");
-            }
-        })
-    }
-    function gethostsMenu(data) {
-        var str = '';
-        for(var i=0;i<data.length;i++)
-        {
-            if(data[i].state == '正常'){
-                var state = '<i class="green desktop icon"></i>';
-            }
-            if(data[i].state == '警告'){
-                var state = '<i class="yellow desktop icon"></i>';
-            }
-            if(data[i].state == '严重'){
-                var state = '<i class="red desktop icon"></i>';
-            }
-            if (i==0){
-                str +="<a class='active item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+state+"</a> ";
-			}else {
-                str +="<a class='item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+state+"</a> ";
-			}
-        }
-        $("#hostsMenu").html(str);
-    }
-    function pointsMenu(host_id) {
-        $.ajax({
-            type: "get",
-            url: "/platformdetail/get_points?host_id="+host_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data = result.data;
-                    getpointsMenu(data);
-                    $('#pointsMenu a').on('click',function () {
-                        $('#pointsMenu a').removeClass('active');
-                        $(this).addClass('active');
-                        itemsMenu(this.id);
-                    })
-                }
-                else {
-                    errorMsg_no_data("监控点列表 Menu");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("监控点列表 Menu");
-            }
-        })
-    }
-    function getpointsMenu(data) {
-        var str = '';
-        console.log("name:"+data[0].point_name)
-        for(var i=0;i<data.length;i++)
-        {
-            if(data[i].state == '正常'){
-                var state = '<i class="green circle icon"></i>';
-            }
-            if(data[i].state == '警告'){
-                var state = '<i class="yellow circle icon"></i>';
-            }
-            if(data[i].state == '严重'){
-                var state = '<i class="red circle icon"></i>';
-            }
-            if (i==0){
-                str +="<a class='active item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+state+"</a> ";
-            }else {
-                str +="<a class='item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+state+"</a> ";
-            }
-        }
-        $("#pointsMenu").html(str);
-    }
-    function itemsMenu(point_id) {
-        $.ajax({
-            type: "get",
-            url: "/platformdetail/get_items?point_id="+point_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data = result.data;
-                    getitemsMenu(data);
-                }
-                else {
-                    errorMsg_no_data("监控项列表 Menu");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("监控项列表 Menu");
-            }
-        })
-    }
-    function getitemsMenu(data) {
-        var str = '';
-        for(var i=0;i<data.length;i++)
-        {
-            if(data[i].state == '正常'){
-                var state = '<i class="green square icon"></i>';
-			}
-            if(data[i].state == '警告'){
-                var state = '<i class="yellow square icon"></i>';
-            }
-            if(data[i].state == '严重'){
-                var state = '<i class="red square icon"></i>';
-            }
-			str +="<tr id='"+data[i].item_id+"' ><td>"
-				+data[i].item_name +"</td><td> "
-                +data[i].value+data[i].units+"</td><td> "
-                +state+"</td><td> "
-                +data[i].weight+"</td></tr> ";
-        }
-        $("#itemsTable").html(str);
-	}
-
-</script>
-<script>
-	//健康度线状图
-    var myChart = echarts.init(document.getElementById('platformHealth'));
-    var option = {
-        xAxis: {
-            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-        },
-        yAxis: {},
-        series: [{
-            name: '销量',
-            type: 'line',
-            data: [5, 20, 36, 10, 10, 20]
-        }]
-    };
-    myChart.setOption(option);
-</script>
-<script>
-    //加载设备状态堆叠柱状图数据
-    $(function(){
-        //var platform = $("#platform_id").text();
-		/* console.log("加载监控项图形的参数:host_id = " + host_id);*/
-        $.ajax({
-            type: "get",
-            url: "/platformview/get_platforms",
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data = result.data[0];
-                    platformsChart(data);
-                }
-                else {
-                    errorMsg_no_data("业务详情 Chart");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("业务详情 Chart");
-            }
-        })
-    })
-    //设备状态堆叠柱状图
-	function platformsChart(data) {
-        var myChart = echarts.init(document.getElementById('platformBar'));
-        var option = {
-            title: {
-                show:true,
-                text: '设备状态堆叠柱状图',
-                top:'-5px'
-            },
-            tooltip : {
-                trigger: 'axis',
-                axisPointer : {
-                    type : false
-                }
-            },
-            legend: {
-                orient: 'vertical',
-                x: 'right',
-                y: 'center',
-                data:['严重','警告','正常','其他']
-            },
-            grid: {
-                left: '2%',
-                right: '10%',
-                bottom: '0%',
-                top:'20%',
-                containLabel: true
-            },
-            xAxis:  {
-                type: 'category',
-                data: ['服务器','网络设备','数据库','虚拟机']
-            },
-            yAxis: {
-                type: 'value',
-                splitLine:{show: false},
-            },
-            series: [
-                {
-                    name: '严重',
-                    type: 'bar',
-                    stack: '总量',
-                    barWidth : 50,
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'insideRight'
-                        }
-                    },
-                    data: [3, 3, 3, 3],
-                    color: ['#DB2828']
-                },
-                {
-                    name: '警告',
-                    type: 'bar',
-                    stack: '总量',
-                    barWidth : 50,
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'insideRight'
-                        }
-                    },
-                    data: [2, 3, 1, ],
-                    color: ['#F7B824']
-                },
-                {
-                    name: '正常',
-                    type: 'bar',
-                    stack: '总量',
-                    barWidth : 50,
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'insideRight'
-                        }
-                    },
-                    data: [2, 2, 1, ],
-                    color: ['#5FB878']
-                },
-                {
-                    name: '其他',
-                    type: 'bar',
-                    stack: '总量',
-                    barWidth : 50,
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'insideRight'
-                        }
-                    },
-                    data: [1, 2, 2, 5],
-                    color: ['#d2d2d2']
-                },
-            ]
-        };
-        myChart.setOption(option);
-    }
-</script>
-<script type="text/javascript">
-	//加载紧凑树图
-    $(function(){
-        var platform_id = 1220;
-        platformTree(platform_id);
-    })
-    function platformTree(platform_id) {
-        $.ajax({
-            type: "get",
-            url: "/platformtree/get_tree?platform_id="+platform_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data = result.data;
-                    getplatformTree(data);
-                }
-                else {
-                    errorMsg_no_data("业务树 Tree");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("业务树 Tree");
-            }
-        })
-    }
-    function getplatformTree(data){
-        var tree = new G6.Tree({
-            id: 'c1',
-            width: 1000,
-            height: 240 ,
-            fitView: 'autoZoom',
-            layoutCfg: {
-                direction: 'TB',
-                getHGap: function(/* d */) {
-                    return 10;
-                },
-                getVGap: function(/* d */) {
-                    return 50;
-                },
-            },
-        });
-        tree.source(data);
-        tree.node()
-            .label(function (obj) {
-                return obj.name;
-            })
-            .style({
-                fillOpacity: 1
-            })
-        tree.edge().shape('smooth');
-        tree.render();
-        tree.on('dblclick', function(ev){
-            //缺少判断为主机id,ev.item.get('model').id
-            pointButton(ev.item.get('model').id);
-        });
-	}
-</script>
-<script type="text/javascript">
-	//加载监控点按钮
-    $(function(){
-        var host_id = 1220;
-        pointButton(host_id);
-    })
-    function pointButton(host_id) {
-        $.ajax({
-            type: "get",
-            url: "/platformdetail/get_points?host_id="+host_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data = result.data;
-                    getpointButton(data);
-					/*$('#hostsMenu a').on('click',function () {
-					 $('#hostsMenu a').removeClass('active');
-					 $(this).addClass('active');
-					 pointsMenu(this.id);
-					 })*/
-                }
-                else {
-                    errorMsg_no_data("监控点按钮 Button");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("监控点按钮 Button");
-            }
-        })
-    }
-    function getpointButton(data) {
-        var str = '';
-        for(var i=0;i<data.length;i++)
-        {
-            if(data[i].state == '正常'){
-                var state = 'ui green top attached button';
-            }
-            if(data[i].state == '警告'){
-                var state = 'ui yellow top attached button';
-            }
-            if(data[i].state == '严重'){
-                var state = 'ui reed top attached button';
-            }
-			str +="<div class='column'><div class='"+state+"' id='"+data[i].point_id+"' >"+data[i].point_name+"</div> </div>";
-        }
-        $("#pointButton").html(str);
-	}
-</script>
-<script type="text/javascript">
-    //modal点击监控点按钮 进入监控点详情
-    $('#pointButton').on('click', '.button',function() {
-        var point_id = this.id.substring(1);
-        $('.tab_points.menu .item').tab('change tab', 'Summary');
-        $("#rowData").empty();
-        $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
-        $("#pointDetailArea").text(point_id);
-        tabSummary(point_id);
-        $('.large.modal').modal('show');
-        $('.tab_points.menu .item')
-            .tab({
-                'onFirstLoad': function (path) {
-                    if (path === 'Report') {
-                        tabReport( $('.top.attached.label').attr("data-id") ,40);
-                    }
-                    if (path === 'Data') {
-                        var point_id = $("#pointDetailArea").text();
-                        var item_id = $("#pointDetailFirstItem").text() ;
-                        var tableData = $("#tableData").DataTable({
-                            "orderFixed": [ 0, 'desc' ],
-                            "paging": false,
-                            ajax: {
-                                url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
-                                dataSrc: 'data'
-                            },
-                            "columnDefs": [ {
-                                "targets": [ 3 ],
-                                "visible": false } ] ,
-                            columns: [
-                                //item_id
-                                {
-                                    "data": "last_time",
-                                    "width": "30%",
-                                    "title": "最新时间",
-                                },
-                                {
-                                    "data": null,
-                                    "width": "10%",
-                                    "title": "状态",
-                                    "orderable": false,
-                                    render: function (data, type, row, meta) {
-                                        var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
-                                        if (row.state == "正常") {
-                                            var myColor = Color[0]
-                                        }
-                                        if (row.state == "严重") {
-                                            var myColor = Color[1]
-                                        }
-                                        if (row.state == "警告") {
-                                            var myColor = Color[2]
-                                        }
-                                        return '<i class="'+ myColor + ' square icon"></i>';
-                                    }
-                                },
-                                {
-                                    "data": "value",
-                                    "width": "30%",
-                                    "title": "值",
-                                    "orderable":false,
-                                },
-                                {
-                                    "data": "state",
-                                    "width": "30%",
-                                    "title": "状态",
-                                    "orderable":false,
-                                },
-                            ],
-                        });
-                        dropdownitemsTab(point_id,item_id);
-                        $('.dropdown.stateTab')
-                            .dropdown({
-                                useLabels: false,
-                                onChange: function(value, text, $selectedItem) {
-                                    if (text == '全部')
-                                    {
-                                        tableData.search('').draw();
-                                    }else {
-                                        tableData.search(text).draw();
-                                    }
-                                }
-                            });
-                        $('.dropdown.itemsTab')
-                            .dropdown({
-								/*useLabels: false,*/
-                                onChange: function(value, text, $selectedItem) {
-									/*console.log("选择的值" + value);*/
-                                    var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
-                                    tableData.ajax.url(url).load();
-                                    $('.dropdown.stateTab').prop('selectedIndex', 0);
-                                }
-                            });
-                        $('.ui.buttons.Time.Data .button').on('click', function() {
-                            $('.buttons.Time.Data .button').removeClass('active');
-                            $(this).addClass('active');
-                            var item_id = $('.dropdown.itemsTab').dropdown('get value');
-                            var url=  "/pointdetail/get_datas?item_id="+item_id+"&time="+this.value;
-                            tableData.ajax.url(url).load();
-                        })
-                    }
-                }
-            });
-    });
-    //获取监控点详情 概述 标签页数据
-    function tabSummary(point_id) {
-        $.ajax({
-            type: "get",
-            url: "/pointdetail?point_id="+point_id,
-            data: {},
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data=result.data;
-                    //将第一个item赋值给弹出框
-                    if(data.item_datas.length != 0) {
-                        $("#pointDetailFirstItem").text(data.item_datas[0].item_id);
-                    }
-                    var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
-                    if (data.state == "正常"){ var myColor = Color[0] }
-                    if (data.state == "严重"){ var myColor = Color[1] }
-                    if (data.state == "警告"){ var myColor = Color[2] }
-                    $('#labelPoints').html("<div class='ui "+myColor+" massive top right attached ribbon label' data-id='"+data.point_id+"'>"+data.point_name+"</div>")
-                    var str = "";
-                    for(var i=0;i<data.item_datas.length;i++)
-                    {
-                        var mytrColor = '';
-                        if (data.item_datas[i].with_triggers == true)
-                        {
-                            if (data.item_datas[i].state == "正常"){ mytrColor = Color[0] }
-                            if (data.item_datas[i].state == "严重"){ mytrColor = Color[1] }
-                            if (data.item_datas[i].state == "警告"){ mytrColor = Color[2] }
+                            //console.log("str:"+str);
+                            $("#platform_select").html(str);
+                            $("#platform_select").dropdown("set value", data[0].platform_id);
+                            $("#platform_select").dropdown("set text", data[0].platform_name);
                         }
                         else {
+                            errorMsg_no_data("业务平台 Dropdown");
                         }
-                        str +=" <tr id='"+data.item_datas[i].item_id+"' class='"+mytrColor+" tr' ><td>"
-                            + data.item_datas[i].item_name +"</td><td>"
-                            + data.item_datas[i].value +"</td><td>"
-                            + data.item_datas[i].warning_point +"</td><td>"
-                            + data.item_datas[i].high_point +"</td><td>"
-                            + data.item_datas[i].last_time +"</td></tr> ";
+                    },
+                    error: function () {
+                        errorMsg_no_connect("业务平台 Dropdown");
                     }
-                    $("#tableSummary").html(str);
-                }
-                else {
-                    errorMsg_no_data("监控点 Tab");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("监控点 Tab");
-            }
-        });
-    }
+                });
+			}
 
-    //获取监控点详情 图形报告 标签页数据
-    function tabReport(point_id,days) {
-        var areaoption = {
-            title: {
-                text: ""
-            },
-            tooltip: {},
-            legend: {
-                data:[]
-            },
-            toolbox: {
-                show: true,
-                feature: {
-                    magicType: {type: ['line', 'bar']},
-                }
-            },
-            xAxis: {
-                data: {}
-            },
-            yAxis: {
-            },
-            series: [{
-                name: '',
-                type: '',
-                areaStyle: {normal: {}},
-                data: {},
-                color: []
-            }]
-        };
-        var option = {
-            title: {
-                text: ""
-            },
-            tooltip: {},
-            legend: {
-                data:[]
-            },
-            toolbox: {
-                show: true,
-                feature: {
-                    magicType: {type: ['line', 'bar','area']},
-                }
-            },
-            xAxis: {
-                data: {}
-            },
-            yAxis: {
-                max:''
-            },
-            series: [{
-                name: '',
-                type: '',
-                data: {},
-                color: [],
-                areaStyle:{}
-            }]
-        };
-        $.ajax({
-            type: "get",
-            url: "/pointdetail/get_graphs?point_id=" + point_id + "&time="+days,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data = result.data;
-                    var str = '';
-                    $("#chartReport").empty();
-                    for (var i=0; i<data.length; i++){
-                        var id="pi"+data[i].item_id;
-                        str ="<div class='column'><div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
-                        $("#chartReport").append(str);
-                        var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
-                        if (data[i].state == "正常"){ var myColor = Color[0] }
-                        if (data[i].state == "严重"){ var myColor = Color[1] }
-                        if (data[i].state == "警告"){ var myColor = Color[2] }
-                        if(data[i].units == "%"){
-                            option.yAxis.max = 100;
-                        }else {
-                            option.yAxis.max = null;
+            //加载健康度和图形数据
+			function getPlatDates() {
+                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+                //console.log("platform_id:::" + platform_id);
+                $.ajax({
+                    type: "get",
+                    url: "/platformdetail/get_datas?platform_id="+platform_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var platform_data = result.data;
+							$("#health_value").text(platform_data.health);
+                            //绘制图标数据
+                            var platform_chart = echarts.init(document.getElementById("platform_graph"));
+                            //配置option
+                            var option = {
+                                title: {
+                                    show:true,
+                                    text: '',
+                                    top:'-5px'
+                                },
+                                tooltip : {
+                                    trigger: 'axis',
+                                    axisPointer : {
+                                        type : false
+                                    }
+                                },
+                                grid: {
+                                    left: '2%',
+                                    right: '2%',
+                                    bottom: '2%',
+                                    top:'2%',
+                                    containLabel: true
+                                },
+                                xAxis:  {
+                                    type: 'category',
+                                    data: platform_data.types
+                                },
+                                yAxis: {
+                                    type: 'value',
+                                    splitLine:{show: false},
+                                },
+                                series: [
+                                    {
+                                        name: '正常',
+                                        type: 'bar',
+                                        stack: '设备总数',
+                                        barWidth : 25,
+                                        label: {
+                                            normal: {
+                                                show: true,
+                                                position: 'insideRight'
+                                            }
+                                        },
+                                        data: platform_data.datas[0],
+                                        color: ['#5FB878']
+                                    },
+                                    {
+                                        name: '警告',
+                                        type: 'bar',
+                                        stack: '设备总数',
+                                        barWidth : 25,
+                                        label: {
+                                            normal: {
+                                                show: true,
+                                                position: 'insideRight'
+                                            }
+                                        },
+                                        data: platform_data.datas[1],
+                                        color: ['#F7B824']
+                                    },
+                                    {
+                                        name: '严重',
+                                        type: 'bar',
+                                        stack: '设备总数',
+                                        barWidth : 25,
+                                        label: {
+                                            normal: {
+                                                show: true,
+                                                position: 'insideRight'
+                                            }
+                                        },
+                                        data: platform_data.datas[2],
+                                        color: ['#DB2828']
+                                    }
+                                ]
+                            };
+                            //根据配置绘制图形
+                            platform_chart.setOption(option);
                         }
-                        var title = "";
-                        if(data[i].units == "") {
-                            title = data[i].item_name;
-                        }else {
-                            title = data[i].item_name + "(" + data[i].units +")";
+                        else {
+                            errorMsg_no_data("业务平台基础数据获取 失败");
                         }
-                        option.title.text = title;
-                        option.xAxis.data = data[i].data_time;
-                        option.series[0].name = data[i].graph_name;
-                        option.series[0].type = data[i].graph_type;
-                        option.series[0].data = data[i].data;
-                        option.series[0].color[0] = myColor;
-                        //面积图存
-                        areaoption.title.text = title;
-                        areaoption.xAxis.data = data[i].data_time;
-                        areaoption.series[0].name = data[i].graph_name;
-                        areaoption.series[0].type = data[i].graph_type;
-                        areaoption.series[0].data = data[i].data;
-                        areaoption.series[0].color[0] = myColor;
-                        echarts.init(document.getElementById(id)).setOption(option);
+                    },
+                    error: function () {
+                        errorMsg_no_connect("服务器连接 失败");
                     }
-                    $('.ui.buttons.Time.Report .button').on('click', function() {
-                        $('.buttons.Time.Report .button').removeClass('active');
-                        $(this).addClass('active');
-                        tabReport($('.top.attached.label').attr("data-id") ,this.value);
-                    })
-                    $('.ui.buttons.Type.Report .button').on('click', function() {
-                        $('.buttons.Type.Report .button').removeClass('active');
-                        $(this).addClass('active');
-                        option.series[0].type = this.value;
-                        if (this.value == "area")
-                        {
-                            $("div#chartReport .chart-style").each(function(){
-                                echarts.init(document.getElementById(this.id)).setOption(areaoption);
-                            })
-                        }else {
-                            option.series[0].areaStyle = "";
-                            $("div#chartReport .chart-style").each(function(){
-                                echarts.init(document.getElementById(this.id)).setOption(option);
+                });
+			}
+
+            //加载分类菜单数据 诠释权值含义
+			function initWeightMenu() {
+                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+                //加载设备列表
+                hostsMenu(platform_id);
+				//加载监控点列表
+                var host_id = $("#hostsMenu").children(".item.textOverflow.active").attr("id");
+                //console.log("host_id:::" + host_id);
+                pointsMenu(host_id);
+				//加载监控项列表
+                var point_id = $("#pointsMenu").children(".item.textOverflow.active").attr("id");
+                //console.log("point_id:::" + point_id);
+                itemsMenu(point_id);
+			}
+			//加载设备列表
+            function hostsMenu(platform_id) {
+                $.ajax({
+                    async: false,
+                    type: "get",
+                    url: "/platformdetail/get_hosts?platform_id="+platform_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            gethostsMenu(data);
+                            $('#hostsMenu a').on('click',function () {
+                                $('#hostsMenu a').removeClass('active');
+                                $(this).addClass('active');
+                                pointsMenu(this.id);
                             })
                         }
-                    })
-                }
-                else {
-                    errorMsg_no_data("监控点 Tab");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("监控点 Tab");
+                        else {
+                            errorMsg_no_data("设备列表 Menu");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("设备列表 Menu");
+                    }
+                })
             }
-        });
-    }
-</script>
-<script type="text/javascript">
-    //加载业务图形报告
-    $(function(){
-        var platform_id = 1220;
-        hostAccordion(platform_id);
-    })
-    function hostAccordion(platform_id) {
-        $.ajax({
-            type: "get",
-            url: "/platformdetail/get_hosts?platform_id="+platform_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data = result.data;
-                    gethostAccordion(data);
+            function gethostsMenu(data) {
+                var str = '';
+                for(var i=0;i<data.length;i++)
+                {
+                    if (i==0){
+                        str +="<a class='item textOverflow active' id='"+data[i].host_id+"' >"+data[i].host_name+"</a> ";
+                    }else {
+                        str +="<a class='item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+"</a> ";
+                    }
                 }
-                else {
-                    errorMsg_no_data("图形报告 Accordion");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("图形报告 Accordion");
+                $("#hostsMenu").html("");
+                $("#hostsMenu").html(str);
             }
-        })
-    }
-    function gethostAccordion(data) {
-        var str = '';
-        var host_ids = new Array();
-        for(var i=0;i<data.length;i++)
-        {
-            str +="<div class='title'><i class='dropdown icon'></i>"
-            +data[i].host_name+"</div><div class='content' id='"+data[i].host_id+"'><p>监控项A图形</p></div>";
-            host_ids.push(data[i].host_id);
-        }
-        $("#hostAccordion").html(str);
-        getitemsAccordion();
-    }
-    function getitemsAccordion(data) {
-        var str = '';
-        var host_ids = new Array();
-        for(var i=0;i<data.length;i++)
-        {
-            str +="<div class='title'><i class='dropdown icon'></i>"
-                +data[i].host_name+"</div><div class='content' id='"+data[i].host_id+"'><p>监控项A图形</p></div>";
-            host_ids.push(data[i].host_id);
-        }
-        $("#hostAccordion").html(str);
-    }
-</script>
-<script type="text/javascript">
-	//告警消息
-	function errorMsg_no_connect(title) {
-		Lobibox.notify("error", {
-		size: "normal",
-		rounded: false,
-		delayIndicator: true,
-		msg: "连接服务器失败！",
-		icon: "warning icon",
-		title: title
-		});
-	}
-	function errorMsg_no_data(title) {
-		Lobibox.notify("error", {
-		size: "normal",
-		rounded: false,
-		delayIndicator: true,
-		msg: "解析数据失败！",
-		icon: "warning icon",
-		title: title
-		});
-	}
-</script>
+
+            //加载监控点列表
+            function pointsMenu(host_id) {
+                $.ajax({
+                    async: false,
+                    type: "get",
+                    url: "/platformdetail/get_points?host_id="+host_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            getpointsMenu(data);
+                            $('#pointsMenu a').on('click',function () {
+                                $('#pointsMenu a').removeClass('active');
+                                $(this).addClass('active');
+                                itemsMenu(this.id);
+                            })
+                        }
+                        else {
+                            errorMsg_no_data("监控点列表 Menu");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控点列表 Menu");
+                    }
+                })
+            }
+            function getpointsMenu(data) {
+                var str = '';
+                for(var i=0;i<data.length;i++)
+                {
+                    if (i==0){
+                        str +="<a class='item textOverflow active' id='"+data[i].point_id+"' >"+data[i].point_name+"</a> ";
+                    }else {
+                        str +="<a class='item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+"</a> ";
+                    }
+                }
+                $("#pointsMenu").html("");
+                $("#pointsMenu").html(str);
+            }
+
+            //加载监控项列表
+            function itemsMenu(point_id) {
+                $.ajax({
+                    type: "get",
+                    url: "/platformdetail/get_items?point_id="+point_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            getitemsMenu(data);
+                        }
+                        else {
+                            errorMsg_no_data("监控项列表 Menu");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控项列表 Menu");
+                    }
+                })
+            }
+            function getitemsMenu(data) {
+                var str = '';
+                for(var i=0;i<data.length;i++)
+                {
+                    str +="<tr id='"+data[i].item_id+"' ><td>"
+                        +data[i].item_name +"</td><td> "
+                        +data[i].state+"</td><td> "
+                        +data[i].value+"</td><td> "
+                        +data[i].weight+"</td></tr> ";
+                }
+                $("#itemsTable").html("");
+                $("#itemsTable").html(str);
+            }
+
+
+//			//健康度线状图
+//			var myChart = echarts.init(document.getElementById('platformHealth'));
+//			var option = {
+//				xAxis: {
+//					data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+//				},
+//				yAxis: {},
+//				series: [{
+//					name: '销量',
+//					type: 'line',
+//					data: [5, 20, 36, 10, 10, 20]
+//				}]
+//			};
+//			myChart.setOption(option);
+
+			//加载业务树方法
+			function platformTree() {
+                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+				$.ajax({
+					type: "get",
+					url: "/platformtree/get_tree?platform_id="+platform_id,
+					dataType: "json",
+					success: function (result) {
+						if(result.success) {
+							var data = result.data;
+							getplatformTree(data);
+						}
+						else {
+							errorMsg_no_data("业务树 Tree");
+						}
+					},
+					error: function () {
+						errorMsg_no_connect("业务树 Tree");
+					}
+				})
+			}
+			function getplatformTree(data){
+				var tree = new G6.Tree({
+					id: 'c1',
+					width: 1000,
+					height: 240 ,
+					fitView: 'autoZoom',
+					layoutCfg: {
+						direction: 'TB',
+						getHGap: function(/* d */) {
+							return 10;
+						},
+						getVGap: function(/* d */) {
+							return 50;
+						},
+					},
+				});
+				tree.source(data);
+				tree.node()
+					.label(function (obj) {
+						return obj.name;
+					})
+					.style({
+						fillOpacity: 1
+					})
+				tree.edge().shape('smooth');
+				tree.render();
+				tree.on('dblclick', function(ev){
+					//缺少判断为主机id,ev.item.get('model').id
+					pointButton(ev.item.get('model').id);
+				});
+			}
+
+//			//加载监控点按钮
+//			$(function(){
+//				var host_id = 1220;
+//				pointButton(host_id);
+//			})
+			function pointButton(host_id) {
+				$.ajax({
+					type: "get",
+					url: "/platformdetail/get_points?host_id="+host_id,
+					dataType: "json",
+					success: function (result) {
+						if(result.success) {
+							var data = result.data;
+							getpointButton(data);
+							/*$('#hostsMenu a').on('click',function () {
+							 $('#hostsMenu a').removeClass('active');
+							 $(this).addClass('active');
+							 pointsMenu(this.id);
+							 })*/
+						}
+						else {
+							errorMsg_no_data("监控点按钮 Button");
+						}
+					},
+					error: function () {
+						errorMsg_no_connect("监控点按钮 Button");
+					}
+				})
+			}
+			function getpointButton(data) {
+				var str = '';
+				for(var i=0;i<data.length;i++)
+				{
+					if(data[i].state == '正常'){
+						var state = 'ui green top attached button';
+					}
+					if(data[i].state == '警告'){
+						var state = 'ui yellow top attached button';
+					}
+					if(data[i].state == '严重'){
+						var state = 'ui reed top attached button';
+					}
+					str +="<div class='column'><div class='"+state+"' id='"+data[i].point_id+"' >"+data[i].point_name+"</div> </div>";
+				}
+				$("#pointButton").html(str);
+			}
+
+			//modal点击监控点按钮 进入监控点详情
+			$('#pointButton').on('click', '.button',function() {
+				var point_id = this.id.substring(1);
+				$('.tab_points.menu .item').tab('change tab', 'Summary');
+				$("#rowData").empty();
+				$("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
+				$("#pointDetailArea").text(point_id);
+				tabSummary(point_id);
+				$('.large.modal').modal('show');
+				$('.tab_points.menu .item')
+					.tab({
+						'onFirstLoad': function (path) {
+							if (path === 'Report') {
+								tabReport( $('.top.attached.label').attr("data-id") ,40);
+							}
+							if (path === 'Data') {
+								var point_id = $("#pointDetailArea").text();
+								var item_id = $("#pointDetailFirstItem").text() ;
+								var tableData = $("#tableData").DataTable({
+									"orderFixed": [ 0, 'desc' ],
+									"paging": false,
+									ajax: {
+										url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
+										dataSrc: 'data'
+									},
+									"columnDefs": [ {
+										"targets": [ 3 ],
+										"visible": false } ] ,
+									columns: [
+										//item_id
+										{
+											"data": "last_time",
+											"width": "30%",
+											"title": "最新时间",
+										},
+										{
+											"data": null,
+											"width": "10%",
+											"title": "状态",
+											"orderable": false,
+											render: function (data, type, row, meta) {
+												var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
+												if (row.state == "正常") {
+													var myColor = Color[0]
+												}
+												if (row.state == "严重") {
+													var myColor = Color[1]
+												}
+												if (row.state == "警告") {
+													var myColor = Color[2]
+												}
+												return '<i class="'+ myColor + ' square icon"></i>';
+											}
+										},
+										{
+											"data": "value",
+											"width": "30%",
+											"title": "值",
+											"orderable":false,
+										},
+										{
+											"data": "state",
+											"width": "30%",
+											"title": "状态",
+											"orderable":false,
+										},
+									],
+								});
+								dropdownitemsTab(point_id,item_id);
+								$('.dropdown.stateTab')
+									.dropdown({
+										useLabels: false,
+										onChange: function(value, text, $selectedItem) {
+											if (text == '全部')
+											{
+												tableData.search('').draw();
+											}else {
+												tableData.search(text).draw();
+											}
+										}
+									});
+								$('.dropdown.itemsTab')
+									.dropdown({
+										/*useLabels: false,*/
+										onChange: function(value, text, $selectedItem) {
+											/*console.log("选择的值" + value);*/
+											var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
+											tableData.ajax.url(url).load();
+											$('.dropdown.stateTab').prop('selectedIndex', 0);
+										}
+									});
+								$('.ui.buttons.Time.Data .button').on('click', function() {
+									$('.buttons.Time.Data .button').removeClass('active');
+									$(this).addClass('active');
+									var item_id = $('.dropdown.itemsTab').dropdown('get value');
+									var url=  "/pointdetail/get_datas?item_id="+item_id+"&time="+this.value;
+									tableData.ajax.url(url).load();
+								})
+							}
+						}
+					});
+			});
+
+			//获取监控点详情 概述 标签页数据
+			function tabSummary(point_id) {
+				$.ajax({
+					type: "get",
+					url: "/pointdetail?point_id="+point_id,
+					data: {},
+					dataType: "json",
+					success: function (result) {
+						if(result.success) {
+							var data=result.data;
+							//将第一个item赋值给弹出框
+							if(data.item_datas.length != 0) {
+								$("#pointDetailFirstItem").text(data.item_datas[0].item_id);
+							}
+							var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
+							if (data.state == "正常"){ var myColor = Color[0] }
+							if (data.state == "严重"){ var myColor = Color[1] }
+							if (data.state == "警告"){ var myColor = Color[2] }
+							$('#labelPoints').html("<div class='ui "+myColor+" massive top right attached ribbon label' data-id='"+data.point_id+"'>"+data.point_name+"</div>")
+							var str = "";
+							for(var i=0;i<data.item_datas.length;i++)
+							{
+								var mytrColor = '';
+								if (data.item_datas[i].with_triggers == true)
+								{
+									if (data.item_datas[i].state == "正常"){ mytrColor = Color[0] }
+									if (data.item_datas[i].state == "严重"){ mytrColor = Color[1] }
+									if (data.item_datas[i].state == "警告"){ mytrColor = Color[2] }
+								}
+								else {
+								}
+								str +=" <tr id='"+data.item_datas[i].item_id+"' class='"+mytrColor+" tr' ><td>"
+									+ data.item_datas[i].item_name +"</td><td>"
+									+ data.item_datas[i].value +"</td><td>"
+									+ data.item_datas[i].warning_point +"</td><td>"
+									+ data.item_datas[i].high_point +"</td><td>"
+									+ data.item_datas[i].last_time +"</td></tr> ";
+							}
+							$("#tableSummary").html(str);
+						}
+						else {
+							errorMsg_no_data("监控点 Tab");
+						}
+					},
+					error: function () {
+						errorMsg_no_connect("监控点 Tab");
+					}
+				});
+			}
+
+			//获取监控点详情 图形报告 标签页数据
+			function tabReport(point_id,days) {
+				var areaoption = {
+					title: {
+						text: ""
+					},
+					tooltip: {},
+					legend: {
+						data:[]
+					},
+					toolbox: {
+						show: true,
+						feature: {
+							magicType: {type: ['line', 'bar']},
+						}
+					},
+					xAxis: {
+						data: {}
+					},
+					yAxis: {
+					},
+					series: [{
+						name: '',
+						type: '',
+						areaStyle: {normal: {}},
+						data: {},
+						color: []
+					}]
+				};
+				var option = {
+					title: {
+						text: ""
+					},
+					tooltip: {},
+					legend: {
+						data:[]
+					},
+					toolbox: {
+						show: true,
+						feature: {
+							magicType: {type: ['line', 'bar','area']},
+						}
+					},
+					xAxis: {
+						data: {}
+					},
+					yAxis: {
+						max:''
+					},
+					series: [{
+						name: '',
+						type: '',
+						data: {},
+						color: [],
+						areaStyle:{}
+					}]
+				};
+				$.ajax({
+					type: "get",
+					url: "/pointdetail/get_graphs?point_id=" + point_id + "&time="+days,
+					dataType: "json",
+					success: function (result) {
+						if(result.success) {
+							var data = result.data;
+							var str = '';
+							$("#chartReport").empty();
+							for (var i=0; i<data.length; i++){
+								var id="pi"+data[i].item_id;
+								str ="<div class='column'><div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
+								$("#chartReport").append(str);
+								var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+								if (data[i].state == "正常"){ var myColor = Color[0] }
+								if (data[i].state == "严重"){ var myColor = Color[1] }
+								if (data[i].state == "警告"){ var myColor = Color[2] }
+								if(data[i].units == "%"){
+									option.yAxis.max = 100;
+								}else {
+									option.yAxis.max = null;
+								}
+								var title = "";
+								if(data[i].units == "") {
+									title = data[i].item_name;
+								}else {
+									title = data[i].item_name + "(" + data[i].units +")";
+								}
+								option.title.text = title;
+								option.xAxis.data = data[i].data_time;
+								option.series[0].name = data[i].graph_name;
+								option.series[0].type = data[i].graph_type;
+								option.series[0].data = data[i].data;
+								option.series[0].color[0] = myColor;
+								//面积图存
+								areaoption.title.text = title;
+								areaoption.xAxis.data = data[i].data_time;
+								areaoption.series[0].name = data[i].graph_name;
+								areaoption.series[0].type = data[i].graph_type;
+								areaoption.series[0].data = data[i].data;
+								areaoption.series[0].color[0] = myColor;
+								echarts.init(document.getElementById(id)).setOption(option);
+							}
+							$('.ui.buttons.Time.Report .button').on('click', function() {
+								$('.buttons.Time.Report .button').removeClass('active');
+								$(this).addClass('active');
+								tabReport($('.top.attached.label').attr("data-id") ,this.value);
+							})
+							$('.ui.buttons.Type.Report .button').on('click', function() {
+								$('.buttons.Type.Report .button').removeClass('active');
+								$(this).addClass('active');
+								option.series[0].type = this.value;
+								if (this.value == "area")
+								{
+									$("div#chartReport .chart-style").each(function(){
+										echarts.init(document.getElementById(this.id)).setOption(areaoption);
+									})
+								}else {
+									option.series[0].areaStyle = "";
+									$("div#chartReport .chart-style").each(function(){
+										echarts.init(document.getElementById(this.id)).setOption(option);
+									})
+								}
+							})
+						}
+						else {
+							errorMsg_no_data("监控点 Tab");
+						}
+					},
+					error: function () {
+						errorMsg_no_connect("监控点 Tab");
+					}
+				});
+			}
+
+            //加载业务图形报告
+            $(function(){
+                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+                hostAccordion(platform_id);
+            })
+            function hostAccordion(platform_id) {
+                $.ajax({
+                    type: "get",
+                    url: "/platformdetail/get_hosts?platform_id="+platform_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            gethostAccordion(data);
+                        }
+                        else {
+                            errorMsg_no_data("图形报告 Accordion");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("图形报告 Accordion");
+                    }
+                })
+            }
+            function gethostAccordion(data) {
+                var str = '';
+                var host_ids = new Array();
+                for(var i=0;i<data.length;i++)
+                {
+                    str +="<div class='title'><i class='dropdown icon'></i>"
+                        +data[i].host_name+"</div><div class='content' id='"+data[i].host_id+"'><p>监控项A图形</p></div>";
+                    host_ids.push(data[i].host_id);
+                }
+                $("#hostAccordion").html(str);
+                getitemsAccordion();
+            }
+            function getitemsAccordion(data) {
+                var str = '';
+                var host_ids = new Array();
+                for(var i=0;i<data.length;i++)
+                {
+                    str +="<div class='title'><i class='dropdown icon'></i>"
+                        +data[i].host_name+"</div><div class='content' id='"+data[i].host_id+"'><p>监控项A图形</p></div>";
+                    host_ids.push(data[i].host_id);
+                }
+                $("#hostAccordion").html(str);
+            }
+
+
+			//告警消息
+			function errorMsg_no_connect(title) {
+				Lobibox.notify("error", {
+				size: "normal",
+				rounded: false,
+				delayIndicator: true,
+				msg: "连接服务器失败！",
+				icon: "warning icon",
+				title: title
+				});
+			}
+			function errorMsg_no_data(title) {
+				Lobibox.notify("error", {
+				size: "normal",
+				rounded: false,
+				delayIndicator: true,
+				msg: "解析数据失败！",
+				icon: "warning icon",
+				title: title
+				});
+			}
+     </script>
+	</th:block>
+</th:block>
 </body>
 </html>
