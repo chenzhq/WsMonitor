@@ -365,6 +365,7 @@
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
@@ -866,27 +867,6 @@
                 }
             }
         });
-
-    function errorMsg_no_connect(title) {
-        Lobibox.notify("error", {
-            size: "normal",
-            rounded: false,
-            delayIndicator: true,
-            msg: "连接服务器失败！",
-            icon: "warning icon",
-            title: title
-        });
-    }
-    function errorMsg_no_data(title) {
-        Lobibox.notify("error", {
-            size: "normal",
-            rounded: false,
-            delayIndicator: true,
-            msg: "解析数据失败！",
-            icon: "warning icon",
-            title: title
-        });
-    }
 </script>
 </body>
 </html>

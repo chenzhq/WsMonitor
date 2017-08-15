@@ -254,6 +254,9 @@
 	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
     <th:block th:fragment="supple">
+		<th:block th:fragment="specialScript">
+			<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+		</th:block>
 		<script>
             //进入页面加载业务方块图
 			$(function() {
@@ -383,8 +386,6 @@
                     }
                 })
 			})
-
-
 		</script>
 	</th:block>
 </th:block>
