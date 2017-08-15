@@ -49,7 +49,7 @@
 				overflow:auto;
 				overflow-x:hidden
 			}
-			.chart-style{  height: 200px  }
+			.chart-style{  height: 200px;width: 360px  }
 			.gridly {
 				position: relative;
 				width: 100%;
@@ -395,7 +395,7 @@
 										<i class="dropdown icon"></i>
 										主机A
 									</div>
-									<div class="active content">
+									<div class="active content" id="test">
 										<p>监控项A图形</p>
 									</div>
 									<div class="title">
@@ -968,7 +968,7 @@
                 for(var i=0;i<data.length;i++)
                 {
                     str +="<div class='title'><i class='dropdown icon'></i>"
-                        +data[i].host_name+"</div><div class='content' id='g"+data[i].host_id+"'></div>";
+                        +data[i].host_name+"</div><div class='content' id='g"+data[i].host_id+"' class='gridly'></div>";
                     host_ids.push(data[i].host_id);
                 }
                 $("#hostAccordion").html(str);
@@ -990,10 +990,11 @@
 							//循环绘制图形
                             for(var i=0;i<graph_datas.length;i++) {
                                 //append 图形定位
-                                var str_graph ="<div class=' brick small'><div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
+                                var str_graph ="<div class='brick small'><div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
+                                var id = "g" + graph_datas[i].item_id;
                                 $("#g"+graph_datas[i].host_id).append(str_graph);
-								console.log($("#g"+graph_datas[i].item_id).attr("id"));
-                                var myChart = echarts.init(document.getElementById("g"+graph_datas[i].item_id));
+								//console.log($("#g"+graph_datas[i].item_id).attr("id"));
+                                var myChart = echarts.init(document.getElementById(id));
                                 var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
                                 if (graph_datas[i].state == "正常"){ var myColor = Color[0] }
                                 if (graph_datas[i].state == "严重"){ var myColor = Color[1] }
@@ -1125,7 +1126,6 @@
                                             }]
                                         };
                                 }
-                                console.log("option::"+option.xAxis.data);
                                 myChart.setOption(option);
 								console.log("绘图完毕");
 							}
