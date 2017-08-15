@@ -47,6 +47,15 @@
 				overflow:auto;
 				overflow-x:hidden
 			}
+			.chart-style{  height: 200px  }
+			.gridly {
+				position: relative;
+				width: 100%;
+			}
+			.brick.small {
+				height: 200px;
+				width: 360px;
+			}
 		</style>
 	</th:block>
 </head>
@@ -576,6 +585,7 @@
 
             //加载健康度和图形数据
 			function getPlatDates() {
+			    console.log("patform_id " + $("#platform_select").dropdown("get value"));
                 var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
                 //console.log("platform_id:::" + platform_id);
                 $.ajax({
@@ -929,10 +939,10 @@
 			}
 
             //加载业务图形报告
-            $(function(){
+            function hostAccordion() {
                 var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
                 $.ajax({
-					async:false,
+                    async:false,
                     type: "get",
                     url: "/platformdetail/get_hosts?platform_id="+platform_id,
                     dataType: "json",
@@ -979,9 +989,8 @@
                             for(var i=0;i<graph_datas.length;i++) {
                                 //append 图形定位
                                 var str_graph ="<div class=' brick small'><div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
-                                console.log($("#g"+graph_datas[i].host_id).attr("id"));
                                 $("#g"+graph_datas[i].host_id).append(str_graph);
-                                console.log($("#g"+graph_datas[i].item_id).attr("id"));
+								console.log($("#g"+graph_datas[i].item_id).attr("id"));
                                 var myChart = echarts.init(document.getElementById("g"+graph_datas[i].item_id));
                                 var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
                                 if (graph_datas[i].state == "正常"){ var myColor = Color[0] }
@@ -1111,19 +1120,6 @@
                                                 type: graph_datas[i].graph_type,
                                                 data: graph_datas[i].datas,
                                                 color: [myColor],
-												/*markLine: {
-												 lineStyle: {
-												 normal: {
-												 color: 'gray',
-												 }
-												 },
-												 data: [
-												 {name: '危险阈值',
-												 yAxis: 80},
-												 {name: '警告阈值',
-												 yAxis: 60},
-												 ]
-												 }*/
                                             }]
                                         };
                                 }
