@@ -16,7 +16,7 @@
 		<script src="https://gw.alipayobjects.com/as/g/datavis/g6/1.1.3/index.js"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 			.textOverflow{
 				overflow: hidden; /*自动隐藏文字*/
@@ -257,7 +257,7 @@
 													<h2 class="ui left aligned header">健康度</h2>
 													<div class="ui huge statistic" >
 														<div class="value">
-															<span id="health_value" class="counter">57.6</span> %
+															<span id="health_value" class="counter"></span> %
 														</div>
 													</div>
 												</div>
@@ -363,7 +363,7 @@
 									<div class="ui grid">
 										<div class="sixteen wide column">
 											<div class="ui segment">
-												<div id="c1"  class="sixteen wide column row3Height"></div>
+												<div id="tree_area"  class="sixteen wide column row3Height"></div>
 											</div>
 										</div>
 										<div class="sixteen wide column">
@@ -513,7 +513,6 @@
 			$(function() {
                 //初始化选项页
                 $('.secondary.pointing.menu .item').tab();
-
                 //初始化业务平台下拉框
                 selectPlaltform();
                 //加载健康度和图形数据
@@ -522,6 +521,20 @@
 				initWeightMenu();
                 //加载业务树
                 platformTree();
+                //加载业务图形报告
+                hostAccordion();
+
+                //业务平台下拉框onchange
+                $("#platform_select").change(function(){
+                    //加载健康度和图形数据
+                    getPlatDates();
+                    //加载分类菜单数据 诠释权值含义
+                    initWeightMenu();
+                    //加载业务树
+                    platformTree();
+                    //加载业务图形报告
+                    hostAccordion();
+				});
 
 
 			})
@@ -535,16 +548,18 @@
                     dataType: "json",
                     success: function (result) {
                         if(result.success) {
-                            var data=result.data;
+                            var platform_data=result.data;
                             var str = "";
-                            for(var i=0;i<data.length;i++)
+                            for(var i=0;i<platform_data.length;i++)
                             {
-                                str +=" <option value='"+data[i].platform_id+"'  >"+data[i].platform_name+"</option> ";
+                                str +=" <option value='"+platform_data[i].platform_id+"'  >"+platform_data[i].platform_name+"</option> ";
                             }
-                            //console.log("str:"+str);
+
+                            $("#platform_select").html("");
                             $("#platform_select").html(str);
-                            $("#platform_select").dropdown("set value", data[0].platform_id);
-                            $("#platform_select").dropdown("set text", data[0].platform_name);
+                            $("#platform_select").dropdown("set value", platform_data[0].platform_id);
+                            $("#platform_select").dropdown("set text", platform_data[0].platform_name);
+
                         }
                         else {
                             errorMsg_no_data("业务平台 Dropdown");
@@ -567,7 +582,8 @@
                     success: function (result) {
                         if(result.success) {
                             var platform_data = result.data;
-							$("#health_value").text(platform_data.health);
+                            var health = platform_data.health.toFixed(2);
+							$("#health_value").text(health);
                             //绘制图标数据
                             var platform_chart = echarts.init(document.getElementById("platform_graph"));
                             //配置option
@@ -822,8 +838,9 @@
 				})
 			}
 			function getplatformTree(data){
+				$("#tree_area").html("");
 				var tree = new G6.Tree({
-					id: 'c1',
+					id: 'tree_area',
 					width: 1000,
 					height: 240 ,
 					fitView: 'autoZoom',
@@ -1185,20 +1202,17 @@
 				});
 			}
 
-            //加载业务图形报告
-            $(function(){
+            function hostAccordion() {
                 var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
-                hostAccordion(platform_id);
-            })
-            function hostAccordion(platform_id) {
                 $.ajax({
+					async:false,
                     type: "get",
                     url: "/platformdetail/get_hosts?platform_id="+platform_id,
                     dataType: "json",
                     success: function (result) {
                         if(result.success) {
-                            var data = result.data;
-                            gethostAccordion(data);
+                            var host_data = result.data;
+                            gethostAccordion(host_data);
                         }
                         else {
                             errorMsg_no_data("图形报告 Accordion");
@@ -1215,22 +1229,191 @@
                 for(var i=0;i<data.length;i++)
                 {
                     str +="<div class='title'><i class='dropdown icon'></i>"
-                        +data[i].host_name+"</div><div class='content' id='"+data[i].host_id+"'><p>监控项A图形</p></div>";
+                        +data[i].host_name+"</div><div class='content' id='g"+data[i].host_id+"'></div>";
                     host_ids.push(data[i].host_id);
                 }
                 $("#hostAccordion").html(str);
-                getitemsAccordion();
+                //获取图形
+                getitemsAccordion(host_ids);
             }
-            function getitemsAccordion(data) {
-                var str = '';
-                var host_ids = new Array();
-                for(var i=0;i<data.length;i++)
-                {
-                    str +="<div class='title'><i class='dropdown icon'></i>"
-                        +data[i].host_name+"</div><div class='content' id='"+data[i].host_id+"'><p>监控项A图形</p></div>";
-                    host_ids.push(data[i].host_id);
-                }
-                $("#hostAccordion").html(str);
+            //获取并绘制业务平台图形数据
+            function getitemsAccordion(host_ids) {
+			    console.log("进入图形数据获取方法，host_ids:"+host_ids);
+                $.ajax({
+                    type: "post",
+                    url:"/platformdetail/get_graphs",
+					data:{"host_ids":host_ids},
+                    traditional: true,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var graph_datas = result.data;
+							//循环绘制图形
+                            for(var i=0;i<graph_datas.length;i++) {
+                                //append 图形定位
+                                var str_graph ="<div class=' brick small'><div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
+                                console.log($("#g"+graph_datas[i].host_id).attr("id"));
+                                $("#g"+graph_datas[i].host_id).append(str_graph);
+                                console.log($("#g"+graph_datas[i].item_id).attr("id"));
+                                var myChart = echarts.init(document.getElementById("g"+graph_datas[i].item_id));
+                                var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+                                if (graph_datas[i].state == "正常"){ var myColor = Color[0] }
+                                if (graph_datas[i].state == "严重"){ var myColor = Color[1] }
+                                if (graph_datas[i].state == "警告"){ var myColor = Color[2] }
+                                var colorGreen = [0.6, '#5FB878'];
+                                var colorYellow = [0.8, '#F7B824'];
+                                var colorRed = [1, '#FF5722'];
+                                if(graph_datas[i].units == "%"){
+                                    var ymax = 100;
+                                }else {
+                                    var ymax = null;
+                                }
+                                //图形值
+                                var title = "";
+                                if(graph_datas[i].units == "") {
+                                    title = graph_datas[i].graph_name;
+                                }else {
+                                    title =graph_datas[i].graph_name + "(" + graph_datas[i].units +")";
+                                }
+                                var option ;
+								console.log("图形类型： " + graph_datas[i].graph_type);
+                                switch (graph_datas[i].graph_type) {
+                                    case "gauge":
+                                        option = {
+                                            title: {
+                                                text: title},
+                                            tooltip : {
+                                                formatter: "{a} <br/>{b} : {c}%"
+                                            },
+                                            series: [
+                                                {
+                                                    name: graph_datas[i].item_name,
+                                                    type: 'gauge',
+                                                    min:0,
+                                                    max:100,
+                                                    splitNumber: 5,
+                                                    axisLine: {            // 坐标轴线
+                                                        lineStyle: {       // 属性lineStyle控制线条样式
+                                                            color: [colorGreen,colorYellow,colorRed],
+                                                            width: 13
+                                                        }
+                                                    },
+                                                    axisTick: {            // 坐标轴小标记
+                                                        length: 18,        // 属性length控制线长
+                                                        lineStyle: {       // 属性lineStyle控制线条样式
+                                                            color: 'auto'
+                                                        }
+                                                    },
+                                                    splitLine: {           // 分隔线
+                                                        length: 22,         // 属性length控制线长
+                                                        lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                                                            color: 'auto'
+                                                        }
+                                                    },
+                                                    pointer: {
+                                                        width:5
+                                                    },
+                                                    detail: {
+                                                        formatter:'{value}%',
+                                                        offsetCenter:[0,'60%'],
+                                                        textStyle: {
+                                                            fontWeight: 'bolder', fontSize: 16,color: '#333',
+                                                        }},
+                                                    data: [{value: graph_datas[i].datas[0], name: ''}]
+                                                }
+                                            ]
+                                        };
+                                        break;
+                                    case "area":
+                                        option = {
+                                            title: {
+                                                text: title
+                                            },
+                                            tooltip: {},
+                                            legend: {
+                                                data:[]
+                                            },
+                                            toolbox: {
+                                                show: true,
+                                                feature: {
+                                                    magicType: {type: ['line', 'bar']},
+                                                }
+                                            },
+                                            xAxis: {
+                                                data: graph_datas[i].data_time
+                                            },
+                                            yAxis: {
+                                                max: ymax,
+                                            },
+                                            series: [{
+                                                name: graph_datas[i].item_name,
+                                                type: 'line',
+                                                data: graph_datas[i].data,
+                                                areaStyle: {
+                                                    normal: { }
+                                                },
+                                                color: [myColor]
+                                            }]
+                                        };
+                                        break;
+                                    default:
+										console.log("进入到了line域：");
+                                        option = {
+                                            title: {
+                                                text: title
+                                            },
+                                            tooltip: {},
+                                            legend: {
+                                                data:[]
+                                            },
+                                            toolbox: {
+                                                show: true,
+                                                feature: {
+                                                    magicType: {type: ['line', 'bar']},
+                                                }
+                                            },
+                                            xAxis: {
+                                                data: graph_datas[i].data_time
+                                            },
+                                            yAxis: {
+                                                max: ymax,
+                                                splitLine:{show: false},
+                                            },
+                                            series: [{
+                                                name: graph_datas[i].item_name,
+                                                type: graph_datas[i].graph_type,
+                                                data: graph_datas[i].datas,
+                                                color: [myColor],
+												/*markLine: {
+												 lineStyle: {
+												 normal: {
+												 color: 'gray',
+												 }
+												 },
+												 data: [
+												 {name: '危险阈值',
+												 yAxis: 80},
+												 {name: '警告阈值',
+												 yAxis: 60},
+												 ]
+												 }*/
+                                            }]
+                                        };
+                                }
+                                console.log("option::"+option.xAxis.data);
+                                myChart.setOption(option);
+								console.log("绘图完毕");
+							}
+                        }
+                        else {
+                            errorMsg_no_data("图形报告 Accordion");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("图形报告 Accordion");
+                    }
+                });
+
             }
 
 

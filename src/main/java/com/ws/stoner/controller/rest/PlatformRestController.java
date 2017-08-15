@@ -6,10 +6,7 @@ import com.ws.stoner.service.GraphService;
 import com.ws.stoner.service.PlatformService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,8 +94,9 @@ public class PlatformRestController {
      * @return
      * @throws ServiceException
      */
+    @ResponseBody
     @RequestMapping(value = "platformdetail/get_graphs",method = RequestMethod.POST)
-    public String getPlatformGraphs(@RequestParam("host_ids") String[] hostIdsArr) throws ServiceException {
+    public String getPlatformGraphs(@RequestParam(value = "host_ids") String[] hostIdsArr) throws ServiceException {
         List<String> hostIds = Arrays.asList(hostIdsArr);
         List<PlatformGraphVO> platformGraphVOS = graphService.getPlatformGraphByhostIds(hostIds);
         return RestResultGenerator.genResult(platformGraphVOS, REST_UPDATE_SUCCESS).toString();

@@ -423,6 +423,86 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
+     * 创建集群
+     * @param platformId
+     * @param clusterId
+     * @param clusterName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean createCluster(String platformId, String clusterId, String clusterName) throws ServiceException {
+        PlatformTree platformTree = null;
+        try {
+            platformTree = mongoPlatformTreeDAO.findById(platformId);
+        } catch (DAOException e) {
+            logger.error("查询 platformTree 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        List<PlatformTree> clusters = platformTree.getChildren();
+        PlatformTree newCluster = new PlatformTree(
+                clusterId,
+                clusterName,
+                PlatformTreeTypeEnum.CLUSTER.getName()
+        );
+        clusters.add(newCluster);
+        platformTree.setChildren(clusters);
+        try {
+            mongoPlatformTreeDAO.save(platformTree);
+        } catch (DAOException e) {
+            logger.error("保存 platformTree 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 删除集群
+     * @param platformId
+     * @param clusterId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean deleteCluster(String platformId, String clusterId) throws ServiceException {
+        PlatformTree platformTree = null;
+        try {
+            platformTree = mongoPlatformTreeDAO.findById(platformId);
+        } catch (DAOException e) {
+            logger.error("根据 id 查询 platformTree 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        List<PlatformTree> clusters = platformTree.getChildren();
+        List<PlatformTree> hosts = null;
+        for(PlatformTree cluster : clusters) {
+            if(cluster.getId().equals(clusterId)) {
+                hosts = cluster.getChildren();
+                //删除集群
+                clusters.remove(cluster);
+                break;
+            }
+        }
+        if(hosts != null) {
+            //将集群下的所有设备移动到业务平台下
+            for(PlatformTree host : hosts) {
+                clusters.add(host);
+            }
+            platformTree.setChildren(clusters);
+        }
+        try {
+            mongoPlatformTreeDAO.save(platformTree);
+        } catch (DAOException e) {
+            logger.error("保存platformTree 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * 根据 hostIds 获取业务平台监控项图形数据 PlatformGraphVO list
      * @param hostIds
      * @return

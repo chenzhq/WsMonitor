@@ -69,6 +69,25 @@ public interface GraphService {
     List<PlatformTreeVO> initPlatTree() throws ServiceException;
 
     /**
+     * 创建集群
+     * @param platformId
+     * @param clusterId
+     * @param clusterName
+     * @return
+     * @throws ServiceException
+     */
+    boolean createCluster(String platformId,String clusterId,String clusterName) throws ServiceException;
+
+    /**
+     * 删除集群
+     * @param platformId
+     * @param clusterId
+     * @return
+     * @throws ServiceException
+     */
+    boolean deleteCluster(String platformId,String clusterId) throws ServiceException;
+
+    /**
      * 根据 hostIds 获取业务平台监控项图形数据 PlatformGraphVO list
      * @param hostIds
      * @return
