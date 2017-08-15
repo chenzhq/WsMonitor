@@ -761,6 +761,7 @@
                         if(result.success) {
                             var data = result.data;
                             getpointsMenu(data);
+                            itemsMenu(data[0].point_id);
                             $('#pointsMenu a').on('click',function () {
                                 $('#pointsMenu a').removeClass('active');
                                 $(this).addClass('active');
@@ -893,11 +894,6 @@
 				});
 			}
 
-//			//加载监控点按钮
-//			$(function(){
-//				var host_id = 1220;
-//				pointButton(host_id);
-//			})
 			function pointButton(host_id) {
 				$.ajax({
 					type: "get",
