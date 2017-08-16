@@ -14,7 +14,7 @@ import java.util.List;
 
 
 /**
- * Created by pc on 2017/7/13.
+ * Created by zkf on 2017/7/13.
  */
 @Repository
 public class MongoItemDAOImpl implements MongoItemDAO {
@@ -57,8 +57,8 @@ public class MongoItemDAOImpl implements MongoItemDAO {
      */
     @Override
     public void update(Item item) throws DAOException {
-        Query query = Query.query(Criteria.where("item_id").is(item.getItemId()));
-        Update update = Update.update("item_id",item.getItemId()).set("host_id",item.getHostId()).set("graph_name",item.getGraphName()).set("graph_type",item.getGraphType());
+        Query query = Query.query(Criteria.where("itemId").is(item.getItemId()));
+        Update update = Update.update("itemId",item.getItemId()).set("hostId",item.getHostId()).set("graphName",item.getGraphName()).set("graphType",item.getGraphType());
         mongoTemplate.updateFirst(query, update, Item.class);
 
     }

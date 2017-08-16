@@ -18,7 +18,7 @@
 		<script src="https://gw.alipayobjects.com/as/g/datavis/g6/1.1.3/index.js"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.textOverflow{
 				overflow: hidden; /*自动隐藏文字*/
@@ -401,8 +401,8 @@
 						</div>
 					</div>
 				</div>
-				<!--modal start-->
-				<div class="ui large modal">
+				<!--监控点详情弹出框-->
+				<div  th:replace="hostdetail::point_detail_page" class="ui large modal">
 					<span style="display:none" id="pointDetailArea"></span>
 					<span style="display:none" id="pointDetailFirstItem"></span>
 					<i class="close icon"></i>
@@ -492,6 +492,55 @@
 					</div>
 					<!--监控点modal end-->
 				</div>
+				<!--图形报告弹出框-->
+				<div  th:replace="hostdetail::graph_conf_page" class="ui small modal">
+					<i class="close icon"></i>
+					<div class="header">
+						添加监控项图形
+					</div>
+					<div class="image content" style="padding-left: 150px;">
+						<div class="ui left floated image">
+							请定义图形的标题：
+							<p></p>
+							<div class="required field">
+								<div class="ui small input graph_name">
+									<input type="text" placeholder="请输入标题">
+								</div>
+							</div>
+							<div id="chart_icon">
+								<i class="massive area chart icon"></i>
+							</div>
+						</div>
+						<div class="description" id="">
+							请选择图形的内容：
+							<p></p>
+							<form class="ui form">
+								<div class="required inline field" >
+									<label>监控点：</label>
+									<select class="ui dropdown points">
+										<option value="">请选择监控点</option>
+									</select>
+								</div>
+								<div class="required inline field">
+									<label>监控项：</label>
+									<select class="ui dropdown items">
+										<option value="">请选择监控项</option>
+									</select>
+								</div>
+								<div class="required inline field">
+									<label>图类别：</label>
+									<select class="ui dropdown type">
+										<option value="">请选择图类别</option>
+									</select>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="actions">
+						<div class="ui button deny">取消</div>
+						<div class="ui green button approve">确认</div>
+					</div>
+				</div>
 			</div>
 				<!--modal end-->
 				<!--Site Content-->
@@ -506,12 +555,12 @@
 	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
 	<th:block th:fragment="supple">
-		<th:block th:fragment="specialScript">
-			<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
-			<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
-			<script src="../static/js/pointModal.js" th:src="@{js/pointModal.js}"></script>
-			<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
-		</th:block>
+
+		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+		<script src="../static/js/pointModal.js" th:src="@{js/pointModal.js}"></script>
+		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+
 		<script type="text/javascript">
             //页面加载完加载基础数据
 			$(function() {
@@ -750,6 +799,7 @@
                         str +="<a class='item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+state+"</a> ";
                     }
                 }
+                $("#hostsMenu").html("");
                 $("#hostsMenu").html(str);
             }
 
@@ -843,6 +893,7 @@
                 }
                 $("#itemsTable").html(str);
             }
+
 			//加载业务树方法
 			function platformTree() {
                 var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
@@ -930,7 +981,7 @@
 					if(data[i].state == '严重'){
 						var state = 'ui reed top attached button';
 					}
-					str +="<div class='column'><div class='"+state+"' id='"+data[i].point_id+"' >"+data[i].point_name+"</div> </div>";
+					str +="<div class='column'><div class='"+state+"' id='p"+data[i].point_id+"' >"+data[i].point_name+"</div> </div>";
 				}
 				$("#pointButton").html(str);
 			}
@@ -962,8 +1013,17 @@
                 var host_ids = new Array();
                 for(var i=0;i<data.length;i++)
                 {
-                    str +="<div class='active title'><i class='dropdown icon'></i>"
-                        +data[i].host_name+"</div><div class='active content'><div class='ui three column grid'  id='g"+data[i].host_id+"'></div></div>";
+                    str += "<div class='active title'>" +
+						     "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right' onclick='add_graph(this.id)'>" +
+								"<i class='large icons' data-tooltip='添加图形报告' data-inverted=''> " +
+						    		"<i class='area chart icon'></i> " +
+									"<i class='inverted corner add icon'></i> " +
+                  				"</i>添加图形报告" +
+						     "</a>" +
+						     "<i class='dropdown icon'></i>"
+                              +data[i].host_name+"" +
+						    "</div>" +
+						    "<div class='active content'><div  id='g"+data[i].host_id+"' class='ui three column grid'></div></div>";
                     host_ids.push(data[i].host_id);
                 }
                 $("#hostAccordion").html(str);
@@ -985,7 +1045,19 @@
 							//循环绘制图形
                             for(var i=0;i<graph_datas.length;i++) {
                                 //append 图形定位
-                                var str_graph ="<div class='column'><div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
+                                var opr_str = "<a class='header item editItems' id='i" + graph_datas[i].item_id + "' onclick='edit_graph(this.id)' style='text-align:right !important'>" +
+                                    				"<i class='large icons' data-tooltip='编辑监控项' data-inverted=''>" +
+									                   "<i class='area chart icon'></i>" +
+                                 					   "<i class='inverted corner write icon'></i>" +
+                                                    "</i>" +
+                                                "</a>" +
+                                                "<a class='header item deleteItems' id='i" + graph_datas[i].item_id + "' onclick='delete_graph(this.id)' style='text-align:right !important'>" +
+													"<i class='large icons' data-tooltip='删除监控项' data-inverted=''>" +
+														"<i class='area chart icon'></i>" +
+														"<i class='inverted corner trash icon'></i>" +
+													"</i>" +
+                                    			"</a>";
+                                var str_graph ="<div class='column'>" + opr_str + "<div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
                                 var id = "g" + graph_datas[i].item_id;
                                 $("#g"+graph_datas[i].host_id).append(str_graph);
 								//console.log($("#g"+graph_datas[i].item_id).attr("id"));
@@ -1150,6 +1222,240 @@
                 });
 
             }
+
+            //点击添加业务图形报告
+            function add_graph(id) {
+			    console.log("进入添加图形报告方法");
+                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+                var item_id = '';
+                var graph_type = '';
+                var host_id = id.substring(1);
+                $('.ui.dropdown').dropdown();
+                //初始化
+                $(".dropdown.points select").dropdown('clear');
+                $(".small.input.graph_name input").val("");
+                $(".dropdown.items select").dropdown('clear');
+                $(".dropdown.type select").dropdown('clear');
+                dropdownPoints(host_id);
+                $('.dropdown.points')
+                    .dropdown({
+                        onChange: function(value, text, $selectedItem) {
+                            $(".dropdown.items select").dropdown('clear');
+                            dropdownItems(value);
+                        }
+                    });
+                $('.dropdown.items')
+                    .dropdown({
+                        onChange: function(value, text, $selectedItem) {
+                            item_id = value.split("_")[1];
+                            $(".dropdown.type select").dropdown('clear');
+                            dropdownType(value.split("_")[0]);
+                        }
+                    });
+                $('.dropdown.type')
+                    .dropdown({
+                        onChange: function(value, text, $selectedItem) {
+                            graph_type = value;
+                            $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                        }
+                    });
+                $('.small.modal').modal({
+                    closable  : false,
+                    onApprove: function () {
+                        //alert("提交后校验item:" + $("#i"+ item_id).length);
+
+                        if(item_id == "") {
+                            alert("必填项--监控项");
+                            return false;
+                        }else if($('.input.graph_name input').val() == "") {
+                            alert("必填项--名称");
+                            return false;
+                        }else if(graph_type == "") {
+                            alert("必填项--图形类型");
+                            return false;
+                        }else if($("#i"+ item_id).length > 0) {
+                            //校验判断 页面上是否已经存在相同监控项的图形了
+                            alert("已存在图形监控项。。。");
+                            return false;
+                        }else {
+                            $('.button.approve').addClass('loading');
+                            var dataInfo = {
+                                graphName: $('.input.graph_name input').val(),
+                                graphType: graph_type,
+                                hostId: host_id,
+                                itemId: item_id,
+								platformId:platform_id
+                            };
+							console.log("graph_name:"+$('.input.graph_name input').val()+"graph_type:"+graph_type+"host_id:"+host_id+"item_id:"+item_id);
+                            $.ajax({
+                                type: "post",
+                                url: "/platformdetail/save_graph",
+                                data: JSON.stringify(dataInfo),
+                                dataType: "json",
+                                contentType : 'application/json',
+                                success: function (result) {
+                                    if(result.success) {
+                                        console.log(result);
+                                        $('.button.approve').removeClass('loading');
+                                        hostAccordion();
+                                        $('.small.modal').modal('hide');
+                                    } else {
+                                        $('.button.approve').removeClass('loading')
+                                        $('.small.modal').modal('hide')
+                                        errorMsg_no_data("监控项 Modal");
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("监控项 Modal");
+                                }
+                            });
+
+                        }
+                    }
+                }).modal('show')
+			}
+
+            //点击修改图形 function
+            function edit_graph(id) {
+                //console.log("ITEMID:" + id);
+                var item_id = id.substring(1);
+                var item_name = "";
+                var point_id = "";
+                var point_name = "";
+                var graph_name = "";
+                var graph_type = "";
+                var graph_value = "";
+                var value_type = "";
+                $.ajax({
+                    type: "get",
+                    async:false,
+                    url: "/platformdetail/get_update?item_id="+item_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var graph_data = result.data;
+                            item_name = graph_data.item_name;
+                            point_id = graph_data.point_id;
+                            point_name = graph_data.point_name;
+                            graph_name = graph_data.graph_name;
+                            graph_type = graph_data.graph_type;
+                            graph_value = graph_data.graph_value;
+                            value_type = graph_data.value_type;
+                        }
+                        else {
+                            errorMsg_no_data("监控项 Chart");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控项 Chart");
+                    }
+                });
+                console.log(
+                    "   item_id:" + item_id +
+                    "   item_name:" + item_name +
+                    "   point_id:" + point_id +
+                    "   point_name:" + point_name +
+                    "   graph_name:" + graph_name +
+                    "   graph_type:" + graph_type +
+                    "   graph_value:" + graph_value +
+                    "   value_type:" + value_type
+                );
+                //$('.ui.dropdown').dropdown();
+                dropdownType(value_type);
+                //初始化
+                $(".small.input.graph_name input").val(graph_name);
+                $(".dropdown.points select").dropdown("set value", point_id);
+                $(".dropdown.points select").dropdown("set text", point_name);
+                $(".dropdown.items select").dropdown("set value", value_type + "_" + item_id);
+                $(".dropdown.items select").dropdown("set text", item_name);
+                $(".dropdown.type select").dropdown("set value", graph_type);
+                $(".dropdown.type select").dropdown("set text", graph_value);
+
+                $(".dropdown.points select").dropdown("remove active");
+                $(".dropdown.items select").dropdown("remove active");
+                $(".dropdown.type select")
+                    .dropdown({
+                        onChange: function(value, text, $selectedItem) {
+                            graph_type = value;
+                            $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                        }
+                    });
+                $('.small.modal').modal({
+                    closable  : false,
+                    onApprove: function () {
+                        //alert("提交后校验item:" + $("#i"+ item_id).length);
+
+                        if(item_id == "") {
+                            alert("必填项--监控项");
+                            return false;
+                        }else if($('.input.graph_name input').val() == "") {
+                            alert("必填项--名称");
+                            return false;
+                        }else if(graph_type == "") {
+                            alert("必填项--图形类型");
+                            return false;
+                        }else {
+                            $('.button.approve').addClass('loading');
+                            var dataInfo = {
+                                graphName: $('.input.graph_name input').val(),
+                                graphType: graph_type,
+                                itemId: item_id
+                            };
+							/*console.log("graph_name:"+$('.input.graph_name input').val()+"graph_type:"+graph_type+"host_id:"+$('#host_id').text()+"item_id:"+item_id);*/
+                            $.ajax({
+                                type: "post",
+                                url: "/platformdetail/update_graph",
+                                data: JSON.stringify(dataInfo),
+                                dataType: "json",
+                                contentType : 'application/json',
+                                success: function (result) {
+                                    if(result.success) {
+                                        $('.button.approve').removeClass('loading');
+                                        hostAccordion();
+                                        $('.small.modal').modal('hide');
+                                    } else {
+                                        $('.button.approve').removeClass('loading');
+                                        $('.small.modal').modal('hide');
+                                        errorMsg_no_data("监控项 Modal");
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("监控项 Modal");
+                                }
+                            });
+
+                        }
+                    }
+                }).modal('show');
+            }
+
+            //点击删除图形 function
+            function delete_graph(id) {
+                if (!confirm("确定删除吗？")){
+                    return false;
+                }
+                //console.log(id);
+                var item_id = id.substring(1);
+                $.ajax({
+                    type: "get",
+                    url: "/platformdetail/del_graph?item_id="+item_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            alert("删除成功~~~");
+                            hostAccordion();
+                        }
+                        else {
+                            alert("删除失败！！！");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控项 Chart");
+                    }
+                });
+            }
+
+
      </script>
 	</th:block>
 </th:block>

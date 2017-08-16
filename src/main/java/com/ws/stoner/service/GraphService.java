@@ -1,6 +1,7 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.view.HostDetailItemGraphVO;
 import com.ws.stoner.model.view.HostDetailItemVO;
@@ -93,6 +94,45 @@ public interface GraphService {
      * @return
      * @throws ServiceException
      */
-    List<PlatformGraphVO> getPlatformGraphByhostIds(List<String> hostIds) throws ServiceException;
+    List<PlatformGraphVO> getPlatformGraphsByhostIds(List<String> hostIds) throws ServiceException;
 
+    /**
+     * 根据 platformId 获取业务平台监控项图形数据 platformGraphVO list
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    List<PlatformGraphVO> getPlatformGraphsByPlatformId(String platformId) throws ServiceException;
+
+    /**
+     * 保存业务图形报告
+     * @param platformGraph
+     * @return
+     * @throws ServiceException
+     */
+    boolean savePlatformGraph(PlatformGraph platformGraph) throws ServiceException;
+
+    /**
+     * 根据 itemId 获取指定 HostDetailItemGraphVO 配置
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    HostDetailItemGraphVO getUpdatePlatformGraph(String itemId) throws ServiceException;
+
+    /**
+     * 更新 业务图形报告
+     * @param platformGraph
+     * @return
+     * @throws ServiceException
+     */
+    boolean updatePlatformGraph(PlatformGraph platformGraph) throws ServiceException;
+
+    /**
+     * 删除 业务图形报告
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    boolean deletePlatformGraph(String itemId) throws ServiceException;
 }

@@ -101,7 +101,7 @@ public void testGetGraphItemByPointId() throws Exception {
     public void testgetPlatformGraphByhostIds() throws Exception {
         List<String> hostIds = new ArrayList<>();
         hostIds.add("10205");
-        System.out.println(graphService.getPlatformGraphByhostIds(hostIds));
+        System.out.println(graphService.getPlatformGraphsByhostIds(hostIds));
     }
 
 

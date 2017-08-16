@@ -418,7 +418,7 @@
 											<div class="ui segment">
 												<div class="ui five column grid fixed-height" id="pointButton">
 													<div class="column" th:each="pointVO : ${pointVOS}">
-														<div class="ui red top attached button" id="0101" th:class="${pointVO.state}=='正常' ? 'ui green top attached button textOverflow' : (${pointVO.state}=='警告' ? 'ui yellow top attached button textOverflow' : 'ui red top attached button textOverflow')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
+														<div class="ui red top attached button" id="" th:class="${pointVO.state}=='正常' ? 'ui green top attached button textOverflow' : (${pointVO.state}=='警告' ? 'ui yellow top attached button textOverflow' : 'ui red top attached button textOverflow')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
 													</div>
 													<div class="column" th:remove="all">
 														<div class="ui red top attached button" id="0114" >CPU</div>
@@ -470,14 +470,15 @@
 					</div>
 				</div>
 
-					<!--modal-->
-					<div class="ui large modal">
+					<!--监控点详情页-->
+
+					<div th:fragment="point_detail_page" class="ui large modal">
 						<span style="display:none" id="pointDetailArea"></span>
 						<span style="display:none" id="pointDetailFirstItem"></span>
 						<i class="close icon"></i>
 						<!--监控点modal start-->
 						<div class="content">
-                        <div class="ui grid points">
+						  <div class="ui grid points">
                             <div id="labelPoints"></div>
                             <div class="sixteen wide column">
 							<div class="ui pointing secondary menu tab_points">
@@ -559,15 +560,15 @@
 
 								</div>
 							</div>
-						</div>
-						</div>
+						  </div>
+						  </div>
                         </div>
 						<!--监控点modal end-->
-						</div>
+
 					</div>
 
 					<!--modal-->
-					<div class="ui small modal">
+					<div th:fragment="graph_conf_page" class="ui small modal">
 						<i class="close icon"></i>
 						<div class="header">
 							添加监控项图形
@@ -621,6 +622,7 @@
 		<!--maincontent-->
 	</div>
 </div>
+</div>
 <th:block th:replace="layout::bottom_script(~{::specialScript})">
 	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
 	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
@@ -635,96 +637,171 @@
 </th:block>
 <script type="text/javascript">
 
-    //点击添加监控项
-    $('a.addItems').on('click', function(e) {
-        e.preventDefault();
-        var graph_type = '';
-        var item_id = '';
-        var graph_type = '';
-        var host_id = $('#host_id').text();
+	//页面加载完之后加载js
+	$(function(){
+		//加载监控项的图形
+        loadHostGraph();
+
+        //点击添加监控项
+        $('a.addItems').on('click', function(e) {
+            e.preventDefault();
+            var graph_type = '';
+            var item_id = '';
+            var graph_type = '';
+            var host_id = $('#host_id').text();
 //        console.log("监控点值：" + $(".dropdown.points select").dropdown('get value'));
-        $('.ui.dropdown').dropdown();
-        //初始化
-        $(".dropdown.points select").dropdown('clear');
-        $(".small.input.graph_name input").val("");
-        $(".dropdown.items select").dropdown('clear');
-        $(".dropdown.type select").dropdown('clear');
-        dropdownPoints(host_id);
-        $('.dropdown.points')
-            .dropdown({
-                onChange: function(value, text, $selectedItem) {
-                    $(".dropdown.items select").dropdown('clear');
-                    dropdownItems(value);
-                }
-            });
-        $('.dropdown.items')
-            .dropdown({
-                onChange: function(value, text, $selectedItem) {
-                    item_id = value.split("_")[1];
-                    $(".dropdown.type select").dropdown('clear');
-                    dropdownType(value.split("_")[0]);
-                }
-            });
-        $('.dropdown.type')
-            .dropdown({
-                onChange: function(value, text, $selectedItem) {
-                    graph_type = value;
-					$("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
-                }
-            });
-		$('.small.modal').modal({
-			closable  : false,
-			onApprove: function () {
-			    //alert("提交后校验item:" + $("#i"+ item_id).length);
+            $('.ui.dropdown').dropdown();
+            //初始化
+            $(".dropdown.points select").dropdown('clear');
+            $(".small.input.graph_name input").val("");
+            $(".dropdown.items select").dropdown('clear');
+            $(".dropdown.type select").dropdown('clear');
+            dropdownPoints(host_id);
+            $('.dropdown.points')
+                .dropdown({
+                    onChange: function(value, text, $selectedItem) {
+                        $(".dropdown.items select").dropdown('clear');
+                        dropdownItems(value);
+                    }
+                });
+            $('.dropdown.items')
+                .dropdown({
+                    onChange: function(value, text, $selectedItem) {
+                        item_id = value.split("_")[1];
+                        $(".dropdown.type select").dropdown('clear');
+                        dropdownType(value.split("_")[0]);
+                    }
+                });
+            $('.dropdown.type')
+                .dropdown({
+                    onChange: function(value, text, $selectedItem) {
+                        graph_type = value;
+                        $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                    }
+                });
+            $('.small.modal').modal({
+                closable  : false,
+                onApprove: function () {
+                    //alert("提交后校验item:" + $("#i"+ item_id).length);
 
-				if(item_id == "") {
-					alert("必填项--监控项");
-                    return false;
-				}else if($('.input.graph_name input').val() == "") {
-                    alert("必填项--名称");
-                    return false;
-				}else if(graph_type == "") {
-                    alert("必填项--图形类型");
-                    return false;
-                }else if($("#i"+ item_id).length > 0) {
-                    //校验判断 页面上是否已经存在相同监控项的图形了
-                    alert("已存在图形监控项。。。");
-                    return false;
-				}else {
-                    $('.button.approve').addClass('loading');
-                    var dataInfo = {
-                        graphName: $('.input.graph_name input').val(),
-                        graphType: graph_type,
-                        hostId: $('#host_id').text(),
-                        itemId: item_id
-                    };
-					/*console.log("graph_name:"+$('.input.graph_name input').val()+"graph_type:"+graph_type+"host_id:"+$('#host_id').text()+"item_id:"+item_id);*/
-                    $.ajax({
-                        type: "post",
-                        url: "/hostgraphs/save_graph",
-                        data: JSON.stringify(dataInfo),
-                        dataType: "json",
-                        contentType : 'application/json',
-                        success: function (result) {
-                            if(result.success) {
-                                $('.button.approve').removeClass('loading')
-                                hostgraphs(result);
-                                $('.small.modal').modal('hide');
-                            } else {
-                                $('.button.approve').removeClass('loading')
-                                $('.small.modal').modal('hide')
-                                errorMsg_no_data("监控项 Modal");
+                    if(item_id == "") {
+                        alert("必填项--监控项");
+                        return false;
+                    }else if($('.input.graph_name input').val() == "") {
+                        alert("必填项--名称");
+                        return false;
+                    }else if(graph_type == "") {
+                        alert("必填项--图形类型");
+                        return false;
+                    }else if($("#i"+ item_id).length > 0) {
+                        //校验判断 页面上是否已经存在相同监控项的图形了
+                        alert("已存在图形监控项。。。");
+                        return false;
+                    }else {
+                        $('.button.approve').addClass('loading');
+                        var dataInfo = {
+                            graphName: $('.input.graph_name input').val(),
+                            graphType: graph_type,
+                            hostId: $('#host_id').text(),
+                            itemId: item_id
+                        };
+						/*console.log("graph_name:"+$('.input.graph_name input').val()+"graph_type:"+graph_type+"host_id:"+$('#host_id').text()+"item_id:"+item_id);*/
+                        $.ajax({
+                            type: "post",
+                            url: "/hostgraphs/save_graph",
+                            data: JSON.stringify(dataInfo),
+                            dataType: "json",
+                            contentType : 'application/json',
+                            success: function (result) {
+                                if(result.success) {
+                                    $('.button.approve').removeClass('loading')
+                                    hostgraphs(result);
+                                    $('.small.modal').modal('hide');
+                                } else {
+                                    $('.button.approve').removeClass('loading')
+                                    $('.small.modal').modal('hide')
+                                    errorMsg_no_data("监控项 Modal");
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("监控项 Modal");
                             }
-                        },
-                        error: function () {
-                            errorMsg_no_connect("监控项 Modal");
-                        }
-                    });
+                        });
 
-				}
-			}
-		}).modal('show')
-    });
+                    }
+                }
+            }).modal('show')
+        });
+
+        //加载监控点悬浮框
+        $('#pointButton .button').hover(
+            function() {
+                var point_id=this.id.substring(1);
+                $.ajax({
+                    type: "get",
+                    url: "/brief/point?point_id="+point_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var Color = ['red', 'yellow', 'green'];
+                            var data = result.data;
+                            var item_datas=data.item_datas;
+                            var str_item_datas = '';
+                            var myColor = '';
+                            for(var i=0; i<item_datas.length; i++){
+                                if (item_datas[i].with_triggers == true) {
+                                    if (item_datas[i].state == "严重") {
+                                        myColor = Color[0]
+                                    }
+                                    if (item_datas[i].state == "警告") {
+                                        myColor = Color[1]
+                                    }
+                                    if (item_datas[i].state == "正常") {
+                                        myColor = Color[2]
+                                    }
+                                }else {
+                                    myColor = ''
+                                }
+                                if(strlen(item_datas[i].item_name) > 16)
+                                {
+                                    var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
+                                }else {
+                                    var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
+                                }
+                                if(strlen(item_datas[i].value) > 16)
+                                {
+                                    var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+                                }else {
+                                    var item_value= "<td><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+                                }
+                                str_item_datas +="<tr>"+item_name+item_value+"</tr>";
+                            }
+
+                            if (data.state == "正常"){ myColor = Color[2] }
+                            if (data.state == "严重"){ myColor = Color[0] }
+                            if (data.state == "警告"){ myColor = Color[1] }
+                            $("#point_name").html("名称："+data.point_name);
+                            $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                            $("#item_datas").html(str_item_datas);
+                        } else {
+                            errorMsg_no_data("监控项 Button");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控点 Button");
+                    }
+                })
+            }).popup({
+            popup: '.special.popup',
+            inline: true,
+            hoverable  : true,
+            delay: {
+                show: 800,
+                hide: 300
+            }
+        });
+
+	})
 
     //修改图形 function
     function editGraph(id) {
@@ -868,79 +945,10 @@
         });
     }
 
-
-    //加载监控点悬浮框
-    $('#pointButton .button').hover(
-        function() {
-            var point_id=this.id.substring(1);
-            $.ajax({
-                type: "get",
-                url: "/brief/point?point_id="+point_id,
-                dataType: "json",
-                success: function (result) {
-                    if(result.success) {
-                        var Color = ['red', 'yellow', 'green'];
-                        var data = result.data;
-                        var item_datas=data.item_datas;
-                        var str_item_datas = '';
-                        var myColor = '';
-                        for(var i=0; i<item_datas.length; i++){
-                            if (item_datas[i].with_triggers == true) {
-                                if (item_datas[i].state == "严重") {
-                                    myColor = Color[0]
-                                }
-                                if (item_datas[i].state == "警告") {
-                                    myColor = Color[1]
-                                }
-                                if (item_datas[i].state == "正常") {
-                                    myColor = Color[2]
-                                }
-                            }else {
-                                myColor = ''
-                            }
-                            if(strlen(item_datas[i].item_name) > 16)
-							{
-                                var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
-							}else {
-                                var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
-							}
-                            if(strlen(item_datas[i].value) > 16)
-                            {
-                                var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
-                            }else {
-                                var item_value= "<td><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
-							}
-                            str_item_datas +="<tr>"+item_name+item_value+"</tr>";
-                        }
-
-                        if (data.state == "正常"){ myColor = Color[2] }
-                        if (data.state == "严重"){ myColor = Color[0] }
-                        if (data.state == "警告"){ myColor = Color[1] }
-                        $("#point_name").html("名称："+data.point_name);
-                        $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
-                        $("#item_datas").html(str_item_datas);
-                    } else {
-                        errorMsg_no_data("监控项 Button");
-                    }
-                },
-                error: function () {
-                    errorMsg_no_connect("监控点 Button");
-                }
-            })
-        }).popup({
-        popup: '.special.popup',
-		inline: true,
-        hoverable  : true,
-        delay: {
-            show: 800,
-            hide: 300
-        }
-    });
-
 	//页面加载完后加载监控项的图形
-    $(function(){
+	function loadHostGraph() {
         var host_id = $("#host_id").text();
-       /* console.log("加载监控项图形的参数:host_id = " + host_id);*/
+		/* console.log("加载监控项图形的参数:host_id = " + host_id);*/
         $.ajax({
             type: "get",
             url: "/hostgraphs?host_id="+host_id,
@@ -957,101 +965,7 @@
                 errorMsg_no_connect("监控项 Chart");
             }
         })
-	})
-
-
-	//设备详情中 添加图形功能 加载 监控点 下拉框数据
-    function dropdownPoints(host_id){
-        $.ajax({
-            type: "get",
-            url: "/hostgraphs/get_points",
-            data: {
-                host_id: host_id
-            },
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data=result.data;
-                    var str = "";
-                    for(var i=0;i<data.length;i++)
-                    {
-                        str +=" <option value='"+data[i].point_id+"'  >"+data[i].point_name+"</option> ";
-                    }
-                    $(".dropdown.points option").html(str);
-                }
-                else {
-                    errorMsg_no_data("监控点 Dropdown");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("监控点 Dropdown");
-            }
-        });
-    };
-
-    //设备详情中 添加图形功能 加载 监控项 下拉框数据
-    function dropdownItems(value){
-        $.ajax({
-            type: "get",
-            url: "/hostgraphs/get_items",
-            data: {
-                point_id: value
-            },
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data=result.data;
-                    var str = "";
-                    for(var i=0;i<data.length;i++)
-                    {
-                        if(data[i].value_type == "0" || data[i].value_type == "3" || data[i].value_type == "%") {
-                            str +=" <option value='"+data[i].value_type+"_"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
-						}else {
-                            str +=" <option disabled='disabled' value='"+data[i].value_type+"_"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
-						}
-
-                    }
-                    $(".dropdown.items option").html(str);
-                }
-                else {
-                    errorMsg_no_data("监控项 Dropdown");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("监控项 Dropdown");
-            }
-        });
-    };
-
-    //设备详情中 添加图形功能 加载 图形类型 下拉框数据
-    function dropdownType(value){
-        $.ajax({
-            type: "get",
-            url: "/hostgraphs/get_graphs",
-            data: {
-                value_type: value
-            },
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var data=result.data;
-                    var str = "";
-                    for(var i=0;i<data.length;i++)
-                    {
-                        str +=" <option value='"+data[i].graph_type+"' >"+data[i].graph_name+"</option> ";
-                    }
-                    $(".dropdown.type option").html(str);
-                }
-                else {
-                    errorMsg_no_data("图表类型 Dropdown");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("图表类型 Dropdown");
-            }
-        });
-    };
-
+	}
 
 	//绘制设备详情中 监控项图形
     function hostgraphs(result) {
@@ -1075,7 +989,7 @@
 										"<i class='area chart icon'></i>" +
 										"<i class='inverted corner trash icon'></i>" +
                 					"</i>" +
-                				"</a>"
+                				"</a>";
                 str_true = "<div class=' brick small'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div>";
                 $("#flag_true_content").append(str_true);
             }
@@ -1228,6 +1142,7 @@
             columns: 18
         });
     }
+
 </script>
 </body>
 </html>

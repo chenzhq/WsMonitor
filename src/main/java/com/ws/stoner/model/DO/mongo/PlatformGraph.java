@@ -16,10 +16,23 @@ public class PlatformGraph {
     private String itemId;
     @Field("host_id")
     private String hostId;
+    @Field("platform_id")
+    private String platformId;
     @Field("graph_name")
     private String graphName;
     @Field("graph_type")
     private String graphType;
+
+    public PlatformGraph() {
+    }
+
+    public PlatformGraph(String itemId, String hostId, String platformId, String graphName, String graphType) {
+        this.itemId = itemId;
+        this.hostId = hostId;
+        this.platformId = platformId;
+        this.graphName = graphName;
+        this.graphType = graphType;
+    }
 
     public String getId() {
         return id;
@@ -48,6 +61,15 @@ public class PlatformGraph {
         return this;
     }
 
+    public String getPlatformId() {
+        return platformId;
+    }
+
+    public PlatformGraph setPlatformId(String platformId) {
+        this.platformId = platformId;
+        return this;
+    }
+
     public String getGraphName() {
         return graphName;
     }
@@ -72,6 +94,7 @@ public class PlatformGraph {
                 "id='" + id + '\'' +
                 ", itemId='" + itemId + '\'' +
                 ", hostId='" + hostId + '\'' +
+                ", platformId='" + platformId + '\'' +
                 ", graphName='" + graphName + '\'' +
                 ", graphType='" + graphType + '\'' +
                 '}';

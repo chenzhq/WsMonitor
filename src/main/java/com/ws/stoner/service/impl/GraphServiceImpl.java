@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * Created by pc on 2017/7/18.
+ * Created by zkf on 2017/7/18.
  */
 @Service
 public class GraphServiceImpl implements GraphService {
@@ -503,13 +503,63 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
+     * 根据 platformId 获取业务平台监控项图形数据 platformGraphVO list
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<PlatformGraphVO> getPlatformGraphsByPlatformId(String platformId) throws ServiceException {
+        List<PlatformGraph> platformGraphs = null;
+        try {
+            platformGraphs = mongoPlatformGraphDAO.findGraphsByPlatformId(platformId);
+        } catch (DAOException e) {
+            logger.error("根据 platformId 获取 platformGraphs 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        List<String> hostIds = new ArrayList<>();
+        for(PlatformGraph platformGraph : platformGraphs) {
+            hostIds.add(platformGraph.getHostId());
+        }
+        List<BriefItemDTO> itemDTOS = itemService.getValueItemsByHostIds(hostIds);
+        List<PlatformGraphVO> platformGraphVOS = new ArrayList<>();
+        for(BriefItemDTO itemDTO : itemDTOS) {
+            for(PlatformGraph platformGraph : platformGraphs) {
+                if(platformGraph.getItemId().equals(itemDTO.getItemId())) {
+                    //组装数据
+                    PlatformGraphVO platformGraphVO = new PlatformGraphVO();
+                    platformGraphVO.setItemId(platformGraph.getItemId());
+                    platformGraphVO.setItemName(itemDTO.getName());
+                    platformGraphVO.setHostId(platformGraph.getHostId());
+                    platformGraphVO.setPlatformId(platformGraph.getPlatformId());
+                    platformGraphVO.setGraphName(platformGraph.getGraphName());
+                    platformGraphVO.setGraphType(platformGraph.getGraphType());
+                    platformGraphVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
+                    //data , dataTime, units
+                    List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemDTO.getItemId(),itemDTO.getValueType(),1);
+                    //降序 转 升序 时间轴
+                    Collections.reverse(historyDTOS);
+                    //将历史线性数据转换成图形对应数据
+                    Map<String ,Object> historyDatasMap = transformHistoryDatas(historyDTOS,itemDTO.getUnits());
+                    platformGraphVO.setDatas((Float[])historyDatasMap.get("datas"));
+                    platformGraphVO.setDataTime((String[])historyDatasMap.get("dataTime"));
+                    platformGraphVO.setUnits((String)historyDatasMap.get("units"));
+                    platformGraphVOS.add(platformGraphVO);
+                }
+            }
+        }
+
+        return platformGraphVOS;
+    }
+
+    /**
      * 根据 hostIds 获取业务平台监控项图形数据 PlatformGraphVO list
      * @param hostIds
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<PlatformGraphVO> getPlatformGraphByhostIds(List<String> hostIds) throws ServiceException {
+    public List<PlatformGraphVO> getPlatformGraphsByhostIds(List<String> hostIds) throws ServiceException {
         List<PlatformGraph> platformGraphs = null;
         try {
             platformGraphs = mongoPlatformGraphDAO.findGraphsByHostIds(hostIds);
@@ -527,6 +577,7 @@ public class GraphServiceImpl implements GraphService {
                    platformGraphVO.setItemId(platformGraph.getItemId());
                    platformGraphVO.setItemName(itemDTO.getName());
                    platformGraphVO.setHostId(platformGraph.getHostId());
+                   platformGraphVO.setPlatformId(platformGraph.getPlatformId());
                    platformGraphVO.setGraphName(platformGraph.getGraphName());
                    platformGraphVO.setGraphType(platformGraph.getGraphType());
                    platformGraphVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
@@ -545,6 +596,95 @@ public class GraphServiceImpl implements GraphService {
         }
 
         return platformGraphVOS;
+    }
+
+    /**
+     * 保存业务图形报告
+     * @param platformGraph
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean savePlatformGraph(PlatformGraph platformGraph) throws ServiceException {
+        try {
+            mongoPlatformGraphDAO.save(platformGraph);
+        } catch (DAOException e) {
+            logger.error("保存 platformGraphs 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 根据 itemId 获取指定 HostDetailItemGraphVO 配置
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public HostDetailItemGraphVO getUpdatePlatformGraph(String itemId) throws ServiceException {
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(itemId);
+        PlatformGraph platformGraph = null;
+        try {
+            platformGraph = mongoPlatformGraphDAO.findGraphByItemId(itemId);
+        } catch (DAOException e) {
+            logger.error("根据 itemId 获取 platformGraphs 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        BriefItemDTO itemDTO = itemService.getItemsByItemIds(itemIds).get(0);
+        HostDetailItemGraphVO itemGraphVO = new HostDetailItemGraphVO();
+        itemGraphVO.setItemId(platformGraph.getItemId());
+        itemGraphVO.setItemName(itemDTO.getName());
+        itemGraphVO.setGraphName(platformGraph.getGraphName());
+        itemGraphVO.setGraphType(platformGraph.getGraphType());
+        itemGraphVO.setPointId(itemDTO.getPoints().get(0).getPointId());
+        itemGraphVO.setPointName(itemDTO.getPoints().get(0).getName());
+        itemGraphVO.setGraphValue(GraphTypeEnum.getName(platformGraph.getGraphType()));
+        //valueType
+        if("%".equals(itemDTO.getUnits())) {
+            itemGraphVO.setValueType(itemDTO.getUnits());
+        }else {
+            itemGraphVO.setValueType(itemDTO.getValueType());
+        }
+        return itemGraphVO;
+    }
+
+    /**
+     * 更新 业务图形报告
+     * @param platformGraph
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean updatePlatformGraph(PlatformGraph platformGraph) throws ServiceException {
+        try {
+            mongoPlatformGraphDAO.update(platformGraph);
+        } catch (DAOException e) {
+            logger.error("更新 platformGraphs 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 删除 业务图形报告
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean deletePlatformGraph(String itemId) throws ServiceException {
+        try {
+            mongoPlatformGraphDAO.delete(itemId);
+        } catch (DAOException e) {
+            logger.error("删除 platformGraphs 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**

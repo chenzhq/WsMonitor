@@ -8,6 +8,8 @@ import java.util.Arrays;
  * Created by zkf on 2017/8/11.
  */
 public class PlatformGraphVO {
+    @JSONField(name = "platform_id")
+    private String platformId;
     @JSONField(name = "host_id")
     private String hostId;
     @JSONField(name = "item_id")
@@ -24,7 +26,8 @@ public class PlatformGraphVO {
     private Float[] datas;
     private String units;
 
-    public PlatformGraphVO(String hostId, String itemId, String itemName, String graphName, String graphType, String state, String[] dataTime, Float[] datas, String units) {
+    public PlatformGraphVO(String platformId, String hostId, String itemId, String itemName, String graphName, String graphType, String state, String[] dataTime, Float[] datas, String units) {
+        this.platformId = platformId;
         this.hostId = hostId;
         this.itemId = itemId;
         this.itemName = itemName;
@@ -43,7 +46,8 @@ public class PlatformGraphVO {
     @Override
     public String toString() {
         return "PlatformGraphVO{" +
-                "hostId='" + hostId + '\'' +
+                "platformId='" + platformId + '\'' +
+                ", hostId='" + hostId + '\'' +
                 ", itemId='" + itemId + '\'' +
                 ", itemName='" + itemName + '\'' +
                 ", graphName='" + graphName + '\'' +
@@ -53,6 +57,15 @@ public class PlatformGraphVO {
                 ", datas=" + Arrays.toString(datas) +
                 ", units='" + units + '\'' +
                 '}';
+    }
+
+    public String getPlatformId() {
+        return platformId;
+    }
+
+    public PlatformGraphVO setPlatformId(String platformId) {
+        this.platformId = platformId;
+        return this;
     }
 
     public String getHostId() {

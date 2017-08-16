@@ -1,6 +1,9 @@
 package com.ws.stoner.controller.rest;
 
+import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.GraphService;
 import com.ws.stoner.service.PlatformService;
@@ -98,8 +101,68 @@ public class PlatformRestController {
     @RequestMapping(value = "platformdetail/get_graphs",method = RequestMethod.POST)
     public String getPlatformGraphs(@RequestParam(value = "host_ids") String[] hostIdsArr) throws ServiceException {
         List<String> hostIds = Arrays.asList(hostIdsArr);
-        List<PlatformGraphVO> platformGraphVOS = graphService.getPlatformGraphByhostIds(hostIds);
+        List<PlatformGraphVO> platformGraphVOS = graphService.getPlatformGraphsByhostIds(hostIds);
         return RestResultGenerator.genResult(platformGraphVOS, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 保存 业务平台监控项图形 数据
+     * @param platformGraph
+     * @return
+     * @throws ServiceException
+     */
+    @ResponseBody
+    @RequestMapping(value = "platformdetail/save_graph",method = RequestMethod.POST)
+    public String savePlatformGraph(@RequestBody PlatformGraph platformGraph ) throws ServiceException {
+        boolean success =  graphService.savePlatformGraph(platformGraph);
+        if(success) {
+//            List<PlatformGraphVO> platformGraphVOS = graphService.getPlatformGraphsByPlatformId(platformGraph.getPlatformId());
+            return RestResultGenerator.genResult(success, REST_RESPONSE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+    }
+
+    /**
+     * 获取 修改原始数据 配置
+     * @return
+     */
+    @RequestMapping(value = "platformdetail/get_update", method = RequestMethod.GET)
+    public String getUpdatePlatformGraph( @RequestParam("item_id") String itemId) throws ServiceException {
+        HostDetailItemGraphVO itemGraphVO = graphService.getUpdatePlatformGraph(itemId);
+        return RestResultGenerator.genResult(itemGraphVO, REST_RESPONSE_SUCCESS).toString();
+    }
+
+    /**
+     * 修改 业务图形报告 数据
+     * @param platformGraph
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "platformdetail/update_graph",method = RequestMethod.POST)
+    public String updatePlatformGraph(@RequestBody PlatformGraph platformGraph ) throws ServiceException {
+        boolean success =  graphService.updatePlatformGraph(platformGraph);
+        if(success) {
+            return RestResultGenerator.genResult(success, REST_RESPONSE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+    }
+
+    /**
+     * 删除 业务图形报告 数据
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "platformdetail/del_graph",method = RequestMethod.GET)
+    public String deletePlatformGraph( @RequestParam("item_id") String itemId) throws ServiceException {
+        boolean success =  graphService.deletePlatformGraph(itemId);
+        if(success) {
+            return RestResultGenerator.genResult(success, REST_RESPONSE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
     }
 
     /**
