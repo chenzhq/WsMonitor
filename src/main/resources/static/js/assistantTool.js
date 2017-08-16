@@ -22,7 +22,7 @@ function errorMsg_no_data(title) {
         title: title
     });
 }
-//判断字符串长度
+//
 function strlen(str){
     var len = 0;
     for (var i=0; i<str.length; i++) {

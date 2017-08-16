@@ -271,10 +271,15 @@
                             $(".ui.three.column.grid").empty();
                             var block_str = "";
                             for(var i=0 ;i < blocks.length; i++) {
+                                if(0 <= blocks[i].health  <= 20){var color = "red";}
+                                if(20 < blocks[i].health  <= 40){var color = "orange";}
+                                if(40 < blocks[i].health  <= 60){var color = "yellow";}
+                                if(60 < blocks[i].health  <= 80){var color = "olive";}
+                                if(80 < blocks[i].health  <= 100){var color = "green";}
                                 block_str =
 									"<div class='column'> " +
 									  "<div class='ui segment'> " +
-                                   		 " <div class='ui green borderless fluid inverted two item menu'> " +
+                                   		 " <div class='ui "+color+" borderless fluid inverted two item menu'> " +
                                     		"<a class='fitted item'> " + blocks[i].platform_name + "  </a> " +
                                     		" <div class='red fitted item'> " +
                                    			    " <div class='ui active fluid indicating progress' data-percent='" + blocks[i].health + "' data-total='100' id='health_" + blocks[i].platform_id + "' style='width:160px;margin-bottom: 0px;padding-bottom: 0px'> " +
@@ -311,11 +316,17 @@
                                             type : false
                                         }
                                     },
+                                    legend: {
+                                        orient: 'vertical',
+                                        x: 'right',
+                                        y: 'center',
+                                        data:['严重','警告','正常','其他']
+                                    },
                                     grid: {
                                         left: '2%',
-                                        right: '2%',
-                                        bottom: '2%',
-                                        top:'2%',
+                                        right: '10%',
+                                        bottom: '0%',
+                                        top:'3%',
                                         containLabel: true
                                     },
                                     xAxis:  {
@@ -325,6 +336,7 @@
                                     yAxis: {
                                         type: 'value',
                                         splitLine:{show: false},
+                                        minInterval : 1
                                     },
                                     series: [
                                         {

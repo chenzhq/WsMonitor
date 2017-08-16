@@ -19,6 +19,8 @@ $('#pointButton').on('click', '.button',function() {
                 if (path === 'Data') {
                     var point_id = $("#pointDetailArea").text();
                     var item_id = $("#pointDetailFirstItem").text() ;
+                    console.log("point_id:"+point_id);
+                    console.log("item_id:"+item_id);
                     var tableData = $("#tableData").DataTable({
                         "orderFixed": [ 0, 'desc' ],
                         "paging": false,
@@ -285,3 +287,30 @@ function tabReport(point_id,days) {
         }
     });
 }
+
+//时序数据中 加载监控项下拉框数据
+function dropdownitemsTab(point_id,item_id){
+    $.ajax({
+        type: "get",
+        url: "/hostgraphs/get_items?point_id=" + point_id,
+        dataType: "json",
+        success: function (result) {
+            if(result.success) {
+                var data=result.data;
+                var str = '';
+                for(var i=0;i<data.length;i++)
+                {
+                    str +="<option value='"+data[i].item_id+"'>"+data[i].item_name+"</option> ";
+                }
+                $(".dropdown.itemsTab select").html(str);
+                $(".dropdown.itemsTab .text").html(data[0].item_name);
+            }
+            else {
+                errorMsg_no_data("监控项 Dropdown");
+            }
+        },
+        error: function () {
+            errorMsg_no_connect("监控项 Dropdown");
+        }
+    });
+};

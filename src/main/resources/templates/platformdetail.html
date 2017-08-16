@@ -38,7 +38,7 @@
 			}
 			.row3Height{  height: 250px;  }
 			.row4Height{
-				height: 173px;
+				height: 142px;
 				width: 100%;
 				overflow:auto;
 				overflow-x:hidden
@@ -49,15 +49,7 @@
 				overflow:auto;
 				overflow-x:hidden
 			}
-			.chart-style{  height: 200px;width: 360px  }
-			.gridly {
-				position: relative;
-				width: 100%;
-			}
-			.brick.small {
-				height: 200px;
-				width: 360px;
-			}
+			.chart-style{  height: 200px;width: 340px;  }
 		</style>
 	</th:block>
 </head>
@@ -263,7 +255,7 @@
 											<div class="six wide column">
 												<div class="ui segment center aligned row1Height">
 													<h2 class="ui left aligned header">健康度</h2>
-													<div class="ui huge statistic" >
+													<div class="ui huge statistic" id="healthStatistic">
 														<div class="value">
 															<span id="health_value" class="counter"></span> %
 														</div>
@@ -376,13 +368,8 @@
 										</div>
 										<div class="sixteen wide column">
 											<div class="ui segment">
+												<h3>监控点</h3>
 												<div class="ui six column grid row4Height" id="pointButton">
-													<div class="column">
-														<div class="ui green top attached button" id="0101">CPU</div>
-													</div>
-													<div class="column">
-														<div class="ui red top attached button" id="0114" >CPU</div>
-													</div>
 												</div>
 											</div>
 										</div>
@@ -395,8 +382,12 @@
 										<i class="dropdown icon"></i>
 										主机A
 									</div>
-									<div class="active content" id="test">
-										<p>监控项A图形</p>
+									<div class="active content">
+										<div class="ui three column grid">
+											<div class="column"><p>监控项A1图形</p></div>
+											<div class="column"><p>监控项A2图形</p></div>
+											<div class="column"><p>监控项A3图形</p></div>
+										</div>
 									</div>
 									<div class="title">
 										<i class="dropdown icon"></i>
@@ -526,7 +517,8 @@
 			$(function() {
                 //初始化选项页
                 $('.secondary.pointing.menu .item').tab();
-
+                //初始折叠菜单
+                $('#hostAccordion').accordion({exclusive:false});
                 //初始化业务平台下拉框
                 selectPlaltform();
                 //加载健康度和图形数据
@@ -599,6 +591,11 @@
                             var platform_data = result.data;
                             var health = platform_data.health.toFixed(2);
 							$("#health_value").text(health);
+							if(0 <= health <= 60){var colorStatistic = "ui huge red statistic";}
+                            if(60 < health <= 80){var colorStatistic = "ui huge yellow  statistic";}
+                            if(80 < health <= 100){var colorStatistic = "ui huge green  statistic";}
+                            $("#healthStatistic").removeClass();
+                            $("#healthStatistic").addClass(colorStatistic);
                             //绘制图标数据
                             var platform_chart = echarts.init(document.getElementById("platform_graph"));
                             //配置option
@@ -614,11 +611,17 @@
                                         type : false
                                     }
                                 },
+                                legend: {
+                                    orient: 'vertical',
+                                    x: 'right',
+                                    y: 'center',
+                                    data:['严重','警告','正常','其他']
+                                },
                                 grid: {
                                     left: '2%',
-                                    right: '2%',
-                                    bottom: '2%',
-                                    top:'2%',
+                                    right: '10%',
+                                    bottom: '0%',
+                                    top:'3%',
                                     containLabel: true
                                 },
                                 xAxis:  {
@@ -628,6 +631,7 @@
                                 yAxis: {
                                     type: 'value',
                                     splitLine:{show: false},
+                                    minInterval : 1
                                 },
                                 series: [
                                     {
@@ -746,7 +750,6 @@
                         str +="<a class='item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+state+"</a> ";
                     }
                 }
-                $("#hostsMenu").html("");
                 $("#hostsMenu").html(str);
             }
 
@@ -889,8 +892,9 @@
 				tree.edge().shape('smooth');
 				tree.render();
 				tree.on('dblclick', function(ev){
-					//缺少判断为主机id,ev.item.get('model').id
-					pointButton(ev.item.get('model').id);
+					if (ev.item.get('model').shape == "设备"){
+                        pointButton(ev.item.get('model').id);
+					}
 				});
 			}
 
@@ -903,11 +907,6 @@
 						if(result.success) {
 							var data = result.data;
 							getpointButton(data);
-							/*$('#hostsMenu a').on('click',function () {
-							 $('#hostsMenu a').removeClass('active');
-							 $(this).addClass('active');
-							 pointsMenu(this.id);
-							 })*/
 						}
 						else {
 							errorMsg_no_data("监控点按钮 Button");
@@ -963,8 +962,8 @@
                 var host_ids = new Array();
                 for(var i=0;i<data.length;i++)
                 {
-                    str +="<div class='title'><i class='dropdown icon'></i>"
-                        +data[i].host_name+"</div><div class='content' id='g"+data[i].host_id+"' class='gridly'></div>";
+                    str +="<div class='active title'><i class='dropdown icon'></i>"
+                        +data[i].host_name+"</div><div class='active content'><div class='ui three column grid'  id='g"+data[i].host_id+"'></div></div>";
                     host_ids.push(data[i].host_id);
                 }
                 $("#hostAccordion").html(str);
@@ -986,7 +985,7 @@
 							//循环绘制图形
                             for(var i=0;i<graph_datas.length;i++) {
                                 //append 图形定位
-                                var str_graph ="<div class='brick small'><div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
+                                var str_graph ="<div class='column'><div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
                                 var id = "g" + graph_datas[i].item_id;
                                 $("#g"+graph_datas[i].host_id).append(str_graph);
 								//console.log($("#g"+graph_datas[i].item_id).attr("id"));
@@ -1016,7 +1015,8 @@
                                     case "gauge":
                                         option = {
                                             title: {
-                                                text: title},
+                                                text: title,
+											},
                                             tooltip : {
                                                 formatter: "{a} <br/>{b} : {c}%"
                                             },
@@ -1062,11 +1062,18 @@
                                     case "area":
                                         option = {
                                             title: {
-                                                text: title
+                                                text: title,
                                             },
                                             tooltip: {},
                                             legend: {
                                                 data:[]
+                                            },
+                                            grid: {
+                                                left: '2%',
+                                                right: '2%',
+                                                bottom: '2%',
+                                                top:'20%',
+                                                containLabel: true
                                             },
                                             toolbox: {
                                                 show: true,
@@ -1095,11 +1102,18 @@
 										console.log("进入到了line域：");
                                         option = {
                                             title: {
-                                                text: title
+                                                text: title,
                                             },
                                             tooltip: {},
                                             legend: {
                                                 data:[]
+                                            },
+                                            grid: {
+                                                left: '2%',
+                                                right: '2%',
+                                                bottom: '2%',
+                                                top:'20%',
+                                                containLabel: true
                                             },
                                             toolbox: {
                                                 show: true,
