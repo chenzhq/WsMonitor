@@ -25,6 +25,9 @@ public class PlatformTreeVO {
                 '}';
     }
 
+    public PlatformTreeVO() {
+    }
+
     public PlatformTreeVO(String id, String label, String color, String shape) {
         this.id = id;
         this.label = label;

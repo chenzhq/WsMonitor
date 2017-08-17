@@ -1,5 +1,7 @@
 package com.ws.stoner.controller.rest;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Item;
@@ -188,5 +190,23 @@ public class PlatformRestController {
         return RestResultGenerator.genResult(platformTreeVO, REST_UPDATE_SUCCESS).toString();
     }
 
+    @RequestMapping(value = "platformtree/get_update",method = RequestMethod.GET)
+    public String getUpdateTrees(@RequestParam("platform_id") String platformId) throws ServiceException {
+        PlatformTreeUpdateVO updateVO = graphService.getUpdateTreeByPlatformId(platformId);
+        return RestResultGenerator.genResult(updateVO, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 更新 业务树
+     * @param dataTree
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "platformtree/update_tree",method = RequestMethod.POST)
+    public String updatePlatformTrees(@RequestParam("data") String dataTree) throws ServiceException {
+        PlatformTreeUpdateVO updateVO = JSON.parseObject(dataTree,PlatformTreeUpdateVO.class);
+        boolean success = graphService.updatePlatformTree(updateVO);
+        return RestResultGenerator.genResult(success, REST_UPDATE_SUCCESS).toString();
+    }
 
 }

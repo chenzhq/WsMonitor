@@ -3,10 +3,7 @@ package com.ws.stoner.service;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
-import com.ws.stoner.model.view.HostDetailItemGraphVO;
-import com.ws.stoner.model.view.HostDetailItemVO;
-import com.ws.stoner.model.view.PlatformGraphVO;
-import com.ws.stoner.model.view.PlatformTreeVO;
+import com.ws.stoner.model.view.*;
 
 import java.util.List;
 
@@ -68,6 +65,22 @@ public interface GraphService {
      * @throws ServiceException
      */
     List<PlatformTreeVO> initPlatTree() throws ServiceException;
+
+    /**
+     * 根据 platformId 获取 要做更新操作的 业务树
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    PlatformTreeUpdateVO getUpdateTreeByPlatformId(String platformId) throws ServiceException;
+
+    /**
+     * 根据 platformTreeVO 保存业务树
+     * @param updateVO
+     * @return
+     * @throws ServiceException
+     */
+    boolean updatePlatformTree(PlatformTreeUpdateVO updateVO) throws ServiceException;
 
     /**
      * 创建集群
