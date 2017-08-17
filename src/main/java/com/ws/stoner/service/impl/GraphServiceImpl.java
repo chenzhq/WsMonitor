@@ -13,13 +13,11 @@ import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.DO.mongo.PlatformTree;
 import com.ws.stoner.model.dto.*;
-import com.ws.stoner.model.view.HostDetailItemGraphVO;
-import com.ws.stoner.model.view.HostDetailItemVO;
-import com.ws.stoner.model.view.PlatformGraphVO;
-import com.ws.stoner.model.view.PlatformTreeVO;
+import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -289,8 +287,6 @@ public class GraphServiceImpl implements GraphService {
         }
         //获取指定业务平台所有设备 hostDTO
         List<BriefHostDTO> hostDTOS = hostService.getHostByPlatformIds(platformIds);
-        //id,label
-        String platformLabel = platform.getLabel();
         //所有集群
         List<PlatformTree> platformchildren = platform.getChildren();
         //用于组装集群VO
@@ -420,6 +416,51 @@ public class GraphServiceImpl implements GraphService {
 
         }
         return platformTreeVOS;
+    }
+
+    /**
+     * 根据 platformTreeVO 保存业务树
+     * @param updateVO
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean updatePlatformTree(PlatformTreeUpdateVO updateVO) throws ServiceException {
+        List<PlatformTreeUpdateVO> clusterVOS = updateVO.getChildren();
+        List<PlatformTree> clusters = new ArrayList<>();
+        for(PlatformTreeUpdateVO clusterVO : clusterVOS) {
+            List<PlatformTreeUpdateVO> hostVOS = clusterVO.getChildren();
+            List<PlatformTree> hosts = new ArrayList<>();
+            for(PlatformTreeUpdateVO hostVO : hostVOS) {
+                PlatformTree host = new PlatformTree(
+                        hostVO.getId(),
+                        hostVO.getText(),
+                        hostVO.getShape()
+                );
+                hosts.add(host);
+            }
+            PlatformTree cluster = new PlatformTree(
+                    clusterVO.getId(),
+                    clusterVO.getText(),
+                    clusterVO.getShape(),
+                    hosts
+            );
+            clusters.add(cluster);
+        }
+        PlatformTree platformTree = new PlatformTree(
+                updateVO.getId(),
+                updateVO.getText(),
+                updateVO.getShape(),
+                clusters
+        );
+        try {
+            mongoPlatformTreeDAO.save(platformTree);
+        } catch (DAOException e) {
+            logger.error("更新保存 platformTree 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**

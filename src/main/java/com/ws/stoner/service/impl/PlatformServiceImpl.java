@@ -472,7 +472,7 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     /**
-     * 获取业务监控的 指定id的 业务平台基础数据 PlatformBlockVO
+     * 获取业务监控的 指定id的 业务平台基础数据 PlatformBlockVO 概述中一部分
      * @return
      * @throws ServiceException
      */
@@ -508,7 +508,7 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     /**
-     * 获取指定 platformId 的 List<PlatDetailHostVO> 用于分类菜单显示
+     * 获取指定 platformId 的 List<PlatDetailHostVO> 用于分类菜单显示 概述中一部分
      * @param platformId
      * @return
      * @throws ServiceException
