@@ -271,17 +271,17 @@
                             $(".ui.three.column.grid").empty();
                             var block_str = "";
                             for(var i=0 ;i < blocks.length; i++) {
-                                if(0 <= blocks[i].health  <= 20){var color = "red";}
+                                /*if(0 <= blocks[i].health  <= 20){var color = "red";}
                                 if(20 < blocks[i].health  <= 40){var color = "orange";}
                                 if(40 < blocks[i].health  <= 60){var color = "yellow";}
                                 if(60 < blocks[i].health  <= 80){var color = "olive";}
-                                if(80 < blocks[i].health  <= 100){var color = "green";}
+                                if(80 < blocks[i].health  <= 100){var color = "green";}*/
                                 block_str =
 									"<div class='column'> " +
 									  "<div class='ui segment'> " +
-                                   		 " <div class='ui "+color+" borderless fluid inverted two item menu'> " +
-                                    		"<a class='fitted item'> " + blocks[i].platform_name + "  </a> " +
-                                    		" <div class='red fitted item'> " +
+                                   		 " <div class='ui  borderless fluid two item menu'> " +
+                                    		"<a class='active fitted item'> " + blocks[i].platform_name + "  </a> " +
+                                    		" <div class='active red fitted item'> " +
                                    			    " <div class='ui active fluid indicating progress' data-percent='" + blocks[i].health + "' data-total='100' id='health_" + blocks[i].platform_id + "' style='width:160px;margin-bottom: 0px;padding-bottom: 0px'> " +
 													" <div class='bar'> " +
 														"<div class='progress'></div> " +
@@ -344,12 +344,6 @@
 											type: 'bar',
 											stack: '设备总数',
 											barWidth : 25,
-											label: {
-												normal: {
-													show: true,
-													position: 'insideRight'
-												}
-											},
 											data: blocks[i].datas[0],
 											color: ['#5FB878']
                                    	 	},
@@ -358,12 +352,6 @@
 											type: 'bar',
 											stack: '设备总数',
 											barWidth : 25,
-											label: {
-												normal: {
-													show: true,
-													position: 'insideRight'
-												}
-                                			},
                                     		data: blocks[i].datas[1],
                                        		color: ['#F7B824']
                                 		},
@@ -372,12 +360,6 @@
 											type: 'bar',
 											stack: '设备总数',
 											barWidth : 25,
-											label: {
-												normal: {
-													show: true,
-													position: 'insideRight'
-												}
-											},
 											data: blocks[i].datas[2],
 											color: ['#DB2828']
 										}

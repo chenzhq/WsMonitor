@@ -19,7 +19,7 @@
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.no-padding-bottom{  padding-bottom: 0px;  }
-			.chart-style{  height: 200px  }
+			.chart-style{  height: 160px  }
 			.gridly {
 				position: relative;
 				width: 100%;
@@ -1077,15 +1077,21 @@
                         title: {
                             text: title
                         },
-                        tooltip: {},
+                        tooltip: {
+                            trigger: 'axis',
+                            position: function (pt) {
+                                return [pt[0], '10%'];
+                            }
+                        },
                         legend: {
                             data:[]
                         },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                magicType: {type: ['line', 'bar']},
-                            }
+                        grid: {
+                            left: '2%',
+                            right: '10%',
+                            bottom: '0%',
+                            top:'20%',
+                            containLabel: true
                         },
                         xAxis: {
                             data: data[i].data_time
@@ -1109,15 +1115,21 @@
                         title: {
                             text: title
                         },
-                        tooltip: {},
+                        tooltip: {
+                            trigger: 'axis',
+                            position: function (pt) {
+                                return [pt[0], '10%'];
+                            }
+                        },
                         legend: {
                             data:[]
                         },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                magicType: {type: ['line', 'bar']},
-                            }
+                        grid: {
+                            left: '2%',
+                            right: '10%',
+                            bottom: '0%',
+                            top:'20%',
+                            containLabel: true
                         },
                         xAxis: {
                             data: data[i].data_time

@@ -163,15 +163,21 @@ function tabReport(point_id,days) {
         title: {
             text: ""
         },
-        tooltip: {},
+        tooltip: {
+            trigger: 'axis',
+            position: function (pt) {
+                return [pt[0], '10%'];
+            }
+        },
         legend: {
             data:[]
         },
-        toolbox: {
-            show: true,
-            feature: {
-                magicType: {type: ['line', 'bar']},
-            }
+        grid: {
+            left: '2%',
+            right: '10%',
+            bottom: '0%',
+            top:'20%',
+            containLabel: true
         },
         xAxis: {
             data: {}
@@ -190,15 +196,21 @@ function tabReport(point_id,days) {
         title: {
             text: ""
         },
-        tooltip: {},
+        tooltip: {
+            trigger: 'axis',
+            position: function (pt) {
+                return [pt[0], '10%'];
+            }
+        },
         legend: {
             data:[]
         },
-        toolbox: {
-            show: true,
-            feature: {
-                magicType: {type: ['line', 'bar','area']},
-            }
+        grid: {
+            left: '2%',
+            right: '10%',
+            bottom: '0%',
+            top:'20%',
+            containLabel: true
         },
         xAxis: {
             data: {}

@@ -13,8 +13,6 @@
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 
 	<th:block th:fragment="supplement">
-		<link href="../static/css/jquery.gridly.css" rel="stylesheet" th:href="@{css/jquery.gridly.css}"/>
-		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
 		<script src="https://gw.alipayobjects.com/as/g/datavis/g6/1.1.3/index.js"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
@@ -31,14 +29,14 @@
 			.chartBar{ height: 140px; }
 			.row1Height{ height: 160px; }
 			.row2Height{
-				height: 289px;
+				height: 300px;
 				width: 100%;
 				overflow:auto;
 				overflow-x:hidden
 			}
-			.row3Height{  height: 250px;  }
+			.row3Height{  height: 240px;  }
 			.row4Height{
-				height: 142px;
+				height: 196px;
 				width: 100%;
 				overflow:auto;
 				overflow-x:hidden
@@ -49,7 +47,13 @@
 				overflow:auto;
 				overflow-x:hidden
 			}
-			.chart-style{  height: 200px;width: 340px;  }
+			.chart-style{  height: 160px; }
+			.ui.styled.fluid.accordion.report{
+				height: 500px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
+			}
 		</style>
 	</th:block>
 </head>
@@ -240,15 +244,15 @@
 					<div class="ui segments">
 						<div class="ui segment">
 							<div class="ui secondary pointing menu">
-								<a class="active item" data-tab="detail">业务概述</a>
-								<a class="item" data-tab="tree">业务树</a>
-								<a class="item" data-tab="report">业务图形报告</a>
+								<a class="active item" data-tab="platformDetail">业务概述</a>
+								<a class="item" data-tab="platformTree">业务树</a>
+								<a class="item" data-tab="platformReport">业务图形报告</a>
 								<div class="right menu">
 									<select id="platform_select" class="ui mini dropdown ">
 									</select>
 								</div>
 							</div>
-							<div class="ui active tab segment noMargin fixedHeight" data-tab="detail">
+							<div class="ui active tab segment noMargin noBorder fixedHeight no-padding" data-tab="platformDetail">
 								<div class="row">
 									<div class="sixteen wide column">
 										<div class="ui grid">
@@ -293,7 +297,41 @@
 																				</tr>
 																				</thead>
 																				<tbody id="itemsTable">
-
+																				<tr>
+																					<td>John</td>
+																					<td title="Approved">Approved</td>
+																					<td  title="None(超超超超超超超超超超超超超级长的文字)">None(超超超超超超超超超超超超超级长的文字)</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
+																				<tr>
+																					<td>Jill</td>
+																					<td>Denied</td>
+																					<td>None</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
+																				<tr>
+																					<td>Jamie</td>
+																					<td>Approved</td>
+																					<td>Requires call</td>
+																				</tr>
 																				</tbody>
 																			</table>
 																		</div>
@@ -308,7 +346,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="ui tab segment noMargin fixedHeight" data-tab="tree">
+							<div class="ui tab segment noMargin noBorder fixedHeight no-padding" data-tab="platformTree">
 								<div class="row">
 									<div class="ui grid">
 										<div class="sixteen wide column">
@@ -317,19 +355,18 @@
 											</div>
 										</div>
 										<div class="sixteen wide column">
-											<div class="ui segment">
+											<div class="ui segment row4Height">
 												<h3>监控点</h3>
-												<div class="ui six column grid row4Height" id="pointButton">
+												<div class="ui six column grid" id="pointButton">
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="ui tab segment noMargin fixedHeight" data-tab="report">
-								<div class="ui styled fluid accordion" id="hostAccordion">
-
-								</div>
+							<div class="ui tab segment noMargin noBorder fixedHeight no-padding report" data-tab="platformReport">
+								<div class="ui styled fluid accordion report" id="hostAccordion">
+                                </div>
 							</div>
 						</div>
 					</div>
@@ -497,35 +534,51 @@
 		<script type="text/javascript">
             //页面加载完加载基础数据
 			$(function() {
-                //初始化选项页
-                $('.secondary.pointing.menu .item').tab();
                 //初始折叠菜单
-                $('#hostAccordion').accordion({exclusive:false});
+                $('#hostAccordion').accordion({
+					exclusive:false,
+                    selector: {
+                        trigger: '.title .dropdown.icon'
+                    }
+                });
                 //初始化业务平台下拉框
                 selectPlaltform();
                 //加载健康度和图形数据
                 getPlatDates();
                 //加载分类菜单数据 诠释权值含义
                 initWeightMenu();
-                //加载业务树
-                platformTree();
-                //加载业务图形报告
-                hostAccordion();
-
                 //业务平台下拉框onchange
                 $("#platform_select").change(function(){
                     //加载健康度和图形数据
                     getPlatDates();
                     //加载分类菜单数据 诠释权值含义
                     initWeightMenu();
-                    //加载业务树
-                    platformTree();
-                    //加载业务图形报告
-                    hostAccordion();
                 });
-
-
-            })
+                //初始化选项页
+                $('.secondary.pointing.menu .item')
+                    .tab({
+                        'onVisible': function (path) {
+                            if (path === 'platformTree') {
+                                //加载业务树
+                                platformTree();
+                                //业务平台下拉框onchange
+                                $("#platform_select").change(function(){
+                                    //加载业务树
+                                    platformTree();
+                                });
+                            }
+                            if (path === 'platformReport') {
+                                //加载业务图形报告
+                                hostAccordion();
+                                //业务平台下拉框onchange
+                                $("#platform_select").change(function(){
+                                    //加载业务图形报告
+                                    hostAccordion();
+                                });
+                            }
+                        }
+                    });
+			})
 
 			//加载 业务平台 下拉框
 			function selectPlaltform() {
@@ -848,8 +901,7 @@
 					error: function () {
 						errorMsg_no_connect("业务树 Tree");
 					}
-				});
-
+				})
 			}
 			function getplatformTree(data){
 				$("#tree_area").html("");
