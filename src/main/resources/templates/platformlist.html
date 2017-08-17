@@ -215,32 +215,41 @@
                                 <table class="ui compact  very basic table center aligned">
                                     <thead>
                                     <tr>
-                                        <th width="20%">名称</th>
-                                        <th width="20%">状态</th>
-                                        <th width="10%">健康度（%）</th>
+                                        <th width="25%">名称</th>
+                                        <th width="10%">状态</th>
+                                        <th width="15%">健康度（%）</th>
                                         <th width="10%">严重设备数量</th>
-                                        <th width="20%">警告设备数量</th>
-                                        <th width="20%">总设备数量</th>
-                                        <th>操作</th>
+                                        <th width="10%">警告设备数量</th>
+                                        <th width="10%">总设备数量</th>
+                                        <th width="20%">操作</th>
                                     </tr>
                                     </thead>
                                     <tbody id="tableSummary">
                                     <tr th:each="platformListVO : ${platformListVOS}">
 
-                                        <td th:text="${platformListVO.platformName}" width="20%">
+                                        <td th:text="${platformListVO.platformName}">
                                             <input text="hidden" th:id="${platformListVO.platformId}"/>
                                             OA
                                         </td>
-                                        <td width="20%"><i
-                                                th:class="${platformListVO.state} == '正常' ? 'green square icon' :(${platformListVO.state} =='警告' ? 'yellow square icon' : 'red square icon') "
-                                                class="red square icon"></i></td>
+                                        <td><i class="red square icon" th:class="${platformListVO.state} == '正常' ?
+                                            'green square icon' :
+                                                (${platformListVO.state} =='警告' ?
+                                                'yellow square icon' : 'red square icon') "></i></td>
                                         <td th:text="${#numbers.formatDecimal(platformListVO.health, 0, 2)} "
-                                            width="10%">%
+                                        >%
                                         </td>
-                                        <td th:text="${platformListVO.highNum}" width="10%">30</td>
-                                        <td th:text="${platformListVO.warningNum}" width="20%">30</td>
-                                        <td th:text="${platformListVO.allNum}" width="20%">30</td>
-                                        <td><a class="manage_btn" th:id="${platformListVO.platformId}" href="#">管理</a></td>
+                                        <td th:text="${platformListVO.highNum}">30</td>
+                                        <td th:text="${platformListVO.warningNum}">30</td>
+                                        <td th:text="${platformListVO.allNum}">30</td>
+                                        <td>
+                                            <ul class="ui horizontal relaxed list">
+                                                <a class="manage_btn item" data-th-pfid="${platformListVO.platformId}"
+                                                   href="#">管理</a>
+                                                <a class="item" href="">>></a>
+                                            </ul>
+
+
+                                        </td>
                                     </tr>
 
                                     </tbody>
@@ -256,11 +265,11 @@
     </div>
 </div>
 <div id="manage_modal" class="ui small modal">
-    <div class="ui icon buttons">
+    <div class="ui compact icon buttons">
         <button class="ui basic compact icon button disabled">
             <i class="edit icon"></i>
         </button>
-        <div class="ui basic icon compact dropdown button">
+        <div class="ui basic icon compact dropdown button disabled">
             <i class="add circle icon"></i>
             <i class="dropdown icon"></i>
             <div class="menu">
@@ -271,10 +280,11 @@
         <button class="ui basic compact icon button disabled">
             <i class="remove circle icon"></i>
         </button>
-
-        <button class="ui basic compact icon button disabled">
-            <i class="exchange icon"></i>
-        </button>
+        <!--
+            <button class="ui basic compact icon button disabled">
+                <i class="exchange icon"></i>
+            </button>
+        -->
     </div>
     <div class="inline fields content">
         <div id="manage_tree"></div>
@@ -293,79 +303,61 @@
     <th:block th:fragment="specialScript">
         <script type="text/javascript">
             var $tree = $('#manage_tree')
-            $('.manage_btn').on('click', function () {
-                var platform_id = $('.manage_btn').attr("id");
-                console.log(platform_id);
+            var platform_id
+            $('.manage_btn').on('click', function (e) {
+                platform_id = $(this).attr("pfid");
                 $.ajax({
                     type: 'get',
-                    url: 'platformtree/get_update?platform_id='+platform_id,
+                    url: 'platformtree/get_update?platform_id=' + platform_id,
                     dataType: 'json',
                     success: function (result) {
-                        if(result.success) {
-                var mock = {
-                    "data": {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "id": "01", "text": "child1", "type": "设备"
-                                    },
-                                    {
-                                        "id": "03", "text": "child3", "type": "设备"
-                                    }
-                                ], "id": "1", "text": "parent1", "type": "集群"
+                        if (result.success) {
+                            var origin_data = result.data
+                            //每次都销毁之前都树
+                            if ($tree.jstree(true)) {
+                                $tree.jstree(true).destroy()
                             }
-                            ,
-                            {
-                                "children": [
-                                    {
-                                        "id": "02", "text": "child2", "type": "设备"
-                                    }
-                                ], "id": "2", "text": "parent2", "type": "集群"
-                            }
-                        ], "id": "0", "text": "root", "type": "业务平台"
-                    }
-                    , "message": "成功", "success": true
-                }
-                var origin_data = mock.data
-                $tree.data('jstree', false).empty()
-                $tree.jstree({
+                            $tree.jstree({
 
-                    core: {
-                        data: [origin_data],
-                        check_callback: true
-                    },
-                    types: {
-                        "#": {
-                          valid_children: ["业务平台"]
-                        },
-                        "业务平台": {
-                            valid_children: ["集群", "设备"]
-                        },
-                        "集群": {
-                            valid_children: ["设备"]
-                        },
-                        "设备": {
-                            valid_children: [],
-                            icon: "desktop icon"
-                        }
-                    },
-                    plugins: ["types", "dnd"]
-                })
-                //点击不同的节点，可选择的按钮不同
-                $tree.on('select_node.jstree', function (e, data) {
-                    console.log('select', data)
-                    $('#manage_modal button').addClass('disabled')
-                    $('#manage_modal .menu .item:contains("集群")').addClass('disabled')
-                    if (data.node.type === '业务平台') {
-                        $('#manage_modal .add').parent().removeClass('disabled')
-                        $('#manage_modal .menu .item:contains("集群")').removeClass('disabled')
-                    } else if (data.node.type === '集群') {
-                        $('#manage_modal .remove').parents('button').removeClass('disabled')
-                        $('#manage_modal .edit').parents('button').removeClass('disabled')
-                    } else {
-                    }
-                })
+                                core: {
+                                    data: [origin_data],
+                                    check_callback: true,
+                                },
+                                types: {
+                                    "#": {
+                                        valid_children: ["业务平台"]
+                                    },
+                                    "业务平台": {
+                                        valid_children: ["集群", "设备"],
+                                        icon: "cubes icon"
+                                    },
+                                    "集群": {
+                                        valid_children: ["设备"],
+                                        icon: "sitemap icon"
+                                    },
+                                    "设备": {
+                                        valid_children: [],
+                                        icon: "desktop icon"
+                                    }
+                                },
+                                plugins: ["types", "dnd"]
+                            }).on("ready.jstree", function() {
+                                $tree.jstree(true).open_node(platform_id)
+                            })
+                            //点击不同的节点，可选择的按钮不同
+                            $tree.on('select_node.jstree', function (e, data) {
+                                $('#manage_modal button').addClass('disabled')
+                                $('#manage_modal .add').parent().addClass('disabled')
+                                $('#manage_modal .menu .item:contains("集群")').addClass('disabled')
+                                if (data.node.type === '业务平台') {
+                                    $('#manage_modal .add').parent().removeClass('disabled')
+                                    $('#manage_modal .menu .item:contains("集群")').removeClass('disabled')
+                                } else if (data.node.type === '集群') {
+                                    $('#manage_modal .remove').parents('button').removeClass('disabled')
+                                    $('#manage_modal .edit').parents('button').removeClass('disabled')
+                                } else {
+                                }
+                            })
                         } else {
                             console.error('数据获取错误')
                         }
@@ -373,31 +365,48 @@
                 })
                 $('#manage_modal').modal({
                     onApprove: function () {
+                        var _tree = $tree.jstree(true)
+                        console.log(_tree.get_json(platform_id, {
+                            no_state: true,
+                            no_data: true,
+                            no_li_attr: true,
+                            no_a_attr: true
+                        }))
+                        $.ajax({
+                            type: 'post',
+                            url: '/platformtree/update_tree',
+                            data: {
+                                data: JSON.stringify(_tree.get_json(platform_id, {
+                                    no_state: true,
+                                    no_data: true,
+                                    no_li_attr: true,
+                                    no_a_attr: true
+                                }))
 
+                            },
+                            dataType: 'json',
+                            success: function (result) {
+                                console.log('success')
+                            },
+                            error: function (result) {
+
+                            }
+                        })
                     }
                 }).modal('show')
             })
 
-            function genNewClusterId(tree, root) {
-                if (tree.children !== undefined) {
-                    var children = tree.children
-                    var maxId = children.reduce(function (a, b) {
-                        a = b.id > a ? b.id : a;
-                        return a
-                    }, 0)
-                    return maxId + 1
-                } else {
-                    return 1
-                }
-            }
 
             // 增加 集群
             $('#manage_modal .menu .item').on('click', function () {
                 var _tree = $tree.jstree(true)
-                var newId = _tree.create_node(_tree.get_selected()[0], '', 'last', function (node) {
+                var newId = _tree.create_node(_tree.get_selected(),
+                    {
+                        text: "新集群",
+                        type: "集群"
+                    }, 'last', function (node) {
 
-                })
-                console.log('newId', newId)
+                    })
                 _tree.edit(_tree.get_node(newId), '新集群', function (node, status) {
                     if (status) {
                         //success
@@ -415,10 +424,8 @@
                 var selected_node = _tree.get_selected(true)[0]
                 //如果有子节点，则先移动到上一层
                 if (_tree.is_parent(selected_node)) {
-                    console.log(_tree.get_json(selected_node))
-                    console.log('selected_node', selected_node)
-                    console.log('selected_node_children', selected_node.children)
-                    _tree.move_node(_tree.get_json(selected_node).children, '0', 'last') //'0'是root节点id，业务平台id
+                    //直接使用selected_node.children不可行，只会移动第一个子节点
+                    _tree.move_node(_tree.get_json(selected_node).children, platform_id, 'last') //'0'是root节点id，业务平台id
                 }
                 var del_result = _tree.delete_node(selected_node)
                 if (!del_result) {
@@ -433,7 +440,7 @@
             $('#manage_modal .edit').parents('button').on('click', function () {
                 var _tree = $tree.jstree(true)
                 var selected_node = _tree.get_selected(true)[0]
-                _tree.edit(selected_node,  function (node, status) {
+                _tree.edit(selected_node, function (node, status) {
                     if (status) {
                         //success
                     }
