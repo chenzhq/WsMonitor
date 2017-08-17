@@ -240,7 +240,7 @@
                                         <td th:text="${platformListVO.highNum}" width="10%">30</td>
                                         <td th:text="${platformListVO.warningNum}" width="20%">30</td>
                                         <td th:text="${platformListVO.allNum}" width="20%">30</td>
-                                        <td><a class="manage_btn" href="#">管理</a></td>
+                                        <td><a class="manage_btn" th:id="${platformListVO.platformId}" href="#">管理</a></td>
                                     </tr>
 
                                     </tbody>
@@ -294,12 +294,14 @@
         <script type="text/javascript">
             var $tree = $('#manage_tree')
             $('.manage_btn').on('click', function () {
-//                $.ajax({
-//                    type: 'get',
-//                    url: '/platformtree/get_tree?platform_id=8',
-//                    dataType: 'json',
-//                    success: function (result) {
-//                        if(result.success) {
+                var platform_id = $('.manage_btn').attr("id");
+                console.log(platform_id);
+                $.ajax({
+                    type: 'get',
+                    url: 'platformtree/get_update?platform_id='+platform_id,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
                 var mock = {
                     "data": {
                         "children": [
@@ -364,11 +366,11 @@
                     } else {
                     }
                 })
-//                        } else {
-//                            console.error('数据获取错误')
-//                        }
-//                    }
-//                })
+                        } else {
+                            console.error('数据获取错误')
+                        }
+                    }
+                })
                 $('#manage_modal').modal({
                     onApprove: function () {
 
