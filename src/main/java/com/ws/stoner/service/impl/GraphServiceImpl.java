@@ -419,6 +419,68 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
+     * 根据 platformId 获取 要做更新操作的 业务树
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public PlatformTreeUpdateVO getUpdateTreeByPlatformId(String platformId) throws ServiceException {
+
+        //获取mongodb中 对应业务结构数据
+        PlatformTree platformTree = null;
+        try {
+            platformTree = mongoPlatformTreeDAO.findById(platformId);
+        } catch (DAOException e) {
+            logger.error("根据 platformId 查询 platformTree 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        List<PlatformTree> clusters = platformTree.getChildren();
+        List<PlatformTreeUpdateVO> clusterVOS = new ArrayList<>();
+        for(PlatformTree cluster : clusters) {
+            if(cluster.getChildren() != null) {
+                //下层有设备
+                List<PlatformTree>  hosts = cluster.getChildren();
+                List<PlatformTreeUpdateVO> hostVOS = new ArrayList<>();
+                for(PlatformTree host : hosts) {
+                    PlatformTreeUpdateVO hostVO = new PlatformTreeUpdateVO(
+                            host.getId(),
+                            host.getLabel(),
+                            null,
+                            host.getType()
+                    );
+                    hostVOS.add(hostVO);
+                }
+                PlatformTreeUpdateVO clusterVO = new PlatformTreeUpdateVO(
+                        cluster.getId(),
+                        cluster.getLabel(),
+                        null,
+                        cluster.getType(),
+                        hostVOS
+                );
+                clusterVOS.add(clusterVO);
+            }else {
+                //下层没有设备
+                PlatformTreeUpdateVO lastVO = new PlatformTreeUpdateVO(
+                        cluster.getId(),
+                        cluster.getLabel(),
+                        null,
+                        cluster.getType()
+                );
+                clusterVOS.add(lastVO);
+            }
+        }
+        PlatformTreeUpdateVO updateVO = new PlatformTreeUpdateVO(
+                platformTree.getId(),
+                platformTree.getLabel(),
+                null,
+                platformTree.getType(),
+                clusterVOS
+        );
+        return updateVO;
+    }
+
+    /**
      * 根据 platformTreeVO 保存业务树
      * @param updateVO
      * @return
@@ -429,23 +491,34 @@ public class GraphServiceImpl implements GraphService {
         List<PlatformTreeUpdateVO> clusterVOS = updateVO.getChildren();
         List<PlatformTree> clusters = new ArrayList<>();
         for(PlatformTreeUpdateVO clusterVO : clusterVOS) {
-            List<PlatformTreeUpdateVO> hostVOS = clusterVO.getChildren();
-            List<PlatformTree> hosts = new ArrayList<>();
-            for(PlatformTreeUpdateVO hostVO : hostVOS) {
-                PlatformTree host = new PlatformTree(
-                        hostVO.getId(),
-                        hostVO.getText(),
-                        hostVO.getShape()
+            if(clusterVO.getChildren() == null) {
+                //下层没有设备
+                PlatformTree last = new PlatformTree(
+                        clusterVO.getId(),
+                        clusterVO.getText(),
+                        clusterVO.getShape()
                 );
-                hosts.add(host);
+                clusters.add(last);
+            }else {
+                List<PlatformTreeUpdateVO> hostVOS = clusterVO.getChildren();
+                List<PlatformTree> hosts = new ArrayList<>();
+                for(PlatformTreeUpdateVO hostVO : hostVOS) {
+                    PlatformTree host = new PlatformTree(
+                            hostVO.getId(),
+                            hostVO.getText(),
+                            hostVO.getShape()
+                    );
+                    hosts.add(host);
+                }
+                PlatformTree cluster = new PlatformTree(
+                        clusterVO.getId(),
+                        clusterVO.getText(),
+                        clusterVO.getShape(),
+                        hosts
+                );
+                clusters.add(cluster);
             }
-            PlatformTree cluster = new PlatformTree(
-                    clusterVO.getId(),
-                    clusterVO.getText(),
-                    clusterVO.getShape(),
-                    hosts
-            );
-            clusters.add(cluster);
+
         }
         PlatformTree platformTree = new PlatformTree(
                 updateVO.getId(),

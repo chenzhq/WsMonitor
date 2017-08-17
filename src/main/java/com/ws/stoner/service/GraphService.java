@@ -67,6 +67,14 @@ public interface GraphService {
     List<PlatformTreeVO> initPlatTree() throws ServiceException;
 
     /**
+     * 根据 platformId 获取 要做更新操作的 业务树
+     * @param platformId
+     * @return
+     * @throws ServiceException
+     */
+    PlatformTreeUpdateVO getUpdateTreeByPlatformId(String platformId) throws ServiceException;
+
+    /**
      * 根据 platformTreeVO 保存业务树
      * @param updateVO
      * @return

@@ -190,6 +190,12 @@ public class PlatformRestController {
         return RestResultGenerator.genResult(platformTreeVO, REST_UPDATE_SUCCESS).toString();
     }
 
+    @RequestMapping(value = "platformtree/get_update",method = RequestMethod.GET)
+    public String getUpdateTrees(@RequestParam("platform_id") String platformId) throws ServiceException {
+        PlatformTreeUpdateVO updateVO = graphService.getUpdateTreeByPlatformId(platformId);
+        return RestResultGenerator.genResult(updateVO, REST_UPDATE_SUCCESS).toString();
+    }
+
     /**
      * 更新 业务树
      * @param dataTree
