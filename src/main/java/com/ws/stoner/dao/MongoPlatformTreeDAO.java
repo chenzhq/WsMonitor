@@ -2,6 +2,7 @@ package com.ws.stoner.dao;
 
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.model.DO.mongo.PlatformTree;
+import com.ws.stoner.model.DO.mongo.PlatformTreeManager;
 
 import java.util.List;
 
@@ -10,15 +11,26 @@ import java.util.List;
  */
 public interface MongoPlatformTreeDAO {
 
-    void save(PlatformTree platformTree) throws DAOException;
+    //更新树
+    void save(PlatformTreeManager platformTreeManager) throws DAOException;
 
+    //保存树
+    void save(PlatformTree platformTree) throws DAOException;
     /**
-     * 根据 id 查找
+     * 根据 id 查找  用于显示
      * @return
      * @throws DAOException
      */
     PlatformTree findById(String id) throws DAOException;
 
     List<PlatformTree> findAll() throws DAOException;
+
+    /**
+     * 用于 获取修改的业务树
+     * @param id
+     * @return
+     * @throws DAOException
+     */
+    PlatformTreeManager findUseManagerById(String id) throws DAOException;
 
 }

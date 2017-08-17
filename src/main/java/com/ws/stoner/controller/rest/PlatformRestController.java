@@ -6,6 +6,7 @@ import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.DO.mongo.PlatformGraph;
+import com.ws.stoner.model.DO.mongo.PlatformTreeManager;
 import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.GraphService;
 import com.ws.stoner.service.PlatformService;
@@ -198,8 +199,8 @@ public class PlatformRestController {
      */
     @RequestMapping(value = "platformtree/get_update",method = RequestMethod.GET)
     public String getUpdateTrees(@RequestParam("platform_id") String platformId) throws ServiceException {
-        PlatformTreeUpdateVO updateVO = graphService.getUpdateTreeByPlatformId(platformId);
-        return RestResultGenerator.genResult(updateVO, REST_UPDATE_SUCCESS).toString();
+        PlatformTreeManager platformTreeManager = graphService.getUpdateTreeByPlatformId(platformId);
+        return RestResultGenerator.genResult(platformTreeManager, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
@@ -210,8 +211,8 @@ public class PlatformRestController {
      */
     @RequestMapping(value = "platformtree/update_tree",method = RequestMethod.POST)
     public String updatePlatformTrees(@RequestParam("data") String dataTree) throws ServiceException {
-        PlatformTreeUpdateVO updateVO = JSON.parseObject(dataTree,PlatformTreeUpdateVO.class);
-        boolean success = graphService.updatePlatformTree(updateVO);
+        PlatformTreeManager platformTreeManager = JSON.parseObject(dataTree,PlatformTreeManager.class);
+        boolean success = graphService.updatePlatformTree(platformTreeManager);
         return RestResultGenerator.genResult(success, REST_UPDATE_SUCCESS).toString();
     }
 
