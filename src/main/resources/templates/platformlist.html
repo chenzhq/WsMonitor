@@ -2,254 +2,443 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <html>
 <head th:replace="layout::common_head(~{::title}, ~{::supplement})">
-	<meta charset="UTF-8">
-	<title>业务列表</title>
-	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
-	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
-	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
-	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
-	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
-	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
-	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
-	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<th:block th:fragment="supplement">
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
-	</th:block>
+    <meta charset="UTF-8">
+    <title>业务列表</title>
+    <script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
+    <script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+    <link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+    <link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+    <link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
+    <link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+    <link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+    <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+    <th:block th:fragment="supplement">
+        <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+        <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
+        <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
+              th:href="@{css/jstree-default/style.min.css}">
+    </th:block>
 </head>
 <body>
 <!--header start-->
 <div id="contextWrap">
-	<!--sidebar-->
-	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
-		 th:replace="layout::left_menu">
-		<a class="item logo" href="#">
-			<img src="../static/images/logo.png" th:src="@{images/logo.png}" alt="whstone"/><img
-				src="../static/images/thumblogo.png" th:src="@{images/thumblogo.png}" alt="whstone"
-				class="displaynone"/>
-		</a>
-		<div class="ui accordion inverted">
-			<div class="title item">
+    <!--sidebar-->
+    <div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
+         th:replace="layout::left_menu">
+        <a class="item logo" href="#">
+            <img src="../static/images/logo.png" th:src="@{images/logo.png}" alt="whstone"/><img
+                src="../static/images/thumblogo.png" th:src="@{images/thumblogo.png}" alt="whstone"
+                class="displaynone"/>
+        </a>
+        <div class="ui accordion inverted">
+            <div class="title item">
                 <i class="ion-speedometer titleIcon icon"></i>仪表盘
-			</div>
-			<div class="content">
-				<a class="item" href="#" th:href="@{/dashboard}">仪表盘</a>
-			</div>
-			<div class="title item" href="#">
-				<i class="ion-ios-world titleIcon  icon"></i>业务概览
-			</div>
-			<div class="content">
-			</div>
-			<div class="title item">
-				<i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
-			</div>
-			<div class="content">
-				<a class="item" href="#" th:href="@{/overview}">设备总览</a>
-				<a class="item" href="#">设备详情</a>
-			</div>
-			<div class="title item" href="#">
-				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
-			</div>
-			<div class="content">
-			</div>
-			<div class="title item">
-				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
-			</div>
-			<div class="content">
-				<a class="item" href="#">告警日历</a>
-				<a class="item" href="#">告警列表</a>
-			</div>
-			<div class="title item" href="#">
-				<i class="ion-briefcase titleIcon icon"></i>报表统计
-			</div>
-			<div class="content">
-			</div>
-		</div>
+            </div>
+            <div class="content">
+                <a class="item" href="#" th:href="@{/dashboard}">仪表盘</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-ios-world titleIcon  icon"></i>业务概览
+            </div>
+            <div class="content">
+            </div>
+            <div class="title item">
+                <i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
+            </div>
+            <div class="content">
+                <a class="item" href="#" th:href="@{/overview}">设备总览</a>
+                <a class="item" href="#">设备详情</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+            </div>
+            <div class="content">
+            </div>
+            <div class="title item">
+                <i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+            </div>
+            <div class="content">
+                <a class="item" href="#">告警日历</a>
+                <a class="item" href="#">告警列表</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-briefcase titleIcon icon"></i>报表统计
+            </div>
+            <div class="content">
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>仪表盘1</span>
-			<i class="ion-speedometer icon"></i>
-			<div class="menu">
-				<div class="header">
-					仪表盘1
-				</div>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>仪表盘1</span>
+            <i class="ion-speedometer icon"></i>
+            <div class="menu">
+                <div class="header">
+                    仪表盘1
+                </div>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>业务概览</span>
-			<i class="ion-ios-world icon"></i>
-			<div class="menu">
-				<div class="header">
-					业务概览
-				</div>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>业务概览</span>
+            <i class="ion-ios-world icon"></i>
+            <div class="menu">
+                <div class="header">
+                    业务概览
+                </div>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>设备监控</span>
-			<i class="ion-mouse icon"></i>
-			<div class="menu">
-				<div class="header">
-					设备监控
-				</div>
-				<div class="ui divider"></div>
-				<a class="item" href="tab.html">设备总览</a>
-				<a class="item" href="table.html">设备详情</a>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>设备监控</span>
+            <i class="ion-mouse icon"></i>
+            <div class="menu">
+                <div class="header">
+                    设备监控
+                </div>
+                <div class="ui divider"></div>
+                <a class="item" href="tab.html">设备总览</a>
+                <a class="item" href="table.html">设备详情</a>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>视图展示</span>
-			<i class="ion-arrow-graph-up-right icon"></i>
-			<div class="menu">
-				<div class="header">
-					视图展示
-				</div>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>视图展示</span>
+            <i class="ion-arrow-graph-up-right icon"></i>
+            <div class="menu">
+                <div class="header">
+                    视图展示
+                </div>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>告警展示</span>
-			<i class="ion-paintbrush icon"></i>
-			<div class="menu">
-				<div class="header">
-					告警展示
-				</div>
-				<div class="ui divider"></div>
-				<a class="item" href="error.html">告警日历</a>
-				<a class="item" href="error.html">告警列表</a>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>告警展示</span>
+            <i class="ion-paintbrush icon"></i>
+            <div class="menu">
+                <div class="header">
+                    告警展示
+                </div>
+                <div class="ui divider"></div>
+                <a class="item" href="error.html">告警日历</a>
+                <a class="item" href="error.html">告警列表</a>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>报表统计</span>
-			<a href="error.html">
-				<i class="ion-briefcase icon"></i>
-			</a>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>报表统计</span>
+            <a href="error.html">
+                <i class="ion-briefcase icon"></i>
+            </a>
+        </div>
 
-		<div class="ui divider"></div>
+        <div class="ui divider"></div>
 
-	</div>
+    </div>
 
-	<!--sidebar-->
+    <!--sidebar-->
 
-	<div class="pusher">
-		<!--navbar-->
-		<div class="navslide navwrap" th:replace="layout::top_nav">
-			<div class="ui menu icon borderless grid" data-color="inverted white">
-				<a class="item labeled openbtn">
-					<i class="ion-navicon-round big icon"></i>
-				</a>
-				<div class="item ui colhidden">
-					<div class="ui icon input">
-						<input type="text" placeholder="Search...">
-						<i class="search icon"></i>
-					</div>
-				</div>
-				<div class="right menu colhidden">
-					<div class="ui dropdown item labeled icon">
-						<i class="bell icon"></i>   告警
-						<div class="ui red label mini circular">6</div>
-						<div class="menu" >
-							<div class="header">
-								紧急告警
-							</div>
-							<div class="item">
-								告警信息1……
-								<div class="ui teal left pointing label">1</div>
-							</div>
-							<div class="item">
-								告警信息2……
-								<div class="ui label">51</div>
-							</div>
-							<div class="item">
-								告警信息3……
-								<div class="ui label">1</div>
-							</div>
-							<div class="header">
-								严重告警
-							</div>
-							<div class="item">
-								<i class="dropdown icon"></i>
-								<span class="text">更多</span>
-								<div class="menu">
-									<div class="item">告警信息……</div>
-									<div class="item">告警信息……</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="ui dropdown item">
+    <div class="pusher">
+        <!--navbar-->
+        <div class="navslide navwrap" th:replace="layout::top_nav">
+            <div class="ui menu icon borderless grid" data-color="inverted white">
+                <a class="item labeled openbtn">
+                    <i class="ion-navicon-round big icon"></i>
+                </a>
+                <div class="item ui colhidden">
+                    <div class="ui icon input">
+                        <input type="text" placeholder="Search...">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
+                <div class="right menu colhidden">
+                    <div class="ui dropdown item labeled icon">
+                        <i class="bell icon"></i> 告警
+                        <div class="ui red label mini circular">6</div>
+                        <div class="menu">
+                            <div class="header">
+                                紧急告警
+                            </div>
+                            <div class="item">
+                                告警信息1……
+                                <div class="ui teal left pointing label">1</div>
+                            </div>
+                            <div class="item">
+                                告警信息2……
+                                <div class="ui label">51</div>
+                            </div>
+                            <div class="item">
+                                告警信息3……
+                                <div class="ui label">1</div>
+                            </div>
+                            <div class="header">
+                                严重告警
+                            </div>
+                            <div class="item">
+                                <i class="dropdown icon"></i>
+                                <span class="text">更多</span>
+                                <div class="menu">
+                                    <div class="item">告警信息……</div>
+                                    <div class="item">告警信息……</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui dropdown item">
                         <img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/0.jpg}"
                              alt="label-image"/>
-						<div class="menu">
-							<a class="item" href="#" th:text="${session.userInfo.name}">whstone</a>
-							<a class="item" href="mail.html" th:href="@{/logout}">注销</a>
-						</div>
-					</div>
-					<a class="item labeled rightsidebar computer only">
-						<i class="ion-wrench large icon"></i>工具
-					</a>
+                        <div class="menu">
+                            <a class="item" href="#" th:text="${session.userInfo.name}">whstone</a>
+                            <a class="item" href="mail.html" th:href="@{/logout}">注销</a>
+                        </div>
+                    </div>
+                    <a class="item labeled rightsidebar computer only">
+                        <i class="ion-wrench large icon"></i>工具
+                    </a>
 
-				</div>
-			</div>
-		</div>
-		<!--navbar-->
-		<!--maincontent-->
-		<div class="mainWrap navslide">
-			<div class="ui equal width left aligned padded grid stackable">
-				<!--Site Content-->
-				<div class="sixteen wide column">
-					<div class="ui segments">
-						<div class="ui segment">
-							<h3 class="ui header">
-								业务列表
-							</h3>
-						</div>
-						<div class="ui segment" style=" min-height : 500px;">
-							<div class="row">
-								<table class="ui compact  very basic table center aligned">
-									<thead>
-									<tr><th width="20%">名称</th>
-										<th width="20%">状态</th>
-										<th width="10%">健康度（%）</th>
-										<th width="10%">严重设备数量</th>
-										<th width="20%">警告设备数量</th>
-										<th width="20%">总设备数量</th>
-									</tr></thead>
-									<tbody id="tableSummary" >
-									<tr th:each="platformListVO : ${platformListVOS}" >
+                </div>
+            </div>
+        </div>
+        <!--navbar-->
+        <!--maincontent-->
+        <div class="mainWrap navslide">
+            <div class="ui equal width left aligned padded grid stackable">
+                <!--Site Content-->
+                <div class="sixteen wide column">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h3 class="ui header">
+                                业务列表
+                            </h3>
+                        </div>
+                        <div class="ui segment" style=" min-height : 500px;">
+                            <div class="row">
+                                <table class="ui compact  very basic table center aligned">
+                                    <thead>
+                                    <tr>
+                                        <th width="20%">名称</th>
+                                        <th width="20%">状态</th>
+                                        <th width="10%">健康度（%）</th>
+                                        <th width="10%">严重设备数量</th>
+                                        <th width="20%">警告设备数量</th>
+                                        <th width="20%">总设备数量</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tableSummary">
+                                    <tr th:each="platformListVO : ${platformListVOS}">
 
-										<td th:text="${platformListVO.platformName}" width="20%">
-											<input text="hidden" th:id="${platformListVO.platformId}" />
-											OA</td>
-										<td width="20%"><i th:class="${platformListVO.state} == '正常' ? 'green square icon' :(${platformListVO.state} =='警告' ? 'yellow square icon' : 'red square icon') " class="red square icon"></i></td>
-										<td th:text="${#numbers.formatDecimal(platformListVO.health, 0, 2)} " width="10%">%</td>
-										<td th:text="${platformListVO.highNum}" width="10%">30</td>
-										<td th:text="${platformListVO.warningNum}" width="20%">30</td>
-										<td th:text="${platformListVO.allNum}" width="20%">30</td>
-									</tr>
+                                        <td th:text="${platformListVO.platformName}" width="20%">
+                                            <input text="hidden" th:id="${platformListVO.platformId}"/>
+                                            OA
+                                        </td>
+                                        <td width="20%"><i
+                                                th:class="${platformListVO.state} == '正常' ? 'green square icon' :(${platformListVO.state} =='警告' ? 'yellow square icon' : 'red square icon') "
+                                                class="red square icon"></i></td>
+                                        <td th:text="${#numbers.formatDecimal(platformListVO.health, 0, 2)} "
+                                            width="10%">%
+                                        </td>
+                                        <td th:text="${platformListVO.highNum}" width="10%">30</td>
+                                        <td th:text="${platformListVO.warningNum}" width="20%">30</td>
+                                        <td th:text="${platformListVO.allNum}" width="20%">30</td>
+                                        <td><a class="manage_btn" href="#">管理</a></td>
+                                    </tr>
 
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!--Site Content-->
-			</div>
-		</div>
-		<!--maincontent-->
-	</div>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Site Content-->
+            </div>
+        </div>
+        <!--maincontent-->
+    </div>
+</div>
+<div id="manage_modal" class="ui small modal">
+    <div class="ui icon buttons">
+        <button class="ui basic compact icon button disabled">
+            <i class="edit icon"></i>
+        </button>
+        <div class="ui basic icon compact dropdown button">
+            <i class="add circle icon"></i>
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                <div class="disabled item">集群</div>
+                <div class="disabled item">设备</div>
+            </div>
+        </div>
+        <button class="ui basic compact icon button disabled">
+            <i class="remove circle icon"></i>
+        </button>
+
+        <button class="ui basic compact icon button disabled">
+            <i class="exchange icon"></i>
+        </button>
+    </div>
+    <div class="inline fields content">
+        <div id="manage_tree"></div>
+    </div>
+    <div id="manage_action" class="actions">
+        <div class="ui button deny">取消</div>
+        <div class="ui green button approve" id="manage_submit">确认</div>
+    </div>
 </div>
 <th:block th:replace="layout::bottom_script(~{::specialScript})">
-	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
-	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
-	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
-	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
+    <script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
+    <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
+    <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
+    <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
 
-	<th:block th:fragment="specialScript"></th:block>
+    <th:block th:fragment="specialScript">
+        <script type="text/javascript">
+            var $tree = $('#manage_tree')
+            $('.manage_btn').on('click', function () {
+//                $.ajax({
+//                    type: 'get',
+//                    url: '/platformtree/get_tree?platform_id=8',
+//                    dataType: 'json',
+//                    success: function (result) {
+//                        if(result.success) {
+                var mock = {
+                    "data": {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "id": "01", "text": "child1", "type": "设备"
+                                    },
+                                    {
+                                        "id": "03", "text": "child3", "type": "设备"
+                                    }
+                                ], "id": "1", "text": "parent1", "type": "集群"
+                            }
+                            ,
+                            {
+                                "children": [
+                                    {
+                                        "id": "02", "text": "child2", "type": "设备"
+                                    }
+                                ], "id": "2", "text": "parent2", "type": "集群"
+                            }
+                        ], "id": "0", "text": "root", "type": "业务平台"
+                    }
+                    , "message": "成功", "success": true
+                }
+                var origin_data = mock.data
+                $tree.data('jstree', false).empty()
+                $tree.jstree({
+
+                    core: {
+                        data: [origin_data],
+                        check_callback: true
+                    },
+                    types: {
+                        "#": {
+                          valid_children: ["业务平台"]
+                        },
+                        "业务平台": {
+                            valid_children: ["集群", "设备"]
+                        },
+                        "集群": {
+                            valid_children: ["设备"]
+                        },
+                        "设备": {
+                            valid_children: [],
+                            icon: "desktop icon"
+                        }
+                    },
+                    plugins: ["types", "dnd"]
+                })
+                //点击不同的节点，可选择的按钮不同
+                $tree.on('select_node.jstree', function (e, data) {
+                    console.log('select', data)
+                    $('#manage_modal button').addClass('disabled')
+                    $('#manage_modal .menu .item:contains("集群")').addClass('disabled')
+                    if (data.node.type === '业务平台') {
+                        $('#manage_modal .add').parent().removeClass('disabled')
+                        $('#manage_modal .menu .item:contains("集群")').removeClass('disabled')
+                    } else if (data.node.type === '集群') {
+                        $('#manage_modal .remove').parents('button').removeClass('disabled')
+                        $('#manage_modal .edit').parents('button').removeClass('disabled')
+                    } else {
+                    }
+                })
+//                        } else {
+//                            console.error('数据获取错误')
+//                        }
+//                    }
+//                })
+                $('#manage_modal').modal({
+                    onApprove: function () {
+
+                    }
+                }).modal('show')
+            })
+
+            function genNewClusterId(tree, root) {
+                if (tree.children !== undefined) {
+                    var children = tree.children
+                    var maxId = children.reduce(function (a, b) {
+                        a = b.id > a ? b.id : a;
+                        return a
+                    }, 0)
+                    return maxId + 1
+                } else {
+                    return 1
+                }
+            }
+
+            // 增加 集群
+            $('#manage_modal .menu .item').on('click', function () {
+                var _tree = $tree.jstree(true)
+                var newId = _tree.create_node(_tree.get_selected()[0], '', 'last', function (node) {
+
+                })
+                console.log('newId', newId)
+                _tree.edit(_tree.get_node(newId), '新集群', function (node, status) {
+                    if (status) {
+                        //success
+                        console.log('success', node)
+                    } else {
+                        console.log('failure')
+                    }
+                })
+
+            })
+
+            //删除集群
+            $('#manage_modal .remove').parents('button').on('click', function () {
+                var _tree = $tree.jstree(true)
+                var selected_node = _tree.get_selected(true)[0]
+                //如果有子节点，则先移动到上一层
+                if (_tree.is_parent(selected_node)) {
+                    console.log(_tree.get_json(selected_node))
+                    console.log('selected_node', selected_node)
+                    console.log('selected_node_children', selected_node.children)
+                    _tree.move_node(_tree.get_json(selected_node).children, '0', 'last') //'0'是root节点id，业务平台id
+                }
+                var del_result = _tree.delete_node(selected_node)
+                if (!del_result) {
+                    console.error('删除失败')
+                    return
+                } else {
+                    console.log('success')
+                }
+            })
+
+            //编辑
+            $('#manage_modal .edit').parents('button').on('click', function () {
+                var _tree = $tree.jstree(true)
+                var selected_node = _tree.get_selected(true)[0]
+                _tree.edit(selected_node,  function (node, status) {
+                    if (status) {
+                        //success
+                    }
+                })
+            })
+        </script>
+    </th:block>
 </th:block>
 
 </body>
