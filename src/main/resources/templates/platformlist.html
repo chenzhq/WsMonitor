@@ -265,11 +265,11 @@
     </div>
 </div>
 <div id="manage_modal" class="ui small modal">
-    <div class="ui compact icon buttons">
-        <button class="ui basic compact icon button disabled">
+    <div class="ui icon buttons">
+        <button class="ui icon button disabled">
             <i class="edit icon"></i>
         </button>
-        <div class="ui basic icon compact dropdown button disabled">
+        <div class="ui icon dropdown button disabled">
             <i class="add circle icon"></i>
             <i class="dropdown icon"></i>
             <div class="menu">
@@ -277,7 +277,7 @@
                 <div class="disabled item">设备</div>
             </div>
         </div>
-        <button class="ui basic compact icon button disabled">
+        <button class="ui icon button disabled">
             <i class="remove circle icon"></i>
         </button>
         <!--
@@ -305,6 +305,13 @@
             var $tree = $('#manage_tree')
             var platform_id
             $('.manage_btn').on('click', function (e) {
+
+                function initBtn() {
+                    $('#manage_modal button').addClass('disabled')
+                    $('#manage_modal .add').parent().addClass('disabled')
+                    $('#manage_modal .menu .item:contains("集群")').addClass('disabled')
+                }
+
                 platform_id = $(this).attr("pfid");
                 $.ajax({
                     type: 'get',
@@ -346,9 +353,7 @@
                             })
                             //点击不同的节点，可选择的按钮不同
                             $tree.on('select_node.jstree', function (e, data) {
-                                $('#manage_modal button').addClass('disabled')
-                                $('#manage_modal .add').parent().addClass('disabled')
-                                $('#manage_modal .menu .item:contains("集群")').addClass('disabled')
+                                initBtn()
                                 if (data.node.type === '业务平台') {
                                     $('#manage_modal .add').parent().removeClass('disabled')
                                     $('#manage_modal .menu .item:contains("集群")').removeClass('disabled')
@@ -392,6 +397,9 @@
 
                             }
                         })
+                    },
+                    onHidden: function () {
+                        initBtn()
                     }
                 }).modal('show')
             })

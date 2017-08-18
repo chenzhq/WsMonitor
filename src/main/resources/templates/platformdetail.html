@@ -599,8 +599,8 @@
                             var health = platform_data.health.toFixed(2);
 							$("#health_value").text(health);
 							if(0 <= health <= 60){var colorStatistic = "ui huge red statistic";}
-                            if(60 < health <= 80){var colorStatistic = "ui huge yellow  statistic";}
-                            if(80 < health <= 100){var colorStatistic = "ui huge green  statistic";}
+                            else if(60 < health <= 80){var colorStatistic = "ui huge yellow  statistic";}
+                            else if(80 < health <= 100){var colorStatistic = "ui huge green  statistic";}
                             $("#healthStatistic").removeClass();
                             $("#healthStatistic").addClass(colorStatistic);
                             //绘制图标数据
@@ -845,6 +845,41 @@
 					success: function (result) {
 						if(result.success) {
 							var data = result.data;
+							//temp mock data
+							var mock = {
+                                "data": {
+                                    "children": [
+                                        {
+                                            "children": [],
+                                            "color": "#5FB878",
+                                            "id": "10206",
+                                            "label": "win_yang_feng",
+                                            "shape": "设备"
+                                        },
+                                        {
+                                            "children": [
+                                                {
+                                                    "color": "#DB2828",
+                                                    "id": "10205",
+                                                    "label": "ZKF_WIN_90",
+                                                    "shape": "设备"
+                                                }
+                                            ],
+                                            "color": "#DB2828",
+                                            "id": "j6_6",
+                                            "label": "2333",
+                                            "shape": "../static/images/0.jpg"
+                                        }
+                                    ],
+                                    "color": "#DB2828",
+                                    "id": "8",
+                                    "label": "windows",
+                                    "shape": "业务平台"
+                                },
+                                "message": "更新成功",
+                                "success": true
+                            }
+                            data = mock.data
 							getplatformTree(data);
 						}
 						else {
