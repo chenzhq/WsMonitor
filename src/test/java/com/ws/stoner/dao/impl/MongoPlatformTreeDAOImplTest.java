@@ -4,6 +4,7 @@ import com.ws.stoner.BootApplication;
 import com.ws.stoner.dao.MongoItemDAO;
 import com.ws.stoner.dao.MongoPlatformTreeDAO;
 import com.ws.stoner.model.DO.mongo.PlatformTree;
+import com.ws.stoner.model.DO.mongo.PlatformTreeManager;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.junit.Test;
 import org.junit.Before; 
@@ -49,25 +50,27 @@ public void after() throws Exception {
 @Test
 public void testSave() throws Exception { 
 //TODO: Test goes here...
-    PlatformTree child1 = new PlatformTree("01","child1","服务器");
-    PlatformTree child2 = new PlatformTree("02","child2","数据库");
-    PlatformTree child3 = new PlatformTree("03","child3","网络设备");
-    PlatformTree child4 = new PlatformTree("04","child4","存储");
-    List<PlatformTree> list1 = new ArrayList<>();
-    List<PlatformTree> list2 = new ArrayList<>();
-    List<PlatformTree> list3 = new ArrayList<>();
+    PlatformTreeManager child1 = new PlatformTreeManager("10205","ZKF_WIN_90","设备");
+    PlatformTreeManager child2 = new PlatformTreeManager("10206","win_yang_feng","设备");
+    List<PlatformTreeManager> list1 = new ArrayList<>();
+    List<PlatformTreeManager> list2 = new ArrayList<>();
+    List<PlatformTreeManager> list3 = new ArrayList<>();
     list1.add(child1);
     list1.add(child2);
-    list2.add(child3);
-    list2.add(child4);
-    PlatformTree parent1 = new PlatformTree("1","parent1","集群",list1);
-    PlatformTree parent2 = new PlatformTree("2","parent2","集群",list2);
+    PlatformTreeManager parent1 = new PlatformTreeManager("1","服务器host","集群",list1);
+    PlatformTreeManager parent2 = new PlatformTreeManager("2","数据库data","集群",list2);
     list3.add(parent1);
     list3.add(parent2);
-    PlatformTree root = new PlatformTree("0","root","业务平台",list3);
+    PlatformTreeManager root = new PlatformTreeManager("8","windows","业务平台",list3);
     mongoPlatformTreeDAO.save(root);
     System.out.println(RestResultGenerator.genResult(root, REST_UPDATE_SUCCESS).toString());
 } 
+
+@Test
+public void testdemo() throws Exception {
+    PlatformTreeManager root = new PlatformTreeManager("111","ceshi","业务平台","zhengc");
+    mongoPlatformTreeDAO.save(root);
+}
 
 
 } 

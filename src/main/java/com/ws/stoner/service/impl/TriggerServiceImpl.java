@@ -122,6 +122,7 @@ public class TriggerServiceImpl implements TriggerService {
                 .setMonitored(true)
                 .setOnlyTrue(true)
                 .setExpandDescription(true)
+                .setExpandExpression(true)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setOutput(DashboardProblemVO.PROPERTY_NAMES)
                 .setFilter(triggerFilter);
@@ -140,6 +141,7 @@ public class TriggerServiceImpl implements TriggerService {
         triggerGetRequest.getParams()
                 .setMonitored(true)
                 .setItemIds(itemIds)
+                .setExpandExpression(true)
                 .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
                 .setOutput(BriefTriggerDTO.PROPERTY_NAMES);
         return listTrigger(triggerGetRequest,BriefTriggerDTO.class);

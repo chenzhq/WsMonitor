@@ -35,7 +35,7 @@ public class TriggerServiceImplImplTest {
 
 @Before
 public void before() throws Exception {
-    zApi.cacheLogin("f558f7da83dea947f7c2d0def347b4f0");
+    zApi.cacheLogin("2d9cab00c19070e3fae36b8b83387e6a");
 } 
 
 @After
@@ -64,7 +64,7 @@ public void testListTrigger() throws Exception {
     @Test
     public void testGetTriggersByItemIds() throws Exception {
         List<String > itemIds = new ArrayList<>();
-        itemIds.add("37155");
+        itemIds.add("32884");
         List<BriefTriggerDTO> briefTriggerDTOS = triggerService.getTriggersByItemIds(itemIds);
         System.out.println(briefTriggerDTOS);
     }

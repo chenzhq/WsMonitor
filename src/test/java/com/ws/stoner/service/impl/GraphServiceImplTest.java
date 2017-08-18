@@ -89,7 +89,7 @@ public void testGetGraphItemByPointId() throws Exception {
 
     @Test
     public void testgetPlatTreeByPlatformId() throws  Exception {
-        System.out.println(graphService.getPlatTreeByPlatformId("17"));
+        System.out.println(graphService.getPlatTreeByPlatformId("8"));
     }
 
     @Test

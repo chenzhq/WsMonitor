@@ -289,24 +289,8 @@ public class GraphServiceImpl implements GraphService {
         //用于组装集群VO
         List<PlatformTreeVO> clusterList = new ArrayList<>();
         for(PlatformTree cluster : platformchildren) {
-            if(cluster.getChildren() == null) {
-                //是设备
-                //color,type
-                String type = PlatformTreeTypeEnum.HOST.getName();
-                String color = "";
-                for(BriefHostDTO hostDTO : hostDTOS) {
-                    if(cluster.getId().equals(hostDTO.getHostId())) {
-                        color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
-                    }
-                }
-                PlatformTreeVO hostTreeVO = new PlatformTreeVO(
-                        cluster.getId(),
-                        cluster.getLabel(),
-                        color,
-                        type
-                );
-                clusterList.add(hostTreeVO);
-            }else {
+            if(cluster.getChildren() != null && cluster.getChildren().size() != 0) {
+                //是集群
                 List<PlatformTreeVO> hostList = new ArrayList<>();
                 for(PlatformTree hostTree : cluster.getChildren()) {
                     String type = "";
@@ -345,6 +329,23 @@ public class GraphServiceImpl implements GraphService {
                         hostList
                 );
                 clusterList.add(clusterTree);
+            }else {
+                //是设备
+                //color,type
+                String type = PlatformTreeTypeEnum.HOST.getName();
+                String color = "";
+                for(BriefHostDTO hostDTO : hostDTOS) {
+                    if(cluster.getId().equals(hostDTO.getHostId())) {
+                        color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                    }
+                }
+                PlatformTreeVO hostTreeVO = new PlatformTreeVO(
+                        cluster.getId(),
+                        cluster.getLabel(),
+                        color,
+                        type
+                );
+                clusterList.add(hostTreeVO);
             }
         }
         //查询业务平台状态

@@ -1,6 +1,5 @@
 package com.ws.stoner.model.DO.mongo;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -20,6 +19,8 @@ public class PlatformTreeManager {
     @Field("label")
     private String text;
     private String type;
+
+    private String state;
     private List<PlatformTreeManager> children;
 
     public PlatformTreeManager(String id, String text, String type) {
@@ -33,6 +34,13 @@ public class PlatformTreeManager {
         this.text = text;
         this.type = type;
         this.children = children;
+    }
+
+    public PlatformTreeManager(String id, String text, String type, String state) {
+        this.id = id;
+        this.text = text;
+        this.type = type;
+        this.state = state;
     }
 
     public PlatformTreeManager() {
@@ -72,6 +80,15 @@ public class PlatformTreeManager {
 
     public PlatformTreeManager setChildren(List<PlatformTreeManager> children) {
         this.children = children;
+        return this;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public PlatformTreeManager setState(String state) {
+        this.state = state;
         return this;
     }
 
