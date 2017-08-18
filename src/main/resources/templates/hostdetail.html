@@ -453,6 +453,13 @@
                                 <div id="flag_true" >
 									<h4 class="ui horizontal divider header">
 										<div class="ui secondary menu">
+											<a class="header item editItems">
+												<i class="large icons" data-tooltip="编辑监控项" data-inverted="">
+													<i class="area chart icon"></i>
+													<i class="inverted corner write icon"></i>
+												</i>
+												编辑
+											</a>
                                             <a class="header item addItems">
                                                 <i class="large icons" data-tooltip="添加监控项" data-inverted="">
                                                     <i class="area chart icon"></i>
@@ -641,7 +648,10 @@
 	$(function(){
 		//加载监控项的图形
         loadHostGraph();
-
+		//点击编辑监控项
+        $('a.editItems').on('click', function(e) {
+            $('.dimmerStr').dimmer('show');
+		})
         //点击添加监控项
         $('a.addItems').on('click', function(e) {
             e.preventDefault();
@@ -975,22 +985,19 @@
         $("#flag_false").empty();
         $("#flag_true_content").empty();
         for (var i=0; i<data.length; i++){
+            var title = "";
+            if(data[i].units == "") {
+                title = data[i].graph_name;
+            }else {
+                title =data[i].graph_name + "(" + data[i].units +")";
+            }
             var id = "i" + data[i].item_id;
             if (data[i].flag==true)
             {
-                var strAction = "<a class='header item editItems' id='g" + data[i].item_id + "' onclick='editGraph(this.id)' style='text-align:right !important'>" +
-									"<i class='large icons' data-tooltip='编辑监控项' data-inverted=''>" +
-										"<i class='area chart icon'></i>" +
-										"<i class='inverted corner write icon'></i>" +
-                					"</i>" +
-               					 "</a>" +
-                				" <a class='header item deleteItems' id='g" + data[i].item_id + "' onclick='deleteGraph(this.id)' style='text-align:right !important'>" +
-                					"<i class='large icons' data-tooltip='删除监控项' data-inverted=''>" +
-										"<i class='area chart icon'></i>" +
-										"<i class='inverted corner trash icon'></i>" +
-                					"</i>" +
-                				"</a>";
-                str_true = "<div class=' brick small'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div>";
+                var strAction = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='g"
+					+ data[i].item_id + "' onclick='editGraph(this.id)'>编辑</div><div class='ui button' id='g"
+					+ data[i].item_id + "' onclick='deleteGraph(this.id)' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
+                str_true = "<div class=' brick small'><div class='dimmerStr'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
                 $("#flag_true_content").append(str_true);
             }
             if(data[i].flag==false){
@@ -1017,12 +1024,6 @@
                 var ymax = null;
 			}
 			//图形值
-			var title = "";
-			if(data[i].units == "") {
-                title = data[i].graph_name;
-			}else {
-			    title =data[i].graph_name + "(" + data[i].units +")";
-			}
             /*console.log("图形类型： " + data[i].graph_type);*/
             switch (data[i].graph_type) {
                 case "gauge":
