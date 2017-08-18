@@ -674,12 +674,6 @@
                                         type: 'bar',
                                         stack: '设备总数',
                                         barWidth : 25,
-                                        label: {
-                                            normal: {
-                                                show: true,
-                                                position: 'insideRight'
-                                            }
-                                        },
                                         data: platform_data.datas[0],
                                         color: ['#5FB878']
                                     },
@@ -688,12 +682,6 @@
                                         type: 'bar',
                                         stack: '设备总数',
                                         barWidth : 25,
-                                        label: {
-                                            normal: {
-                                                show: true,
-                                                position: 'insideRight'
-                                            }
-                                        },
                                         data: platform_data.datas[1],
                                         color: ['#F7B824']
                                     },
@@ -702,12 +690,6 @@
                                         type: 'bar',
                                         stack: '设备总数',
                                         barWidth : 25,
-                                        label: {
-                                            normal: {
-                                                show: true,
-                                                position: 'insideRight'
-                                            }
-                                        },
                                         data: platform_data.datas[2],
                                         color: ['#DB2828']
                                     }
@@ -883,7 +865,6 @@
 			//加载业务树方法
 			function platformTree() {
                 var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
-				var data_tree ;
 				$.ajax({
 					type: "get",
 					async:false,
@@ -967,7 +948,7 @@
 						var state = 'ui yellow top attached button';
 					}
 					if(data[i].state == '严重'){
-						var state = 'ui reed top attached button';
+						var state = 'ui red top attached button';
 					}
 					str +="<div class='column'><div class='"+state+"' id='p"+data[i].point_id+"' >"+data[i].point_name+"</div> </div>";
 				}
@@ -1002,11 +983,16 @@
                 for(var i=0;i<data.length;i++)
                 {
                     str += "<div class='active title'>" +
-						     "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right' onclick='add_graph(this.id)'>" +
+                        "<a class='header item editItems' id='i" +  data[i].host_id + "'style='float:right' onclick='edit_graphs(this.id)'" +
+								"<i class='write icon'></i>" +
+								"<i class='write icon' data-tooltip='编辑图形报告' data-inverted=''></i>编辑" +
+								"<i class='trash icon' data-tooltip='删除图形报告' data-inverted=''></i>删除" +
+                        "</a>" +
+						     "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right' onclick='add_graphs(this.id)'>" +
 								"<i class='large icons' data-tooltip='添加图形报告' data-inverted=''> " +
 						    		"<i class='area chart icon'></i> " +
 									"<i class='inverted corner add icon'></i> " +
-                  				"</i>添加图形报告" +
+                  				"</i>添加" +
 						     "</a>" +
 						     "<i class='dropdown icon'></i>"
                               +data[i].host_name+"" +
@@ -1020,7 +1006,7 @@
             }
             //获取并绘制业务平台图形数据
             function getitemsAccordion(host_ids) {
-			    console.log("进入图形数据获取方法，host_ids:"+host_ids);
+				console.log("进入图形数据获取方法，host_ids:"+host_ids);
                 $.ajax({
                     type: "post",
                     url:"/platformdetail/get_graphs",
@@ -1030,25 +1016,25 @@
                     success: function (result) {
                         if(result.success) {
                             var graph_datas = result.data;
+                            $.each(host_ids,function(n,value) {
+                                $("#g"+value).html('');
+                            });
 							//循环绘制图形
                             for(var i=0;i<graph_datas.length;i++) {
+                                var title = "";
+                                if(graph_datas[i].units == "") {
+                                    title = graph_datas[i].graph_name;
+                                }else {
+                                    title =graph_datas[i].graph_name + "(" + graph_datas[i].units +")";
+                                }
                                 //append 图形定位
-                                var opr_str = "<a class='header item editItems' id='i" + graph_datas[i].item_id + "' onclick='edit_graph(this.id)' style='text-align:right !important'>" +
-                                    				"<i class='large icons' data-tooltip='编辑监控项' data-inverted=''>" +
-									                   "<i class='area chart icon'></i>" +
-                                 					   "<i class='inverted corner write icon'></i>" +
-                                                    "</i>" +
-                                                "</a>" +
-                                                "<a class='header item deleteItems' id='i" + graph_datas[i].item_id + "' onclick='delete_graph(this.id)' style='text-align:right !important'>" +
-													"<i class='large icons' data-tooltip='删除监控项' data-inverted=''>" +
-														"<i class='area chart icon'></i>" +
-														"<i class='inverted corner trash icon'></i>" +
-													"</i>" +
-                                    			"</a>";
-                                var str_graph ="<div class='column'>" + opr_str + "<div id='g"+graph_datas[i].item_id+"' class='chart-style'>"+graph_datas[i].item_id+"</div></div>";
+                                var dimmer_str = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='i"
+									+ graph_datas[i].item_id + "' onclick='edit_graph(this.id)'>编辑</div><div class='ui button' id='i"
+									+ graph_datas[i].item_id + "' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
                                 var id = "g" + graph_datas[i].item_id;
+                                var str_graph ="<div class='column'><div class='dimmerStr'>" + dimmer_str + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
                                 $("#g"+graph_datas[i].host_id).append(str_graph);
-								//console.log($("#g"+graph_datas[i].item_id).attr("id"));
+                                //console.log($("#g"+graph_datas[i].item_id).attr("id"));
                                 var myChart = echarts.init(document.getElementById(id));
                                 var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
                                 if (graph_datas[i].state == "正常"){ var myColor = Color[0] }
@@ -1063,12 +1049,6 @@
                                     var ymax = null;
                                 }
                                 //图形值
-                                var title = "";
-                                if(graph_datas[i].units == "") {
-                                    title = graph_datas[i].graph_name;
-                                }else {
-                                    title =graph_datas[i].graph_name + "(" + graph_datas[i].units +")";
-                                }
                                 var option ;
 								console.log("图形类型： " + graph_datas[i].graph_type);
                                 switch (graph_datas[i].graph_type) {
@@ -1124,7 +1104,12 @@
                                             title: {
                                                 text: title,
                                             },
-                                            tooltip: {},
+                                            tooltip: {
+                                                trigger: 'axis',
+                                                position: function (pt) {
+                                                    return [pt[0], '10%'];
+                                                }
+                                            },
                                             legend: {
                                                 data:[]
                                             },
@@ -1134,12 +1119,6 @@
                                                 bottom: '2%',
                                                 top:'20%',
                                                 containLabel: true
-                                            },
-                                            toolbox: {
-                                                show: true,
-                                                feature: {
-                                                    magicType: {type: ['line', 'bar']},
-                                                }
                                             },
                                             xAxis: {
                                                 data: graph_datas[i].data_time
@@ -1164,7 +1143,12 @@
                                             title: {
                                                 text: title,
                                             },
-                                            tooltip: {},
+                                            tooltip: {
+                                                trigger: 'axis',
+                                                position: function (pt) {
+                                                    return [pt[0], '10%'];
+                                                }
+											},
                                             legend: {
                                                 data:[]
                                             },
@@ -1174,12 +1158,6 @@
                                                 bottom: '2%',
                                                 top:'20%',
                                                 containLabel: true
-                                            },
-                                            toolbox: {
-                                                show: true,
-                                                feature: {
-                                                    magicType: {type: ['line', 'bar']},
-                                                }
                                             },
                                             xAxis: {
                                                 data: graph_datas[i].data_time
@@ -1212,7 +1190,8 @@
             }
 
             //点击添加业务图形报告
-            function add_graph(id) {
+            function add_graphs(id) {
+                $('.dimmerStr').dimmer('show');
 			    console.log("进入添加图形报告方法");
                 var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
                 var item_id = '';
@@ -1302,7 +1281,9 @@
                     }
                 }).modal('show')
 			}
-
+            function edit_graphs(id) {//id='g"+data[i].host_id+"'
+                $('.dimmerStr').dimmer('show');
+            }
             //点击修改图形 function
             function edit_graph(id) {
                 //console.log("ITEMID:" + id);
