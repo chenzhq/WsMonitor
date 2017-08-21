@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
+	<meta charset="UTF-8">
+	<title>日历图</title>
+	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
+	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
+	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+
+	<th:block th:fragment="supplement">
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<style type="text/css">
+		</style>
+	</th:block>
+</head>
+<body>
+<!--header start-->
+<div id="contextWrap">
+	<!--sidebar-->
+	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
+		 th:replace="layout::left_menu">
+		<a class="item logo" href="index.html">
+			<img src="../static/images/logo.png" alt="stagblogo"/><img src="../static/images/thumblogo.png"
+																	   alt="stagblogo" class="displaynone"/>
+		</a>
+		<div class="ui accordion inverted">
+			<div class="title item">
+                <i class="ion-speedometer titleIcon icon"></i>仪表盘
+			</div>
+			<div class="content">
+				<a class="item" href="#" th:href="@{/dashboard}">仪表盘</a>
+			</div>
+			<div class="title item" href="#">
+				<i class="ion-ios-world titleIcon  icon"></i>业务概览
+			</div>
+			<div class="content">
+			</div>
+			<div class="title item">
+				<i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="#" th:href="@{/overview}">设备总览</a>
+				<a class="item" href="#">设备详情</a>
+			</div>
+			<div class="title item" href="#">
+				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+			</div>
+			<div class="content">
+			</div>
+			<div class="title item">
+				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="#">告警日历</a>
+				<a class="item" href="#">告警列表</a>
+			</div>
+			<div class="title item" href="#">
+				<i class="ion-briefcase titleIcon icon"></i>报表统计
+			</div>
+			<div class="content">
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>仪表盘1</span>
+			<i class="ion-speedometer icon"></i>
+			<div class="menu">
+				<div class="header">
+					仪表盘1
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>业务概览</span>
+			<i class="ion-ios-world icon"></i>
+			<div class="menu">
+				<div class="header">
+					业务概览
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>设备监控</span>
+			<i class="ion-mouse icon"></i>
+			<div class="menu">
+				<div class="header">
+					设备监控
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="tab.html">设备总览</a>
+				<a class="item" href="table.html">设备详情</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>视图展示</span>
+			<i class="ion-arrow-graph-up-right icon"></i>
+			<div class="menu">
+				<div class="header">
+					视图展示
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>告警展示</span>
+			<i class="ion-paintbrush icon"></i>
+			<div class="menu">
+				<div class="header">
+					告警展示
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="error.html">告警日历</a>
+				<a class="item" href="error.html">告警列表</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>报表统计</span>
+			<a href="error.html">
+				<i class="ion-briefcase icon"></i>
+			</a>
+		</div>
+
+		<div class="ui divider"></div>
+
+	</div>
+
+	<!--sidebar-->
+
+	<div class="pusher">
+		<!--navbar-->
+		<div class="navslide navwrap" th:replace="layout::top_nav">
+			<div class="ui menu icon borderless grid" data-color="inverted white">
+				<a class="item labeled openbtn">
+					<i class="ion-navicon-round big icon"></i>
+				</a>
+				<div class="item ui colhidden">
+					<div class="ui icon input">
+						<input type="text" placeholder="Search...">
+						<i class="search icon"></i>
+					</div>
+				</div>
+				<div class="right menu colhidden">
+					<div class="ui dropdown item labeled icon">
+						<i class="bell icon"></i>   告警
+						<div class="ui red label mini circular">6</div>
+						<div class="menu" >
+							<div class="header">
+								紧急告警
+							</div>
+							<div class="item">
+								告警信息1……
+								<div class="ui teal left pointing label">1</div>
+							</div>
+							<div class="item">
+								告警信息2……
+								<div class="ui label">51</div>
+							</div>
+							<div class="item">
+								告警信息3……
+								<div class="ui label">1</div>
+							</div>
+							<div class="header">
+								严重告警
+							</div>
+							<div class="item">
+								<i class="dropdown icon"></i>
+								<span class="text">更多</span>
+								<div class="menu">
+									<div class="item">告警信息……</div>
+									<div class="item">告警信息……</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="ui dropdown item">
+                        <img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/0.jpg}"
+                             alt="label-image"/>
+						<div class="menu">
+							<a class="item" href="#" th:text="${session.userInfo.name}">whstone</a>
+							<a class="item" href="mail.html" th:href="@{/logout}">注销</a>
+						</div>
+					</div>
+					<a class="item labeled rightsidebar computer only">
+						<i class="ion-wrench large icon"></i>工具
+					</a>
+
+				</div>
+			</div>
+		</div>
+		<!--navbar-->
+		<!--maincontent-->
+		<div class="mainWrap navslide">
+			<div class="ui equal width left aligned padded grid stackable">
+				<!--Site Content-->
+				<div class="sixteen wide column">
+					<div class="ui segments">
+						<div class="ui segment">
+							<div class="ui secondary pointing menu">
+								<a class="active item" data-tab="platformDetail">业务概述</a>
+								<a class="item" data-tab="platformTree">业务树</a>
+								<a class="item" data-tab="platformReport">业务图形报告</a>
+								<div class="right menu">
+									<select id="platform_select" class="ui mini dropdown ">
+									</select>
+								</div>
+							</div>
+							<div class="ui active tab segment noMargin noBorder fixedHeight no-padding" data-tab="platformDetail">
+								<div class="row">
+									<div class="sixteen wide column">
+										<div class="ui grid">
+											<div class="sixteen wide column">
+												<div class="ui segment center aligned">
+													<h2 class="ui left aligned header">健康度</h2>
+												</div>
+											</div>
+											<div class="sixteen wide column">
+												<div  class="ui segment">
+													<h2 class="ui left aligned header">健康度</h2>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+				<!--modal end-->
+				<!--Site Content-->
+			</div>
+		</div>
+		<!--maincontent-->
+	</div>
+
+<th:block th:replace="layout::bottom_script(~{::supple})">
+	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
+	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
+	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
+	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
+	<th:block th:fragment="supple">
+		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+		<script type="text/javascript">
+            //页面加载完加载基础数据
+			$(function() {
+                //初始折叠菜单
+			})
+     </script>
+	</th:block>
+</th:block>
+</body>
+</html>
