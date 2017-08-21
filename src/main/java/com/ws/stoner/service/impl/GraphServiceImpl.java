@@ -3,6 +3,7 @@ package com.ws.stoner.service.impl;
 import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.PlatformTreeTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
+import com.ws.stoner.constant.URLConsts;
 import com.ws.stoner.dao.MongoGraphDAO;
 import com.ws.stoner.dao.MongoPlatformGraphDAO;
 import com.ws.stoner.dao.MongoPlatformTreeDAO;
@@ -254,6 +255,7 @@ public class GraphServiceImpl implements GraphService {
      */
     @Override
     public PlatformTreeVO getPlatTreeByPlatformId(String platformId) throws ServiceException {
+        String context_url = URLConsts.URL_CONTEXT + "/images/";
         List<String> platformIds = new ArrayList<>();
         platformIds.add(platformId);
         //判断mongodb中是否有业务平台数据，没有，则初始化
@@ -272,7 +274,6 @@ public class GraphServiceImpl implements GraphService {
                     return platformTreeVO;
                 }
             }
-
         }
         //获取mongodb中 对应业务结构数据
         PlatformTree platform = null;
@@ -294,68 +295,74 @@ public class GraphServiceImpl implements GraphService {
                 List<PlatformTreeVO> hostList = new ArrayList<>();
                 for(PlatformTree hostTree : cluster.getChildren()) {
                     String type = "";
-                    String color = "";
+                    String state = "";
                     for(BriefHostDTO hostDTO : hostDTOS) {
                         if(hostTree.getId().equals(hostDTO.getHostId())) {
-                            color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
-                            type = PlatformTreeTypeEnum.HOST.getName();
+                            state = StatusConverter.getTextStatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                            type = PlatformTreeTypeEnum.HOST.code;
                         }
                     }
                     PlatformTreeVO hostTreeVO = new PlatformTreeVO(
                             hostTree.getId(),
                             hostTree.getLabel(),
-                            color,
-                            type
+                            state,
+                            type,
+                            context_url
                     );
                     hostList.add(hostTreeVO);
                 }
-                String clusterColor ;
-                List<String> colors = new ArrayList<>();
+                String clusterState ;
+                String clusterType = PlatformTreeTypeEnum.CLUSTER.code;
+                List<String> states = new ArrayList<>();
                 for(PlatformTreeVO hostTree : hostList) {
-                    colors.add(hostTree.getColor());
+                    states.add(hostTree.getState());
                 }
-                if(colors.contains(StatusEnum.HIGH.color)) {
-                    clusterColor = StatusEnum.HIGH.color;
-                }else if(colors.contains(StatusEnum.WARNING.color)) {
-                    clusterColor = StatusEnum.WARNING.color;
+                if(states.contains(StatusEnum.HIGH.text)) {
+                    clusterState = StatusEnum.HIGH.text;
+                }else if(states.contains(StatusEnum.WARNING.text)) {
+                    clusterState = StatusEnum.WARNING.text;
                 }else {
-                    clusterColor = StatusEnum.OK.color;
+                    clusterState = StatusEnum.OK.text;
                 }
                 PlatformTreeVO clusterTree = new PlatformTreeVO(
                         cluster.getId(),
                         cluster.getLabel(),
-                        clusterColor,
-                        PlatformTreeTypeEnum.CLUSTER.getName(),
+                        clusterState,
+                        clusterType,
+                        context_url,
                         hostList
                 );
                 clusterList.add(clusterTree);
             }else {
                 //是设备
                 //color,type
-                String type = PlatformTreeTypeEnum.HOST.getName();
-                String color = "";
+                String type = PlatformTreeTypeEnum.HOST.code;
+                String state = "";
                 for(BriefHostDTO hostDTO : hostDTOS) {
                     if(cluster.getId().equals(hostDTO.getHostId())) {
-                        color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                        state = StatusConverter.getTextStatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
                     }
                 }
                 PlatformTreeVO hostTreeVO = new PlatformTreeVO(
                         cluster.getId(),
                         cluster.getLabel(),
-                        color,
-                        type
+                        state,
+                        type,
+                        context_url
                 );
                 clusterList.add(hostTreeVO);
             }
         }
         //查询业务平台状态
         BriefPlatformDTO platformDTO = platformService.getPlatformByPlatformId(platformId);
-        String platformColor = StatusConverter.colorTransform(platformDTO.getCustomState());
+        String platformState = StatusConverter.getTextStatusTransform(platformDTO.getCustomState());
+        String platformType = PlatformTreeTypeEnum.PLATFORM.code;
         PlatformTreeVO platformTreeVO = new PlatformTreeVO(
                 platformId,
                 platform.getLabel(),
-                platformColor,
-                PlatformTreeTypeEnum.PLATFORM.getName(),
+                platformState,
+                platformType,
+                context_url,
                 clusterList
         );
         return platformTreeVO;
@@ -368,7 +375,7 @@ public class GraphServiceImpl implements GraphService {
      */
     @Override
     public List<PlatformTreeVO> initPlatTree() throws ServiceException {
-
+        String context_url = URLConsts.URL_CONTEXT + "/images/";
         List<BriefPlatformDTO> allPlatformDTOS = platformService.listAllPlatform();
         List<PlatformTreeVO> platformTreeVOS = new ArrayList<>();
         for(BriefPlatformDTO platformDTO : allPlatformDTOS) {
@@ -376,25 +383,26 @@ public class GraphServiceImpl implements GraphService {
             List<PlatformTree> hostList = new ArrayList<>();
             List<PlatformTreeVO> hostListVO = new ArrayList<>();
             for(BriefHostDTO hostDTO : hostDTOS) {
-                String color = StatusConverter.colorTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                String state = StatusConverter.getTextStatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
                 PlatformTree hostTree = new PlatformTree(
                         hostDTO.getHostId(),
                         hostDTO.getName(),
-                        PlatformTreeTypeEnum.HOST.getName()
+                        PlatformTreeTypeEnum.HOST.code
                 );
                 hostList.add(hostTree);
                 PlatformTreeVO hostTreeVO = new PlatformTreeVO(
                         hostDTO.getHostId(),
                         hostDTO.getName(),
-                        color,
-                        PlatformTreeTypeEnum.HOST.getName()
+                        state,
+                        PlatformTreeTypeEnum.HOST.getName(),
+                        context_url
                 );
                 hostListVO.add(hostTreeVO);
             }
             PlatformTree platformTree = new PlatformTree(
                     platformDTO.getPlatformId(),
                     platformDTO.getName(),
-                    PlatformTreeTypeEnum.PLATFORM.getName(),
+                    PlatformTreeTypeEnum.PLATFORM.code,
                     hostList
             );
             try {
@@ -406,8 +414,9 @@ public class GraphServiceImpl implements GraphService {
             PlatformTreeVO platformTreeVO = new PlatformTreeVO(
                     platformDTO.getPlatformId(),
                     platformDTO.getName(),
-                    StatusConverter.colorTransform(platformDTO.getCustomState()),
-                    PlatformTreeTypeEnum.PLATFORM.getName(),
+                    StatusConverter.getTextStatusTransform(platformDTO.getCustomState()),
+                    PlatformTreeTypeEnum.PLATFORM.code,
+                    context_url,
                     hostListVO
             );
             platformTreeVOS.add(platformTreeVO);

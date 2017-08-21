@@ -4,9 +4,14 @@ package com.ws.stoner.constant;
  * Created by chenzheqi on 2017/5/24.
  */
 public enum StatusEnum {
-    WARNING("警告", 1,"#F7B824"),
-    HIGH("严重", 2,"#DB2828"),
-    OK("正常", 0,"#5FB878");
+    WARNING("警告", 1,"yellow","warning"),
+    HIGH("严重", 2,"red","high"),
+    OK("正常", 0,"green","ok");
+
+    public String name;
+    public int code;
+    public String color;
+    public String text;
 
     StatusEnum(String name, int code) {
         this.name = name;
@@ -19,12 +24,17 @@ public enum StatusEnum {
         this.color = color;
     }
 
+    StatusEnum(String name, int code, String color, String text) {
+        this.name = name;
+        this.code = code;
+        this.color = color;
+        this.text = text;
+    }
+
     StatusEnum(String name) {
         this.name = name;
     }
-    public String name;
-    public int code;
-    public String color;
+
 
     public String getName() {
         return name;

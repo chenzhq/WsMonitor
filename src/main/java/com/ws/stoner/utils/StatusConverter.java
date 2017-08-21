@@ -9,6 +9,8 @@ import com.ws.stoner.constant.StatusEnum;
 对象状态转换器
  */
 public class StatusConverter {
+
+    //return "正常，警告，严重"
     public static String StatusTransform(int customStatus) {
         String status = "";
         if(StatusEnum.WARNING.code == customStatus) {
@@ -20,7 +22,7 @@ public class StatusConverter {
         }
         return status;
     }
-
+    //return "正常，警告，严重" 重载
     public static String StatusTransform(int customStatus,int customAvailableState) {
         String status = "";
         if(StatusEnum.OK.code == customStatus && StatusEnum.OK.code == customAvailableState) {
@@ -37,6 +39,36 @@ public class StatusConverter {
         return status;
     }
 
+    //return "ok，warning，high"
+    public static String getTextStatusTransform(int customStatus) {
+        String status = "";
+        if(StatusEnum.WARNING.code == customStatus) {
+            status = StatusEnum.WARNING.text;
+        }else if(StatusEnum.HIGH.code == customStatus){
+            status = StatusEnum.HIGH.text;
+        }else if(StatusEnum.OK.code == customStatus) {
+            status = StatusEnum.OK.text;
+        }
+        return status;
+    }
+    //return "ok，warning，high"  重载
+    public static String getTextStatusTransform(int customStatus,int customAvailableState) {
+        String status = "";
+        if(StatusEnum.OK.code == customStatus && StatusEnum.OK.code == customAvailableState) {
+            status = StatusEnum.OK.text;
+        }else if(StatusEnum.WARNING.code == customStatus && StatusEnum.OK.code == customAvailableState) {
+            status = StatusEnum.WARNING.text;
+        }else if(StatusEnum.HIGH.code == customStatus && StatusEnum.OK.code == customAvailableState) {
+            status = StatusEnum.HIGH.text;
+        }else if(StatusEnum.WARNING.code == customAvailableState) {
+            status = StatusEnum.HIGH.text;
+        }else {
+            status = StatusEnum.OK.text;
+        }
+        return status;
+    }
+
+    //return "green，yellow，red"
     public static String colorTransform(int customStatus) {
         String color = "";
         if(StatusEnum.WARNING.code == customStatus) {
@@ -49,6 +81,7 @@ public class StatusConverter {
         return color;
     }
 
+    //return "green，yellow，red" 重载
     public static String colorTransform(int customStatus,int customAvailableState) {
         String color ;
         if(StatusEnum.OK.code == customStatus && StatusEnum.OK.code == customAvailableState) {
@@ -65,6 +98,7 @@ public class StatusConverter {
         return color;
     }
 
+    //return "正常，警告，严重" 根据阀值和表达式判断出状态值
     public static String getStatusByThresholdValue(Float value,Float warningPointValue,Float highPointValue,String symbol) {
         String status = "";
         Float point;

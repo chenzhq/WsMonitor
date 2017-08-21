@@ -5,21 +5,34 @@ package com.ws.stoner.constant;
  */
 public enum PlatformTreeTypeEnum {
 
-    PLATFORM("业务平台"),
-    CLUSTER("集群"),
-    HOST("设备");
+    PLATFORM("platform","业务平台"),
+    CLUSTER("cluster","集群"),
+    HOST("host","设备");
 
-    PlatformTreeTypeEnum(String name) {
+    PlatformTreeTypeEnum(String code,String name) {
+        this.code = code;
         this.name = name;
     }
     public String name;
+
+    public String code;
 
     public String getName() {
         return name;
     }
 
+
     public PlatformTreeTypeEnum setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public PlatformTreeTypeEnum setCode(String code) {
+        this.code = code;
         return this;
     }
 }
