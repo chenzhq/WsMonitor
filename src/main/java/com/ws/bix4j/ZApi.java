@@ -1,6 +1,8 @@
 package com.ws.bix4j;
 
+import com.ws.bix4j.access.alert.Alert;
 import com.ws.bix4j.access.application.Application;
+import com.ws.bix4j.access.event.Event;
 import com.ws.bix4j.access.history.History;
 import com.ws.bix4j.access.host.Host;
 import com.ws.bix4j.access.hostInterface.HostInterface;
@@ -88,7 +90,7 @@ public class ZApi {
     public Item Item() {
         return new Item(uri.toString(), auth);
     }
-    public Problem Problems() {
+    public Problem Problem() {
         return new Problem(uri.toString(), auth);
     }
     public Template Template() {
@@ -102,6 +104,12 @@ public class ZApi {
     }
     public History History() {
         return new History(uri.toString(), auth);
+    }
+    public Event Event() {
+        return new Event(uri.toString(), auth);
+    }
+    public Alert Alert() {
+        return new Alert(uri.toString(), auth);
     }
 
 }
