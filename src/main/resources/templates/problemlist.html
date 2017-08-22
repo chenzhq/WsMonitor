@@ -14,6 +14,15 @@
 		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
+			.ui.table.dataTable thead th {
+				border-left: 0px;
+			}
+			.ui.special.popup.confirm{
+				height: 260px;width: 500px;overflow:auto;overflow-x:hidden
+			}
+			.ui.special.popup.alarmed{
+				height: 260px;width: 500px;overflow:auto;overflow-x:hidden
+			}
 		</style>
 	</th:block>
 </head>
@@ -210,26 +219,15 @@
 						<div class="ui segment no-padding">
 							<div class="ui secondary menu">
 								<a class="header item">
-									<h3><i class="bar large chart icon"></i>检测总数：</h3>
+									<h3><i class="bar large chart icon"></i>问题列表</h3>
 								</a>
-								<a class="item">
-									<p>36个设备的222个监测点。
-										<i class="red circle icon"></i>  30
-										<i class="yellow circle icon"></i>  50
-										<i class="green circle icon"></i>  122
-										<i class="grey circle icon"></i>  20
-									</p>
-								</a>
-
 								<a class="right item">
-									类型：
+									告警状态：
                                     <select id="ui_dropdown" class="ui dropdown">
-                                        <option value="">选择类型</option>
-                                        <option>组</option>
-                                        <option>服务器</option>
-                                        <option>数据库</option>
-                                        <option>网络设备</option>
-										<option>监控点</option>
+                                        <option value="">选择告警状态</option>
+                                        <option>未告警</option>
+                                        <option>告警失败</option>
+                                        <option>已告警</option>
                                     </select>
 								</a>
 							</div>
@@ -238,11 +236,126 @@
 							<div id="host_table_dimmer" class="ui inverted dimmer">
 								<div class="ui text loader">加载</div>
 							</div>
-							<table  id="host_table" class="tree ui  compact very basic table center aligned ">
+							<table  id="host_table" class="ui compact very basic table center aligned ">
+								<!--静态数据 start-->
+								<thead>
+								<tr>
+									<th class="two wide">发生时间</th>
+									<th class="two wide">设备</th>
+									<th class="four wide">问题</th>
+									<th class="two wide">严重性</th>
+									<th class="two wide">持续时间</th>
+									<th class="two wide">[告警状态]</th>
+									<th class="one wide">确认</th>
+									<th class="one wide">详情</th>
+								</tr></thead>
+								<tbody>
+								<tr>
+									<td>2017-8-22 15:10:03</td>
+									<td>设备1</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="color: yellow">告警</td>
+									<td>2秒</td>
+									<td>未告警</td>
+									<td>不</td>
+									<td><a href="javascript:void(0)">详情</a></td>
+								</tr>
+								<tr>
+									<td>2017-8-22 15:10:03</td>
+									<td>设备2</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="color: red">严重</td>
+									<td>2秒</td>
+									<td>告警失败</td>
+									<td><a href="javascript:void(0)" class="confirm">是</a></td>
+									<td><a href="javascript:void(0)">详情</a></td>
+								</tr>
+								<tr>
+									<td>2017-8-22 15:10:03</td>
+									<td>设备3</td>
+									<td>主机1内存使用率超过90%</td>
+									<td style="color: red">严重</td>
+									<td>2秒</td>
+									<td><a href="javascript:void(0)" class="alarmed" id="已告警pop_id">已告警</a></td>
+									<td><a href="javascript:void(0)" class="confirm"  id="是pop_id">是</a></td>
+									<td><a href="javascript:void(0)">详情</a></td>
+								</tr>
+								</tbody>
+								<!--静态数据 end-->
 							</table>
 						</div>
 					</div>
 				</div>
+				<!--已告警提示框 start-->
+				<div class="ui special popup alarmed">
+					<table id="alarmedTable" class="ui very basic compact collapsing celled fixed single line table">
+						<!--静态数据 start-->
+						<thead>
+						<tr>
+							<th class="four wide">步骤</th>
+							<th class="four wide">时间</th>
+							<th class="four wide">状态（重试次数）</th>
+							<th class="four wide">接收者</th>
+						</tr></thead>
+						<tbody>
+						<tr>
+							<td>1</td>
+							<td>2017-08-12 11:13:39</td>
+							<td>已发送通知(0)</td>
+							<td>chen[chenzhq.2@gmail.com]</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>2017-08-12 11:13:39</td>
+							<td>已发送通知(1)</td>
+							<td>admin[admin@gmail.com]</td>
+						</tr>
+						<tr>
+							<td>1</td>
+							<td>2017-08-12 11:13:39</td>
+							<td>已发送通知(0)</td>
+							<td>admin[admin@gmail.com]</td>
+						</tr>
+						</tbody>
+						<!--静态数据 end-->
+					</table>
+				</div>
+				<!--已告警提示框 end-->
+				<!--确认记录提示框 start-->
+				<div class="ui special popup confirm">
+					<table id="confirmTable" class="ui very basic compact collapsing celled fixed single line table">
+						<!--静态数据 start-->
+						<thead>
+						<tr>
+							<th class="four wide">时间</th>
+							<th class="four wide">用户</th>
+							<th class="four wide">消息</th>
+							<th class="four wide">用户动作</th>
+						</tr></thead>
+						<tbody>
+						<tr>
+							<td>2017-8-22 15:10:03</td>
+							<td>yans(12312@qq.com)</td>
+							<td>主机1内存使用率超过90%</td>
+							<td>已关闭</td>
+						</tr>
+						<tr>
+							<td>2017-8-22 15:10:03</td>
+							<td>yans(12312@qq.com)</td>
+							<td>主机1内存使用率超过90%</td>
+							<td>未关闭</td>
+						</tr>
+						<tr>
+							<td>2017-8-22 15:10:03</td>
+							<td>yans(12312@qq.com)</td>
+							<td>主机1内存使用率超过90%</td>
+							<td></td>
+						</tr>
+						</tbody>
+						<!--静态数据 end-->
+					</table>
+				</div>
+				<!--确认记录提示框 end-->
 			</div>
 		</div>
 	</div>
@@ -265,163 +378,247 @@
 	</th:block>
 </th:block>
 <script type="text/javascript">
-    $(document).ready(function() {
-        var host_table = $("#host_table").DataTable({
-            "paging": false,
-            "ordering": false,
-            "initComplete": function () {
-                $('#host_table tr:eq(1)').treegrid('expand')
-            },
-            "drawCallback": function () {//初始化后回调
-                $("#host_table").treegrid({
-					'initialState': 'collapsed',
-//					'saveState': true
-//					'expanderTemplate': '<i class="caret right icon"></i>',
-//					'expanderExpandedClass': 'down',
-//					'expanderCollapsedClass': 'right'
-				});
-//				if(host_table !== undefined)
-//                console.log(host_table.isFirstInit)
-				if(host_table !== undefined && !host_table.isFirstInit)
-                	$('#host_table tr:eq(1)').treegrid('expand')
-                var selectIndex
-                $('a.delete').on('click',function (e) {
-                    selectIndex = host_table.row($(this).parents('tr')).index();
-                    $('#del-pop').on('click', 'i.checkmark', function () {
-                        var sourceData = $('#host_table').DataTable().data();
-                        $('#host_table_dimmer').dimmer('show')
-                        $('#del-pop').removeClass('visible').addClass('hidden')
-                        $.ajax({
-                            type: 'delete',
-                            url: '/ov/group?del_group='+ sourceData[selectIndex].cid,
-                            data: {del_group: sourceData[selectIndex].cid},
-                            dataType: 'json',
-                            success: function(result) {
-                                if(result.success) {
-                                    host_table.rows().remove()
-                                    host_table.rows.add(result.data).draw()
-                                    $('#host_table_dimmer').dimmer('hide')
-                                } else {
-                                    console.error('服务器错误')
-                                }
-                            },
-                            error: function (e) {
-                                console.error(e)
-                            }
-                        })
-                    })
-                }).popup({
-                    popup: $('#del-pop'),
-                    position: 'top right',
-                    on: 'click'
-                })
+	//下拉框事件
+	$("#ui_dropdown").change(function(){
+		var tmp=$("#ui_dropdown").val()
+		host_table.search(tmp).draw();
+	});
 
+	//点击已告警事件
+	$('#host_table a.alarmed').hover(function(e) {
+		//alarmedpopup();
+	}).popup({
+		popup: '.special.popup.alarmed',
+		inline: true,
+		hoverable  : true,
+		delay: {
+			show: 800,
+			hide: 300
+		}
+	});
+   //连接已告警提示框
+   function alarmedpopup() {
+       var point_id = this.id.substring(1);
+       $.ajax({
+           type: "get",
+           url: "/brief/point?point_id=" + point_id,
+           dataType: "json",
+           success: function (result) {
+               if (result.success) {
+                   var data = result.data;
+                   getalarmedpopup(data)
+               } else {
+                   errorMsg_no_data("已告警 Popup");
+               }
+           },
+           error: function () {
+               errorMsg_no_connect("已告警 Popup");
+           }
+       })
+   }
+   //获取已告警提示框内容
+   function getalarmedpopup(data) {
+   }
+	//点击确认记录事件
+	$('#host_table a.confirm').hover(function(e) {
+        //confirmpopup();
+	}).popup({
+		popup: '.special.popup.confirm',
+		inline: true,
+		hoverable  : true,
+		delay: {
+			show: 800,
+			hide: 300
+		}
+	});
+   //连接确认记录提示框
+   function confirmpopup() {
+       var point_id = this.id.substring(1);
+       $.ajax({
+           type: "get",
+           url: "/brief/point?point_id=" + point_id,
+           dataType: "json",
+           success: function (result) {
+               if (result.success) {
+                   var data = result.data;
+                   getconfirmpopup(data)
+               } else {
+                   errorMsg_no_data("确认记录 Popup");
+               }
+           },
+           error: function () {
+               errorMsg_no_connect("确认记录 Popup");
+           }
+       })
+   }
+   //获取确认记录提示框内容
+   function getconfirmpopup(data) {
+	   var Color = ['red', 'yellow', 'green'];
+	   var item_datas = data.item_datas;
+	   var str_item_datas = '';
+	   var myColor = '';
+	   for (var i = 0; i < item_datas.length; i++) {
+		   if (item_datas[i].with_triggers == true) {
+			   if (item_datas[i].state == "严重") {
+				   myColor = Color[0]
+			   }
+			   if (item_datas[i].state == "警告") {
+				   myColor = Color[1]
+			   }
+			   if (item_datas[i].state == "正常") {
+				   myColor = Color[2]
+			   }
+		   } else {
+			   myColor = ''
+		   }
+		   if (strlen(item_datas[i].item_name) > 16) {
+			   var item_name = "<td title=" + item_datas[i].item_name + "><span>" + item_datas[i].item_name + "</span></td>"
+		   } else {
+			   var item_name = "<td><span>" + item_datas[i].item_name + "</span></td>"
+		   }
+		   if (strlen(item_datas[i].value) > 16) {
+			   var item_value = "<td title=" + item_datas[i].value + "><span class='ui " + myColor + " header textOverflow'>" + item_datas[i].value + "</span></td>"
+		   } else {
+			   var item_value = "<td><span class='ui " + myColor + " header textOverflow'>" + item_datas[i].value + "</span></td>"
+		   }
+		   str_item_datas += "<tr>" + item_name + item_value + "</tr>";
+	   }
 
-            },
-            "createdRow": function (row, data, dataIndex) {
-                if (data.pid== null) {
-                    var tmp='treegrid-'+ data.cid;
-                } else {
-                    var tmp='treegrid-'+ data.cid +' treegrid-parent-'+ data.pid;
-                }
-                if (data.cid.substr(0, 1) === 'h')
-                    $(row).attr('data-id', data.cid);
-                $(row).addClass(tmp)
-                $('td', row).eq(0).addClass('left aligned');
-                $('td', row).eq(2).addClass('no-padding');
-            },
-            ajax: {
-                url: '/host/overview',
-                dataSrc: 'data'
-            },
-            columns: [
-                {
-                    "data": null,
-                    "width": "20%",
-                    "title": "名称",
-                    render: function(data, type, row, meta) {
-                        if (data.state == "正常") {
-                            if (row.type === '组') {
-                                return '<i class="green folder icon"></i>' + row.name;
-                            } else if(row.type === '监控点') {
-                                return '<i class="green circle icon"></i>' + row.name;
-                            } else {
-                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
-									'<i class="green desktop icon"></i>' + row.name + '</a>';
-                            }
-                        } else if (data.state == "严重") {
-                            if (row.type === '组') {
-                                return '<i class="red folder icon"></i>' + row.name;
-                            } else if(row.type === '监控点') {
-                                return '<i class="red circle icon"></i>' + row.name;
-                            } else {
-                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
-									'<i class="red desktop icon"></i>' + row.name + '</a>';
-							}
+	   if (data.state == "正常") {
+		   myColor = Color[2]
+	   }
+	   if (data.state == "严重") {
+		   myColor = Color[0]
+	   }
+	   if (data.state == "警告") {
+		   myColor = Color[1]
+	   }
+	   $("#point_name").html("名称：" + data.point_name);
+	   $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini " + myColor + " horizontal label' style='margin-bottom: 0'>" + data.state + "</div>");
+	   $("#item_datas").html(str_item_datas);
+   }
+</script>
+<script>
+	/* $(document).ready(function() {
+	 var host_table = $("#host_table").DataTable({
+	 "paging": false,
+	 "ordering": false,
+	 "createdRow": function (row, data, dataIndex) {
+	 //$(row).addClass(tmp)
+	 $('td', row).eq(0).addClass('left aligned');
+	 $('td', row).eq(2).addClass('no-padding');
+	 },
+	 ajax: {
+	 url: '/host/overview',
+	 dataSrc: 'data'
+	 },
+	 columns: [
+	 {
+	 "data": "type",
+	 "width": "15%",
+	 "title": "发生时间",
+	 },
+	 {
+	 "data": "type",
+	 "width": "15%",
+	 "title": "设备",
+	 },
+	 {
+	 "data": "type",
+	 "width": "30%",
+	 "title": "问题",
+	 },
+	 {
+	 "data": "null",
+	 "width": "10%",
+	 "title": "严重性",
+	 render: function(data, type, row, meta) {
 
-                        } else if (data.state == "警告") {
-                            if (row.type === '组') {
-                                return '<i class="yellow folder icon"></i>' + row.name;
-                            } else if(row.type === '监控点') {
-                                return '<i class="yellow circle icon"></i>' + row.name;
-                            } else {
-                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
-                                    '<i class="yellow desktop icon"></i>' + row.name + '</a>';
-                            }
+	 }
+	 },
+	 {
+	 "data": "type",
+	 "width": "10%",
+	 "title": "持续时间",
+	 },
+	 {
+	 "data": "type",
+	 "width": "10%",
+	 "title": "[告警状态]",
+	 },
+	 {
+	 "data": "type",
+	 "width": "10%",
+	 "title": "确认",
+	 },
+	 {
+	 "data": null,
+	 "width": "20%",
+	 "title": "名称",
+	 render: function(data, type, row, meta) {
+	 if (data.state == "正常") {
+	 if (row.type === '组') {
+	 return '<i class="green folder icon"></i>' + row.name;
+	 } else if(row.type === '监控点') {
+	 return '<i class="green circle icon"></i>' + row.name;
+	 } else {
+	 return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+	 '<i class="green desktop icon"></i>' + row.name + '</a>';
+	 }
+	 } else if (data.state == "严重") {
+	 if (row.type === '组') {
+	 return '<i class="red folder icon"></i>' + row.name;
+	 } else if(row.type === '监控点') {
+	 return '<i class="red circle icon"></i>' + row.name;
+	 } else {
+	 return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+	 '<i class="red desktop icon"></i>' + row.name + '</a>';
+	 }
 
-                        } else {
-                            return '<i class="list green layout icon"></i>' + row.name;
-                        }
-                    }
+	 } else if (data.state == "警告") {
+	 if (row.type === '组') {
+	 return '<i class="yellow folder icon"></i>' + row.name;
+	 } else if(row.type === '监控点') {
+	 return '<i class="yellow circle icon"></i>' + row.name;
+	 } else {
+	 return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+	 '<i class="yellow desktop icon"></i>' + row.name + '</a>';
+	 }
 
-                },
-                {
-                    "data": "type",
-                    "width": "20%",
-                    "title": "类型",
-                },
-                {
-                    "data": null,
-                    "width": "20%",
-                    "title": "操作",
-                    render: function(data, type, row, meta) {
-                        if(row.type=="组"){
-                            if(row.cid === 'g0') {
-                                return '<div class="ui secondary menu">' +
-                                '<a class="right item new" id="'+row.cid+'"> 新建</a></div>';
-                            }
-                            return '<div class="ui secondary menu">' +
-								'<a class="right item new" > 新建</a>' +
-								'<a class="item move" > 移动</a>' +
-								'<a class="item edit" > 编辑</a>' +
-								'<a class="item delete"> 删除</a></div>';
-                        }else {
-                            return '<div class="ui secondary menu"><a class="right item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
-                        }
-                    }
-                },
-            ],
-        });
+	 } else {
+	 return '<i class="list green layout icon"></i>' + row.name;
+	 }
+	 }
 
-        //下拉框事件
-        $("#ui_dropdown").change(function(){
-            var tmp=$("#ui_dropdown").val()
-            host_table.search(tmp).draw();
-        });
-
-        //点击新建事件
-        $('#host_table tbody').on('click', '.new', function(e) {
-            e.preventDefault();
-			}).modal('show')
-        });
-        //点击移动事件
-        $('#host_table tbody').on('click', '.move', function(e) {
-            e.preventDefault();
-        });
-
-        $('#host_table tbody').on('click', '.edit', function(e) {
-        });
-
+	 },
+	 {
+	 "data": "type",
+	 "width": "20%",
+	 "title": "类型",
+	 },
+	 {
+	 "data": null,
+	 "width": "20%",
+	 "title": "操作",
+	 render: function(data, type, row, meta) {
+	 if(row.type=="组"){
+	 if(row.cid === 'g0') {
+	 return '<div class="ui secondary menu">' +
+	 '<a class="right item new" id="'+row.cid+'"> 新建</a></div>';
+	 }
+	 return '<div class="ui secondary menu">' +
+	 '<a class="right item new" > 新建</a>' +
+	 '<a class="item move" > 移动</a>' +
+	 '<a class="item edit" > 编辑</a>' +
+	 '<a class="item delete"> 删除</a></div>';
+	 }else {
+	 return '<div class="ui secondary menu"><a class="right item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
+	 }
+	 }
+	 },
+	 ],
+	 });
+	 */
 </script>
 </body>
 </html>

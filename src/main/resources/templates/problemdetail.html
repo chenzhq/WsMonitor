@@ -205,34 +205,107 @@
 				<!--Site Content-->
 				<div class="sixteen wide column">
 					<div class="ui segments">
-						<div class="ui segment">
-							<div class="ui secondary pointing menu">
-								<a class="active item" data-tab="platformDetail">业务概述</a>
-								<a class="item" data-tab="platformTree">业务树</a>
-								<a class="item" data-tab="platformReport">业务图形报告</a>
-								<div class="right menu">
-									<select id="platform_select" class="ui mini dropdown ">
+						<div class="ui segment no-padding">
+							<div class="ui secondary menu">
+								<a class="header item">
+									<h3><i class="bar large chart icon"></i>问题详情</h3>
+								</a>
+								<a class="right item">
+									告警状态：
+									<select id="ui_dropdown" class="ui dropdown">
+										<option value="">选择告警状态</option>
+										<option>未告警</option>
+										<option>告警失败</option>
+										<option>已告警</option>
 									</select>
-								</div>
+								</a>
 							</div>
-							<div class="ui active tab segment noMargin noBorder fixedHeight no-padding" data-tab="platformDetail">
-								<div class="row">
-									<div class="sixteen wide column">
-										<div class="ui grid">
-											<div class="six wide column">
-												<div class="ui segment center aligned">
-													<h2 class="ui left aligned header">健康度</h2>
+						</div>
+						<div class="ui segment"  style=" min-height : 500px;">
+							<div class="row">
+								<div class="sixteen wide column">
+									<div class="ui grid">
+										<div class="six wide column">
+											<div class="ui segment center aligned">
+												<div class="ui internally celled grid">
+													<div class="row">
+														<div class="eight wide center aligned column">
+															<p>设备名: </p>
+														</div>
+														<div class="eight wide column">
+															<span>设备名称</span>
+														</div>
+													</div>
+													<div class="row ">
+														<div class="eight wide center aligned column">
+															<span>IP: </span>
+														</div>
+														<div class="eight wide column">
+															<span>ip</span>
+														</div>
+													</div>
+													<div class="row">
+														<div class="eight wide center aligned column">
+															<span>类型:</span>
+														</div>
+														<div class="eight wide column">
+															<span >type</span>
+														</div>
+													</div>
+													<div class="row">
+														<div class="sixteen wide column">
+															<span>描述:</span><br>
+															<span>包含一个简单的表格列出设备等信息;</br>部分信息可以伸缩隐藏，例如四种配置接口等数据</span>
+														</div>
+													</div>
 												</div>
 											</div>
-											<div class="ten wide column">
-												<div class="ui segment left aligned row1Height">
-													<div id="platform_graph" class="chartBar"></div>
-												</div>
+										</div>
+										<div class="ten wide column">
+											<div class="ui segment left aligned row1Height">
+												<div id="platform_graph" class="chartBar"></div>
 											</div>
-											<div class="sixteen wide column">
-												<div  class="ui segment">
-													<h2 class="ui left aligned header">健康度</h2>
+										</div>
+										<div class="sixteen wide column">
+											<div  class="ui segment">
+												<div id="host_table_dimmer" class="ui inverted dimmer">
+													<div class="ui text loader">加载</div>
 												</div>
+												<table  id="host_table" class="ui compact very basic table center aligned ">
+													<!--静态数据 start-->
+													<thead>
+													<tr>
+														<th class="four wide">开始时间</th>
+														<th class="four wide">结束时间</th>
+														<th class="four wide">状态[问题/问题（已恢复）/正常]</th>
+														<th class="two wide">持续时间</th>
+														<th class="two wide">确认[是/否/无]</th>
+													</tr></thead>
+													<tbody>
+													<tr>
+														<td>2017-8-22 15:10:03</td>
+														<td>2017-8-22 15:10:03</td>
+														<td style="color: yellow">问题（已恢复）</td>
+														<td>2秒</td>
+														<td>是</td>
+													</tr>
+													<tr>
+														<td>2017-8-22 15:10:03</td>
+														<td>2017-8-22 15:10:03</td>
+														<td style="color: red">问题</td>
+														<td>2秒</td>
+														<td><a href="javascript:void(0)" class="confirm">是</a></td>
+													</tr>
+													<tr>
+														<td>2017-8-22 15:10:03</td>
+														<td>2017-8-22 15:10:03</td>
+														<td style="color: green">正常</td>
+														<td>2秒</td>
+														<td><a href="javascript:void(0)" class="confirm"  id="是pop_id">是</a></td>
+													</tr>
+													</tbody>
+													<!--静态数据 end-->
+												</table>
 											</div>
 										</div>
 									</div>
@@ -241,9 +314,76 @@
 						</div>
 					</div>
 				</div>
-			</div>
-				<!--modal end-->
-				<!--Site Content-->
+				<!--已告警提示框 start-->
+				<div class="ui special popup alarmed">
+					<table id="alarmedTable" class="ui very basic compact collapsing celled fixed single line table">
+						<!--静态数据 start-->
+						<thead>
+						<tr>
+							<th class="four wide">步骤</th>
+							<th class="four wide">时间</th>
+							<th class="four wide">状态（重试次数）</th>
+							<th class="four wide">接收者</th>
+						</tr></thead>
+						<tbody>
+						<tr>
+							<td>1</td>
+							<td>2017-08-12 11:13:39</td>
+							<td>已发送通知(0)</td>
+							<td>chen[chenzhq.2@gmail.com]</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>2017-08-12 11:13:39</td>
+							<td>已发送通知(1)</td>
+							<td>admin[admin@gmail.com]</td>
+						</tr>
+						<tr>
+							<td>1</td>
+							<td>2017-08-12 11:13:39</td>
+							<td>已发送通知(0)</td>
+							<td>admin[admin@gmail.com]</td>
+						</tr>
+						</tbody>
+						<!--静态数据 end-->
+					</table>
+				</div>
+				<!--已告警提示框 end-->
+				<!--确认记录提示框 start-->
+				<div class="ui special popup confirm">
+					<table id="confirmTable" class="ui very basic compact collapsing celled fixed single line table">
+						<!--静态数据 start-->
+						<thead>
+						<tr>
+							<th class="four wide">时间</th>
+							<th class="four wide">用户</th>
+							<th class="four wide">消息</th>
+							<th class="four wide">用户动作</th>
+						</tr></thead>
+						<tbody>
+						<tr>
+							<td>2017-8-22 15:10:03</td>
+							<td>yans(12312@qq.com)</td>
+							<td>主机1内存使用率超过90%</td>
+							<td>已关闭</td>
+						</tr>
+						<tr>
+							<td>2017-8-22 15:10:03</td>
+							<td>yans(12312@qq.com)</td>
+							<td>主机1内存使用率超过90%</td>
+							<td>未关闭</td>
+						</tr>
+						<tr>
+							<td>2017-8-22 15:10:03</td>
+							<td>yans(12312@qq.com)</td>
+							<td>主机1内存使用率超过90%</td>
+							<td></td>
+						</tr>
+						</tbody>
+						<!--静态数据 end-->
+					</table>
+				</div>
+				<!--确认记录提示框 end-->
 			</div>
 		</div>
 		<!--maincontent-->
