@@ -69,4 +69,9 @@ public void testListTrigger() throws Exception {
         System.out.println(briefTriggerDTOS);
     }
 
+    @Test
+    public void testlistProblemListVO() throws Exception {
+        System.out.println(triggerService.listProblemListVO());
+    }
+
 } 

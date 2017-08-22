@@ -5,6 +5,7 @@ import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
 import com.ws.stoner.model.view.DashboardProblemVO;
+import com.ws.stoner.model.view.ProblemListVO;
 
 import java.util.List;
 
@@ -51,5 +52,19 @@ public interface TriggerService {
      */
     List<BriefTriggerDTO> getTriggersByItemIds(List<String> itemIds) throws ServiceException;
 
+
+    /**
+     * 列出问题触发器 BriefTriggerDTOS
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefTriggerDTO> listProblemTriggers() throws ServiceException;
+
+    /**
+     * 问题管理 问题列表 ProblemListVO
+     * @return
+     * @throws ServiceException
+     */
+    List<ProblemListVO> listProblemListVO() throws ServiceException;
 
 }

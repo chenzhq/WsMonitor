@@ -203,6 +203,23 @@ public static enum HOSTGROUP_INTERNAL {
 
     }
 
+    /**
+     *触发器 priority 值
+     */
+    public static enum TRIGGER_PRIORITY  {
+        NOT_CLASSIFIED(0),
+        INFORMATION(1),
+        WARNING(2),
+        AVERAGE(3),
+        HIGH(4),
+        DISASTER(5);
+        public int value;
+        private TRIGGER_PRIORITY(int value) {
+            this.value = value;
+        }
+
+    }
+
 /**
  * 监控项类型
  */

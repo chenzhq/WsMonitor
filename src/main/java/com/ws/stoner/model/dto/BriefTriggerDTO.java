@@ -15,6 +15,8 @@ public class BriefTriggerDTO {
     private String expression;
     private Integer priority;
     private List<BriefItemDTO> items;
+    private List<BriefHostDTO> hosts;
+    private BriefEventDTO lastEvent;
 
 
     public static final String[] PROPERTY_NAMES = {"triggerid", "description","expression","priority"};
@@ -64,6 +66,23 @@ public class BriefTriggerDTO {
         return this;
     }
 
+    public List<BriefHostDTO> getHosts() {
+        return hosts;
+    }
+
+    public BriefTriggerDTO setHosts(List<BriefHostDTO> hosts) {
+        this.hosts = hosts;
+        return this;
+    }
+
+    public BriefEventDTO getLastEvent() {
+        return lastEvent;
+    }
+
+    public BriefTriggerDTO setLastEvent(BriefEventDTO lastEvent) {
+        this.lastEvent = lastEvent;
+        return this;
+    }
 
     @Override
     public String toString() {
@@ -73,6 +92,8 @@ public class BriefTriggerDTO {
                 ", expression='" + expression + '\'' +
                 ", priority=" + priority +
                 ", items=" + items +
+                ", hosts=" + hosts +
+                ", lastEvent=" + lastEvent +
                 '}';
     }
 }
