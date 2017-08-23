@@ -17,6 +17,7 @@
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
+			.chartBar{ height: 140px; }
 		</style>
 	</th:block>
 </head>
@@ -222,91 +223,81 @@
 							</div>
 						</div>
 						<div class="ui segment"  style=" min-height : 500px;">
-							<div class="row">
-								<div class="sixteen wide column">
-									<div class="ui grid">
-										<div class="six wide column">
-											<div class="ui segment center aligned">
-												<div class="ui internally celled grid">
-													<div class="row">
-														<div class="eight wide center aligned column">
-															<p>设备名: </p>
-														</div>
-														<div class="eight wide column">
-															<span>设备名称</span>
-														</div>
-													</div>
-													<div class="row ">
-														<div class="eight wide center aligned column">
-															<span>IP: </span>
-														</div>
-														<div class="eight wide column">
-															<span>ip</span>
-														</div>
-													</div>
-													<div class="row">
-														<div class="eight wide center aligned column">
-															<span>类型:</span>
-														</div>
-														<div class="eight wide column">
-															<span >type</span>
-														</div>
-													</div>
-													<div class="row">
-														<div class="sixteen wide column">
-															<span>描述:</span><br>
-															<span>包含一个简单的表格列出设备等信息;</br>部分信息可以伸缩隐藏，例如四种配置接口等数据</span>
-														</div>
-													</div>
-												</div>
-											</div>
+							<div class="sixteen wide column chartBar">
+								<div class="ui grid">
+									<div class="six wide column">
+										<div class="ui segment left aligned">
+											<table class="ui very basic single line table chartBar  center aligned">
+												<tbody>
+												<tr>
+													<td class="eight wide"><h4 class="ui header">所属主机:</h4></td>
+													<td class="eight wide">设备名称</td>
+												</tr>
+												<tr>
+													<td><h4 class="ui center aligned header">监控点名称:</h4></td>
+													<td>127.0.0.124</td>
+												</tr>
+												<tr>
+													<td><h4 class="ui center aligned header">监控项名称:</h4></td>
+													<td>type</td>
+												</tr>
+												<tr>
+													<td><h4 class="ui center aligned header">阀值:</h4></td>
+													<td>阀值</td>
+												</tr>
+												<tr>
+													<td><h4 class="ui center aligned header">触发器描述:</h4></td>
+													<td>触发器描述</td>
+												</tr>
+												</tbody>
+											</table>
 										</div>
-										<div class="ten wide column">
-											<div class="ui segment left aligned row1Height">
-												<div id="platform_graph" class="chartBar"></div>
-											</div>
+									</div>
+									<div class="ten wide column">
+										<div class="ui segment left aligned row1Height">
+											<div id="problemChart" class="chartBar"></div>
 										</div>
-										<div class="sixteen wide column">
-											<div  class="ui segment">
-												<div id="host_table_dimmer" class="ui inverted dimmer">
-													<div class="ui text loader">加载</div>
-												</div>
-												<table  id="host_table" class="ui compact very basic table center aligned ">
-													<!--静态数据 start-->
-													<thead>
-													<tr>
-														<th class="four wide">开始时间</th>
-														<th class="four wide">结束时间</th>
-														<th class="four wide">状态[问题/问题（已恢复）/正常]</th>
-														<th class="two wide">持续时间</th>
-														<th class="two wide">确认[是/否/无]</th>
-													</tr></thead>
-													<tbody>
-													<tr>
-														<td>2017-8-22 15:10:03</td>
-														<td>2017-8-22 15:10:03</td>
-														<td style="color: yellow">问题（已恢复）</td>
-														<td>2秒</td>
-														<td>是</td>
-													</tr>
-													<tr>
-														<td>2017-8-22 15:10:03</td>
-														<td>2017-8-22 15:10:03</td>
-														<td style="color: red">问题</td>
-														<td>2秒</td>
-														<td><a href="javascript:void(0)" class="confirm">是</a></td>
-													</tr>
-													<tr>
-														<td>2017-8-22 15:10:03</td>
-														<td>2017-8-22 15:10:03</td>
-														<td style="color: green">正常</td>
-														<td>2秒</td>
-														<td><a href="javascript:void(0)" class="confirm"  id="是pop_id">是</a></td>
-													</tr>
-													</tbody>
-													<!--静态数据 end-->
-												</table>
+									</div>
+									<div class="sixteen wide column">
+										<div  class="ui segment">
+											<div id="host_table_dimmer" class="ui inverted dimmer">
+												<div class="ui text loader">加载</div>
 											</div>
+											<table  id="host_table" class="ui compact very basic table center aligned ">
+												<!--静态数据 start-->
+												<thead>
+												<tr>
+													<th class="four wide">开始时间</th>
+													<th class="four wide">结束时间</th>
+													<th class="four wide">状态[问题/问题（已恢复）/正常]</th>
+													<th class="two wide">持续时间</th>
+													<th class="two wide">确认[是/否/无]</th>
+												</tr></thead>
+												<tbody>
+												<tr>
+													<td>2017-8-22 15:10:03</td>
+													<td>2017-8-22 15:10:03</td>
+													<td style="color: yellow">问题（已恢复）</td>
+													<td>2秒</td>
+													<td>无</td>
+												</tr>
+												<tr>
+													<td>2017-8-22 15:10:03</td>
+													<td>2017-8-22 15:10:03</td>
+													<td style="color: red">问题</td>
+													<td>2秒</td>
+													<td><a href="javascript:void(0)" class="confirm">是</a></td>
+												</tr>
+												<tr>
+													<td>2017-8-22 15:10:03</td>
+													<td>2017-8-22 15:10:03</td>
+													<td style="color: green">正常</td>
+													<td>2秒</td>
+													<td><a href="javascript:void(0)" class="confirm"  id="是pop_id">是</a></td>
+												</tr>
+												</tbody>
+												<!--静态数据 end-->
+											</table>
 										</div>
 									</div>
 								</div>
@@ -402,8 +393,103 @@
             //页面加载完加载基础数据
 			$(function() {
                 //初始折叠菜单
+                //加载图形数据
+                getproblemchart();
 			})
-     </script>
+            //加载健康度和图形数据
+            function problemchart() {
+                $.ajax({
+                    type: "get",
+                    url: "/platformdetail/get_datas?platform_id="+platform_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            //getproblemchart(data);
+                        }
+                        else {
+                            errorMsg_no_data("图形 Chart");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("图形 Chart");
+                    }
+                });
+            }
+            function getproblemchart() {
+                //绘制图标数据
+                var platform_chart = echarts.init(document.getElementById("problemChart"));
+                //配置option
+                var option = {
+                    title: {
+                        show:true,
+                        text: '',
+                        top:'-5px'
+                    },
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer : {
+                            type : false
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        x: 'right',
+                        y: 'center',
+                        data:['严重','警告','正常']
+                    },
+                    grid: {
+                        left: '2%',
+                        right: '10%',
+                        bottom: '0%',
+                        top:'3%',
+                        containLabel: true
+                    },
+                    xAxis:  {
+                        type: 'value',
+                        splitLine:{show: false},
+                        minInterval : 1
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: ['状态']
+                        //data: platform_data.types
+                    },
+                    series: [
+                        {
+                            name: '正常',
+                            type: 'bar',
+                            stack: '设备总数',
+
+
+                            data: ['2'],
+                            //data: platform_data.datas[0],
+                            color: ['#5FB878']
+                        },
+                        {
+                            name: '警告',
+                            type: 'bar',
+                            stack: '设备总数',
+                            barWidth : 25,
+                            data: ['2'],
+                            //data: platform_data.datas[1],
+                            color: ['#F7B824']
+                        },
+                        {
+                            name: '严重',
+                            type: 'bar',
+                            stack: '设备总数',
+                            barWidth : 25,
+                            data: ['2'],
+                            //data: platform_data.datas[2],
+                            color: ['#DB2828']
+                        }
+                    ]
+                };
+                //根据配置绘制图形
+                platform_chart.setOption(option);
+            }
+		</script>
 	</th:block>
 </th:block>
 </body>

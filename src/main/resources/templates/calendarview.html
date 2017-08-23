@@ -17,6 +17,7 @@
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
+			.chartBar{ height: 200px; }
 		</style>
 	</th:block>
 </head>
@@ -205,30 +206,70 @@
 				<!--Site Content-->
 				<div class="sixteen wide column">
 					<div class="ui segments">
-						<div class="ui segment">
-							<div class="ui secondary pointing menu">
-								<a class="active item" data-tab="platformDetail">业务概述</a>
-								<a class="item" data-tab="platformTree">业务树</a>
-								<a class="item" data-tab="platformReport">业务图形报告</a>
-								<div class="right menu">
-									<select id="platform_select" class="ui mini dropdown ">
+						<div class="ui segment no-padding">
+							<div class="ui secondary menu">
+								<a class="header item">
+									<h3><i class="bar large chart icon"></i>日历图</h3>
+								</a>
+								<a class="right item">
+									告警状态：
+									<select id="ui_dropdown" class="ui dropdown">
+										<option value="">选择告警状态</option>
+										<option>未告警</option>
+										<option>告警失败</option>
+										<option>已告警</option>
 									</select>
-								</div>
+								</a>
 							</div>
-							<div class="ui active tab segment noMargin noBorder fixedHeight no-padding" data-tab="platformDetail">
-								<div class="row">
+						</div>
+						<div class="ui segment"  style=" min-height : 500px;">
+							<div class="sixteen wide column chartBar">
+								<div class="ui grid">
 									<div class="sixteen wide column">
-										<div class="ui grid">
-											<div class="sixteen wide column">
-												<div class="ui segment center aligned">
-													<h2 class="ui left aligned header">健康度</h2>
-												</div>
+										<div class="ui segment left aligned row1Height">
+											<div id="calendarChart" class="chartBar"></div>
+										</div>
+									</div>
+									<div class="sixteen wide column">
+										<div  class="ui segment">
+											<div id="host_table_dimmer" class="ui inverted dimmer">
+												<div class="ui text loader">加载</div>
 											</div>
-											<div class="sixteen wide column">
-												<div  class="ui segment">
-													<h2 class="ui left aligned header">健康度</h2>
-												</div>
-											</div>
+											<table  id="host_table" class="ui compact very basic table center aligned ">
+												<!--静态数据 start-->
+												<thead>
+												<tr>
+													<th class="four wide">开始时间</th>
+													<th class="four wide">结束时间</th>
+													<th class="four wide">状态[问题/问题（已恢复）/正常]</th>
+													<th class="two wide">持续时间</th>
+													<th class="two wide">确认[是/否/无]</th>
+												</tr></thead>
+												<tbody>
+												<tr>
+													<td>2017-8-22 15:10:03</td>
+													<td>2017-8-22 15:10:03</td>
+													<td style="color: yellow">问题（已恢复）</td>
+													<td>2秒</td>
+													<td>无</td>
+												</tr>
+												<tr>
+													<td>2017-8-22 15:10:03</td>
+													<td>2017-8-22 15:10:03</td>
+													<td style="color: red">问题</td>
+													<td>2秒</td>
+													<td><a href="javascript:void(0)" class="confirm">是</a></td>
+												</tr>
+												<tr>
+													<td>2017-8-22 15:10:03</td>
+													<td>2017-8-22 15:10:03</td>
+													<td style="color: green">正常</td>
+													<td>2秒</td>
+													<td><a href="javascript:void(0)" class="confirm"  id="是pop_id">是</a></td>
+												</tr>
+												</tbody>
+												<!--静态数据 end-->
+											</table>
 										</div>
 									</div>
 								</div>
@@ -236,7 +277,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
 				<!--modal end-->
 				<!--Site Content-->
 			</div>
@@ -258,7 +298,160 @@
 			$(function() {
                 //初始折叠菜单
 			})
-     </script>
+     	</script>
+		<script>
+            //绘制图标数据
+            var calendar_chart = echarts.init(document.getElementById("calendarChart"));
+            //配置option
+            function getVirtulData(year) {
+                year = year || '2017';
+                var date = +echarts.number.parseDate(year + '-01-01');
+                var end = +echarts.number.parseDate((+year + 1) + '-01-01');
+                var dayTime = 3600 * 24 * 1000;
+                var data = [];
+                for (var time = date; time < end; time += dayTime) {
+                    data.push([
+                        echarts.format.formatTime('yyyy-MM-dd', time),
+                        Math.floor(Math.random() * 10000)
+                    ]);
+                }
+                return data;
+            }
+
+            var data = getVirtulData(2016);
+
+            option = {
+                backgroundColor: '#404a59',
+
+                title: {
+                    top: 0,
+                    text: '2016年某人每天的步数',
+                    left: 'center',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                tooltip : {
+                    trigger: 'item'
+                },
+                legend: {
+                    top: '15',
+                    left: '100',
+                    data:['步数', 'Top 12'],
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                calendar: [{
+                    top: 50,
+                    left: 'center',
+                    range: ['2016-01-01', '2016-12-31'],
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: '#000',
+                            width: 4,
+                            type: 'solid'
+                        }
+                    },
+                    yearLabel: {
+                        formatter: '{start}  1st',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: '#323c48',
+                            borderWidth: 1,
+                            borderColor: '#111'
+                        }
+                    }
+                }],
+                series : [
+                    {
+                        name: '步数',
+                        type: 'scatter',
+                        coordinateSystem: 'calendar',
+                        data: data,
+                        symbolSize: function (val) {
+                            return val[1] / 500;
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#ddb926'
+                            }
+                        }
+                    },
+                    {
+                        name: '步数',
+                        type: 'scatter',
+                        coordinateSystem: 'calendar',
+                        calendarIndex: 1,
+                        data: data,
+                        symbolSize: function (val) {
+                            return val[1] / 500;
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#ddb926'
+                            }
+                        }
+                    },
+                    {
+                        name: 'Top 12',
+                        type: 'effectScatter',
+                        coordinateSystem: 'calendar',
+                        calendarIndex: 1,
+                        data: data.sort(function (a, b) {
+                            return b[1] - a[1];
+                        }).slice(0, 12),
+                        symbolSize: function (val) {
+                            return val[1] / 500;
+                        },
+                        showEffectOn: 'render',
+                        rippleEffect: {
+                            brushType: 'stroke'
+                        },
+                        hoverAnimation: true,
+                        itemStyle: {
+                            normal: {
+                                color: '#f4e925',
+                                shadowBlur: 10,
+                                shadowColor: '#333'
+                            }
+                        },
+                        zlevel: 1
+                    },
+                    {
+                        name: 'Top 12',
+                        type: 'effectScatter',
+                        coordinateSystem: 'calendar',
+                        data: data.sort(function (a, b) {
+                            return b[1] - a[1];
+                        }).slice(0, 12),
+                        symbolSize: function (val) {
+                            return val[1] / 500;
+                        },
+                        showEffectOn: 'render',
+                        rippleEffect: {
+                            brushType: 'stroke'
+                        },
+                        hoverAnimation: true,
+                        itemStyle: {
+                            normal: {
+                                color: '#f4e925',
+                                shadowBlur: 10,
+                                shadowColor: '#333'
+                            }
+                        },
+                        zlevel: 1
+                    }
+                ]
+            };
+            //根据配置绘制图形
+            calendar_chart.setOption(option);
+		</script>
 	</th:block>
 </th:block>
 </body>
