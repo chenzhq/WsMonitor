@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 /**
  * Created by pc on 2017/8/22.
@@ -24,6 +25,8 @@ public class BriefEventDTO {
     private String rEventid;
     @JSONField(name = "userid")
     private String userId;
+
+    private List<BriefAcknowledgeDTO> acknowledges ;
 
     public static final String[] PROPERTY_NAMES = {"eventid", "source","object","objectid","acknowledged","clock","value","r_eventid","userid"};
 
@@ -106,6 +109,15 @@ public class BriefEventDTO {
 
     public BriefEventDTO setUserId(String userId) {
         this.userId = userId;
+        return this;
+    }
+
+    public List<BriefAcknowledgeDTO> getAcknowledges() {
+        return acknowledges;
+    }
+
+    public BriefEventDTO setAcknowledges(List<BriefAcknowledgeDTO> acknowledges) {
+        this.acknowledges = acknowledges;
         return this;
     }
 

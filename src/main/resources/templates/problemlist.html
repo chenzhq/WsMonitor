@@ -245,20 +245,20 @@
 									<th class="four wide">问题</th>
 									<th class="two wide">严重性</th>
 									<th class="two wide">持续时间</th>
-									<th class="two wide">[告警状态]</th>
+									<th class="two wide">告警状态</th>
 									<th class="one wide">确认</th>
 									<th class="one wide">详情</th>
 								</tr></thead>
 								<tbody>
-								<tr>
-									<td>2017-8-22 15:10:03</td>
-									<td>设备1</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="color: yellow">告警</td>
-									<td>2秒</td>
-									<td>未告警</td>
-									<td>不</td>
-									<td><a href="javascript:void(0)">详情</a></td>
+								<tr th:each="problemListVO : ${problemListVOS}">
+									<td th:text="${problemListVO.lastTime}">2017-8-22 15:10:03</td>
+									<td th:text="${problemListVO.hostName}">设备1</td>
+									<td th:text="${problemListVO.description}">主机1内存使用率超过90%</td>
+									<td th:text="${problemListVO.state}" th:style = "${problemListVO.state}=='警告' ? 'color:red' : 'color:yellow'" >警告</td>
+									<td th:text="${problemListVO.durationString}">2秒</td>
+									<td th:text="${problemListVO.alertState}" th:class="${problemListVO.alertState}=='已告警' ? alarmed:''">未告警</td>
+									<td th:text="${problemListVO.acknowledged}" th:class="${problemListVO.acknowledged}=='是' ? confirm:''">不</td>
+									<td><a th:id="${problemListVO.eventId}" onclick="problemdetail(this.id)">详情</a></td>
 								</tr>
 								<tr>
 									<td>2017-8-22 15:10:03</td>
@@ -378,6 +378,10 @@
 	</th:block>
 </th:block>
 <script type="text/javascript">
+
+	function problemdetail(event_id) {
+	    console.log("event_id",event_id);
+	}
 	//下拉框事件
 	$("#ui_dropdown").change(function(){
 		var tmp=$("#ui_dropdown").val()

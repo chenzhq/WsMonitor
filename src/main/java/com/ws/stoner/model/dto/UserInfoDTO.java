@@ -1,5 +1,6 @@
 package com.ws.stoner.model.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.bean.UserDO;
 
 import java.time.Instant;
@@ -8,7 +9,9 @@ import java.time.Instant;
  * Created by chenzheqi on 2017/5/27.
  */
 public class UserInfoDTO {
+    @JSONField(name = "userid")
     private String userId;
+    @JSONField(name = "alias")
     private String name;
     private int type;
     private String userIp;
@@ -16,6 +19,11 @@ public class UserInfoDTO {
     private String attempIp;
     private Instant attempClock;
     private int attempFailed;
+
+    public static final String[] PROPERTY_NAMES = {"userid", "alias","type"};
+
+    public UserInfoDTO() {
+    }
 
     public UserInfoDTO(UserDO result) {
         this.userId = result.getUserId();

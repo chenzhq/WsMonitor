@@ -25,9 +25,6 @@ import static com.ws.stoner.constant.MessageConsts.REST_RESPONSE_SUCCESS;
 public class PointDetailRestController {
 
     @Autowired
-    private PointSerivce pointSerivce;
-
-    @Autowired
     private GraphService graphService;
 
     @Autowired

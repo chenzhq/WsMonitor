@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 /**
  * Created by pc on 2017/8/22.
@@ -17,14 +18,17 @@ public class BriefAlertDTO {
     private String alertType;
     private LocalDateTime clock;
     @JSONField(name = "esc_step")
-    private String escStep;
+    private Integer escStep;
     @JSONField(name = "eventid")
     private String eventId;
     private String message;
-    private String retries;
+    private String status;
+    private Integer retries;
     private String sendto;
     @JSONField(name = "userid")
     private String userId;
+
+    private List<UserInfoDTO> users;
 
     public static final String[] PROPERTY_NAMES = {"alertid", "alerttype","clock","esc_step","eventid","message","retries","sendto","status","userid"};
 
@@ -56,11 +60,11 @@ public class BriefAlertDTO {
         return this;
     }
 
-    public String getEscStep() {
+    public Integer getEscStep() {
         return escStep;
     }
 
-    public BriefAlertDTO setEscStep(String escStep) {
+    public BriefAlertDTO setEscStep(Integer escStep) {
         this.escStep = escStep;
         return this;
     }
@@ -83,11 +87,11 @@ public class BriefAlertDTO {
         return this;
     }
 
-    public String getRetries() {
+    public Integer getRetries() {
         return retries;
     }
 
-    public BriefAlertDTO setRetries(String retries) {
+    public BriefAlertDTO setRetries(Integer retries) {
         this.retries = retries;
         return this;
     }
@@ -110,18 +114,38 @@ public class BriefAlertDTO {
         return this;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public BriefAlertDTO setStatus(String status) {
+        this.status = status;
+        return this;
+    }
+
+    public List<UserInfoDTO> getUsers() {
+        return users;
+    }
+
+    public BriefAlertDTO setUsers(List<UserInfoDTO> users) {
+        this.users = users;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "BriefAlertDTO{" +
                 "alertId='" + alertId + '\'' +
                 ", alertType='" + alertType + '\'' +
-                ", clock='" + clock + '\'' +
+                ", clock=" + clock +
                 ", escStep='" + escStep + '\'' +
                 ", eventId='" + eventId + '\'' +
                 ", message='" + message + '\'' +
-                ", retries='" + retries + '\'' +
+                ", status='" + status + '\'' +
+                ", retries=" + retries +
                 ", sendto='" + sendto + '\'' +
                 ", userId='" + userId + '\'' +
+                ", users=" + users +
                 '}';
     }
 }
