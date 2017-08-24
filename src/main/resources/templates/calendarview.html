@@ -312,20 +312,22 @@
                 for (var time = date; time < end; time += dayTime) {
                     data.push([
                         echarts.format.formatTime('yyyy-MM-dd', time),
-                        Math.floor(Math.random() * 10000)
+                        //Math.floor(Math.random() * 10000)
+                        5000
                     ]);
                 }
                 return data;
             }
 
-            var data = getVirtulData(2016);
-
+            //var data = getVirtulData(2017);
+            var data1 = [['2017-01-01',20],['2017-01-03',10]];
+            var data2 = [['2017-01-02',20]];
             option = {
                 backgroundColor: '#404a59',
 
                 title: {
                     top: 0,
-                    text: '2016年某人每天的步数',
+                    text: '2017年',
                     left: 'center',
                     textStyle: {
                         color: '#fff'
@@ -335,17 +337,17 @@
                     trigger: 'item'
                 },
                 legend: {
-                    top: '15',
+                    top: '10',
                     left: '100',
-                    data:['步数', 'Top 12'],
+                    data:['已确认', '未确认'],
                     textStyle: {
                         color: '#fff'
                     }
                 },
                 calendar: [{
-                    top: 50,
+                    top: 60,
                     left: 'center',
-                    range: ['2016-01-01', '2016-12-31'],
+                    range: ['2017-01-01', '2017-01-20'],
                     splitLine: {
                         show: true,
                         lineStyle: {
@@ -370,12 +372,12 @@
                 }],
                 series : [
                     {
-                        name: '步数',
+                        name: '已确认',
                         type: 'scatter',
                         coordinateSystem: 'calendar',
-                        data: data,
+                        data: data1,
                         symbolSize: function (val) {
-                            return val[1] / 500;
+                            return val[1];
                         },
                         itemStyle: {
                             normal: {
@@ -384,54 +386,15 @@
                         }
                     },
                     {
-                        name: '步数',
-                        type: 'scatter',
-                        coordinateSystem: 'calendar',
-                        calendarIndex: 1,
-                        data: data,
-                        symbolSize: function (val) {
-                            return val[1] / 500;
-                        },
-                        itemStyle: {
-                            normal: {
-                                color: '#ddb926'
-                            }
-                        }
-                    },
-                    {
-                        name: 'Top 12',
+                        name: '未确认',
                         type: 'effectScatter',
                         coordinateSystem: 'calendar',
-                        calendarIndex: 1,
-                        data: data.sort(function (a, b) {
-                            return b[1] - a[1];
-                        }).slice(0, 12),
+                        //data: data.sort(function (a, b) {
+                        //    return b[1] - a[1];
+                        //}).slice(0, 2),
+                        data: data2,
                         symbolSize: function (val) {
-                            return val[1] / 500;
-                        },
-                        showEffectOn: 'render',
-                        rippleEffect: {
-                            brushType: 'stroke'
-                        },
-                        hoverAnimation: true,
-                        itemStyle: {
-                            normal: {
-                                color: '#f4e925',
-                                shadowBlur: 10,
-                                shadowColor: '#333'
-                            }
-                        },
-                        zlevel: 1
-                    },
-                    {
-                        name: 'Top 12',
-                        type: 'effectScatter',
-                        coordinateSystem: 'calendar',
-                        data: data.sort(function (a, b) {
-                            return b[1] - a[1];
-                        }).slice(0, 12),
-                        symbolSize: function (val) {
-                            return val[1] / 500;
+                            return val[1];
                         },
                         showEffectOn: 'render',
                         rippleEffect: {
