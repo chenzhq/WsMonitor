@@ -1,5 +1,6 @@
 package com.ws.stoner.utils;
 
+import com.ws.bix4j.ZApiParameter;
 import com.ws.stoner.constant.StatusEnum;
 
 /**
@@ -154,6 +155,21 @@ public class StatusConverter {
                break;
        }
        return status;
+    }
+
+    //根据触发器的 priority 获取对应的状态名称 return "正常，警告，严重"
+    public static String getStatusByTriggerPriority(Integer priority) {
+        //PriorityState
+        if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.WARNING.value) ) {
+            return StatusEnum.WARNING.getName();
+        }else if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.HIGH.value)) {
+            return StatusEnum.HIGH.getName();
+        }else if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.INFORMATION.value)) {
+            return StatusEnum.WARNING.getName();
+        }else {
+            return StatusEnum.OK.getName();
+        }
+
     }
 
 }

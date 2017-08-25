@@ -26,6 +26,9 @@ public class BriefEventDTO {
     @JSONField(name = "userid")
     private String userId;
 
+    private BriefTriggerDTO relatedObject;
+
+    private List<BriefHostDTO> hosts;
     private List<BriefAcknowledgeDTO> acknowledges ;
 
     public static final String[] PROPERTY_NAMES = {"eventid", "source","object","objectid","acknowledged","clock","value","r_eventid","userid"};
@@ -121,6 +124,24 @@ public class BriefEventDTO {
         return this;
     }
 
+    public List<BriefHostDTO> getHosts() {
+        return hosts;
+    }
+
+    public BriefEventDTO setHosts(List<BriefHostDTO> hosts) {
+        this.hosts = hosts;
+        return this;
+    }
+
+    public BriefTriggerDTO getRelatedObject() {
+        return relatedObject;
+    }
+
+    public BriefEventDTO setRelatedObject(BriefTriggerDTO relatedObject) {
+        this.relatedObject = relatedObject;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "BriefEventDTO{" +
@@ -129,10 +150,13 @@ public class BriefEventDTO {
                 ", object=" + object +
                 ", objectId='" + objectId + '\'' +
                 ", acknowledged=" + acknowledged +
-                ", clock='" + clock + '\'' +
+                ", clock=" + clock +
                 ", value=" + value +
                 ", rEventid='" + rEventid + '\'' +
                 ", userId='" + userId + '\'' +
+                ", relatedObject=" + relatedObject +
+                ", hosts=" + hosts +
+                ", acknowledges=" + acknowledges +
                 '}';
     }
 }

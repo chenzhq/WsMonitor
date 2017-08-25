@@ -52,6 +52,12 @@ public interface TriggerService {
      */
     List<BriefTriggerDTO> getTriggersByItemIds(List<String> itemIds) throws ServiceException;
 
+    /**
+     * 列出所有触发器 排除依赖 触发器 BriefTriggerDTOS
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefTriggerDTO> listTriggersSkipDependent() throws ServiceException;
 
     /**
      * 列出问题触发器 BriefTriggerDTOS

@@ -1,20 +1,27 @@
 package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
+import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.event.EventGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
-import com.ws.stoner.model.dto.BriefEventDTO;
+import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.ProblemAcknowledgeVO;
+import com.ws.stoner.model.view.ProblemListVO;
+import com.ws.stoner.service.AlertService;
 import com.ws.stoner.service.EventService;
+import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.utils.AlertStatusConverter;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +38,12 @@ public class EventServiceImpl implements EventService {
     private static final Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
     @Autowired
     private ZApi zApi;
+
+    @Autowired
+    private TriggerService triggerService;
+
+    @Autowired
+    private AlertService alertService;
 
     @Override
     public List<BriefEventDTO> listEvent(EventGetRequest request) throws ServiceException {
@@ -59,8 +72,120 @@ public class EventServiceImpl implements EventService {
         EventGetRequest eventGetRequest = new EventGetRequest();
         eventGetRequest.getParams()
                 .setEventIds(eventIds)
-                .setSelectAcknowledges(BriefAcknowledgeDTO.PROPERTY_NAMES);
+                .setSelectAcknowledges(BriefAcknowledgeDTO.PROPERTY_NAMES)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                .setOutput(BriefEventDTO.PROPERTY_NAMES);
         return listEvent(eventGetRequest);
+    }
+
+    /**
+     * 获取指定时间区间内 的 所有事件  all eventDTOS
+     * @param beginTime  秒数 字符串
+     * @param endTime  秒数 字符串
+     * @param triggerIds  用来过滤依赖关系的 event
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefEventDTO> getAllEventsByTime(String beginTime, String endTime,List<String> triggerIds) throws ServiceException {
+        EventGetRequest eventGetRequest = new EventGetRequest();
+        eventGetRequest.getParams()
+                .setSource(ZApiParameter.SOURCE.TRIGGER.value)
+                .setObject(ZApiParameter.OBJECT.TRIGGER.value)
+                .setTimeFrom(beginTime)
+                .setTimeTill(endTime)
+                .setObjectIds(triggerIds)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                .setOutput(BriefEventDTO.PROPERTY_NAMES);
+        return listEvent(eventGetRequest);
+    }
+
+    /**
+     * 获取指定时间区间内 的 恢复事件  recovery eventDTOS
+     * @param beginTime  秒数 字符串
+     * @param endTime  秒数 字符串
+     * @param triggerIds  用来过滤依赖关系的 event
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefEventDTO> getRecoveryEventsByTime(String beginTime, String endTime, List<String> triggerIds) throws ServiceException {
+        EventGetRequest eventGetRequest = new EventGetRequest();
+        List<Integer> values = new ArrayList<>();
+        values.add(ZApiParameter.EVENT_VALUE.OK.value);
+        eventGetRequest.getParams()
+                .setSource(ZApiParameter.SOURCE.TRIGGER.value)
+                .setObject(ZApiParameter.OBJECT.TRIGGER.value)
+                .setTimeFrom(beginTime)
+                .setTimeTill(endTime)
+                .setValue(values)
+                .setObjectIds(triggerIds)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                .setOutput(BriefEventDTO.PROPERTY_NAMES);
+        return listEvent(eventGetRequest);
+
+    }
+
+    /**
+     * 获取指定时间区间内 的 问题事件 problem eventDTOS
+     * @param beginTime  秒数 字符串
+     * @param endTime  秒数 字符串
+     * @param triggerIds  用来过滤依赖关系的 event
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefEventDTO> getProblemEventsByTime(String beginTime, String endTime,List<String> triggerIds) throws ServiceException {
+        EventGetRequest eventGetRequest = new EventGetRequest();
+        List<Integer> values = new ArrayList<>();
+        values.add(ZApiParameter.EVENT_VALUE.PROBLEM.value);
+        eventGetRequest.getParams()
+                .setSource(ZApiParameter.SOURCE.TRIGGER.value)
+                .setObject(ZApiParameter.OBJECT.TRIGGER.value)
+                .setTimeFrom(beginTime)
+                .setTimeTill(endTime)
+                .setValue(values)
+                .setObjectIds(triggerIds)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                .setOutput(BriefEventDTO.PROPERTY_NAMES);
+        return listEvent(eventGetRequest);
+
+    }
+
+    /**
+     * 根据时间区间 获取 历史记录  问题列表 List<ProblemListVO>
+     * @param beginTime 时间格式：秒数
+     * @param endTime  时间格式：秒数
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<ProblemListVO> getHistoryProblemsByTime(String beginTime, String endTime) throws ServiceException {
+        //处理依赖关系
+        List<BriefTriggerDTO> triggerDTOS = triggerService.listTriggersSkipDependent();
+        List<String > triggerIds = new ArrayList<>();
+        for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+            triggerIds.add(triggerDTO.getTriggerId());
+        }
+        List<BriefEventDTO> problemEventDTOS = getProblemEventsByTime(beginTime,endTime,triggerIds);
+        List<BriefEventDTO> recoveryEventDTOS = getRecoveryEventsByTime(beginTime, String.valueOf(System.currentTimeMillis() / 1000),triggerIds);
+        //用于获取总的告警信息
+        List<String> allEventIds = new ArrayList<>();
+        for(BriefEventDTO eventDTO : problemEventDTOS) {
+            allEventIds.add(eventDTO.getEventId());
+        }
+        for(BriefEventDTO eventDTO : recoveryEventDTOS) {
+            allEventIds.add(eventDTO.getEventId());
+        }
+        List<BriefAlertDTO> allAlertDTOS = alertService.getAlertDTOByEventIds(allEventIds);
+        //将 BriefProblemDTO 转换成 ProblemListVO
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS,allAlertDTOS);
+        //时间排序
+        return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }
 
     /**

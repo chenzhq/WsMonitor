@@ -220,6 +220,59 @@ public static enum HOSTGROUP_INTERNAL {
 
     }
 
+    /**
+     * ACKNOWLEDGE 确认 action
+     */
+    public static enum ACKNOWLEDGE_ACTION  {
+        UNACKNOWLEDGED(0),
+        ACKNOWLEDGED(1);
+        public int value;
+        private ACKNOWLEDGE_ACTION(int value) {
+            this.value = value;
+        }
+
+    }
+
+
+    /**
+     * ALERT 告警状态类型
+     */
+
+    public static enum ALERT_MESSAGE_STATUS  {
+        MESSAGE_SENDING(0),
+        MESSAGE_SENT(1),
+        MESSAGE_FAILED(2);
+        public int value;
+        private ALERT_MESSAGE_STATUS(int value) {
+            this.value = value;
+        }
+
+    }
+
+    public static enum ALERT_COMMAND_STATUS  {
+        COMMAND_WORK(0),
+        COMMAND_UNWORK(1);
+        public int value;
+        private ALERT_COMMAND_STATUS(int value) {
+            this.value = value;
+        }
+
+    }
+
+/*
+ * 事件类型 event
+ */
+    public static enum EVENT_VALUE  {
+        OK(0),
+        PROBLEM(1);
+        public int value;
+        private EVENT_VALUE(int value) {
+            this.value = value;
+        }
+
+    }
+
+
 /**
  * 监控项类型
  */

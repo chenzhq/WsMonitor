@@ -13,11 +13,14 @@ import com.ws.stoner.model.view.DashboardProblemVO;
 import com.ws.stoner.model.view.ProblemListVO;
 import com.ws.stoner.service.AlertService;
 import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.utils.AlertStatusConverter;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -153,6 +156,26 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     /**
+     * 列出所有触发器 排除依赖 触发器 BriefTriggerDTOS
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefTriggerDTO> listTriggersSkipDependent() throws ServiceException {
+        TriggerGetRequest request = new TriggerGetRequest();
+        Map<String, Integer> triggerFilter = new HashMap<>();
+        triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
+        request.getParams()
+                .setMonitored(true)
+                .setExpandDescription(true)
+                .setExpandExpression(true)
+                .setSkipDependent(true)
+                .setOutput(BriefTriggerDTO.PROPERTY_NAMES)
+                .setFilter(triggerFilter);
+        return listTrigger(request, BriefTriggerDTO.class);
+    }
+
+    /**
      * 列出问题触发器 BriefTriggerDTOS
      * @return
      * @throws ServiceException
@@ -167,6 +190,7 @@ public class TriggerServiceImpl implements TriggerService {
                 .setOnlyTrue(true)
                 .setExpandDescription(true)
                 .setExpandExpression(true)
+                .setSkipDependent(true)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setSelectLastEvent(BriefEventDTO.PROPERTY_NAMES)
                 .setOutput(BriefTriggerDTO.PROPERTY_NAMES)
@@ -175,7 +199,7 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     /**
-     * 问题管理 问题列表 ProblemListVO
+     * 问题管理 问题列表  当前问题块 ProblemListVO
      * @return
      * @throws ServiceException
      */
@@ -187,15 +211,16 @@ public class TriggerServiceImpl implements TriggerService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
         for(BriefTriggerDTO triggerDTO : triggerDTOS) {
             ProblemListVO problemListVO = new ProblemListVO();
+            problemListVO.setTriggerId(triggerDTO.getTriggerId());
             if(triggerDTO.getHosts().size() != 0) {
                 problemListVO.setHostName(triggerDTO.getHosts().get(0).getName());
             }
             if(triggerDTO.getLastEvent() != null) {
-                problemListVO.setEventId(triggerDTO.getLastEvent().getEventId());
-                problemListVO.setLastTime(triggerDTO.getLastEvent().getClock().format(formatter));
+                problemListVO.setProblemEventid(triggerDTO.getLastEvent().getEventId());
+                problemListVO.setProblemTime(triggerDTO.getLastEvent().getClock().format(formatter));
                 //durationString
-                problemListVO.setDurationString(triggerDTO.getLastEvent().getClock());
-                if(triggerDTO.getLastEvent().getAcknowledged() == 1) {
+                problemListVO.setDurationString(triggerDTO.getLastEvent().getClock(), LocalDateTime.now());
+                if(triggerDTO.getLastEvent().getAcknowledged() == ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value) {
                     problemListVO.setAcknowledged("是");
                 }else {
                     problemListVO.setAcknowledged("否");
@@ -204,25 +229,23 @@ public class TriggerServiceImpl implements TriggerService {
                 List<String> eventIds = new ArrayList<>();
                 eventIds.add(triggerDTO.getLastEvent().getEventId());
                 List<BriefAlertDTO> alertDTOS = alertService.getAlertDTOByEventIds(eventIds);
-                if(alertDTOS.size() != 0) {
-                    problemListVO.setAlertState("已告警");
-                }else {
+                if(alertDTOS.size() == 0) {
                     problemListVO.setAlertState("未告警");
+                }else {
+                    for(BriefAlertDTO alertDTO : alertDTOS) {
+                        problemListVO.setAlertState(AlertStatusConverter.getMassageByAlertStatus(alertDTO.getStatus()));
+                    }
                 }
             }
+            problemListVO.setProblemState("问题");
             problemListVO.setDescription(triggerDTO.getName());
-            //state
-            if(triggerDTO.getPriority() == ZApiParameter.TRIGGER_PRIORITY.WARNING.value) {
-                problemListVO.setState(StatusEnum.WARNING.getName());
-            }else if(triggerDTO.getPriority() == ZApiParameter.TRIGGER_PRIORITY.HIGH.value) {
-                problemListVO.setState(StatusEnum.HIGH.getName());
-            }else if(triggerDTO.getPriority() == ZApiParameter.TRIGGER_PRIORITY.INFORMATION.value) {
-                problemListVO.setState(StatusEnum.WARNING.getName());
-            }else {
-                problemListVO.setState(StatusEnum.OK.getName());
-            }
+            //PriorityState
+            problemListVO.setPriorityState(StatusConverter.getStatusByTriggerPriority(triggerDTO.getPriority()));
             problemListVOS.add(problemListVO);
+
+
         }
-        return problemListVOS;
+        //时间排序
+        return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }
 }

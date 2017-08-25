@@ -22,7 +22,7 @@ public class BriefAlertDTO {
     @JSONField(name = "eventid")
     private String eventId;
     private String message;
-    private String status;
+    private Integer status;
     private Integer retries;
     private String sendto;
     @JSONField(name = "userid")
@@ -114,11 +114,11 @@ public class BriefAlertDTO {
         return this;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public BriefAlertDTO setStatus(String status) {
+    public BriefAlertDTO setStatus(Integer status) {
         this.status = status;
         return this;
     }

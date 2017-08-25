@@ -17,6 +17,7 @@ public class ProblemAlertVO {
     private Integer retries;
     private String alias;
     private String sendto;
+    private boolean recovery;
 
     public String getAlertId() {
         return alertId;
@@ -81,15 +82,26 @@ public class ProblemAlertVO {
         return this;
     }
 
+    public boolean isRecovery() {
+        return recovery;
+    }
+
+    public ProblemAlertVO setRecovery(boolean recovery) {
+        this.recovery = recovery;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "ProblemAlertVO{" +
                 "alertId='" + alertId + '\'' +
+                ", escStep=" + escStep +
                 ", lastTime='" + lastTime + '\'' +
                 ", status='" + status + '\'' +
                 ", retries=" + retries +
                 ", alias='" + alias + '\'' +
                 ", sendto='" + sendto + '\'' +
+                ", recovery=" + recovery +
                 '}';
     }
 }
