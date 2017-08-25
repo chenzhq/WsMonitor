@@ -242,43 +242,63 @@
 								<tr>
 									<th class="two wide">发生时间</th>
 									<th class="two wide">设备</th>
-									<th class="four wide">问题</th>
-									<th class="two wide">严重性</th>
-									<th class="two wide">持续时间</th>
+									<th class="three wide">问题</th>
+									<th class="one wide">严重性</th>
+									<th class="one wide">状态</th>
+									<th class="two wide">恢复时间</th>
+									<th class="one wide">持续时间</th>
 									<th class="two wide">告警状态</th>
 									<th class="one wide">确认</th>
-									<th class="one wide">详情</th>
+									<th class="one wide">操作</th>
 								</tr></thead>
 								<tbody>
-								<tr th:each="problemListVO : ${problemListVOS}">
-									<td th:text="${problemListVO.lastTime}">2017-8-22 15:10:03</td>
-									<td th:text="${problemListVO.hostName}">设备1</td>
-									<td th:text="${problemListVO.description}">主机1内存使用率超过90%</td>
-									<td th:text="${problemListVO.state}" th:style = "${problemListVO.state}=='警告' ? 'color:red' : 'color:yellow'" >警告</td>
-									<td th:text="${problemListVO.durationString}">2秒</td>
-									<td th:text="${problemListVO.alertState}" th:class="${problemListVO.alertState}=='已告警' ? alarmed:''">未告警</td>
-									<td th:text="${problemListVO.acknowledged}" th:class="${problemListVO.acknowledged}=='是' ? confirm:''">不</td>
-									<td><a th:id="${problemListVO.eventId}" onclick="problemdetail(this.id)">详情</a></td>
+								<tr>
+									<td>2017-8-22 15:10:03</td>
+									<td>设备2</td>
+									<td><a href="problemdetail.html">主机1内存使用率超过90%</a></td>
+									<td style="color: red">严重</td>
+									<td><a href="javascript:void(0)" class="alarmed">已解决</a></td>
+									<td>2017-8-25 15:18:22</td>
+									<td>2秒</td>
+									<td>成功，告警数1</td>
+									<td><a href="javascript:void(0)" class="confirm">是</a></td>
+									<td><a href="javascript:void(0)" class="detail">事件详情</a></td>
+								</tr>
+								<tr>
+									<td><a href="javascript:void(0)" class="modal">2017-8-22 15:10:03</a></td>
+									<td>设备2</td>
+									<td><a href="problemdetail.html">主机1内存使用率超过90%</a></td>
+									<td style="color: yellow">告警</td>
+									<td>问题</td>
+									<td></td>
+									<td>82秒</td>
+									<td>发送中，告警数5</td>
+									<td>否</td>
+									<td><a href="javascript:void(0)" class="detail">事件详情</a></td>
 								</tr>
 								<tr>
 									<td>2017-8-22 15:10:03</td>
 									<td>设备2</td>
-									<td>主机1内存使用率超过90%</td>
-									<td style="color: red">严重</td>
+									<td><a href="problemdetail.html">主机1内存使用率超过90%</a></td>
+									<td style="color: green">一般</td>
+									<td><a href="javascript:void(0)" class="alarmed">已解决</a></td>
+									<td>2017-8-25 15:18:22</td>
 									<td>2秒</td>
-									<td>告警失败</td>
+									<td>失败，告警数0</td>
 									<td><a href="javascript:void(0)" class="confirm">是</a></td>
-									<td><a href="javascript:void(0)">详情</a></td>
+									<td><a href="javascript:void(0)" class="detail">事件详情</a></td>
 								</tr>
 								<tr>
 									<td>2017-8-22 15:10:03</td>
-									<td>设备3</td>
-									<td>主机1内存使用率超过90%</td>
+									<td>设备2</td>
+									<td><a href="problemdetail.html">主机1内存使用率超过90%</a></td>
 									<td style="color: red">严重</td>
+									<td>问题</td>
+									<td>2017-8-25 15:18:22</td>
 									<td>2秒</td>
-									<td><a href="javascript:void(0)" class="alarmed" id="已告警pop_id">已告警</a></td>
-									<td><a href="javascript:void(0)" class="confirm"  id="是pop_id">是</a></td>
-									<td><a href="javascript:void(0)">详情</a></td>
+									<td>发送中,告警数2</td>
+									<td><a href="javascript:void(0)" class="confirm">否</a></td>
+									<td><a href="javascript:void(0)" class="detail">事件详情</a></td>
 								</tr>
 								</tbody>
 								<!--静态数据 end-->
@@ -356,11 +376,131 @@
 					</table>
 				</div>
 				<!--确认记录提示框 end-->
+				<!--确认记录模态框 start-->
+				<div class="ui small modal confirm">
+					<div class="header">标题</div>
+					<div class="content">
+						<div class="ui form">
+							<div class="required inline field">
+								<label>名</label>
+								<input type="text" placeholder="Full Name">
+							</div>
+							<p>有历史确认记录，则在文本框下方列出，与确认记录数据一致</p>
+							<div class="required inline field">
+								<div class="ui checkbox">
+									<input type="checkbox" tabindex="0" class="hidden">
+									<label>关闭问题</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="actions">
+						<div class="ui approve submit button">确认</div>
+						<div class="ui cancel button">取消</div>
+					</div>
+				</div>
+				<!--确认记录模态框 end-->
+				<!--事件详情模态框 start-->
+				<div class="ui small modal detail">
+					<div class="content">
+						<div class="ui  pointing secondary menu">
+							<a class="active item" data-tab="first">事件细节</a>
+							<a class="item" data-tab="second">确认</a>
+							<a class="item" data-tab="third">告警记录</a>
+						</div>
+						<div class="ui bottom attached active tab segment" data-tab="first">
+							<p>[所属主机，监控点名称，监控项名称]考虑合并在一起显示，阀值，（触发器）描述，发生时间，恢复时间，手动关闭[Admin/无]</p>
+						</div>
+						<div class="ui bottom attached tab segment" data-tab="second">
+							<table id="confirmTable_second" class="ui very basic compact collapsing celled fixed single line table">
+								<!--静态数据 start-->
+								<thead>
+								<tr>
+									<th class="four wide">时间</th>
+									<th class="four wide">用户</th>
+									<th class="four wide">消息</th>
+									<th class="four wide">用户动作</th>
+								</tr></thead>
+								<tbody>
+								<tr>
+									<td>2017-8-22 15:10:03</td>
+									<td>yans(12312@qq.com)</td>
+									<td>主机1内存使用率超过90%</td>
+									<td>已关闭</td>
+								</tr>
+								<tr>
+									<td>2017-8-22 15:10:03</td>
+									<td>yans(12312@qq.com)</td>
+									<td>主机1内存使用率超过90%</td>
+									<td>未关闭</td>
+								</tr>
+								<tr>
+									<td>2017-8-22 15:10:03</td>
+									<td>yans(12312@qq.com)</td>
+									<td>主机1内存使用率超过90%</td>
+									<td></td>
+								</tr>
+								</tbody>
+								<!--静态数据 end-->
+							</table>
+						</div>
+						<div class="ui bottom attached tab segment" data-tab="third">
+							<table id="alarmedTable_third" class="ui very basic compact collapsing celled fixed single line table">
+								<!--静态数据 start-->
+								<thead>
+								<tr>
+									<th class="four wide">步骤</th>
+									<th class="four wide">时间</th>
+									<th class="four wide">接收者</th>
+									<th class="four wide">告警方式</th>
+									<th class="four wide">主题</th>
+									<th class="four wide">信息</th>
+									<th class="four wide">状态（重试次数）</th>
+								</tr></thead>
+								<tbody>
+								<tr>
+									<td>1</td>
+									<td>2017-08-12 11:13:39</td>
+									<td>告警方式</td>
+									<td>主题</td>
+									<td>信息</td>
+									<td>chen[chenzhq.2@gmail.com]</td>
+									<td>已发送通知(0)</td>
+								</tr>
+								<tr>
+									<td>2</td>
+									<td>2017-08-12 11:13:39</td>
+									<td>告警方式</td>
+									<td>主题</td>
+									<td>信息</td>
+									<td>admin[admin@gmail.com]</td>
+									<td>已发送通知(1)</td>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>2017-08-12 11:13:39</td>
+									<td>告警方式</td>
+									<td>主题</td>
+									<td>信息</td>
+									<td>admin[admin@gmail.com]</td>
+									<td>已发送通知(0)</td>
+								</tr>
+								</tbody>
+								<!--静态数据 end-->
+							</table>
+						</div>
+					</div>
+					<div class="actions">
+						<div class="ui approve submit button">确认</div>
+						<div class="ui cancel button">取消</div>
+					</div>
+				</div>
+				<!--事件详情模态框 end-->
 			</div>
 		</div>
 	</div>
 </div>
-<!--modal-->
+
 <div id="del-pop" class="ui custom popup transition hidden">
 	<div class="description">是否删除该分组？</div>
 	<i class="mini checkmark negative icon "></i>
@@ -382,6 +522,8 @@
 	function problemdetail(event_id) {
 	    console.log("event_id",event_id);
 	}
+    $('.ui.checkbox').checkbox();
+    $('.menu .item').tab();
 	//下拉框事件
 	$("#ui_dropdown").change(function(){
 		var tmp=$("#ui_dropdown").val()
@@ -423,9 +565,17 @@
    //获取已告警提示框内容
    function getalarmedpopup(data) {
    }
-	//点击确认记录事件
-	$('#host_table a.confirm').hover(function(e) {
-        //confirmpopup();
+    //点击确认记录事件
+    $('#host_table a.confirm').on('click',function(){
+        $('.ui.modal.confirm').modal('setting', 'closable', false).modal('show');
+    })
+    //点击事件详情事件
+    $('#host_table a.detail').on('click',function(){
+        $('.ui.modal.detail').modal('setting', 'closable', false).modal('show');
+    })
+	//浮动确认记录事件
+	$('#host_table a.confirm').hover(function() {
+
 	}).popup({
 		popup: '.special.popup.confirm',
 		inline: true,
