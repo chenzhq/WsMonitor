@@ -5,7 +5,6 @@ import com.ws.bix4j.access.user.UserGetRequest;
 import com.ws.bix4j.access.user.UserLoginResponse;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.LoginDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;

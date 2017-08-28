@@ -19,6 +19,20 @@ public class ProblemAlertVO {
     private String sendto;
     private boolean recovery;
 
+    public ProblemAlertVO() {
+    }
+
+    public ProblemAlertVO(String alertId, Integer escStep, String lastTime, String status, Integer retries, String alias, String sendto, boolean recovery) {
+        this.alertId = alertId;
+        this.escStep = escStep;
+        this.lastTime = lastTime;
+        this.status = status;
+        this.retries = retries;
+        this.alias = alias;
+        this.sendto = sendto;
+        this.recovery = recovery;
+    }
+
     public String getAlertId() {
         return alertId;
     }

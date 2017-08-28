@@ -30,6 +30,7 @@ public class BriefEventDTO {
 
     private List<BriefHostDTO> hosts;
     private List<BriefAcknowledgeDTO> acknowledges ;
+    private List<BriefAlertDTO> alerts;
 
     public static final String[] PROPERTY_NAMES = {"eventid", "source","object","objectid","acknowledged","clock","value","r_eventid","userid"};
 
@@ -142,6 +143,15 @@ public class BriefEventDTO {
         return this;
     }
 
+    public List<BriefAlertDTO> getAlerts() {
+        return alerts;
+    }
+
+    public BriefEventDTO setAlerts(List<BriefAlertDTO> alerts) {
+        this.alerts = alerts;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "BriefEventDTO{" +
@@ -157,6 +167,50 @@ public class BriefEventDTO {
                 ", relatedObject=" + relatedObject +
                 ", hosts=" + hosts +
                 ", acknowledges=" + acknowledges +
+                ", alerts=" + alerts +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BriefEventDTO eventDTO = (BriefEventDTO) o;
+
+        if (eventId != null ? !eventId.equals(eventDTO.eventId) : eventDTO.eventId != null) return false;
+        if (source != null ? !source.equals(eventDTO.source) : eventDTO.source != null) return false;
+        if (object != null ? !object.equals(eventDTO.object) : eventDTO.object != null) return false;
+        if (objectId != null ? !objectId.equals(eventDTO.objectId) : eventDTO.objectId != null) return false;
+        if (acknowledged != null ? !acknowledged.equals(eventDTO.acknowledged) : eventDTO.acknowledged != null)
+            return false;
+        if (clock != null ? !clock.equals(eventDTO.clock) : eventDTO.clock != null) return false;
+        if (value != null ? !value.equals(eventDTO.value) : eventDTO.value != null) return false;
+        if (rEventid != null ? !rEventid.equals(eventDTO.rEventid) : eventDTO.rEventid != null) return false;
+        if (userId != null ? !userId.equals(eventDTO.userId) : eventDTO.userId != null) return false;
+        if (relatedObject != null ? !relatedObject.equals(eventDTO.relatedObject) : eventDTO.relatedObject != null)
+            return false;
+        if (hosts != null ? !hosts.equals(eventDTO.hosts) : eventDTO.hosts != null) return false;
+        if (acknowledges != null ? !acknowledges.equals(eventDTO.acknowledges) : eventDTO.acknowledges != null)
+            return false;
+        return alerts != null ? alerts.equals(eventDTO.alerts) : eventDTO.alerts == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = eventId != null ? eventId.hashCode() : 0;
+        result = 31 * result + (source != null ? source.hashCode() : 0);
+        result = 31 * result + (object != null ? object.hashCode() : 0);
+        result = 31 * result + (objectId != null ? objectId.hashCode() : 0);
+        result = 31 * result + (acknowledged != null ? acknowledged.hashCode() : 0);
+        result = 31 * result + (clock != null ? clock.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (rEventid != null ? rEventid.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (relatedObject != null ? relatedObject.hashCode() : 0);
+        result = 31 * result + (hosts != null ? hosts.hashCode() : 0);
+        result = 31 * result + (acknowledges != null ? acknowledges.hashCode() : 0);
+        result = 31 * result + (alerts != null ? alerts.hashCode() : 0);
+        return result;
     }
 }

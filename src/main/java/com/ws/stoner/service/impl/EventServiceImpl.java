@@ -5,17 +5,16 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.event.EventGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
-import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.ProblemAcknowledgeVO;
+import com.ws.stoner.model.view.ProblemDetailListVO;
 import com.ws.stoner.model.view.ProblemListVO;
 import com.ws.stoner.service.AlertService;
 import com.ws.stoner.service.EventService;
 import com.ws.stoner.service.TriggerService;
 import com.ws.stoner.utils.AlertStatusConverter;
-import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
 import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
@@ -90,15 +90,20 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<BriefEventDTO> getAllEventsByTime(String beginTime, String endTime,List<String> triggerIds) throws ServiceException {
         EventGetRequest eventGetRequest = new EventGetRequest();
+        List<String> sortOrder = new ArrayList<>();
+        List<String> sortFilter = new ArrayList<>();
+        sortFilter.add("clock");
+        sortOrder.add("DESC");
         eventGetRequest.getParams()
-                .setSource(ZApiParameter.SOURCE.TRIGGER.value)
-                .setObject(ZApiParameter.OBJECT.TRIGGER.value)
                 .setTimeFrom(beginTime)
                 .setTimeTill(endTime)
                 .setObjectIds(triggerIds)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
-                .setOutput(BriefEventDTO.PROPERTY_NAMES);
+                .setSelectAlerts(BriefAlertDTO.PROPERTY_NAMES)
+                .setOutput(BriefEventDTO.PROPERTY_NAMES)
+                .setSortField(sortFilter)
+                .setSortOrder(sortOrder);
         return listEvent(eventGetRequest);
     }
 
@@ -116,14 +121,13 @@ public class EventServiceImpl implements EventService {
         List<Integer> values = new ArrayList<>();
         values.add(ZApiParameter.EVENT_VALUE.OK.value);
         eventGetRequest.getParams()
-                .setSource(ZApiParameter.SOURCE.TRIGGER.value)
-                .setObject(ZApiParameter.OBJECT.TRIGGER.value)
                 .setTimeFrom(beginTime)
                 .setTimeTill(endTime)
                 .setValue(values)
                 .setObjectIds(triggerIds)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                .setSelectAlerts(BriefAlertDTO.PROPERTY_NAMES)
                 .setOutput(BriefEventDTO.PROPERTY_NAMES);
         return listEvent(eventGetRequest);
 
@@ -143,14 +147,13 @@ public class EventServiceImpl implements EventService {
         List<Integer> values = new ArrayList<>();
         values.add(ZApiParameter.EVENT_VALUE.PROBLEM.value);
         eventGetRequest.getParams()
-                .setSource(ZApiParameter.SOURCE.TRIGGER.value)
-                .setObject(ZApiParameter.OBJECT.TRIGGER.value)
                 .setTimeFrom(beginTime)
                 .setTimeTill(endTime)
                 .setValue(values)
                 .setObjectIds(triggerIds)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                .setSelectAlerts(BriefAlertDTO.PROPERTY_NAMES)
                 .setOutput(BriefEventDTO.PROPERTY_NAMES);
         return listEvent(eventGetRequest);
 
@@ -217,4 +220,99 @@ public class EventServiceImpl implements EventService {
         }
         return acknowledgeVOS;
     }
+
+    /**
+     * 根据指定的 triggerId 获取 问题详情中 详情事件列表
+     * @param triggerId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<ProblemDetailListVO> getDetailListVOSByTriggerId(String triggerId) throws ServiceException {
+        List<ProblemDetailListVO> problemDetailListVOS = new ArrayList<>();
+        List<String> triggerIds = new ArrayList<>();
+        triggerIds.add(triggerId);
+        String beginTime = "0";
+        String endTime = String.valueOf(System.currentTimeMillis() / 1000);
+        List<BriefEventDTO> eventDTOS = getAllEventsByTime(beginTime,endTime,triggerIds);
+        if(eventDTOS.size() == 0) {
+            return null;
+        }
+        //处理第一条 事件
+        BriefEventDTO firstDTO = eventDTOS.get(0);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
+        ProblemDetailListVO firstVO = new ProblemDetailListVO();
+        firstVO.setEventId(firstDTO.getEventId());
+        firstVO.setBeginTime(firstDTO.getClock().format(formatter));
+        firstVO.setDurationString(firstDTO.getClock(), LocalDateTime.now());
+        if(firstDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+            //该触发器的最新状态为问题
+            firstVO.setStatus("问题");
+            //确认
+            if(firstDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
+                firstVO.setAcknowledged("是");
+            }else {
+                firstVO.setAcknowledged("否");
+            }
+            List<BriefAlertDTO> firstDTOAlerts = firstDTO.getAlerts();
+            //问题和恢复的告警,告警数
+            Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(firstDTOAlerts);
+            firstVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
+            firstVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+        }else {
+            //该触发器的最新状态为正常
+            firstVO.setStatus("正常");
+            //确认
+            firstVO.setAcknowledged("无");
+            firstVO.setAlertNum(0);
+            firstVO.setAlertState("无");
+        }
+        //添加第一个元素
+        problemDetailListVOS.add(firstVO);
+        //定义上一个 DetailTime 用于指定 结束时间和持续时间
+        LocalDateTime beforeTimeDTO = null;
+        LocalDateTime currentTimeDTO = firstDTO.getClock();
+        //处理后面的events
+        for(BriefEventDTO eventDTO : eventDTOS) {
+            if(!eventDTO.equals(firstDTO)) {
+                //保存前一个DTOTime 用于赋值持续时间和结束时间
+                beforeTimeDTO = currentTimeDTO;
+                currentTimeDTO = eventDTO.getClock();
+                ProblemDetailListVO currentVO = new ProblemDetailListVO();
+                //赋值
+                currentVO.setEventId(eventDTO.getEventId());
+                currentVO.setBeginTime(eventDTO.getClock().format(formatter));
+                currentVO.setEndTime(beforeTimeDTO.format(formatter));
+                currentVO.setDurationString(eventDTO.getClock(),beforeTimeDTO);
+                if(eventDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+                    //recoveryEventid
+                    currentVO.setRecoveryEventid(eventDTO.getrEventid());
+                    // eventDTO 状态为问题
+                    currentVO.setStatus("问题(已恢复)");
+                    //确认
+                    if(eventDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
+                        currentVO.setAcknowledged("是");
+                    }else {
+                        currentVO.setAcknowledged("否");
+                    }
+                    List<BriefAlertDTO> alertDTOS = eventDTO.getAlerts();
+                    //问题和恢复的告警,告警数
+                    Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
+                    currentVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
+                    currentVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+                }else {
+                    // eventDTO 状态为问题
+                    currentVO.setStatus("正常");
+                    //确认
+                    currentVO.setAcknowledged("无");
+                    currentVO.setAlertNum(0);
+                    currentVO.setAlertState("无");
+                }
+                problemDetailListVOS.add(currentVO);
+            }
+        }
+        return problemDetailListVOS;
+    }
+
+
 }

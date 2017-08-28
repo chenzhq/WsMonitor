@@ -37,6 +37,26 @@ public class ThresholdUtils {
         return thresholdValue.trim();
     }
 
+    //阀值解析 返回带 比较符号的 阀值 expression='{16252}>200M'  ==> >200M
+    public static String getThresholdValueSymbol(String expression) {
+        //expression='{16252}>1000'  expression='{16252}>200M'
+        String thresholdValue = "";
+        if(expression.indexOf(">") != -1 && expression.indexOf(">=") == -1) {
+            // '>'
+            thresholdValue = expression.substring(expression.indexOf(">"));
+        }else if(expression.indexOf("<") != -1 && expression.indexOf("<=") == -1) {
+            // '<'
+            thresholdValue = expression.substring(expression.indexOf("<"));
+        }else if(expression.indexOf("<>") != -1) {
+            // '<>'
+            thresholdValue = expression.substring(expression.indexOf("<>"));
+        }else if(expression.indexOf("=") != -1 && expression.indexOf("<=") == -1 && expression.indexOf(">=") == -1) {
+            // '='
+            thresholdValue = expression.substring(expression.indexOf("="));
+        }
+        return thresholdValue.trim();
+    }
+
     //返回比较符号
     public static String getThresholdSymbol(String expression) {
         //expression='{16252}>1000'  expression='{16252}>200M'

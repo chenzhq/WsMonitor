@@ -7,15 +7,12 @@ import com.ws.stoner.model.dto.BriefAlertDTO;
 import com.ws.stoner.model.dto.BriefEventDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
 import com.ws.stoner.utils.AlertStatusConverter;
+import com.ws.stoner.utils.BaseUtils;
 import com.ws.stoner.utils.StatusConverter;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by zkf on 2017/8/22.
@@ -44,6 +41,8 @@ public class ProblemListVO {
     private String durationString;
     @JSONField(name = "alert_state")
     private String alertState;
+    @JSONField(name = "alert_num")
+    private Integer alertNum;
     private String acknowledged;
 
     public String getProblemEventid() {
@@ -150,17 +149,17 @@ public class ProblemListVO {
     }
 
     public ProblemListVO setDurationString(LocalDateTime beginTime,LocalDateTime endTime) {
-        Duration duration = Duration.between(beginTime, endTime);
-        Long sec = duration.getSeconds();
 
-        int days = (int) (sec / (24 * 3600));
-        int hours = (int) (sec / 3600 % 24);
-        int minute = (int) (sec / 60 % 60);
-        StringBuilder timeStringBuilder = new StringBuilder();
-        timeStringBuilder.append(days == 0 ? "" : days + "天");
-        timeStringBuilder.append(hours == 0 ? "" : hours + "小时");
-        timeStringBuilder.append(minute == 0 ? "" : minute + "分钟");
-        this.durationString = timeStringBuilder.toString();
+        this.durationString = BaseUtils.getDurationStringByTime(beginTime, endTime);
+        return this;
+    }
+
+    public Integer getAlertNum() {
+        return alertNum;
+    }
+
+    public ProblemListVO setAlertNum(Integer alertNum) {
+        this.alertNum = alertNum;
         return this;
     }
 
@@ -178,6 +177,7 @@ public class ProblemListVO {
                 ", problemState='" + problemState + '\'' +
                 ", durationString='" + durationString + '\'' +
                 ", alertState='" + alertState + '\'' +
+                ", alertNum=" + alertNum +
                 ", acknowledged='" + acknowledged + '\'' +
                 '}';
     }
@@ -246,14 +246,10 @@ public class ProblemListVO {
                     alertDTOS.add(alertDTO);
                 }
             }
-            //循环 问题和恢复的告警
-            if(alertDTOS.size() == 0) {
-                problemListVO.setAlertState("未告警");
-            }else {
-                for(BriefAlertDTO alertDTO : alertDTOS) {
-                    problemListVO.setAlertState(AlertStatusConverter.getMassageByAlertStatus(alertDTO.getStatus()));
-                }
-            }
+            //循环 问题和恢复的告警,告警数
+            Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
+            problemListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
+            problemListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
             //确认
             if(problemEventDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
                 problemListVO.setAcknowledged("是");

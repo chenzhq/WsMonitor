@@ -1,6 +1,8 @@
 package com.ws.stoner.utils;
 
 import java.lang.reflect.Array;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -29,5 +31,18 @@ public class BaseUtils {
         }
 
         return dest;
+    }
+
+    public static String getDurationStringByTime(LocalDateTime beginTime, LocalDateTime endTime) {
+        Duration duration = Duration.between(beginTime, endTime);
+        Long sec = duration.getSeconds();
+        int days = (int) (sec / (24 * 3600));
+        int hours = (int) (sec / 3600 % 24);
+        int minute = (int) (sec / 60 % 60);
+        StringBuilder timeStringBuilder = new StringBuilder();
+        timeStringBuilder.append(days == 0 ? "" : days + "天");
+        timeStringBuilder.append(hours == 0 ? "" : hours + "小时");
+        timeStringBuilder.append(minute == 0 ? "" : minute + "分钟");
+        return timeStringBuilder.toString();
     }
 }

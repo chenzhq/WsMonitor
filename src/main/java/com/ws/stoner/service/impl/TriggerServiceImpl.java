@@ -10,11 +10,14 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.DashboardProblemVO;
+import com.ws.stoner.model.view.ProblemDetailVO;
 import com.ws.stoner.model.view.ProblemListVO;
 import com.ws.stoner.service.AlertService;
+import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.service.TriggerService;
 import com.ws.stoner.utils.AlertStatusConverter;
 import com.ws.stoner.utils.StatusConverter;
+import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,9 @@ public class TriggerServiceImpl implements TriggerService {
 
     @Autowired
     private AlertService alertService;
+
+    @Autowired
+    private PointSerivce pointSerivce;
 
     @Override
     public List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ServiceException {
@@ -137,6 +143,26 @@ public class TriggerServiceImpl implements TriggerService {
         return listTrigger(request, DashboardProblemVO.class);
     }
 
+
+    /**
+     * 根据 triggerIds 查询对应的 triggerDTOS selectHosts selectItems
+     * @param triggerIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefTriggerDTO> getTriggersByTriggerIds(List<String> triggerIds) throws ServiceException {
+        TriggerGetRequest request = new TriggerGetRequest();
+        request.getParams()
+                .setTriggerIds(triggerIds)
+                .setExpandDescription(true)
+                .setExpandExpression(true)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
+                .setOutput(BriefTriggerDTO.PROPERTY_NAMES);
+        return listTrigger(request, BriefTriggerDTO.class);
+    }
+
     /**
      * 根据itemIds获取监控中的 trggierDTO list
      * @param itemIds
@@ -229,13 +255,10 @@ public class TriggerServiceImpl implements TriggerService {
                 List<String> eventIds = new ArrayList<>();
                 eventIds.add(triggerDTO.getLastEvent().getEventId());
                 List<BriefAlertDTO> alertDTOS = alertService.getAlertDTOByEventIds(eventIds);
-                if(alertDTOS.size() == 0) {
-                    problemListVO.setAlertState("未告警");
-                }else {
-                    for(BriefAlertDTO alertDTO : alertDTOS) {
-                        problemListVO.setAlertState(AlertStatusConverter.getMassageByAlertStatus(alertDTO.getStatus()));
-                    }
-                }
+                //问题和恢复的告警,告警数
+                Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
+                problemListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
+                problemListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
             }
             problemListVO.setProblemState("问题");
             problemListVO.setDescription(triggerDTO.getName());
@@ -247,5 +270,36 @@ public class TriggerServiceImpl implements TriggerService {
         }
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
+    }
+
+
+    /**
+     * 问题管理 问题详情 基础静态信息 ProblemDetailVO
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public ProblemDetailVO getProblemDetailVOByTriggerId(String triggerId) throws ServiceException {
+        List<String> triggerIds = new ArrayList<>();
+        triggerIds.add(triggerId);
+        BriefTriggerDTO triggerDTO = getTriggersByTriggerIds(triggerIds).get(0);
+        String itemId = triggerDTO.getItems().get(0).getItemId();
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(itemId);
+        ProblemDetailVO problemDetailVO = new ProblemDetailVO();
+        problemDetailVO.setTriggerId(triggerId);
+        problemDetailVO.setPointName(pointSerivce.getPointsByItemIds(itemIds).get(0).getName());
+        problemDetailVO.setHostName(triggerDTO.getHosts().get(0).getName());
+        problemDetailVO.setTriggerName(triggerDTO.getName());
+        String level = StatusConverter.getStatusByTriggerPriority(triggerDTO.getPriority());
+        problemDetailVO.setLevel(level);
+        problemDetailVO.setState(triggerDTO.getValue());
+        problemDetailVO.setItemName(triggerDTO.getItems().get(0).getName());
+        if(level.equals(StatusEnum.WARNING.getName())) {
+            problemDetailVO.setWarningPoint(ThresholdUtils.getThresholdValueSymbol(triggerDTO.getExpression()));
+        }else if(level.equals(StatusEnum.HIGH.getName())) {
+            problemDetailVO.setHighPoint(ThresholdUtils.getThresholdValueSymbol(triggerDTO.getExpression()));
+        }
+        return problemDetailVO;
     }
 }

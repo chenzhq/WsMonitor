@@ -4,6 +4,7 @@ import com.ws.bix4j.access.event.EventGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefEventDTO;
 import com.ws.stoner.model.view.ProblemAcknowledgeVO;
+import com.ws.stoner.model.view.ProblemDetailListVO;
 import com.ws.stoner.model.view.ProblemListVO;
 
 import java.util.List;
@@ -81,6 +82,14 @@ public interface EventService {
      * @throws ServiceException
      */
     List<ProblemAcknowledgeVO> getAcknowledgeVOSByEventId(String eventId) throws ServiceException;
+
+    /**
+     * 根据指定的 triggerId 获取 问题详情中 详情事件列表
+     * @param triggerId
+     * @return
+     * @throws ServiceException
+     */
+    List<ProblemDetailListVO> getDetailListVOSByTriggerId(String triggerId) throws ServiceException;
 
 
 }

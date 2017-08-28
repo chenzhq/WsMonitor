@@ -15,7 +15,6 @@ import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
-import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

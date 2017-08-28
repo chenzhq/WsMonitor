@@ -375,5 +375,21 @@ public class PointSerivceImpl implements PointSerivce {
         return points;
     }
 
+    /**
+     * 根据 itemIds 获取 List<BriefPointDTO> list 用于基础信息 名称
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefPointDTO> getPointsByItemIds(List<String> itemIds) throws ServiceException {
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        appRequest.getParams()
+                .setItemIds(itemIds)
+                .setOutput(BriefPointDTO.PROPERTY_NAMES);
+        List<BriefPointDTO> points = listPoint(appRequest);
+        return points;
+    }
+
 
 }

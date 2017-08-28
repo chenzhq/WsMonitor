@@ -3,7 +3,6 @@ package com.ws.stoner.service;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.DO.mongo.PlatformTreeManager;
-import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.view.*;
 
 import java.util.List;

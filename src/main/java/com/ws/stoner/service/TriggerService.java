@@ -5,6 +5,7 @@ import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
 import com.ws.stoner.model.view.DashboardProblemVO;
+import com.ws.stoner.model.view.ProblemDetailVO;
 import com.ws.stoner.model.view.ProblemListVO;
 
 import java.util.List;
@@ -36,13 +37,23 @@ public interface TriggerService {
      * @throws ServiceException
      */
     int countTrigger(TriggerGetRequest request) throws ServiceException;
-
+/*
+zabbix 方法
+ */
     /**
      *
      * @return
      * @throws ServiceException
      */
     List<DashboardProblemVO> listBriefProblems() throws ServiceException;
+
+    /**
+     * 根据 triggerIds 查询对应的 triggerDTOS selectHost
+     * @param triggerIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefTriggerDTO> getTriggersByTriggerIds(List<String> triggerIds ) throws ServiceException;
 
     /**
      * 根据itemIds获取监控中的 trggierDTO list
@@ -72,5 +83,12 @@ public interface TriggerService {
      * @throws ServiceException
      */
     List<ProblemListVO> listProblemListVO() throws ServiceException;
+
+    /**
+     * 问题管理 问题详情 基础静态信息 ProblemDetailVO
+     * @return
+     * @throws ServiceException
+     */
+    ProblemDetailVO getProblemDetailVOByTriggerId(String triggerId) throws ServiceException;
 
 }

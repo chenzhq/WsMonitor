@@ -109,6 +109,14 @@ public interface PointSerivce {
      */
     List<BriefPointDTO> getPointsByHostIds(List<String> hostIds) throws ServiceException;
 
+    /**
+     * 根据 itemIds 获取 List<BriefPointDTO> list 用于基础信息 名称
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefPointDTO> getPointsByItemIds(List<String> itemIds) throws ServiceException;
+
 
 
 }

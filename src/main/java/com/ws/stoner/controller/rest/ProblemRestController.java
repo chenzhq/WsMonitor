@@ -1,9 +1,9 @@
 package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.view.PlatformBlockVO;
 import com.ws.stoner.model.view.ProblemAcknowledgeVO;
 import com.ws.stoner.model.view.ProblemAlertVO;
+import com.ws.stoner.model.view.ProblemDetailListVO;
 import com.ws.stoner.model.view.ProblemListVO;
 import com.ws.stoner.service.AlertService;
 import com.ws.stoner.service.EventService;
@@ -85,5 +85,15 @@ public class ProblemRestController {
     public String getAlertsByEventId(@RequestParam("event_id") String eventId) throws ServiceException {
         List<ProblemAlertVO> alertVOS = alertService.getAlertVOByEventId(eventId);
         return RestResultGenerator.genResult(alertVOS, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 问题详情  详情列表
+     * @return
+     */
+    @RequestMapping(value = "problemdetail/get_list", method = RequestMethod.GET)
+    public String getDetailListByTriggerId(@RequestParam("trigger_id") String triggerId) throws ServiceException {
+        List<ProblemDetailListVO> problemDetailListVOS = eventService.getDetailListVOSByTriggerId(triggerId);
+        return RestResultGenerator.genResult(problemDetailListVOS, REST_UPDATE_SUCCESS).toString();
     }
 }

@@ -10,6 +10,8 @@ import com.ws.stoner.model.dto.BriefAlertDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.view.ProblemAlertVO;
 import com.ws.stoner.service.AlertService;
+import com.ws.stoner.service.EventService;
+import com.ws.stoner.utils.AlertStatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class AlertServiceImpl implements AlertService {
     private static final Logger logger = LoggerFactory.getLogger(AlertServiceImpl.class);
     @Autowired
     private ZApi zApi;
+
+    @Autowired
+    private EventService eventService;
 
     @Override
     public List<BriefAlertDTO> listAlert(AlertGetRequest request) throws ServiceException {
@@ -74,29 +79,51 @@ public class AlertServiceImpl implements AlertService {
     public List<ProblemAlertVO> getAlertVOByEventId(String eventId) throws ServiceException {
         List<String> eventIds = new ArrayList<>();
         eventIds.add(eventId);
-        List<BriefAlertDTO> alertDTOS = getAlertDTOByEventIds(eventIds);
+        List<BriefAlertDTO> problemAlertDTOS = getAlertDTOByEventIds(eventIds);
+        List<BriefAlertDTO> recoveryAlertDTOS ;
+        String recoveryEventId = eventService.getEventByEventId(eventIds).get(0).getrEventid();
         List<ProblemAlertVO> alertVOS = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
-        for(BriefAlertDTO alertDTO : alertDTOS) {
-            ProblemAlertVO alertVO = new ProblemAlertVO();
-            alertVO.setAlertId(alertDTO.getAlertId());
-            alertVO.setLastTime(alertDTO.getClock().format(formatter));
-            alertVO.setRetries(alertDTO.getRetries());
-            alertVO.setSendto(alertDTO.getSendto());
-            alertVO.setEscStep(alertDTO.getEscStep());
-            //status
-            if("0".equals(alertDTO)) {
-                alertVO.setStatus("未发送通知");
-            }else if("1".equals(alertDTO)) {
-                alertVO.setStatus("已发送通知");
-            }else {
-                alertVO.setStatus("发送通知失败");
-            }
+        for(BriefAlertDTO alertDTO : problemAlertDTOS) {
             List<UserInfoDTO> userInfoDTOS = alertDTO.getUsers();
+            String alias = "";
             if(userInfoDTOS.size() != 0) {
-                alertVO.setAlias(userInfoDTOS.get(0).getName());
+                alias = userInfoDTOS.get(0).getName();
             }
+            ProblemAlertVO alertVO = new ProblemAlertVO(
+                    alertDTO.getAlertId(),
+                    alertDTO.getEscStep(),
+                    alertDTO.getClock().format(formatter),
+                    AlertStatusConverter.getDiscriptionByStatus(alertDTO.getStatus()),
+                    alertDTO.getRetries(),
+                    alias,
+                    alertDTO.getSendto(),
+                    false
+            );
             alertVOS.add(alertVO);
+        }
+        if(recoveryEventId != null) {
+            List<String> recoveryEventIds = new ArrayList<>();
+            recoveryEventIds.add(recoveryEventId);
+            recoveryAlertDTOS = getAlertDTOByEventIds(recoveryEventIds);
+            for(BriefAlertDTO recoveryAlertDTO : recoveryAlertDTOS) {
+                List<UserInfoDTO> userInfoDTOS = recoveryAlertDTO.getUsers();
+                String alias = "";
+                if(userInfoDTOS.size() != 0) {
+                    alias = userInfoDTOS.get(0).getName();
+                }
+                ProblemAlertVO alertVO = new ProblemAlertVO(
+                        recoveryAlertDTO.getAlertId(),
+                        recoveryAlertDTO.getEscStep(),
+                        recoveryAlertDTO.getClock().format(formatter),
+                        AlertStatusConverter.getDiscriptionByStatus(recoveryAlertDTO.getStatus()),
+                        recoveryAlertDTO.getRetries(),
+                        alias,
+                        recoveryAlertDTO.getSendto(),
+                        true
+                );
+                alertVOS.add(alertVO);
+            }
         }
         return alertVOS;
     }

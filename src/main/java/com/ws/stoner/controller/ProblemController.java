@@ -1,15 +1,14 @@
 package com.ws.stoner.controller;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.view.ProblemListVO;
+import com.ws.stoner.model.view.ProblemDetailVO;
 import com.ws.stoner.service.TriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
 
 /**
  * Created by zkf on 2017/8/22.
@@ -22,10 +21,16 @@ public class ProblemController {
     private TriggerService triggerService;
 
     @RequestMapping(value = {"/problemlist", ""})
-    public ModelAndView problemList(Model model) throws ServiceException {
-        ModelAndView mav = new ModelAndView("problemlist");
-        List<ProblemListVO> problemListVOS = triggerService.listProblemListVO();
-        mav.addObject("problemListVOS", problemListVOS);
+    public String problemList() {
+        return "problemlist";
+    }
+
+    @RequestMapping(value = {"/problemdetail", ""})
+    public ModelAndView ProblemDetail(@RequestParam(name = "trigger_id")String triggerId) throws ServiceException {
+        ModelAndView mav = new ModelAndView("problemdetail");
+        ProblemDetailVO problemDetailVO = triggerService.getProblemDetailVOByTriggerId(triggerId);
+        mav.addObject("problemDetailVO",problemDetailVO);
         return mav;
     }
+
 }
