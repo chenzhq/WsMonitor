@@ -12,6 +12,7 @@ import com.ws.bix4j.access.problem.Problem;
 import com.ws.bix4j.access.template.Template;
 import com.ws.bix4j.access.trigger.Trigger;
 import com.ws.bix4j.access.user.*;
+import com.ws.bix4j.access.usergroup.Usergroup;
 import com.ws.bix4j.access.valuemap.Valuemap;
 import com.ws.bix4j.exception.ZApiException;
 
@@ -110,6 +111,9 @@ public class ZApi {
     }
     public Alert Alert() {
         return new Alert(uri.toString(), auth);
+    }
+    public Usergroup Usergroup() {
+        return new Usergroup(uri.toString(), auth);
     }
 
 }

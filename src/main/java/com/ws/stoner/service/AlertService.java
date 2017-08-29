@@ -27,4 +27,13 @@ public interface AlertService {
      * @throws ServiceException
      */
     List<ProblemAlertVO> getAlertVOByEventId(String eventId) throws ServiceException;
+
+    /**
+     * 根据 eventId 组装 详细的alertVO 事件详情中 告警详情
+     * @param eventId
+     * @return
+     * @throws ServiceException
+     */
+    List<ProblemAlertVO> getDetailAlertByEventId(String eventId) throws ServiceException;
+
 }

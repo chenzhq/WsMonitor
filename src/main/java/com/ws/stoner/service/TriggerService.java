@@ -47,7 +47,6 @@ zabbix 方法
      * @throws ServiceException
      */
     List<BriefTriggerDTO> getTriggersByTriggerIds(List<String> triggerIds ) throws ServiceException;
-
     /**
      * 根据itemIds获取监控中的 trggierDTO list
      * @param itemIds
