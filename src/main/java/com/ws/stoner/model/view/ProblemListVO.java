@@ -194,7 +194,7 @@ public class ProblemListVO {
     }
 
     //将BriefEventDTOS 转换成 ProblemListVOS 对象 list
-    public static List<ProblemListVO> transformVOSUseBriefEventDTO(List<BriefEventDTO> problemEventDTOS,List<BriefEventDTO> recoveryEventDTOS,List<BriefAlertDTO> allAlertDTOS) {
+    public static List<ProblemListVO> transformVOSUseBriefEventDTO(List<BriefEventDTO> problemEventDTOS,List<BriefEventDTO> recoveryEventDTOS) {
         List<ProblemListVO> problemListVOS = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
         for(BriefEventDTO problemEventDTO : problemEventDTOS) {
@@ -225,12 +225,8 @@ public class ProblemListVO {
                         //ProblemState
                         problemListVO.setProblemState("已解决");
                         //从恢复事件 添加告警信息
-                        for(BriefAlertDTO alertDTO : allAlertDTOS) {
-                            if(alertDTO.getEventId().equals(recoveryEventDTO.getEventId())) {
-                                //属于恢复的告警
-                                alertDTOS.add(alertDTO);
-                            }
-                        }
+                        List<BriefAlertDTO> recoveryAlertDTOS = recoveryEventDTO.getAlerts();
+                        alertDTOS.addAll(recoveryAlertDTOS);
                     }
                 }
             }else {
@@ -240,12 +236,8 @@ public class ProblemListVO {
                 problemListVO.setDurationString(problemEventDTO.getClock(), LocalDateTime.now());
             }
             //从问题事件 添加告警信息
-            for(BriefAlertDTO alertDTO : allAlertDTOS) {
-                if(alertDTO.getEventId().equals(problemEventDTO.getEventId())) {
-                    //属于问题的告警
-                    alertDTOS.add(alertDTO);
-                }
-            }
+            List<BriefAlertDTO> problemAlertDTOS = problemEventDTO.getAlerts();
+            alertDTOS.addAll(problemAlertDTOS);
             //循环 问题和恢复的告警,告警数
             Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
             problemListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());

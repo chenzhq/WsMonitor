@@ -42,11 +42,7 @@ public class EventServiceImpl implements EventService {
     @Autowired
     private TriggerService triggerService;
 
-    @Autowired
-    private AlertService alertService;
-
-    @Override
-    public List<BriefEventDTO> listEvent(EventGetRequest request) throws ServiceException {
+    private List<BriefEventDTO> listEvent(EventGetRequest request) throws ServiceException {
         List<BriefEventDTO> events;
         try {
             events = zApi.Event().get(request,BriefEventDTO.class);
@@ -176,17 +172,8 @@ public class EventServiceImpl implements EventService {
         }
         List<BriefEventDTO> problemEventDTOS = getProblemEventsByTime(beginTime,endTime,triggerIds);
         List<BriefEventDTO> recoveryEventDTOS = getRecoveryEventsByTime(beginTime, String.valueOf(System.currentTimeMillis() / 1000),triggerIds);
-        //用于获取总的告警信息
-        List<String> allEventIds = new ArrayList<>();
-        for(BriefEventDTO eventDTO : problemEventDTOS) {
-            allEventIds.add(eventDTO.getEventId());
-        }
-        for(BriefEventDTO eventDTO : recoveryEventDTOS) {
-            allEventIds.add(eventDTO.getEventId());
-        }
-        List<BriefAlertDTO> allAlertDTOS = alertService.getAlertDTOByEventIds(allEventIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
-        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS,allAlertDTOS);
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS);
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }

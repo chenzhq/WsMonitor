@@ -40,8 +40,6 @@ public class ProblemServiceImpl implements ProblemService {
     private TriggerService triggerService;
     @Autowired
     private EventService eventService;
-    @Autowired
-    private AlertService alertService;
 
 /*
  *基础方法
@@ -52,8 +50,7 @@ public class ProblemServiceImpl implements ProblemService {
      * @return the list
      * @throws ServiceException the auth expire exception
      */
-    @Override
-    public List<BriefProblemDTO> listProblem(ProblemGetRequest request) throws ServiceException {
+    private List<BriefProblemDTO> listProblem(ProblemGetRequest request) throws ServiceException {
         List<BriefProblemDTO> problems;
         try {
             problems = zApi.Problem().get(request,BriefProblemDTO.class);
@@ -114,10 +111,8 @@ public class ProblemServiceImpl implements ProblemService {
         String beginTime = String.valueOf(System.currentTimeMillis() / 1000 - 30 * 60);
         String endTime = String.valueOf(System.currentTimeMillis() / 1000 );
         List<BriefEventDTO> recoveryEventDTOS = eventService.getRecoveryEventsByTime(beginTime, endTime,triggerIds);
-        //获取总的告警信息
-        List<BriefAlertDTO> allAlertDTOS = alertService.getAlertDTOByEventIds(eventIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
-        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(eventDTOS,recoveryEventDTOS,allAlertDTOS);
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(eventDTOS,recoveryEventDTOS);
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }

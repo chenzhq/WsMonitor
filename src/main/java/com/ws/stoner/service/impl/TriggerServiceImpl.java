@@ -49,8 +49,7 @@ public class TriggerServiceImpl implements TriggerService {
     @Autowired
     private PointSerivce pointSerivce;
 
-    @Override
-    public List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ServiceException {
+    private List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ServiceException {
         List<BriefTriggerDTO> triggers;
         try {
             triggers = zApi.Trigger().get(request,BriefTriggerDTO.class);
@@ -225,7 +224,7 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     /**
-     * 问题管理 问题列表  当前问题块 ProblemListVO
+     * 问题管理 问题列表  当前问题 ProblemListVO
      * @return
      * @throws ServiceException
      */

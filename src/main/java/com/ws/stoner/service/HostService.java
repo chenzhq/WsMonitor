@@ -1,6 +1,5 @@
 package com.ws.stoner.service;
 
-import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.view.HostDetailInterfaceVO;
@@ -13,27 +12,6 @@ import java.util.List;
  * Created by chenzheqi on 2017/5/23.
  */
 public interface HostService {
-
-/*
- *基础方法
- */
-
-    /**
-     * 根据 request 获取主机总数量
-     * @return
-     * @throws ServiceException
-     */
-    int countHost(HostGetRequest request) throws ServiceException;
-
-
-
-    /**
-     * List host list.
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException;
 
 /*
  *zabbix api方法

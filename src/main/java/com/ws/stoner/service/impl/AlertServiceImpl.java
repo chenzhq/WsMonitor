@@ -36,8 +36,7 @@ public class AlertServiceImpl implements AlertService {
     @Autowired
     private EventService eventService;
 
-    @Override
-    public List<BriefAlertDTO> listAlert(AlertGetRequest request) throws ServiceException {
+    private List<BriefAlertDTO> listAlert(AlertGetRequest request) throws ServiceException {
         List<BriefAlertDTO> alerts;
         try {
             alerts = zApi.Alert().get(request,BriefAlertDTO.class);
