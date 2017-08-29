@@ -33,8 +33,7 @@ public class ValuemapServiceImpl implements ValuemapService{
     @Autowired
     private ZApi zApi;
 
-    @Override
-    public List<BriefValuemapDTO> listValuemap(ValuemapGetRequest request) throws ServiceException {
+    private List<BriefValuemapDTO> listValuemap(ValuemapGetRequest request) throws ServiceException {
         List<BriefValuemapDTO> valuemaps;
         try {
             valuemaps = zApi.Valuemap().get(request,BriefValuemapDTO.class);

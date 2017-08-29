@@ -14,13 +14,6 @@ import java.util.List;
  * Created by zkf on 2017/6/8.
  */
 public interface TriggerService {
-    /**
-     * 根据 request 获取触发器 list
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ServiceException;
 
     /**
      * 获取所有的问题触发器ids
@@ -54,7 +47,6 @@ zabbix 方法
      * @throws ServiceException
      */
     List<BriefTriggerDTO> getTriggersByTriggerIds(List<String> triggerIds ) throws ServiceException;
-
     /**
      * 根据itemIds获取监控中的 trggierDTO list
      * @param itemIds

@@ -1,11 +1,9 @@
 package com.ws.stoner.service;
 
-import com.ws.bix4j.access.event.EventGetRequest;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
 import com.ws.stoner.model.dto.BriefEventDTO;
-import com.ws.stoner.model.view.ProblemAcknowledgeVO;
-import com.ws.stoner.model.view.ProblemDetailListVO;
-import com.ws.stoner.model.view.ProblemListVO;
+import com.ws.stoner.model.view.*;
 
 import java.util.List;
 
@@ -13,14 +11,6 @@ import java.util.List;
  * Created by pc on 2017/8/22.
  */
 public interface EventService {
-
-    /**
-     * List event list.
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefEventDTO> listEvent(EventGetRequest request) throws ServiceException;
 
     /**
      * 根据 eventIds 查询所有指定的事件 BriefEventDTO
@@ -84,12 +74,37 @@ public interface EventService {
     List<ProblemAcknowledgeVO> getAcknowledgeVOSByEventId(String eventId) throws ServiceException;
 
     /**
-     * 根据指定的 triggerId 获取 问题详情中 详情事件列表
+     * 根据 eventid 获取判断 事件的确认操作是否可以 关闭问题
+     * @param eventId
+     * @param userId  用于判断 Super Admin OR 所属用户群组 对 Trigger所属主机的主机群组 有读写权限（3）
+     * @return
+     * @throws ServiceException
+     */
+    AcknowledgeCheckboxVO getCheckboxVOByEventId(String eventId,String userId) throws ServiceException;
+
+    /**
+     * 根据 acknowledgeDTO 执行确认动作
+     * @param acknowledgeDTO
+     * @return AcknowledgeVO  eventids[] 影响的事件 events
+     * @throws ServiceException
+     */
+    AcknowledgeVO acknowledgeEvent(BriefAcknowledgeDTO acknowledgeDTO) throws ServiceException;
+
+    /**
+     * 根据指定的 triggerId 组装 问题详情中 详情事件列表
      * @param triggerId
      * @return
      * @throws ServiceException
      */
     List<ProblemDetailListVO> getDetailListVOSByTriggerId(String triggerId) throws ServiceException;
+
+    /**
+     * 根据 eventId 组装 事件详情弹出框 事件细节信息 EventDetailVO
+     * @param eventId
+     * @return
+     * @throws ServiceException
+     */
+    EventDetailVO getEventDetailByEventId(String eventId) throws ServiceException;
 
 
 }

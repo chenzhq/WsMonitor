@@ -48,8 +48,7 @@ public class HostServiceImpl implements HostService {
  *count host
  */
 
-    @Override
-    public int countHost(HostGetRequest request) throws ServiceException {
+    private int countHost(HostGetRequest request) throws ServiceException {
         int allHost;
         try {
             allHost = zApi.Host().count(request);
@@ -69,8 +68,7 @@ public class HostServiceImpl implements HostService {
      * @return
      * @throws ServiceException
      */
-    @Override
-    public List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException {
+    private List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException {
         List<BriefHostDTO> hosts;
         try {
             hosts = zApi.Host().get(request,BriefHostDTO.class);

@@ -1,7 +1,5 @@
 package com.ws.stoner.service;
 
-import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
-import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
 import com.ws.stoner.model.view.*;
@@ -13,20 +11,6 @@ import java.util.Map;
  * Created by zkf on 2017/6/1.
  */
 public interface PlatformService {
-    /**
-     * List hostgroup list.
-     *
-     * @return the list
-     * @throws AuthExpireException the auth expire exception
-     */
-    List<BriefPlatformDTO> listPlatform(HostGroupGetRequest request) throws ServiceException;
-
-    /**
-     * 根据request获取业务平台数量 hostgroup number
-     * @return
-     * @throws ServiceException
-     */
-    int countPlatform(HostGroupGetRequest request) throws ServiceException;
 
     /**
      * 获取所有业务平台数量 platform number all
@@ -57,18 +41,6 @@ public interface PlatformService {
      */
     int countOkPlatform() throws ServiceException;
 
-    /**
-     * 获取指定业务平台的所有主机数量 all host number by platformIds
-     */
-    int countAllHostByPlatformIds(List<String> platformIds) throws ServiceException;
-
-    /**
-     * 获取指定业务平台的问题主机数量 problem host number by platformIds
-     * @param platformIds
-     * @return
-     * @throws ServiceException
-     */
-    int countProblemHostByPlatformIds(List<String> platformIds) throws ServiceException;
 
 
 /*

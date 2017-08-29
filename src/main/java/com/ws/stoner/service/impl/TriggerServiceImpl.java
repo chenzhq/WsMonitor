@@ -49,8 +49,7 @@ public class TriggerServiceImpl implements TriggerService {
     @Autowired
     private PointSerivce pointSerivce;
 
-    @Override
-    public List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ServiceException {
+    private List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ServiceException {
         List<BriefTriggerDTO> triggers;
         try {
             triggers = zApi.Trigger().get(request,BriefTriggerDTO.class);
@@ -158,6 +157,7 @@ public class TriggerServiceImpl implements TriggerService {
                 .setExpandDescription(true)
                 .setExpandExpression(true)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectGroups(BriefPlatformDTO.PROPERTY_NAMES)
                 .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
                 .setOutput(BriefTriggerDTO.PROPERTY_NAMES);
         return listTrigger(request, BriefTriggerDTO.class);
@@ -225,7 +225,7 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     /**
-     * 问题管理 问题列表  当前问题块 ProblemListVO
+     * 问题管理 问题列表  当前问题 ProblemListVO
      * @return
      * @throws ServiceException
      */
@@ -295,11 +295,7 @@ public class TriggerServiceImpl implements TriggerService {
         problemDetailVO.setLevel(level);
         problemDetailVO.setState(triggerDTO.getValue());
         problemDetailVO.setItemName(triggerDTO.getItems().get(0).getName());
-        if(level.equals(StatusEnum.WARNING.getName())) {
-            problemDetailVO.setWarningPoint(ThresholdUtils.getThresholdValueSymbol(triggerDTO.getExpression()));
-        }else if(level.equals(StatusEnum.HIGH.getName())) {
-            problemDetailVO.setHighPoint(ThresholdUtils.getThresholdValueSymbol(triggerDTO.getExpression()));
-        }
+        problemDetailVO.setThreshold(ThresholdUtils.getThresholdValueSymbol(triggerDTO.getExpression()));
         return problemDetailVO;
     }
 }

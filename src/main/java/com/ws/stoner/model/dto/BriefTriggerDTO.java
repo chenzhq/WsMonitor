@@ -15,12 +15,16 @@ public class BriefTriggerDTO {
     private String expression;
     private Integer priority;
     private Integer value;
+    @JSONField(name = "manual_close")
+    private Integer manualClose;
+
     private List<BriefItemDTO> items;
     private List<BriefHostDTO> hosts;
     private BriefEventDTO lastEvent;
+    private List<BriefPlatformDTO> groups;
 
 
-    public static final String[] PROPERTY_NAMES = {"triggerid", "description","expression","priority","value"};
+    public static final String[] PROPERTY_NAMES = {"triggerid", "description","expression","priority","value","manual_close"};
 
     public String getTriggerId() {
         return triggerId;
@@ -85,12 +89,30 @@ public class BriefTriggerDTO {
         return this;
     }
 
+    public Integer getManualClose() {
+        return manualClose;
+    }
+
+    public BriefTriggerDTO setManualClose(Integer manualClose) {
+        this.manualClose = manualClose;
+        return this;
+    }
+
     public Integer getValue() {
         return value;
     }
 
     public BriefTriggerDTO setValue(Integer value) {
         this.value = value;
+        return this;
+    }
+
+    public List<BriefPlatformDTO> getGroups() {
+        return groups;
+    }
+
+    public BriefTriggerDTO setGroups(List<BriefPlatformDTO> groups) {
+        this.groups = groups;
         return this;
     }
 
@@ -102,9 +124,11 @@ public class BriefTriggerDTO {
                 ", expression='" + expression + '\'' +
                 ", priority=" + priority +
                 ", value=" + value +
+                ", manualClose=" + manualClose +
                 ", items=" + items +
                 ", hosts=" + hosts +
                 ", lastEvent=" + lastEvent +
+                ", groups=" + groups +
                 '}';
     }
 }

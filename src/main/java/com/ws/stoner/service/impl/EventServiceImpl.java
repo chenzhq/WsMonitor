@@ -2,19 +2,19 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
+import com.ws.bix4j.access.event.EventAcknowledgeRequest;
 import com.ws.bix4j.access.event.EventGetRequest;
+import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
-import com.ws.stoner.model.view.ProblemAcknowledgeVO;
-import com.ws.stoner.model.view.ProblemDetailListVO;
-import com.ws.stoner.model.view.ProblemListVO;
-import com.ws.stoner.service.AlertService;
-import com.ws.stoner.service.EventService;
-import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.model.view.*;
+import com.ws.stoner.service.*;
 import com.ws.stoner.utils.AlertStatusConverter;
+import com.ws.stoner.utils.StatusConverter;
+import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +43,15 @@ public class EventServiceImpl implements EventService {
     private TriggerService triggerService;
 
     @Autowired
-    private AlertService alertService;
+    private PointSerivce pointSerivce;
 
-    @Override
-    public List<BriefEventDTO> listEvent(EventGetRequest request) throws ServiceException {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UsergroupService usergroupService;
+
+    private List<BriefEventDTO> listEvent(EventGetRequest request) throws ServiceException {
         List<BriefEventDTO> events;
         try {
             events = zApi.Event().get(request,BriefEventDTO.class);
@@ -176,17 +181,8 @@ public class EventServiceImpl implements EventService {
         }
         List<BriefEventDTO> problemEventDTOS = getProblemEventsByTime(beginTime,endTime,triggerIds);
         List<BriefEventDTO> recoveryEventDTOS = getRecoveryEventsByTime(beginTime, String.valueOf(System.currentTimeMillis() / 1000),triggerIds);
-        //用于获取总的告警信息
-        List<String> allEventIds = new ArrayList<>();
-        for(BriefEventDTO eventDTO : problemEventDTOS) {
-            allEventIds.add(eventDTO.getEventId());
-        }
-        for(BriefEventDTO eventDTO : recoveryEventDTOS) {
-            allEventIds.add(eventDTO.getEventId());
-        }
-        List<BriefAlertDTO> allAlertDTOS = alertService.getAlertDTOByEventIds(allEventIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
-        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS,allAlertDTOS);
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS);
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }
@@ -219,6 +215,93 @@ public class EventServiceImpl implements EventService {
             }
         }
         return acknowledgeVOS;
+    }
+
+    /**
+     * 根据 eventid 获取判断 事件的确认操作是否可以 关闭问题
+     * @param eventId
+     * @param userId  用于判断 Super Admin OR 所属用户群组 对 Trigger所属主机的主机群组 有读写权限（3）
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public AcknowledgeCheckboxVO getCheckboxVOByEventId(String eventId, String userId) throws ServiceException {
+        List<String> eventIds = new ArrayList<>();
+        eventIds.add(eventId);
+        AcknowledgeCheckboxVO checkboxVO = new AcknowledgeCheckboxVO();
+        String triggerId = getEventByEventId(eventIds).get(0).getObjectId();
+        List<String> triggerIds = new ArrayList<>();
+        triggerIds.add(triggerId);
+        BriefTriggerDTO triggerDTO = triggerService.getTriggersByTriggerIds(triggerIds).get(0);
+        String groupId = triggerDTO.getGroups().get(0).getPlatformId();
+        //step1:Trigger是否为问题状态？是
+        if(triggerDTO.getValue().equals(ZApiParameter.TRIGGER_VALUE.OK.value)) {
+            //如果不是问题状态
+            checkboxVO.setCheckboxEnable(false);
+            checkboxVO.setDisableMessage("问题已关闭");
+            return checkboxVO;
+        }
+        //step2:Trigger是否可关闭？ 是
+        if(triggerDTO.getManualClose().equals(ZApiParameter.TRIGGER_MANUAL_CLOSE.NO.value)) {
+            //如果不可关闭
+            checkboxVO.setCheckboxEnable(false);
+            checkboxVO.setDisableMessage("问题不可关闭");
+            return checkboxVO;
+        }
+        //step3:Login User类型：Super Admin OR 所属用户群组 对 Trigger所属主机的主机群组 有读写权限（3）
+        List<String> userIds = new ArrayList<>();
+        userIds.add(userId);
+        UserInfoDTO userInfoDTO = userService.getUsersByUserIds(userIds).get(0);
+        if(userInfoDTO.getType() != ZApiParameter.USER_TYPE.SUPER_ADMIN.value) {
+            //所属用户群组 对 Trigger所属主机的主机群组 有读写权限（3）
+            List<BriefPermissionDTO> permissionDTOS = usergroupService.getUsrgrpsByUserIds(userIds).get(0).getRights();
+            for(BriefPermissionDTO permissionDTO : permissionDTOS) {
+                if(permissionDTO.getId().equals(groupId) && permissionDTO.getPermission().equals(ZApiParameter.USERGROUP_PERMISSION.READ_WRITE)) {
+                    checkboxVO.setCheckboxEnable(true);
+                    checkboxVO.setDisableMessage("问题可关闭");
+                    return checkboxVO;
+                }
+            }
+            //循环结束还未返回方法，则无权限
+            checkboxVO.setCheckboxEnable(false);
+            checkboxVO.setDisableMessage("无权限");
+            return checkboxVO;
+        }else {
+            //Super Admin
+            checkboxVO.setCheckboxEnable(true);
+            checkboxVO.setDisableMessage("问题可关闭");
+            return checkboxVO;
+        }
+
+    }
+
+    /**
+     * 根据 acknowledgeDTO 执行确认动作
+     * @param acknowledgeDTO
+     * @return AcknowledgeVO  eventids[] 影响的事件 events
+     * @throws ServiceException
+     */
+    @Override
+    public AcknowledgeVO acknowledgeEvent(BriefAcknowledgeDTO acknowledgeDTO) throws ServiceException {
+        List<String> eventIds = new ArrayList<>();
+        eventIds.add(acknowledgeDTO.getEventId());
+        EventAcknowledgeRequest acknowledgeRequest = new EventAcknowledgeRequest();
+        acknowledgeRequest.getParams()
+                .setEventIds(eventIds)
+                .setMessage(acknowledgeDTO.getMessage())
+                .setAction(Integer.parseInt(acknowledgeDTO.getAction()));
+        AcknowledgeVO acknowledgeVO;
+        try {
+           acknowledgeVO = zApi.Event().acknowledge(acknowledgeRequest,AcknowledgeVO.class);
+        } catch (ZApiException e) {
+            ZApiExceptionEnum zeEnum = e.getCode();
+            if (zeEnum.equals(ZBX_API_AUTH_EXPIRE) || zeEnum.equals(NO_AUTH_ASSIGN)) {
+                throw new AuthExpireException(e.getMessage());
+            }
+            logger.error("执行确认操作失败 {}", e.getMessage());
+            throw new ServiceException(e.getMessage());
+        }
+        return acknowledgeVO;
     }
 
     /**
@@ -312,6 +395,62 @@ public class EventServiceImpl implements EventService {
             }
         }
         return problemDetailListVOS;
+    }
+
+    /**
+     * 根据 eventId 组装 事件详情弹出框 事件细节信息 EventDetailVO
+     * @param eventId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public EventDetailVO getEventDetailByEventId(String eventId) throws ServiceException {
+        List<String> eventIds = new ArrayList<>();
+        eventIds.add(eventId);
+        BriefEventDTO eventDTO = getEventByEventId(eventIds).get(0);
+        String triggerId = eventDTO.getObjectId();
+        List<String> triggerIds = new ArrayList<>();
+        triggerIds.add(triggerId);
+        BriefTriggerDTO triggerDTO = triggerService.getTriggersByTriggerIds(triggerIds).get(0);
+        String itemId = triggerDTO.getItems().get(0).getItemId();
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(itemId);
+        String pointName = pointSerivce.getPointsByItemIds(itemIds).get(0).getName();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
+        //赋值
+        EventDetailVO eventDetailVO = new EventDetailVO();
+        eventDetailVO.setEventId(eventId);
+        eventDetailVO.setHostName(eventDTO.getHosts().get(0).getName());
+        eventDetailVO.setPointName(pointName);
+        eventDetailVO.setItemName(triggerDTO.getItems().get(0).getName());
+        eventDetailVO.setTriggerName(triggerDTO.getName());
+        eventDetailVO.setThreshold(ThresholdUtils.getThresholdValueSymbol(triggerDTO.getExpression()));
+        eventDetailVO.setLevel(StatusConverter.getStatusByTriggerPriority(triggerDTO.getPriority()));
+        //状态还未映射值
+        eventDetailVO.setState(eventDTO.getValue());
+        eventDetailVO.setProblemTime(eventDTO.getClock().format(formatter));
+        //recoveryTime
+        if(!"0".equals(eventDTO.getrEventid())) {
+            //有恢复事件
+            List<String> recoveryIds = new ArrayList<>();
+            recoveryIds.add(eventDTO.getrEventid());
+            BriefEventDTO recoveryDTO = getEventByEventId(recoveryIds).get(0);
+            eventDetailVO.setRecoveryTime(recoveryDTO.getClock().format(formatter));
+        }
+        //closed,closeduser
+        List<BriefAcknowledgeDTO> acknowledgeDTOS = eventDTO.getAcknowledges();
+        for(BriefAcknowledgeDTO acknowledgeDTO : acknowledgeDTOS) {
+            if(Integer.parseInt(acknowledgeDTO.getAction()) == ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value) {
+                eventDetailVO.setClosed(true);
+                eventDetailVO.setClosedUser(acknowledgeDTO.getAlias());
+                break;
+            }else {
+                eventDetailVO.setClosed(false);
+            }
+        }
+
+        return eventDetailVO;
+
     }
 
 

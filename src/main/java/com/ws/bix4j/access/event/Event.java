@@ -22,4 +22,12 @@ public class Event extends ZApiMethod {
         List<T> response = JSON.parseArray(JSON.parseObject(responseJson).getJSONArray("result").toString(), clazz);
         return response;
     }
+
+    public <T> T acknowledge(EventAcknowledgeRequest request, Class<T> clazz) throws ZApiException {
+        request.setAuth(this.auth);
+        String responseJson = sendRequest(JSON.toJSONString(request, SerializerFeature.NotWriteDefaultValue));
+        T response = JSON.parseObject(JSON.parseObject(responseJson).getJSONObject("result").toString(), clazz);
+        return response;
+    }
+
 }

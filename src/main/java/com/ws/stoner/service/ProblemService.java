@@ -13,17 +13,6 @@ import java.util.List;
 public interface ProblemService {
 
 /*
- *基础方法
- */
-    /**
-     * List problem list.
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefProblemDTO> listProblem(ProblemGetRequest request) throws ServiceException;
-
-/*
  *zabbix 方法
  */
 

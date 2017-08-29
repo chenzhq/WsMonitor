@@ -1,12 +1,13 @@
 package com.ws.stoner.model.view;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Created by zkf on 2017/8/23.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProblemAlertVO {
-
     @JSONField(name = "alert_id")
     private String alertId;
     @JSONField(name = "esc_step")
@@ -18,6 +19,10 @@ public class ProblemAlertVO {
     private String alias;
     private String sendto;
     private boolean recovery;
+    @JSONField(name = "alert_type")
+    private String alertType;
+    private String  subject;
+    private String message;
 
     public ProblemAlertVO() {
     }
@@ -31,6 +36,20 @@ public class ProblemAlertVO {
         this.alias = alias;
         this.sendto = sendto;
         this.recovery = recovery;
+    }
+
+    public ProblemAlertVO(String alertId, Integer escStep, String lastTime, String status, Integer retries, String alias, String sendto, boolean recovery, String alertType, String subject, String message) {
+        this.alertId = alertId;
+        this.escStep = escStep;
+        this.lastTime = lastTime;
+        this.status = status;
+        this.retries = retries;
+        this.alias = alias;
+        this.sendto = sendto;
+        this.recovery = recovery;
+        this.alertType = alertType;
+        this.subject = subject;
+        this.message = message;
     }
 
     public String getAlertId() {
@@ -105,6 +124,33 @@ public class ProblemAlertVO {
         return this;
     }
 
+    public String getAlertType() {
+        return alertType;
+    }
+
+    public ProblemAlertVO setAlertType(String alertType) {
+        this.alertType = alertType;
+        return this;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public ProblemAlertVO setSubject(String subject) {
+        this.subject = subject;
+        return this;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public ProblemAlertVO setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "ProblemAlertVO{" +
@@ -116,6 +162,9 @@ public class ProblemAlertVO {
                 ", alias='" + alias + '\'' +
                 ", sendto='" + sendto + '\'' +
                 ", recovery=" + recovery +
+                ", alertType='" + alertType + '\'' +
+                ", subject='" + subject + '\'' +
+                ", message='" + message + '\'' +
                 '}';
     }
 }

@@ -7,6 +7,7 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefAlertDTO;
+import com.ws.stoner.model.dto.BriefMediatypeDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.view.ProblemAlertVO;
 import com.ws.stoner.service.AlertService;
@@ -36,8 +37,7 @@ public class AlertServiceImpl implements AlertService {
     @Autowired
     private EventService eventService;
 
-    @Override
-    public List<BriefAlertDTO> listAlert(AlertGetRequest request) throws ServiceException {
+    private List<BriefAlertDTO> listAlert(AlertGetRequest request) throws ServiceException {
         List<BriefAlertDTO> alerts;
         try {
             alerts = zApi.Alert().get(request,BriefAlertDTO.class);
@@ -64,6 +64,7 @@ public class AlertServiceImpl implements AlertService {
         alertGetRequest.getParams()
                 .setEventIds(eventIds)
                 .setSelectUsers(UserInfoDTO.PROPERTY_NAMES)
+                .setSelectMediatypes(BriefMediatypeDTO.PROPERTY_NAMES)
                 .setOutput(BriefAlertDTO.PROPERTY_NAMES);
         List<BriefAlertDTO> alertDTOS = listAlert(alertGetRequest);
         return alertDTOS;
@@ -121,6 +122,74 @@ public class AlertServiceImpl implements AlertService {
                         alias,
                         recoveryAlertDTO.getSendto(),
                         true
+                );
+                alertVOS.add(alertVO);
+            }
+        }
+        return alertVOS;
+    }
+
+
+    /**
+     * 根据 eventId 组装 详细的alertVO 事件详情中 告警详情
+     * @param eventId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<ProblemAlertVO> getDetailAlertByEventId(String eventId) throws ServiceException {
+        List<String> eventIds = new ArrayList<>();
+        eventIds.add(eventId);
+        List<BriefAlertDTO> DetailAlertDTOS = getAlertDTOByEventIds(eventIds);
+        List<BriefAlertDTO> recoveryAlertDTOS ;
+        String recoveryEventId = eventService.getEventByEventId(eventIds).get(0).getrEventid();
+        List<ProblemAlertVO> alertVOS = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
+        for(BriefAlertDTO alertDTO : DetailAlertDTOS) {
+            List<UserInfoDTO> userInfoDTOS = alertDTO.getUsers();
+            String alias = "";
+            if(userInfoDTOS.size() != 0) {
+                alias = userInfoDTOS.get(0).getName();
+            }
+            String mediatypeName = alertDTO.getMediatypes().get(0).getDescription();
+            ProblemAlertVO alertVO = new ProblemAlertVO(
+                    alertDTO.getAlertId(),
+                    alertDTO.getEscStep(),
+                    alertDTO.getClock().format(formatter),
+                    AlertStatusConverter.getDiscriptionByStatus(alertDTO.getStatus()),
+                    alertDTO.getRetries(),
+                    alias,
+                    alertDTO.getSendto(),
+                    false,
+                    mediatypeName,
+                    alertDTO.getSubject(),
+                    alertDTO.getMessage()
+            );
+            alertVOS.add(alertVO);
+        }
+        if(recoveryEventId != null) {
+            List<String> recoveryEventIds = new ArrayList<>();
+            recoveryEventIds.add(recoveryEventId);
+            recoveryAlertDTOS = getAlertDTOByEventIds(recoveryEventIds);
+            for(BriefAlertDTO recoveryAlertDTO : recoveryAlertDTOS) {
+                List<UserInfoDTO> userInfoDTOS = recoveryAlertDTO.getUsers();
+                String alias = "";
+                if(userInfoDTOS.size() != 0) {
+                    alias = userInfoDTOS.get(0).getName();
+                }
+                String reMediatypeName = recoveryAlertDTO.getMediatypes().get(0).getDescription();
+                ProblemAlertVO alertVO = new ProblemAlertVO(
+                        recoveryAlertDTO.getAlertId(),
+                        recoveryAlertDTO.getEscStep(),
+                        recoveryAlertDTO.getClock().format(formatter),
+                        AlertStatusConverter.getDiscriptionByStatus(recoveryAlertDTO.getStatus()),
+                        recoveryAlertDTO.getRetries(),
+                        alias,
+                        recoveryAlertDTO.getSendto(),
+                        true,
+                        reMediatypeName,
+                        recoveryAlertDTO.getSubject(),
+                        recoveryAlertDTO.getMessage()
                 );
                 alertVOS.add(alertVO);
             }

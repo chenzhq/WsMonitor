@@ -29,9 +29,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Autowired
     private ZApi zApi;
 
-
-    @Override
-    public List<BriefHistoryDTO> listHistory(HistoryGetRequest request) throws ServiceException {
+    private List<BriefHistoryDTO> listHistory(HistoryGetRequest request) throws ServiceException {
         List<BriefHistoryDTO> historys;
         try {
             historys = zApi.History().get(request,BriefHistoryDTO.class);

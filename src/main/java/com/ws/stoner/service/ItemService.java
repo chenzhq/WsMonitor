@@ -17,17 +17,6 @@ import java.util.List;
 public interface ItemService {
 
 /*
-  item 基础方法  list
- */
-    /**
-     * 根据request请求获取item list
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefItemDTO> listItem(ItemGetRequest request) throws ServiceException;
-
-/*
  *ZABBIX API 方法
   */
 

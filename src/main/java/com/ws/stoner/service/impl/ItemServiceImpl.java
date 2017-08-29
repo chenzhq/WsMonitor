@@ -59,8 +59,7 @@ public class ItemServiceImpl implements ItemService {
      * @return
      * @throws ServiceException
      */
-    @Override
-    public List<BriefItemDTO> listItem(ItemGetRequest request) throws ServiceException {
+    private List<BriefItemDTO> listItem(ItemGetRequest request) throws ServiceException {
         List<BriefItemDTO> items ;
         try {
             items = zApi.Item().get(request,BriefItemDTO.class);

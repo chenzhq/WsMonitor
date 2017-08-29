@@ -1,6 +1,5 @@
 package com.ws.stoner.service;
 
-import com.ws.bix4j.access.valuemap.ValuemapGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefValuemapDTO;
 
@@ -11,17 +10,6 @@ import java.util.List;
  */
 public interface ValuemapService {
 
-/*
- *基础方法
- */
-
-    /**
-     * List valuemap list.
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefValuemapDTO> listValuemap(ValuemapGetRequest request) throws ServiceException;
 
     /**
      * 根据 valuemapIds 查询出指定的 值映射  BriefValuemapDTO

@@ -14,14 +14,15 @@ public class BriefAlertDTO {
 
     @JSONField(name = "alertid")
     private String alertId;
-    @JSONField(name = "alerttype")
-    private String alertType;
+    @JSONField(name = "mediatypeid")
+    private String mediatypeId;
     private LocalDateTime clock;
     @JSONField(name = "esc_step")
     private Integer escStep;
     @JSONField(name = "eventid")
     private String eventId;
     private String message;
+    private String subject;
     private Integer status;
     private Integer retries;
     private String sendto;
@@ -29,8 +30,9 @@ public class BriefAlertDTO {
     private String userId;
 
     private List<UserInfoDTO> users;
+    private List<BriefMediatypeDTO> mediatypes;
 
-    public static final String[] PROPERTY_NAMES = {"alertid", "alerttype","clock","esc_step","eventid","message","retries","sendto","status","userid"};
+    public static final String[] PROPERTY_NAMES = {"alertid", "mediatypeid","clock","esc_step","eventid","message","subject","retries","sendto","status","userid"};
 
     public String getAlertId() {
         return alertId;
@@ -41,12 +43,21 @@ public class BriefAlertDTO {
         return this;
     }
 
-    public String getAlertType() {
-        return alertType;
+    public String getMediatypeId() {
+        return mediatypeId;
     }
 
-    public BriefAlertDTO setAlertType(String alertType) {
-        this.alertType = alertType;
+    public BriefAlertDTO setMediatypeId(String mediatypeId) {
+        this.mediatypeId = mediatypeId;
+        return this;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public BriefAlertDTO setSubject(String subject) {
+        this.subject = subject;
         return this;
     }
 
@@ -132,20 +143,31 @@ public class BriefAlertDTO {
         return this;
     }
 
+    public List<BriefMediatypeDTO> getMediatypes() {
+        return mediatypes;
+    }
+
+    public BriefAlertDTO setMediatypes(List<BriefMediatypeDTO> mediatypes) {
+        this.mediatypes = mediatypes;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "BriefAlertDTO{" +
                 "alertId='" + alertId + '\'' +
-                ", alertType='" + alertType + '\'' +
+                ", mediatypeId='" + mediatypeId + '\'' +
                 ", clock=" + clock +
-                ", escStep='" + escStep + '\'' +
+                ", escStep=" + escStep +
                 ", eventId='" + eventId + '\'' +
                 ", message='" + message + '\'' +
-                ", status='" + status + '\'' +
+                ", subject='" + subject + '\'' +
+                ", status=" + status +
                 ", retries=" + retries +
                 ", sendto='" + sendto + '\'' +
                 ", userId='" + userId + '\'' +
                 ", users=" + users +
+                ", mediatypes=" + mediatypes +
                 '}';
     }
 }

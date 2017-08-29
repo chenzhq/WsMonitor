@@ -1,27 +1,26 @@
 package com.ws.stoner.controller.rest;
 
+import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.view.ProblemAcknowledgeVO;
-import com.ws.stoner.model.view.ProblemAlertVO;
-import com.ws.stoner.model.view.ProblemDetailListVO;
-import com.ws.stoner.model.view.ProblemListVO;
+import com.ws.stoner.model.DO.mongo.PlatformGraph;
+import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
+import com.ws.stoner.model.dto.UserInfoDTO;
+import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.AlertService;
 import com.ws.stoner.service.EventService;
 import com.ws.stoner.service.ProblemService;
 import com.ws.stoner.service.TriggerService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 import static com.ws.stoner.constant.MessageConsts.REST_UPDATE_SUCCESS;
 
 /**
- * Created by pc on 2017/8/23.
+ * Created by zkf on 2017/8/23.
  */
 @RestController
 public class ProblemRestController {
@@ -78,6 +77,27 @@ public class ProblemRestController {
     }
 
     /**
+     *  确认操作 判断是否可关闭问题
+     * @return
+     */
+    @RequestMapping(value = "problemlist/is_acknowlegde", method = RequestMethod.GET)
+    public String getAcknowledgeCheckBoxByEventId(@RequestParam("event_id") String eventId,HttpSession session) throws ServiceException {
+        UserInfoDTO userInfoDTO = (UserInfoDTO) session.getAttribute(CookieConsts.USER_INFO);
+        AcknowledgeCheckboxVO checkboxVO = eventService.getCheckboxVOByEventId(eventId,userInfoDTO.getUserId());
+        return RestResultGenerator.genResult(checkboxVO, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 执行确认动作
+     * @return
+     */
+    @RequestMapping(value = "acknowledge/acknowledge_event", method = RequestMethod.POST)
+    public String getAcknowledgesByEventId(@RequestBody BriefAcknowledgeDTO acknowledgeDTO) throws ServiceException {
+        AcknowledgeVO acknowledgeVO = eventService.acknowledgeEvent(acknowledgeDTO);
+        return RestResultGenerator.genResult(acknowledgeVO, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
      * 问题列表  告警记录 pop
      * @return
      */
@@ -95,5 +115,25 @@ public class ProblemRestController {
     public String getDetailListByTriggerId(@RequestParam("trigger_id") String triggerId) throws ServiceException {
         List<ProblemDetailListVO> problemDetailListVOS = eventService.getDetailListVOSByTriggerId(triggerId);
         return RestResultGenerator.genResult(problemDetailListVOS, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 事件详情  事件细节信息
+     * @return
+     */
+    @RequestMapping(value = "eventdetail/get_detail", method = RequestMethod.GET)
+    public String getEventDetailByEventId(@RequestParam("event_id") String eventId) throws ServiceException {
+        EventDetailVO eventDetailVO = eventService.getEventDetailByEventId(eventId);
+        return RestResultGenerator.genResult(eventDetailVO, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 事件详情  告警详情信息
+     * @return
+     */
+    @RequestMapping(value = "alertdetail/get_detail", method = RequestMethod.GET)
+    public String getAlertDetailByEventId(@RequestParam("event_id") String eventId) throws ServiceException {
+        List<ProblemAlertVO> problemAlertVOS = alertService.getDetailAlertByEventId(eventId);
+        return RestResultGenerator.genResult(problemAlertVOS, REST_UPDATE_SUCCESS).toString();
     }
 }

@@ -221,6 +221,19 @@ public static enum HOSTGROUP_INTERNAL {
     }
 
     /**
+     * 触发器问题是否可手动关闭
+     */
+    public static enum TRIGGER_MANUAL_CLOSE  {
+        NO(0),
+        YES(1);
+        public int value;
+        private TRIGGER_MANUAL_CLOSE(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
      * ACKNOWLEDGE 确认 action
      */
     public static enum ACKNOWLEDGE_ACTION  {
@@ -322,8 +335,20 @@ public static enum HOSTGROUP_INTERNAL {
             this.value = value;
         }
     }
+    /**
+     * 权限
+     */
+    public static enum USERGROUP_PERMISSION {
+        ACCESS_DENIED(0),
+        READ_ONLY(2),
+        READ_WRITE(3);
 
+        public int value;
 
+        private USERGROUP_PERMISSION(int value) {
+            this.value = value;
+        }
+    }
 
 /**
  * 其他
@@ -397,4 +422,20 @@ public static enum HOSTGROUP_INTERNAL {
     }
 
 
+    /**
+     * mediatype 的告警方式类型
+     */
+    public static enum ALERT_MEDIATYPE {
+        EMAIL(0),
+        SCRIPT(1),
+        SMS(2),
+        JABBER(3),
+        EZ_TEXTING(100);
+
+        public int value;
+
+        private ALERT_MEDIATYPE(int value) {
+            this.value = value;
+        }
+    }
 }

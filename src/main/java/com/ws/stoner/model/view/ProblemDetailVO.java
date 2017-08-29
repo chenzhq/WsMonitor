@@ -15,10 +15,8 @@ public class ProblemDetailVO {
     private String pointName;
     @JSONField(name = "item_name")
     private String itemName;
-    @JSONField(name = "high_point")
-    private String highPoint;
-    @JSONField(name = "warning_point")
-    private String warningPoint;
+
+    private String threshold;
     @JSONField(name = "trigger_name")
     private String triggerName;
     private String level;
@@ -27,13 +25,12 @@ public class ProblemDetailVO {
     public ProblemDetailVO() {
     }
 
-    public ProblemDetailVO(String triggerId, String hostName, String pointName, String itemName, String highPoint, String warningPoint, String triggerName, String level, Integer state) {
+    public ProblemDetailVO(String triggerId, String hostName, String pointName, String itemName, String threshold, String triggerName, String level, Integer state) {
         this.triggerId = triggerId;
         this.hostName = hostName;
         this.pointName = pointName;
         this.itemName = itemName;
-        this.highPoint = highPoint;
-        this.warningPoint = warningPoint;
+        this.threshold = threshold;
         this.triggerName = triggerName;
         this.level = level;
         this.state = state;
@@ -75,21 +72,12 @@ public class ProblemDetailVO {
         return this;
     }
 
-    public String getHighPoint() {
-        return highPoint;
+    public String getThreshold() {
+        return threshold;
     }
 
-    public ProblemDetailVO setHighPoint(String highPoint) {
-        this.highPoint = highPoint;
-        return this;
-    }
-
-    public String getWarningPoint() {
-        return warningPoint;
-    }
-
-    public ProblemDetailVO setWarningPoint(String warningPoint) {
-        this.warningPoint = warningPoint;
+    public ProblemDetailVO setThreshold(String threshold) {
+        this.threshold = threshold;
         return this;
     }
 
@@ -127,11 +115,10 @@ public class ProblemDetailVO {
                 ", hostName='" + hostName + '\'' +
                 ", pointName='" + pointName + '\'' +
                 ", itemName='" + itemName + '\'' +
-                ", highPoint='" + highPoint + '\'' +
-                ", warningPoint='" + warningPoint + '\'' +
+                ", threshold='" + threshold + '\'' +
                 ", triggerName='" + triggerName + '\'' +
                 ", level='" + level + '\'' +
-                ", state='" + state + '\'' +
+                ", state=" + state +
                 '}';
     }
 }
