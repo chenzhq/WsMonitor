@@ -43,7 +43,7 @@ public class OverviewRestController {
      * @param supGroupId
      * @return
      */
-    @RequestMapping(value = "ov/group", method = RequestMethod.POST)
+    @RequestMapping(value = "ov/group/create", method = RequestMethod.POST)
     public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("sup_group") String supGroupId) throws ServiceException {
         boolean success =  overviewService.createOverviewGroup(newGroupName,supGroupId);
         if(success) {
@@ -71,7 +71,7 @@ public class OverviewRestController {
      * @param delGroupId
      * @return
      */
-    @RequestMapping(value = "ov/group", method = RequestMethod.DELETE)
+    @RequestMapping(value = "ov/group/delete", method = RequestMethod.DELETE)
     public String deleteOverviewGroup(@RequestParam("del_group") String delGroupId) throws ServiceException {
         boolean success = overviewService.deleteOverviewGroup(delGroupId);
         if(success) {

@@ -5,11 +5,9 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
+import com.ws.stoner.model.query.CalendarFormQuery;
 import com.ws.stoner.model.view.*;
-import com.ws.stoner.service.AlertService;
-import com.ws.stoner.service.EventService;
-import com.ws.stoner.service.ProblemService;
-import com.ws.stoner.service.TriggerService;
+import com.ws.stoner.service.*;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +31,9 @@ public class ProblemRestController {
     private TriggerService triggerService;
     @Autowired
     private ProblemService problemService;
+
+    @Autowired
+    private GraphService graphService;
 
     /**
      * 问题列表模块  当前问题 请求
@@ -135,5 +136,15 @@ public class ProblemRestController {
     public String getAlertDetailByEventId(@RequestParam("event_id") String eventId) throws ServiceException {
         List<ProblemAlertVO> problemAlertVOS = alertService.getDetailAlertByEventId(eventId);
         return RestResultGenerator.genResult(problemAlertVOS, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 根据查询参数 获取告警日历数据
+     * @return
+     */
+    @RequestMapping(value = "calendar/get_datas", method = RequestMethod.POST)
+    public String getCalendarDatas(@RequestBody CalendarFormQuery formQuery) throws ServiceException {
+        CalendarVO calendarVO = graphService.getCalendarGraphDatas(formQuery);
+        return RestResultGenerator.genResult(calendarVO, REST_UPDATE_SUCCESS).toString();
     }
 }

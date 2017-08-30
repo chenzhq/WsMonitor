@@ -3,6 +3,7 @@ package com.ws.stoner.service;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.DO.mongo.PlatformTreeManager;
+import com.ws.stoner.model.query.CalendarFormQuery;
 import com.ws.stoner.model.view.*;
 
 import java.util.List;
@@ -148,4 +149,11 @@ public interface GraphService {
      * @throws ServiceException
      */
     boolean deletePlatformGraph(String itemId) throws ServiceException;
+
+    /**
+     * 告警日历 获取日历图 CalendarVO formQuery 查询条件
+     * @return
+     * @throws ServiceException
+     */
+    CalendarVO getCalendarGraphDatas(CalendarFormQuery formQuery) throws ServiceException;
 }

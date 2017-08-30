@@ -346,7 +346,7 @@
                         $('#del-pop').removeClass('visible').addClass('hidden')
                         $.ajax({
                             type: 'delete',
-                            url: '/ov/group?del_group='+ sourceData[selectIndex].cid,
+                            url: '/ov/group/delete?del_group='+ sourceData[selectIndex].cid,
                             data: {del_group: sourceData[selectIndex].cid},
                             dataType: 'json',
                             success: function(result) {
@@ -475,7 +475,7 @@
                     $('#new_submit').addClass('loading')
                     $.ajax({
                         type: "post",
-                        url: "/ov/group",
+                        url: "/ov/group/create",
                         data: {
                             sup_group: sourceData[sup_index].cid,
                             new_group_name: $('#new-group-input').val()

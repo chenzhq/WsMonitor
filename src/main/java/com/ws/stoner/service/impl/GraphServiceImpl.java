@@ -3,7 +3,7 @@ package com.ws.stoner.service.impl;
 import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.PlatformTreeTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.constant.URLConsts;
+import com.ws.stoner.constant.BaseConsts;
 import com.ws.stoner.dao.MongoGraphDAO;
 import com.ws.stoner.dao.MongoPlatformGraphDAO;
 import com.ws.stoner.dao.MongoPlatformTreeDAO;
@@ -11,15 +11,21 @@ import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.*;
 import com.ws.stoner.model.dto.*;
+import com.ws.stoner.model.query.CalendarFormQuery;
 import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
+import org.omg.PortableInterceptor.ObjectReferenceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -54,6 +60,9 @@ public class GraphServiceImpl implements GraphService {
 
     @Autowired
     private PlatformService platformService;
+
+    @Autowired
+    private EventService eventService;
 
 
     /**
@@ -254,7 +263,7 @@ public class GraphServiceImpl implements GraphService {
      */
     @Override
     public PlatformTreeVO getPlatTreeByPlatformId(String platformId) throws ServiceException {
-        String context_url = URLConsts.URL_CONTEXT + "/images/";
+        String context_url = BaseConsts.URL_CONTEXT + "/images/";
         List<String> platformIds = new ArrayList<>();
         platformIds.add(platformId);
         //判断mongodb中是否有业务平台数据，没有，则初始化
@@ -374,7 +383,7 @@ public class GraphServiceImpl implements GraphService {
      */
     @Override
     public List<PlatformTreeVO> initPlatTree() throws ServiceException {
-        String context_url = URLConsts.URL_CONTEXT + "/images/";
+        String context_url = BaseConsts.URL_CONTEXT + "/images/";
         List<BriefPlatformDTO> allPlatformDTOS = platformService.listAllPlatform();
         List<PlatformTreeVO> platformTreeVOS = new ArrayList<>();
         for(BriefPlatformDTO platformDTO : allPlatformDTOS) {
@@ -729,6 +738,44 @@ public class GraphServiceImpl implements GraphService {
     }
 
     /**
+     * 告警日历 获取日历图 CalendarVOS
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public CalendarVO getCalendarGraphDatas(CalendarFormQuery formQuery) throws ServiceException {
+        Long endTime =System.currentTimeMillis() / 1000;
+        Long beginTime = endTime - BaseConsts.CALENDAR_DAYS * 24 * 3600;
+        LocalDateTime endLocal = LocalDateTime.now();
+        LocalDateTime beginLocal = LocalDateTime.ofInstant(Instant.ofEpochSecond(beginTime), ZoneId.systemDefault());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd");
+        //处理依赖关系
+        List<BriefTriggerDTO> triggerDTOS = triggerService.listTriggersSkipDependent();
+        List<String > triggerIds = new ArrayList<>();
+        for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+            triggerIds.add(triggerDTO.getTriggerId());
+        }
+        List<BriefEventDTO> problemEventDTOS = eventService.getProblemEventsByTime(String.valueOf(beginTime),String.valueOf(endTime),triggerIds);
+        String title = "2017年 6月-12月";
+        List<String> range = new ArrayList<>();
+        range.add(beginLocal.format(formatter));
+        range.add(endLocal.format(formatter));
+        //lightDatas,dimDatas
+        List<List<Object>> datas = new ArrayList<>();
+        for(int i=0;i<BaseConsts.CALENDAR_DAYS;i++ ) {
+            LocalDate today = beginLocal.toLocalDate().plusDays(i+1);
+            CalendarDayVO calendarDayVO = getOneDayCalendar(today,problemEventDTOS,formQuery);
+            List<Object> oneDay = new ArrayList<>();
+            oneDay.add(calendarDayVO.getDate());
+            oneDay.add(calendarDayVO.getProblemNum());
+            oneDay.add(calendarDayVO.isLighting());
+            datas.add(oneDay);
+        }
+        CalendarVO calendarVO = new CalendarVO(title,range,datas);
+        return calendarVO;
+    }
+
+    /**
      * 注意返回的map 的key有三个 "units",  "datas",  "dataTime"
      * @param historyDTOS 需要转换的历史数据
      * @param units
@@ -750,6 +797,61 @@ public class GraphServiceImpl implements GraphService {
         historyDatasMap.put("datas",datas.toArray(new Float[0]));
         historyDatasMap.put("dataTime",dataTime.toArray(new String[0]));
         return historyDatasMap;
+    }
+
+
+    /**
+     *
+     * @param today 当天
+     * @param problemEventDTOS
+     * @return
+     */
+    private CalendarDayVO getOneDayCalendar(LocalDate today, List<BriefEventDTO> problemEventDTOS, CalendarFormQuery formQuery) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd");
+        LocalDate nextDay = today.plusDays(1);
+        int problemNum = 0;
+        boolean lighting = false;
+        for(BriefEventDTO eventDTO : problemEventDTOS) {
+            //过滤  event
+            LocalDate day = eventDTO.getClock().toLocalDate();
+            if((day.isAfter(today)||day.isEqual(today)) && day.isBefore(nextDay)) {
+                //满足当天的 event
+                boolean selectHost;
+                boolean selectPrority ;
+                boolean selectAcknowledge;
+                //host查询
+                if(formQuery.getHostId() == null) {
+                    selectHost = true;
+                }else {
+                    selectHost = eventDTO.getHosts().get(0).getHostId().equals(formQuery.getHostId());
+                }
+                //严重性查询
+                if(formQuery.getPriority() == null) {
+                    selectPrority = true;
+                }else {
+                    selectPrority = eventDTO.getRelatedObject().getPriority().equals(formQuery.getPriority());
+                }
+                //确认查询
+                if(formQuery.getAcknowledge() == null) {
+                    selectAcknowledge = true;
+                }else {
+                    selectAcknowledge = eventDTO.getAcknowledged().equals(formQuery.getAcknowledge());
+                }
+                //执行过滤条件
+                if(selectHost && selectPrority && selectAcknowledge) {
+                    problemNum++;
+                    if("0".equals(eventDTO.getrEventid())) {
+                        lighting = true;
+                    }
+                }
+            }
+        }
+        CalendarDayVO calendarDayVO = new CalendarDayVO(
+                today.format(formatter),
+                problemNum,
+                lighting
+        );
+        return calendarDayVO;
     }
 
 }
