@@ -12,16 +12,25 @@
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<th:block th:fragment="supplement">
 		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
 		<style type="text/css">
 			.ui.table.dataTable thead th {
 				border-left: 0px;
 			}
 			.ui.special.popup.confirm{
-				height: 260px;width: 500px;overflow:auto;overflow-x:hidden
+				height: 260px;width: 700px;overflow-y:auto;overflow-x:hidden
 			}
 			.ui.special.popup.alarmed{
-				height: 260px;width: 500px;overflow:auto;overflow-x:hidden
+				height: 260px;width: 700px;overflow-y:auto;overflow-x:hidden
+			}
+			#table_modal_confirm{
+				overflow-y:auto;
+				overflow-x:hidden;
+				max-height:160px;
+				margin-bottom: 10px;
+			}
+			.ui.tab.segment.detail{
+				height: 260px;overflow-y:auto;overflow-x:hidden
 			}
 		</style>
 	</th:block>
@@ -315,37 +324,39 @@
 				</div>
 				<!--已告警提示框 start-->
 				<div class="ui special popup alarmed">
-					<table class="ui very basic compact collapsing celled fixed single line table">
-						<thead>
-						<tr>
-							<th class="four wide">步骤</th>
-							<th class="four wide">时间</th>
-							<th class="four wide">状态（重试次数）</th>
-							<th class="four wide">接收者</th>
-						</tr></thead>
-						<tbody id="alarmedTable">
-						<!--静态数据 start-->
-						<tr>
-							<td>1</td>
-							<td>2017-08-12 11:13:39</td>
-							<td>已发送通知(0)</td>
-							<td>chen[chenzhq.2@gmail.com]</td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td>2017-08-12 11:13:39</td>
-							<td>已发送通知(1)</td>
-							<td>admin[admin@gmail.com]</td>
-						</tr>
-						<tr>
-							<td>1</td>
-							<td>2017-08-12 11:13:39</td>
-							<td>已发送通知(0)</td>
-							<td>admin[admin@gmail.com]</td>
-						</tr>
-						<!--静态数据 end-->
-						</tbody>
-					</table>
+					<div class="sixteen wide column">
+						<table class="ui very basic compact collapsing celled fixed single line table">
+							<thead>
+							<tr>
+								<th class="four wide">步骤</th>
+								<th class="four wide">时间</th>
+								<th class="four wide">状态（重试次数）</th>
+								<th class="four wide">接收者</th>
+							</tr></thead>
+							<tbody id="alarmedTable">
+							<!--静态数据 start-->
+							<tr>
+								<td>1</td>
+								<td>2017-08-12 11:13:39</td>
+								<td>已发送通知(0)</td>
+								<td>chen[chenzhq.2@gmail.com]</td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>2017-08-12 11:13:39</td>
+								<td>已发送通知(1)</td>
+								<td>admin[admin@gmail.com]</td>
+							</tr>
+							<tr>
+								<td>1</td>
+								<td>2017-08-12 11:13:39</td>
+								<td>已发送通知(0)</td>
+								<td>admin[admin@gmail.com]</td>
+							</tr>
+							<!--静态数据 end-->
+							</tbody>
+						</table>
+					</div>
 				</div>
 				<!--已告警提示框 end-->
 				<!--确认记录提示框 start-->
@@ -385,18 +396,31 @@
 				<!--确认记录提示框 end-->
 				<!--确认记录模态框 start-->
 				<div class="ui small modal confirm">
-					<div class="header">标题</div>
 					<div class="content">
 						<div class="ui form">
-							<div class="required inline field">
-								<label>名</label>
-								<input type="text" placeholder="Full Name">
+							<div class="required inline field" id="text_field">
+								<input type="text" id="confirmmodal_text" placeholder="不能为空">
 							</div>
-							<p>有历史确认记录，则在文本框下方列出，与确认记录数据一致</p>
-							<div class="required inline field">
+							<div id="table_modal_confirm">
+								<table class="ui celled striped compact single line table">
+									<thead>
+									<tr>
+										<th class="four wide">时间</th>
+										<th class="four wide">用户</th>
+										<th class="four wide">消息</th>
+										<th class="four wide">用户动作</th>
+									</tr></thead>
+									<tbody id="confirmTable_modal">
+									<tr>
+										<td colspan="4">无历史确认记录</td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="required inline field" id="text_checkbox">
 								<div class="ui checkbox">
 									<input type="checkbox" tabindex="0" class="hidden">
-									<label>关闭问题</label>
+									<label  id="label_checkbox">关闭问题</label>
 								</div>
 							</div>
 						</div>
@@ -415,11 +439,11 @@
 							<a class="item" data-tab="detailConfirm">确认</a>
 							<a class="item" data-tab="detailRecord">告警记录</a>
 						</div>
-						<div class="ui bottom attached active tab segment" data-tab="detailDetails">
+						<div class="ui active tab segment detail" data-tab="detailDetails">
 							<p>[所属主机，监控点名称，监控项名称]考虑合并在一起显示，阀值，（触发器）描述，发生时间，恢复时间，手动关闭[Admin/无]</p>
 						</div>
-						<div class="ui bottom attached tab segment" data-tab="detailConfirm">
-							<table class="ui very basic compact collapsing celled fixed single line table">
+						<div class="ui tab segment detail" data-tab="detailConfirm">
+							<table class="ui very basic compact fixed single line table">
 								<!--静态数据 start-->
 								<thead>
 								<tr>
@@ -451,9 +475,8 @@
 								<!--静态数据 end-->
 							</table>
 						</div>
-						<div class="ui bottom attached tab segment" data-tab="detailRecord">
-							<table class="ui very basic compact collapsing celled fixed single line table">
-								<!--静态数据 start-->
+						<div class="ui tab segment detail" data-tab="detailRecord">
+							<table class="ui very basic compact celled fixed single line table">
 								<thead>
 								<tr>
 									<th class="four wide">步骤</th>
@@ -465,6 +488,7 @@
 									<th class="four wide">状态（重试次数）</th>
 								</tr></thead>
 								<tbody id="alarmedTable_tab">
+								<!--静态数据 start-->
 								<tr>
 									<td>1</td>
 									<td>2017-08-12 11:13:39</td>
@@ -492,13 +516,12 @@
 									<td>admin[admin@gmail.com]</td>
 									<td>已发送通知(0)</td>
 								</tr>
-								</tbody>
 								<!--静态数据 end-->
+								</tbody>
 							</table>
 						</div>
 					</div>
 					<div class="actions">
-						<div class="ui approve submit button">确认</div>
 						<div class="ui cancel button">取消</div>
 					</div>
 				</div>
@@ -527,8 +550,6 @@
 <script type="text/javascript">
     //页面加载完加载基础数据
     $(function() {
-        //初始折叠菜单
-        $('.ui.checkbox').checkbox();
         //初始化选项页
         $('.secondary.pointing.menu .item')
             .tab();
@@ -553,12 +574,44 @@
                 //点击事件详情事件
                 $('#problemsTable a.detail').on('click',function(){
                     var event_id=$(this).attr("data-id");
+                    //初始化事件详情模态框
                     detailmodal(event_id);
                     $('.ui.modal.detail').modal('setting', 'closable', false).modal('show');
+                    //初始化事件详情模态框
+                    $('.secondary.pointing.menu .item')
+                        .tab({
+                            'onVisible': function (path) {
+                                if (path === 'detailConfirm') {
+                                    //初始化确认列表
+                                    detailconfirm();
+                                }
+                                if (path === 'detailRecord') {
+                                    //初始化记录列表
+                                    detailrecord();
+                                }
+                            }
+                        });
                 })
                 //点击确认记录事件
                 $('#problemsTable a.confirm').on('click',function(){
-                    $('.ui.modal.confirm').modal('setting', 'closable', false).modal('show');
+                    var event_id=$(this).attr("data-id");
+                    confirmmodal(event_id);
+                    $('.ui.modal.confirm').modal({
+                        onApprove: function () {
+                            //验证是否为空
+                            if($("#confirmmodal_text").val()=="")
+                            {
+                                $("#text_field").addClass("error");
+                                return false;
+                            }else if(!$('.ui.checkbox').checkbox("is checked"))
+                            {
+                                $("#text_checkbox").addClass("error");
+                                return false;
+                            }else {
+                                alert("完成一次关闭问题的确认操作，接口详情有问题，待完成")
+							}
+                        }
+                    }).modal('setting', 'closable', false).modal('show');
                 })
                 //浮动确认记录事件
                 $('#problemsTable a.confirm').hover(function() {
@@ -765,20 +818,7 @@
         }
         $("#alarmedTable").html(str);
 	}
-    //初始化事件详情模态框
-    $('.secondary.pointing.menu .item')
-        .tab({
-            'onVisible': function (path) {
-                if (path === 'detailConfirm') {
-                    //初始化确认列表
-                    detailconfirm();
-                }
-                if (path === 'detailRecord') {
-                    //初始化记录列表
-                    detailrecord();
-                }
-            }
-        });
+
     //连接事件详情模态框，细节列表
     function detailmodal(event_id) {
         $.ajax({
@@ -864,8 +904,86 @@
     }
     //获取事件详情模态框，记录列表
     function getdetailrecord(data){
-        //待完成
+        var str = '';
+        for(var i=0;i<data.length;i++)
+        {
+            str += "<tr id='"+data[i].alert_id+"'><td>"
+                +data[i].esc_step+"</td><td>"
+                +data[i].last_time+"</td><td>"
+                +data[i].sendto+"</td><td>"
+                +data[i].recovery+"</td><td>"
+                +data[i].recovery+"</td><td>"
+                +data[i].status+"</td><td>"
+                +data[i].recovery+"("+data[i].retries+")</td></tr>"
+        }
+        $("#alarmedTable_tab").html(str);
     }
+    //连接确认记录模态框，历史确认记录
+    function confirmmodal(event_id) {
+        $("#confirmmodal_text").val("");
+		$("#text_field").removeClass("error");
+        $("#text_checkbox").removeClass("error");
+        $('.ui.checkbox').checkbox("set unchecked");
+        //用户是否可以关闭问题
+        $.ajax({
+            type: "get",
+            url: "/acknowledge/is_closed?event_id=" + event_id,
+            dataType: "json",
+            success: function (result) {
+                if (result.success) {
+                    var data = result.data;
+                    if (data.checkbox_enable==false){
+                        $('.ui.checkbox').addClass("disabled");
+                        $("#label_checkbox").html(data.disable_message)
+                    }else {
+                        $("#label_checkbox").html("问题可关闭")
+					}
+                } else {
+                    errorMsg_no_data("用户是否可关闭问题 modal");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("用户是否可关闭问题 modal");
+            }
+        })
+		//历史确认记录
+        $.ajax({
+            type: "get",
+            url: "/problemlist/get_acknowledges?event_id=" + event_id,
+            dataType: "json",
+            success: function (result) {
+                if (result.success) {
+                    var data = result.data;
+                    getconfirmmodal(data);
+                } else {
+                    errorMsg_no_data("历史确认记录 modal");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("历史确认记录 modal");
+            }
+        })
+    }
+    //获取确认记录模态框，历史确认记录
+    function getconfirmmodal(data){
+        var str = '';
+        for(var i=0;i<data.length;i++)
+        {
+            if(data[i].action == '0'){
+                var action = '未确认';
+            }
+            else if(data[i].action == '1'){
+                var action = '已确认';
+            }
+            str += "<tr id='"+data[i].acknowledge_id+"'><td>"
+                +data[i].clock+"</td><td>"
+                +data[i].alias+"</td><td>"
+                +data[i].message+"</td><td>"
+                +action+"</td></tr>"
+        }
+        $("#confirmTable_modal").html(str);
+    }
+
 </script>
 </body>
 </html>
