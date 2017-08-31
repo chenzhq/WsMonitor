@@ -110,11 +110,11 @@ public interface EventService {
 
     /**
      * 组装当天一天的 问题事件数量 ProblemListVOS
-     * @param today
+     * @param formQuery
      * @return
      * @throws ServiceException
      */
-    List<ProblemListVO> getOneDayProblemListVOS(LocalDate today, CalendarFormQuery formQuery) throws ServiceException;
+    List<ProblemListVO> getOneDayProblemListVOS(CalendarFormQuery formQuery) throws ServiceException;
 
 
 }
