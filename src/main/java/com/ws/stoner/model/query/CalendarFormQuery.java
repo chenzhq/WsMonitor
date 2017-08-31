@@ -9,7 +9,7 @@ public class CalendarFormQuery {
     private String problemNum;
     private Integer priority;
     private Integer acknowledge;
-    private boolean isProblem;
+    private String today;//当天
 
     public String getHostId() {
         return hostId;
@@ -47,12 +47,12 @@ public class CalendarFormQuery {
         return this;
     }
 
-    public boolean isProblem() {
-        return isProblem;
+    public String getToday() {
+        return today;
     }
 
-    public CalendarFormQuery setProblem(boolean problem) {
-        isProblem = problem;
+    public CalendarFormQuery setToday(String today) {
+        this.today = today;
         return this;
     }
 }

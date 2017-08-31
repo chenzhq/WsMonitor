@@ -147,4 +147,14 @@ public class ProblemRestController {
         CalendarVO calendarVO = graphService.getCalendarGraphDatas(formQuery);
         return RestResultGenerator.genResult(calendarVO, REST_UPDATE_SUCCESS).toString();
     }
+
+    /**
+     * 根据查询参数 获取一天的日历信息 ： 一天的问题历史记录  List<ProblemListVO>
+     * @return
+     */
+    @RequestMapping(value = "calendar/get_list", method = RequestMethod.POST)
+    public String getOneDayListCalendar(@RequestBody CalendarFormQuery formQuery) throws ServiceException {
+        List<ProblemListVO> problemListVOS = eventService.getOneDayProblemListVOS(formQuery);
+        return RestResultGenerator.genResult(problemListVOS, REST_UPDATE_SUCCESS).toString();
+    }
 }

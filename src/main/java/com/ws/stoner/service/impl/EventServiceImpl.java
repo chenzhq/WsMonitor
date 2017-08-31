@@ -21,8 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +81,7 @@ public class EventServiceImpl implements EventService {
                 .setSelectAcknowledges(BriefAcknowledgeDTO.PROPERTY_NAMES)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
                 .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                .setSelectAlerts(BriefAlertDTO.PROPERTY_NAMES)
                 .setOutput(BriefEventDTO.PROPERTY_NAMES);
         return listEvent(eventGetRequest);
     }
@@ -182,7 +182,15 @@ public class EventServiceImpl implements EventService {
             triggerIds.add(triggerDTO.getTriggerId());
         }
         List<BriefEventDTO> problemEventDTOS = getProblemEventsByTime(beginTime,endTime,triggerIds);
-        List<BriefEventDTO> recoveryEventDTOS = getRecoveryEventsByTime(beginTime, String.valueOf(System.currentTimeMillis() / 1000),triggerIds);
+//        List<BriefEventDTO> recoveryEventDTOS = getRecoveryEventsByTime(beginTime, String.valueOf(System.currentTimeMillis() / 1000),triggerIds);
+        List<String> recoveryEventIds = new ArrayList<>();
+        for(BriefEventDTO eventDTO : problemEventDTOS) {
+            if(!"0".equals(eventDTO.getrEventid())) {
+                recoveryEventIds.add(eventDTO.getrEventid());
+            }
+        }
+        //获取 恢复事件集合
+        List<BriefEventDTO> recoveryEventDTOS = getEventByEventId(recoveryEventIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
         List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS);
         //时间排序
@@ -235,7 +243,7 @@ public class EventServiceImpl implements EventService {
         List<String> triggerIds = new ArrayList<>();
         triggerIds.add(triggerId);
         BriefTriggerDTO triggerDTO = triggerService.getTriggersByTriggerIds(triggerIds).get(0);
-        String groupId = triggerDTO.getGroups().get(0).getPlatformId();
+        List<BriefPlatformDTO> groups = triggerDTO.getGroups();
         //step1:Trigger是否为问题状态？是
         if(triggerDTO.getValue().equals(ZApiParameter.TRIGGER_VALUE.OK.value)) {
             //如果不是问题状态
@@ -258,11 +266,14 @@ public class EventServiceImpl implements EventService {
             //所属用户群组 对 Trigger所属主机的主机群组 有读写权限（3）
             List<BriefPermissionDTO> permissionDTOS = usergroupService.getUsrgrpsByUserIds(userIds).get(0).getRights();
             for(BriefPermissionDTO permissionDTO : permissionDTOS) {
-                if(permissionDTO.getId().equals(groupId) && permissionDTO.getPermission().equals(ZApiParameter.USERGROUP_PERMISSION.READ_WRITE)) {
-                    checkboxVO.setCheckboxEnable(true);
-                    checkboxVO.setDisableMessage("问题可关闭");
-                    return checkboxVO;
+                for(BriefPlatformDTO group : groups) {
+                    if(permissionDTO.getId().equals(group.getPlatformId()) && permissionDTO.getPermission().equals(ZApiParameter.USERGROUP_PERMISSION.READ_WRITE)) {
+                        checkboxVO.setCheckboxEnable(true);
+                        checkboxVO.setDisableMessage("问题可关闭");
+                        return checkboxVO;
+                    }
                 }
+
             }
             //循环结束还未返回方法，则无权限
             checkboxVO.setCheckboxEnable(false);
@@ -457,13 +468,65 @@ public class EventServiceImpl implements EventService {
 
     /**
      * 组装当天一天的 问题事件数量 ProblemListVOS
-     * @param today
+     * @param formQuery
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<ProblemListVO> getOneDayProblemListVOS(LocalDate today,CalendarFormQuery formQuery) throws ServiceException {
-        return null;
+    public List<ProblemListVO> getOneDayProblemListVOS(CalendarFormQuery formQuery) throws ServiceException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime todayTime = LocalDate.parse(formQuery.getToday(),formatter).atStartOfDay();
+        Long beginTime = todayTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000;
+        Long endTime = beginTime + 24 * 3600;
+        //处理依赖关系
+        List<BriefTriggerDTO> triggerDTOS = triggerService.listTriggersSkipDependent();
+        List<String > triggerIds = new ArrayList<>();
+        for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+            triggerIds.add(triggerDTO.getTriggerId());
+        }
+        List<BriefEventDTO> problemEventDTOS = getProblemEventsByTime(String.valueOf(beginTime),String.valueOf(endTime),triggerIds);
+        //用于接收查询条件后的结果DTO
+        List<BriefEventDTO> resultEventDTOS = new ArrayList<>();
+        //处理查询条件 resultEventDTOS
+        for(BriefEventDTO eventDTO : problemEventDTOS) {
+            boolean selectHost;
+            boolean selectPrority ;
+            boolean selectAcknowledge;
+            //host查询
+            if(formQuery.getHostId() == null) {
+                selectHost = true;
+            }else {
+                selectHost = eventDTO.getHosts().get(0).getHostId().equals(formQuery.getHostId());
+            }
+            //严重性查询
+            if(formQuery.getPriority() == null) {
+                selectPrority = true;
+            }else {
+                selectPrority = eventDTO.getRelatedObject().getPriority().equals(formQuery.getPriority());
+            }
+            //确认查询
+            if(formQuery.getAcknowledge() == null) {
+                selectAcknowledge = true;
+            }else {
+                selectAcknowledge = eventDTO.getAcknowledged().equals(formQuery.getAcknowledge());
+            }
+            //执行过滤条件
+            if(selectHost && selectPrority && selectAcknowledge) {
+                resultEventDTOS.add(eventDTO);
+            }
+        }
+        List<String> recoveryEventIds = new ArrayList<>();
+        for(BriefEventDTO eventDTO : resultEventDTOS) {
+            if(!"0".equals(eventDTO.getrEventid())) {
+                recoveryEventIds.add(eventDTO.getrEventid());
+            }
+        }
+        //获取 恢复事件集合
+        List<BriefEventDTO> recoveryEventDTOS = getEventByEventId(recoveryEventIds);
+        //将 BriefProblemDTO 转换成 ProblemListVO
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(resultEventDTOS,recoveryEventDTOS);
+        //时间排序
+        return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }
 
 
