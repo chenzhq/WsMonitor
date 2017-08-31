@@ -18,10 +18,10 @@
 				border-left: 0px;
 			}
 			.ui.special.popup.confirm{
-				height: 260px;width: 700px;overflow-y:auto;overflow-x:hidden
+				max-height: 260px;overflow-y:auto;overflow-x:hidden
 			}
 			.ui.special.popup.alarmed{
-				height: 260px;width: 700px;overflow-y:auto;overflow-x:hidden
+				max-height: 260px;overflow-y:auto;overflow-x:hidden
 			}
 			#table_modal_confirm{
 				overflow-y:auto;
@@ -32,6 +32,7 @@
 			.ui.tab.segment.detail{
 				height: 260px;overflow-y:auto;overflow-x:hidden
 			}
+			.ui.tab.segment.noMargin{ margin:0; }
 		</style>
 	</th:block>
 </head>
@@ -251,71 +252,6 @@
 							<div class="ui segment noBorder">
 								<div class="sixteen wide column">
 									<table  id="problemsTable" class="ui compact very basic table center aligned ">
-										<!--静态数据 start-->
-										<thead>
-										<tr>
-											<th class="two wide">发生时间</th>
-											<th class="two wide">设备</th>
-											<th class="three wide">问题</th>
-											<th class="one wide">严重性</th>
-											<th class="one wide">状态</th>
-											<th class="two wide">恢复时间</th>
-											<th class="one wide">持续时间</th>
-											<th class="two wide">告警状态</th>
-											<th class="one wide">确认</th>
-											<th class="one wide">操作</th>
-										</tr></thead>
-										<tbody>
-										<tr>
-											<td>2017-8-22 15:10:03</td>
-											<td>设备2</td>
-											<td><a href="problemdetail.html">主机1内存使用率超过90%</a></td>
-											<td style="color: red">严重</td>
-											<td><a href="javascript:void(0)" class="alarmed">已解决</a></td>
-											<td>2017-8-25 15:18:22</td>
-											<td>2秒</td>
-											<td>成功，告警数1</td>
-											<td><a href="javascript:void(0)" class="confirm">是</a></td>
-											<td><a href="javascript:void(0)" class="detail">事件详情</a></td>
-										</tr>
-										<tr>
-											<td><a href="javascript:void(0)" class="modal">2017-8-22 15:10:03</a></td>
-											<td>设备2</td>
-											<td><a href="problemdetail.html">主机1内存使用率超过90%</a></td>
-											<td style="color: yellow">告警</td>
-											<td>问题</td>
-											<td></td>
-											<td>82秒</td>
-											<td>发送中，告警数5</td>
-											<td>否</td>
-											<td><a href="javascript:void(0)" class="detail">事件详情</a></td>
-										</tr>
-										<tr>
-											<td>2017-8-22 15:10:03</td>
-											<td>设备2</td>
-											<td><a href="problemdetail.html">主机1内存使用率超过90%</a></td>
-											<td style="color: green">一般</td>
-											<td><a href="javascript:void(0)" class="alarmed">已解决</a></td>
-											<td>2017-8-25 15:18:22</td>
-											<td>2秒</td>
-											<td>失败，告警数0</td>
-											<td><a href="javascript:void(0)" class="confirm">是</a></td>
-											<td><a href="javascript:void(0)" class="detail">事件详情</a></td>
-										</tr>
-										<tr>
-											<td>2017-8-22 15:10:03</td>
-											<td>设备2</td>
-											<td><a href="problemdetail.html">主机1内存使用率超过90%</a></td>
-											<td style="color: red">严重</td>
-											<td>问题</td>
-											<td>2017-8-25 15:18:22</td>
-											<td>2秒</td>
-											<td>发送中,告警数2</td>
-											<td><a href="javascript:void(0)" class="confirm">否</a></td>
-											<td><a href="javascript:void(0)" class="detail">事件详情</a></td>
-										</tr>
-										</tbody>
-										<!--静态数据 end-->
 									</table>
 								</div>
 							</div>
@@ -325,7 +261,7 @@
 				<!--已告警提示框 start-->
 				<div class="ui special popup alarmed">
 					<div class="sixteen wide column">
-						<table class="ui very basic compact collapsing celled fixed single line table">
+						<table class="ui very basic compact collapsing celled fixed single line table center aligned">
 							<thead>
 							<tr>
 								<th class="four wide">步骤</th>
@@ -334,26 +270,9 @@
 								<th class="four wide">接收者</th>
 							</tr></thead>
 							<tbody id="alarmedTable">
-							<!--静态数据 start-->
 							<tr>
-								<td>1</td>
-								<td>2017-08-12 11:13:39</td>
-								<td>已发送通知(0)</td>
-								<td>chen[chenzhq.2@gmail.com]</td>
+								<td colspan="4">无数据</td>
 							</tr>
-							<tr>
-								<td>2</td>
-								<td>2017-08-12 11:13:39</td>
-								<td>已发送通知(1)</td>
-								<td>admin[admin@gmail.com]</td>
-							</tr>
-							<tr>
-								<td>1</td>
-								<td>2017-08-12 11:13:39</td>
-								<td>已发送通知(0)</td>
-								<td>admin[admin@gmail.com]</td>
-							</tr>
-							<!--静态数据 end-->
 							</tbody>
 						</table>
 					</div>
@@ -361,7 +280,7 @@
 				<!--已告警提示框 end-->
 				<!--确认记录提示框 start-->
 				<div class="ui special popup confirm">
-					<table class="ui very basic compact collapsing celled fixed single line table">
+					<table class="ui very basic compact collapsing celled fixed single line table center aligned">
 						<thead>
 						<tr>
 							<th class="four wide">时间</th>
@@ -370,26 +289,9 @@
 							<th class="four wide">用户动作</th>
 						</tr></thead>
 						<tbody id="confirmTable">
-						<!--静态数据 start-->
 						<tr>
-							<td>2017-8-22 15:10:03</td>
-							<td>yans(12312@qq.com)</td>
-							<td>主机1内存使用率超过90%</td>
-							<td>已关闭</td>
+							<td colspan="4">无数据</td>
 						</tr>
-						<tr>
-							<td>2017-8-22 15:10:03</td>
-							<td>yans(12312@qq.com)</td>
-							<td>主机1内存使用率超过90%</td>
-							<td>未关闭</td>
-						</tr>
-						<tr>
-							<td>2017-8-22 15:10:03</td>
-							<td>yans(12312@qq.com)</td>
-							<td>主机1内存使用率超过90%</td>
-							<td></td>
-						</tr>
-						<!--静态数据 end-->
 						</tbody>
 					</table>
 				</div>
@@ -402,7 +304,7 @@
 								<input type="text" id="confirmmodal_text" placeholder="不能为空">
 							</div>
 							<div id="table_modal_confirm">
-								<table class="ui celled striped compact single line table">
+								<table class="ui celled striped compact single line table center aligned">
 									<thead>
 									<tr>
 										<th class="four wide">时间</th>
@@ -412,7 +314,7 @@
 									</tr></thead>
 									<tbody id="confirmTable_modal">
 									<tr>
-										<td colspan="4">无历史确认记录</td>
+										<td colspan="4">无数据</td>
 									</tr>
 									</tbody>
 								</table>
@@ -432,19 +334,39 @@
 				</div>
 				<!--确认记录模态框 end-->
 				<!--事件详情模态框 start-->
-				<div class="ui small modal detail">
+				<div class="ui big modal detail">
 					<div class="content">
-						<div class="ui  pointing secondary menu">
+						<div class="ui pointing secondary menu detail">
 							<a class="active item" data-tab="detailDetails">事件细节</a>
 							<a class="item" data-tab="detailConfirm">确认</a>
 							<a class="item" data-tab="detailRecord">告警记录</a>
 						</div>
-						<div class="ui active tab segment detail" data-tab="detailDetails">
-							<p>[所属主机，监控点名称，监控项名称]考虑合并在一起显示，阀值，（触发器）描述，发生时间，恢复时间，手动关闭[Admin/无]</p>
+						<div class="ui active tab segment detail noMargin" data-tab="detailDetails">
+							<table class="ui very basic compact fixed table center aligned">
+								<thead>
+								<tr>
+									<th colspan="3">监控信息</th>
+									<th rowspan="2">阀值</th>
+									<th rowspan="2">触发器描述</th>
+									<th rowspan="2">发生时间</th>
+									<th rowspan="2">恢复时间</th>
+									<th rowspan="2">手动关闭(操作人)</th>
+								</tr>
+								<tr>
+									<th>所属主机</th>
+									<th>监控点</th>
+									<th>监控项</th>
+								</tr>
+								</thead>
+								<tbody id="detailTable_tab">
+								<tr>
+									<td colspan="8">无数据</td>
+								</tr>
+								</tbody>
+							</table>
 						</div>
-						<div class="ui tab segment detail" data-tab="detailConfirm">
-							<table class="ui very basic compact fixed single line table">
-								<!--静态数据 start-->
+						<div class="ui tab segment detail noMargin" data-tab="detailConfirm">
+							<table class="ui very basic compact fixed single line table center aligned">
 								<thead>
 								<tr>
 									<th class="four wide">时间</th>
@@ -454,69 +376,27 @@
 								</tr></thead>
 								<tbody id="confirmTable_tab">
 								<tr>
-									<td>2017-8-22 15:10:03</td>
-									<td>yans(12312@qq.com)</td>
-									<td>主机1内存使用率超过90%</td>
-									<td>已关闭</td>
-								</tr>
-								<tr>
-									<td>2017-8-22 15:10:03</td>
-									<td>yans(12312@qq.com)</td>
-									<td>主机1内存使用率超过90%</td>
-									<td>未关闭</td>
-								</tr>
-								<tr>
-									<td>2017-8-22 15:10:03</td>
-									<td>yans(12312@qq.com)</td>
-									<td>主机1内存使用率超过90%</td>
-									<td></td>
+									<td colspan="4">无历史确认记录</td>
 								</tr>
 								</tbody>
-								<!--静态数据 end-->
 							</table>
 						</div>
-						<div class="ui tab segment detail" data-tab="detailRecord">
-							<table class="ui very basic compact celled fixed single line table">
+						<div class="ui tab segment detail noMargin" data-tab="detailRecord">
+							<table class="ui very basic compact celled fixed single line table center aligned">
 								<thead>
 								<tr>
-									<th class="four wide">步骤</th>
-									<th class="four wide">时间</th>
-									<th class="four wide">接收者</th>
-									<th class="four wide">告警方式</th>
+									<th class="one wide">步骤</th>
+									<th class="three wide">时间</th>
+									<th class="two wide">接收者</th>
+									<th class="one wide">方式</th>
 									<th class="four wide">主题</th>
 									<th class="four wide">信息</th>
-									<th class="four wide">状态（重试次数）</th>
+									<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
 								</tr></thead>
 								<tbody id="alarmedTable_tab">
-								<!--静态数据 start-->
 								<tr>
-									<td>1</td>
-									<td>2017-08-12 11:13:39</td>
-									<td>告警方式</td>
-									<td>主题</td>
-									<td>信息</td>
-									<td>chen[chenzhq.2@gmail.com]</td>
-									<td>已发送通知(0)</td>
+									<td colspan="7">无历史确认记录</td>
 								</tr>
-								<tr>
-									<td>2</td>
-									<td>2017-08-12 11:13:39</td>
-									<td>告警方式</td>
-									<td>主题</td>
-									<td>信息</td>
-									<td>admin[admin@gmail.com]</td>
-									<td>已发送通知(1)</td>
-								</tr>
-								<tr>
-									<td>1</td>
-									<td>2017-08-12 11:13:39</td>
-									<td>告警方式</td>
-									<td>主题</td>
-									<td>信息</td>
-									<td>admin[admin@gmail.com]</td>
-									<td>已发送通知(0)</td>
-								</tr>
-								<!--静态数据 end-->
 								</tbody>
 							</table>
 						</div>
@@ -575,6 +455,10 @@
                 $('#problemsTable a.detail').on('click',function(){
                     var event_id=$(this).attr("data-id");
                     //初始化事件详情模态框
+                    $('.ui.menu.detail a').removeClass("active");
+                    $('.ui.tab.detail').removeClass("active");
+                    $('.ui.menu.detail a:eq(0)').addClass("active");
+                    $('.ui.tab.detail:first').addClass("active");
                     detailmodal(event_id);
                     $('.ui.modal.detail').modal('setting', 'closable', false).modal('show');
                     //初始化事件详情模态框
@@ -702,10 +586,10 @@
                 {
                     "data": null,
                     "width": "15%",
-                    "title": "[告警状态]",
+                    "title": "告警状态",
                     "orderable": false,
                     render: function(data, type, row, meta) {
-                        return row.alert_state + '，告警数' + row.alert_num;
+                        return row.alert_state + '(' + row.alert_num + ')';
                     }
                 },
                 {
@@ -778,9 +662,9 @@
             else if(data[i].action == '1'){
                 var action = '已确认';
             }
-			str += "<tr id='"+data[i].acknowledge_id+"'><td>"
+			str += "<tr><td>"
 				+data[i].clock+"</td><td>"
-				+data[i].alias+"</td><td>"
+				+data[i].alias+"</td><td class='left aligned'>"
 				+data[i].message+"</td><td>"
 				+action+"</td></tr>"
         }
@@ -810,10 +694,10 @@
         var str = '';
         for(var i=0;i<data.length;i++)
         {
-            str += "<tr id='"+data[i].alert_id+"'><td>"
+            str += "<tr><td>"
                 +data[i].esc_step+"</td><td>"
                 +data[i].last_time+"</td><td>"
-                +data[i].status+")"+data[i].retries+")</td><td>"
+                +data[i].status+"("+data[i].retries+")</td><td>"
                 +data[i].sendto+"</td></tr>"
         }
         $("#alarmedTable").html(str);
@@ -823,7 +707,7 @@
     function detailmodal(event_id) {
         $.ajax({
             type: "get",
-            url: "/problemlist/get_alerts?event_id=" + event_id,
+            url: "/eventdetail/get_detail?event_id=" + event_id,
             dataType: "json",
             success: function (result) {
                 if (result.success) {
@@ -841,7 +725,23 @@
     }
     //获取事件详情模态框，细节列表
     function getdetailmodal(data){
-        //待完成
+        var str = '';
+		if(data.closed == true){
+			var closed = '已关闭';
+		}
+		else if(data.closed == false){
+			var closed = '未关闭';
+		}
+		str += "<tr><td>"
+			+data.host_name+"</td><td>"
+			+data.point_name+"</td><td>"
+			+data.item_name+"</td><td>"
+			+data.threshold+"</td><td>"
+			+data.trigger_name+"</td><td>"
+			+data.problem_time+"</td><td>"
+			+data.recovery_time+"</td><td>"
+			+closed+"("+data.closed_user+")</td></tr>"
+        $("#detailTable_tab").html(str);
     }
     //连接事件详情模态框，确认列表
     function detailconfirm(event_id) {
@@ -874,9 +774,9 @@
             else if(data[i].action == '1'){
                 var action = '已确认';
             }
-            str += "<tr id='"+data[i].acknowledge_id+"'><td>"
+            str += "<tr><td>"
                 +data[i].clock+"</td><td>"
-                +data[i].alias+"</td><td>"
+                +data[i].alias+"</td><td class='left aligned'>"
                 +data[i].message+"</td><td>"
                 +action+"</td></tr>"
         }
@@ -886,7 +786,7 @@
     function detailrecord(event_id) {
         $.ajax({
             type: "get",
-            url: "/problemlist/get_alerts?event_id=" + event_id,
+            url: "/alertdetail/get_detail?event_id=" + event_id,
             dataType: "json",
             success: function (result) {
                 if (result.success) {
@@ -907,14 +807,14 @@
         var str = '';
         for(var i=0;i<data.length;i++)
         {
-            str += "<tr id='"+data[i].alert_id+"'><td>"
+            str += "<tr><td>"
                 +data[i].esc_step+"</td><td>"
                 +data[i].last_time+"</td><td>"
                 +data[i].sendto+"</td><td>"
-                +data[i].recovery+"</td><td>"
-                +data[i].recovery+"</td><td>"
-                +data[i].status+"</td><td>"
-                +data[i].recovery+"("+data[i].retries+")</td></tr>"
+                +data[i].alert_type+"</td><td class='left aligned' title='"+data[i].subject+"'>"
+                +data[i].subject+"</td><td class='left aligned' title='"+data[i].message+"'>"
+                +data[i].message+"</td><td>"
+                +data[i].status+"("+data[i].retries+")</td></tr>"
         }
         $("#alarmedTable_tab").html(str);
     }
@@ -975,9 +875,9 @@
             else if(data[i].action == '1'){
                 var action = '已确认';
             }
-            str += "<tr id='"+data[i].acknowledge_id+"'><td>"
+            str += "<tr><td>"
                 +data[i].clock+"</td><td>"
-                +data[i].alias+"</td><td>"
+                +data[i].alias+"</td><td class='left aligned'>"
                 +data[i].message+"</td><td>"
                 +action+"</td></tr>"
         }
