@@ -749,6 +749,7 @@ public class GraphServiceImpl implements GraphService {
         LocalDateTime endLocal = LocalDateTime.now();
         LocalDateTime beginLocal = LocalDateTime.ofInstant(Instant.ofEpochSecond(beginTime), ZoneId.systemDefault());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd");
+        DateTimeFormatter titleFomatter = DateTimeFormatter.ofPattern("YYYY 年 MM 月 dd 日");
         //处理依赖关系
         List<BriefTriggerDTO> triggerDTOS = triggerService.listTriggersSkipDependent();
         List<String > triggerIds = new ArrayList<>();
@@ -756,13 +757,14 @@ public class GraphServiceImpl implements GraphService {
             triggerIds.add(triggerDTO.getTriggerId());
         }
         List<BriefEventDTO> problemEventDTOS = eventService.getProblemEventsByTime(String.valueOf(beginTime),String.valueOf(endTime),triggerIds);
-        String title = "2017年 6月-12月";
+        String title = beginLocal.format(titleFomatter) + "-" +endLocal.format(titleFomatter);
         List<String> range = new ArrayList<>();
         range.add(beginLocal.format(formatter));
         range.add(endLocal.format(formatter));
         //datas
         List<List<Object>> datas = new ArrayList<>();
         for(int i=0;i<BaseConsts.CALENDAR_DAYS;i++ ) {
+            //当天时间
             LocalDate today = beginLocal.toLocalDate().plusDays(i+1);
             CalendarDayVO calendarDayVO = getOneDayCalendar(today,problemEventDTOS,formQuery);
             //问题数筛选
@@ -855,7 +857,11 @@ public class GraphServiceImpl implements GraphService {
                 }
                 //执行过滤条件
                 if(selectHost && selectPrority && selectAcknowledge) {
-                    problemNum++;
+                    if(problemNum >= 100) {
+                        problemNum = 100;
+                    }else {
+                        problemNum++;
+                    }
                     if("0".equals(eventDTO.getrEventid())) {
                         lighting = true;
                     }

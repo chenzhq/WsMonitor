@@ -243,7 +243,7 @@ public class EventServiceImpl implements EventService {
         List<String> triggerIds = new ArrayList<>();
         triggerIds.add(triggerId);
         BriefTriggerDTO triggerDTO = triggerService.getTriggersByTriggerIds(triggerIds).get(0);
-        String groupId = triggerDTO.getGroups().get(0).getPlatformId();
+        List<BriefPlatformDTO> groups = triggerDTO.getGroups();
         //step1:Trigger是否为问题状态？是
         if(triggerDTO.getValue().equals(ZApiParameter.TRIGGER_VALUE.OK.value)) {
             //如果不是问题状态
@@ -266,11 +266,14 @@ public class EventServiceImpl implements EventService {
             //所属用户群组 对 Trigger所属主机的主机群组 有读写权限（3）
             List<BriefPermissionDTO> permissionDTOS = usergroupService.getUsrgrpsByUserIds(userIds).get(0).getRights();
             for(BriefPermissionDTO permissionDTO : permissionDTOS) {
-                if(permissionDTO.getId().equals(groupId) && permissionDTO.getPermission().equals(ZApiParameter.USERGROUP_PERMISSION.READ_WRITE)) {
-                    checkboxVO.setCheckboxEnable(true);
-                    checkboxVO.setDisableMessage("问题可关闭");
-                    return checkboxVO;
+                for(BriefPlatformDTO group : groups) {
+                    if(permissionDTO.getId().equals(group.getPlatformId()) && permissionDTO.getPermission().equals(ZApiParameter.USERGROUP_PERMISSION.READ_WRITE)) {
+                        checkboxVO.setCheckboxEnable(true);
+                        checkboxVO.setDisableMessage("问题可关闭");
+                        return checkboxVO;
+                    }
                 }
+
             }
             //循环结束还未返回方法，则无权限
             checkboxVO.setCheckboxEnable(false);
