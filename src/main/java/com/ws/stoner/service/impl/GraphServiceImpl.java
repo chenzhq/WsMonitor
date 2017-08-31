@@ -760,16 +760,32 @@ public class GraphServiceImpl implements GraphService {
         List<String> range = new ArrayList<>();
         range.add(beginLocal.format(formatter));
         range.add(endLocal.format(formatter));
-        //lightDatas,dimDatas
+        //datas
         List<List<Object>> datas = new ArrayList<>();
         for(int i=0;i<BaseConsts.CALENDAR_DAYS;i++ ) {
             LocalDate today = beginLocal.toLocalDate().plusDays(i+1);
             CalendarDayVO calendarDayVO = getOneDayCalendar(today,problemEventDTOS,formQuery);
-            List<Object> oneDay = new ArrayList<>();
-            oneDay.add(calendarDayVO.getDate());
-            oneDay.add(calendarDayVO.getProblemNum());
-            oneDay.add(calendarDayVO.isLighting());
-            datas.add(oneDay);
+            //问题数筛选
+            boolean selectNum ;
+            if(formQuery.getProblemNum() == null) {
+                selectNum = true;
+            }else if(formQuery.getProblemNum() == "0~2" && calendarDayVO.getProblemNum() <= 2 ) {
+                selectNum = true;
+            }else if(formQuery.getProblemNum() == "2~5" && calendarDayVO.getProblemNum() > 2 && calendarDayVO.getProblemNum() <= 5) {
+                selectNum = true;
+            }else if(formQuery.getProblemNum() == "5个以上" && calendarDayVO.getProblemNum() > 5){
+                selectNum = true;
+            }else{
+                selectNum = false;
+            }
+            //problemNum条件过滤
+            if(selectNum) {
+                List<Object> oneDay = new ArrayList<>();
+                oneDay.add(calendarDayVO.getDate());
+                oneDay.add(calendarDayVO.getProblemNum());
+                oneDay.add(calendarDayVO.isLighting());
+                datas.add(oneDay);
+            }
         }
         CalendarVO calendarVO = new CalendarVO(title,range,datas);
         return calendarVO;
@@ -814,8 +830,8 @@ public class GraphServiceImpl implements GraphService {
         for(BriefEventDTO eventDTO : problemEventDTOS) {
             //过滤  event
             LocalDate day = eventDTO.getClock().toLocalDate();
+            //满足当天的 event
             if((day.isAfter(today)||day.isEqual(today)) && day.isBefore(nextDay)) {
-                //满足当天的 event
                 boolean selectHost;
                 boolean selectPrority ;
                 boolean selectAcknowledge;

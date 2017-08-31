@@ -10,6 +10,7 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
+import com.ws.stoner.model.query.CalendarFormQuery;
 import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.AlertStatusConverter;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -451,6 +453,17 @@ public class EventServiceImpl implements EventService {
 
         return eventDetailVO;
 
+    }
+
+    /**
+     * 组装当天一天的 问题事件数量 ProblemListVOS
+     * @param today
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<ProblemListVO> getOneDayProblemListVOS(LocalDate today,CalendarFormQuery formQuery) throws ServiceException {
+        return null;
     }
 
 

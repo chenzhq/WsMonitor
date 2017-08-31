@@ -3,8 +3,10 @@ package com.ws.stoner.service;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
 import com.ws.stoner.model.dto.BriefEventDTO;
+import com.ws.stoner.model.query.CalendarFormQuery;
 import com.ws.stoner.model.view.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -105,6 +107,14 @@ public interface EventService {
      * @throws ServiceException
      */
     EventDetailVO getEventDetailByEventId(String eventId) throws ServiceException;
+
+    /**
+     * 组装当天一天的 问题事件数量 ProblemListVOS
+     * @param today
+     * @return
+     * @throws ServiceException
+     */
+    List<ProblemListVO> getOneDayProblemListVOS(LocalDate today, CalendarFormQuery formQuery) throws ServiceException;
 
 
 }
