@@ -4,7 +4,6 @@ import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.event.EventAcknowledgeRequest;
 import com.ws.bix4j.access.event.EventGetRequest;
-import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;

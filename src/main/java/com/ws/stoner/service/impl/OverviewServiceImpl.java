@@ -9,9 +9,11 @@ import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Group;
 import com.ws.stoner.model.dto.*;
+import com.ws.stoner.model.view.OverViewHostVO;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.service.TemplateService;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ public class OverviewServiceImpl implements OverviewService {
     private OverviewGroupRepository overviewGroupRepository;
 
     @Autowired
-    private HostService hostServiceImpl;
+    private HostService hostService;
 
     @Autowired
     private TemplateService templateService;
@@ -50,7 +52,7 @@ public class OverviewServiceImpl implements OverviewService {
         //step1:调用  listAllHost()，listProblemHost(triggerIds) ,listAllTemplate(),组装ProblemHostIds
         List<BriefHostDTO> allHosts ;
         List<BriefTemplateDTO> allTemplates;
-        allHosts = hostServiceImpl.listAllHost();
+        allHosts = hostService.listAllHost();
         allTemplates = templateService.listAllTemplate();
         //step:2 初始化 root节点
             //root节点为空
@@ -110,7 +112,7 @@ public class OverviewServiceImpl implements OverviewService {
         }
         //step:3 创建list，调用list = getGroupTree()
         List<OverviewListGroupDTO> overviewListGroupDTOS = new ArrayList<>();
-        overviewListGroupDTOS = getGroupTree("root", overviewListGroupDTOS,allHosts);
+        formatGroupTree("root", overviewListGroupDTOS,allHosts);
         //step:4 反转list，循环 list，
         Collections.reverse(overviewListGroupDTOS);
         for(OverviewListGroupDTO overviewListGroupDTO : overviewListGroupDTOS) {
@@ -402,9 +404,9 @@ public class OverviewServiceImpl implements OverviewService {
         List<OverviewListGroupDTO> rootTree = new ArrayList<>();
         List<OverviewListGroupDTO> moveGroupTree = new ArrayList<>();
         //调用
-        rootTree =  getGroupTree("root",rootTree,new ArrayList<BriefHostDTO>());
+        formatGroupTree("root",rootTree,new ArrayList<BriefHostDTO>());
         if(!"".equals(groupName) && groupName != null) {
-            moveGroupTree =  getGroupTree(groupName,moveGroupTree,new ArrayList<BriefHostDTO>());
+            formatGroupTree(groupName,moveGroupTree,new ArrayList<BriefHostDTO>());
             //状态赋值，state = 0,表示可选择，1表示不可选择
             for(OverviewListGroupDTO group : rootTree) {
                 if(moveGroupTree.contains(group)) {
@@ -422,7 +424,74 @@ public class OverviewServiceImpl implements OverviewService {
         return rootTree;
     }
 
-    private List<OverviewListGroupDTO> getGroupTree(String name, List<OverviewListGroupDTO> overviewListGroupDTOS, List<BriefHostDTO> allHosts)  {
+    /**
+     * 获取主机选择树
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<OverViewHostVO> getSelectHostVOS() throws ServiceException {
+        List<Group> allGroups = overviewGroupRepository.findAll();
+        List<BriefHostDTO> allHosts = hostService.listAllHost();
+        List<OverViewHostVO> hostVOS = new ArrayList<>();
+        for(Group group : allGroups) {
+            List<String> hostIds = Arrays.asList(group.getHostChildren());
+            int okNum = 0;
+            int warningNum  = 0;
+            int highNum = 0;
+            for(BriefHostDTO hostDTO : allHosts) {
+                if(hostIds.contains(hostDTO.getHostId())) {
+                    String hostState = StatusConverter.getTextStatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                    OverViewHostVO hostVO = new OverViewHostVO(
+                            hostDTO.getHostId(),
+                            group.getcId(),
+                            hostDTO.getName(),
+                            OverviewTypeEnum.HOST.getName(),
+                            hostState
+                    );
+                    hostVOS.add(hostVO);
+                   if(StatusEnum.HIGH.text.equals(hostState)) {
+                       highNum++;
+                   }else if(StatusEnum.WARNING.text.equals(hostState)) {
+                       warningNum++;
+                   }else {
+                       okNum++;
+                   }
+                }
+            }
+            String groupState ;
+            String parent ;
+            if(highNum > 0) {
+                groupState = StatusEnum.HIGH.text;
+            }else if(warningNum > 0) {
+                groupState = StatusEnum.WARNING.text;
+            }else {
+                groupState = StatusEnum.OK.text;
+            }
+            if("root".equals(group.getName())) {
+                parent = "#";
+            }else {
+                parent = group.getpId();
+            }
+            OverViewHostVO groupVO = new OverViewHostVO(
+                    group.getcId(),
+                    parent,
+                    group.getName(),
+                    OverviewTypeEnum.GROUP.getName(),
+                    groupState
+            );
+            hostVOS.add(groupVO);
+        }
+        return hostVOS;
+    }
+
+    /**
+     * 根据指定顺序 格式化树
+     * @param name 从哪个节点开始格式化
+     * @param overviewListGroupDTOS  被格式化组对象
+     * @param allHosts 用于匹配设备id获取 name 和state，若为空则表示不显示设备格式化
+     */
+    private void formatGroupTree(String name, List<OverviewListGroupDTO> overviewListGroupDTOS, List<BriefHostDTO> allHosts)  {
         //step1:新建List<OverviewListGroupDTO> list,OverviewListGroupDTO mongoGroup,根据name查出mongoGroupDO
         Group group = overviewGroupRepository.findByName(name);
         //step2:给vo赋值，cid，pid，name,groupChildren，添加vo到list中
@@ -441,7 +510,7 @@ public class OverviewServiceImpl implements OverviewService {
         if(group.getGroupChildren().length != 0) {
             //是：循环 group_children ，取name，递归调用 list = getGroupTree(name,list)
             for(String groupName : group.getGroupChildren()) {
-                overviewListGroupDTOS = getGroupTree(groupName, overviewListGroupDTOS,allHosts);
+                formatGroupTree(groupName, overviewListGroupDTOS,allHosts);
             }
         }
         //step4:取DO的 host_children,循环 add host 到 list中 return list
@@ -481,7 +550,6 @@ public class OverviewServiceImpl implements OverviewService {
 
             }
         }
-        return overviewListGroupDTOS;
     }
 
 

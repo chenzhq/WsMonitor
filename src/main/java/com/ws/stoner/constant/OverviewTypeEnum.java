@@ -5,6 +5,7 @@ package com.ws.stoner.constant;
  */
 public enum OverviewTypeEnum {
     GROUP("组"),
+    HOST("设备"),
     POINT("监控点");
 
     OverviewTypeEnum(String name) {

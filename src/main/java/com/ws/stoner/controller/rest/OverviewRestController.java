@@ -4,6 +4,7 @@ import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.OverviewEditGroupDTO;
 import com.ws.stoner.model.dto.OverviewListGroupDTO;
+import com.ws.stoner.model.view.OverViewHostVO;
 import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,17 @@ public class OverviewRestController {
     public String getMoveGroupTree(@RequestParam("group_name") String groupName) throws ServiceException {
         List<OverviewListGroupDTO> olg = overviewService.getMoveGroupTree(groupName);
         return RestResultGenerator.genResult(olg, REST_RESPONSE_SUCCESS).toString();
+    }
+
+    /**
+     * 获取设备选择树 用于选择设备
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "ov/group/select_host", method = RequestMethod.GET)
+    public String getSelectHostTree() throws ServiceException {
+        List<OverViewHostVO> hostVOS = overviewService.getSelectHostVOS();
+        return RestResultGenerator.genResult(hostVOS, REST_RESPONSE_SUCCESS).toString();
     }
 
 }
