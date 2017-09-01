@@ -26,9 +26,14 @@
 			.ui.tab.segment.detail{
 				height: 260px;overflow-y:auto;overflow-x:hidden
 			}
-			.ui.tab.segment.noMargin{ margin:0; }
-			.chartBar{ height: 140px; }
-			.row1Height{ height: 170px; }
+			.ui.segment.detailconfirm{
+				height: 232px;overflow-y:auto;overflow-x:hidden
+			}
+			.ui.segment.detailalarmed{
+				height: 180px;overflow-y:auto;overflow-x:hidden
+			}
+			.chartBar{ height: 110px; }
+			.row1Height{ height: 130px; }
 		</style>
 	</th:block>
 </head>
@@ -237,29 +242,27 @@
 							<div class="sixteen wide column chartBar">
 								<div class="ui grid">
 									<div class="eight wide column">
-										<div class="ui segment left aligned row1Height">
-											<table class="ui very basic compact fixed table center aligned">
-												<thead>
-												<tr>
-													<th colspan="3">监控信息</th>
-													<th rowspan="2">阀值</th>
-													<th rowspan="2">&nbsp触发器描述</th>
-													<th rowspan="2">发生时间</th>
-													<th rowspan="2">恢复时间</th>
-													<th rowspan="2">手动关闭(操作人)</th>
-												</tr>
-												<tr>
-													<th>所属主机</th>
-													<th>监控点</th>
-													<th>监控项</th>
-												</tr>
-												</thead>
-												<tbody id="detailTable">
-												<tr>
-													<td colspan="8">无数据</td>
-												</tr>
-												</tbody>
-											</table>
+										<div class="ui segment  row1Height">
+											<div class="ui two column divided grid">
+												<div class="column" style="padding: 0px">
+													<table class="ui very basic compact single line fixed definition table center aligned">
+														<tbody id="detailTable">
+														<tr>
+															<td colspan="2">无数据</td>
+														</tr>
+														</tbody>
+													</table>
+												</div>
+												<div class="column" style="padding: 0px">
+													<table class="ui very basic compact single line fixed definition table center aligned">
+														<tbody id="detailTable1">
+														<tr>
+															<td colspan="2">无数据</td>
+														</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
 										</div>
 									</div>
 									<div class="eight wide column">
@@ -268,12 +271,16 @@
 										</div>
 									</div>
 									<div class="sixteen wide column">
-										<div  class="ui segment">
-											<div id="host_table_dimmer" class="ui inverted dimmer">
-												<div class="ui text loader">加载</div>
+										<div class="ui segments">
+											<div class="ui segment">
+												<h4 class="ui header">
+													历史记录
+												</h4>
 											</div>
-											<table  id="problemsTable" class="ui compact very basic table center aligned ">
-											</table>
+											<div class="ui segment">
+												<table  id="problemsTable" class="ui compact very basic table center aligned ">
+												</table>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -302,73 +309,81 @@
 				<!--事件详情模态框 start-->
 				<div class="ui big modal detail">
 					<div class="content">
-						<div class="ui pointing secondary menu detail">
-							<a class="active item" data-tab="detailDetails">事件细节</a>
-							<a class="item" data-tab="detailConfirm">确认</a>
-							<a class="item" data-tab="detailRecord">告警记录</a>
+						<div class="sixteen wide column">
+							<div class="ui grid">
+								<div class="eight wide column">
+									<div class="ui segments">
+										<div class="ui segment">
+											<h4 class="ui header">
+												事件细节
+											</h4>
+										</div>
+										<div class="ui segment no-padding detailconfirm">
+											<table class="ui very basic compact fixed definition table center aligned">
+												<tbody id="detailTable_tab">
+												<tr>
+													<td colspan="2">无数据</td>
+												</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+								<div class="eight wide column">
+									<div class="ui segments">
+										<div class="ui segment">
+											<h4 class="ui header">
+												确认记录
+											</h4>
+										</div>
+										<div class="ui segment detailconfirm">
+											<table class="ui very basic compact fixed single line table center aligned">
+												<thead>
+												<tr>
+													<th class="four wide">时间</th>
+													<th class="four wide">用户</th>
+													<th class="four wide">消息</th>
+													<th class="four wide">用户动作</th>
+												</tr></thead>
+												<tbody id="confirmTable_tab">
+												<tr>
+													<td colspan="4">无历史确认记录</td>
+												</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+								<div class="sixteen wide column">
+									<div class="ui segments">
+										<div class="ui segment">
+											<h4 class="ui header">
+												告警记录
+											</h4>
+										</div>
+										<div class="ui segment detailalarmed">
+											<table class="ui very basic compact fixed single line table center aligned">
+												<thead>
+												<tr>
+													<th class="one wide">步骤</th>
+													<th class="three wide">时间</th>
+													<th class="two wide">接收者</th>
+													<th class="one wide">方式</th>
+													<th class="four wide">主题</th>
+													<th class="four wide">信息</th>
+													<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
+												</tr></thead>
+												<tbody id="alarmedTable_tab">
+												<tr>
+													<td colspan="7">无历史确认记录</td>
+												</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
-						<div class="ui active tab segment detail noMargin" data-tab="detailDetails">
-							<table class="ui very basic compact fixed table center aligned">
-								<thead>
-								<tr>
-									<th colspan="3">监控信息</th>
-									<th rowspan="2">阀值</th>
-									<th rowspan="2">触发器描述</th>
-									<th rowspan="2">发生时间</th>
-									<th rowspan="2">恢复时间</th>
-									<th rowspan="2">手动关闭(操作人)</th>
-								</tr>
-								<tr>
-									<th>所属主机</th>
-									<th>监控点</th>
-									<th>监控项</th>
-								</tr>
-								</thead>
-								<tbody id="detailTable_tab">
-								<tr>
-									<td colspan="8">无数据</td>
-								</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="ui tab segment detail noMargin" data-tab="detailConfirm">
-							<table class="ui very basic compact fixed single line table center aligned">
-								<thead>
-								<tr>
-									<th class="four wide">时间</th>
-									<th class="four wide">用户</th>
-									<th class="four wide">消息</th>
-									<th class="four wide">用户动作</th>
-								</tr></thead>
-								<tbody id="confirmTable_tab">
-								<tr>
-									<td colspan="4">无历史确认记录</td>
-								</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="ui tab segment detail noMargin" data-tab="detailRecord">
-							<table class="ui very basic compact celled fixed single line table center aligned">
-								<thead>
-								<tr>
-									<th class="one wide">步骤</th>
-									<th class="three wide">时间</th>
-									<th class="two wide">接收者</th>
-									<th class="one wide">方式</th>
-									<th class="four wide">主题</th>
-									<th class="four wide">信息</th>
-									<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
-								</tr></thead>
-								<tbody id="alarmedTable_tab">
-								<tr>
-									<td colspan="7">无历史确认记录</td>
-								</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-					<div class="actions">
-						<div class="ui cancel button">取消</div>
 					</div>
 				</div>
 				<!--事件详情模态框 end-->
@@ -419,74 +434,131 @@
                 //绘制图标数据
                 var platform_chart = echarts.init(document.getElementById("problemChart"));
                 //配置option
-                var option = {
-                    title: {
-                        show:true,
-                        text: '',
-                        top:'-5px'
-                    },
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer : {
-                            type : false
+                var data = [
+                    [1447923064, 1567933064, 1, 'green'],
+                    [1567933064, 1607943064, 1, 'yellow'],
+                    [1607943064, 1647953064, 1, 'red'],
+                    [1547944064, 0, 0, ' '],
+                    [1597955064, 0, 0, ' '],
+                    [1647953064, 0, 0, ' '],
+                ]
+                data = echarts.util.map(data, function(item, index) {
+                    return {
+                        name: '状态',
+                        value: item,
+                        itemStyle: {
+                            normal: {
+                                color: item[3]
+                            }
                         }
+                    }
+                })
+
+                function renderItem(params, api) {
+                    var start = api.coord([api.value(0), 0])
+                    var end = api.coord([api.value(1), 0])
+                    var height = api.size([0, 1])[1] * 0.6;
+                    if(api.value(2) === 0) {
+                        return {
+                            type: 'line',
+                            shape: {
+                                x1: start[0],
+                                y1: start[1] - height / 1.5,
+                                x2: start[0],
+                                y2: start[1] + height /1.5,
+                            },
+                            style: {stroke: 'black', lineWidth: 2},
+                            z: 100
+                        }
+                    }
+                    return {
+                        type: 'rect',
+                        shape: echarts.graphic.clipRectByRect({
+                            x: start[0],
+                            y: start[1] - height / 2,
+                            width: end[0] - start[0],
+                            height: height
+                        }, {
+                            x: params.coordSys.x,
+                            y: params.coordSys.y,
+                            width: params.coordSys.width,
+                            height: params.coordSys.height
+                        }),
+                        style: api.style(),
+                        z: 3
+                    }
+                }
+
+                option = {
+                    tooltip: {
+                        formatter: function (params) {
+                            return params.marker + params.value[3] + ': ' + params.value[2] + ' ms';
+                        }
+                    },
+                    title: {
+                        text: '',
+                        left: 'center'
                     },
                     legend: {
-                        orient: 'vertical',
-                        x: 'right',
-                        y: 'center',
-                        data:['严重','警告','正常']
+                        data: ['bar', 'error']
                     },
+                    dataZoom: [{
+                        type: 'slider',
+                        filterMode: 'weakFilter',
+                        showDataShadow: false,
+                        top: 100,
+                        height: 10,
+                        borderColor: 'transparent',
+                        backgroundColor: '#e2e2e2',
+                        handleIcon: 'M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z', // jshint ignore:line
+                        handleSize: 20,
+                        handleStyle: {
+                            shadowBlur: 6,
+                            shadowOffsetX: 1,
+                            shadowOffsetY: 2,
+                            shadowColor: '#aaa'
+                        },
+                        labelFormatter: '',
+                        minSpan: 10
+                    }],
                     grid: {
-                        left: '2%',
-                        right: '10%',
-                        bottom: '0%',
-                        top:'3%',
-                        containLabel: true
+                        height:60,
+                        top: -0,
                     },
-                    xAxis:  {
-                        type: 'value',
-                        splitLine:{show: false},
-                        minInterval : 1
+                    xAxis: {
+                        type: 'time',
+                        splitLine: {
+                            show: false
+                        }
                     },
                     yAxis: {
-                        type: 'category',
                         data: ['状态']
-                        //data: platform_data.types
                     },
-                    series: [
-                        {
-                            name: '正常',
-                            type: 'bar',
-                            stack: '设备总数',
-
-
-                            data: ['2'],
-                            //data: platform_data.datas[0],
-                            color: ['#5FB878']
+                    series: [{
+                        type: 'custom',
+                        renderItem: renderItem,
+                        itemStyle: {
+                            normal: {
+                                opacity: 0.5
+                            }
                         },
-                        {
-                            name: '警告',
-                            type: 'bar',
-                            stack: '设备总数',
-                            barWidth : 25,
-                            data: ['2'],
-                            //data: platform_data.datas[1],
-                            color: ['#F7B824']
-                        },
-                        {
-                            name: '严重',
-                            type: 'bar',
-                            stack: '设备总数',
-                            barWidth : 25,
-                            data: ['2'],
-                            //data: platform_data.datas[2],
-                            color: ['#DB2828']
-                        }
-                    ]
+                        data: data
+                    }]
                 };
                 //根据配置绘制图形
                 platform_chart.setOption(option);
+                //点击每个节点，获取时间段
+                platform_chart.on('click', function (params) {
+                    var calendar =params.data;
+                    console.log(calendar.value)
+					var starttime=new Date(calendar.value[0])
+					if(calendar.value[1]!=0){
+                        var endtime=new Date(calendar.value[1])
+					}else {
+                        var endtime="无";
+					}
+					alert("开始时间:"+starttime+"结束时间:"+endtime)
+                });
             }
 		</script>
 		<script>
@@ -513,22 +585,25 @@
             //获取事件细节信息
             function getdetailtable(data){
                 var str = '';
+                var str1 = '';
                 if(data.closed == true){
                     var closed = '已关闭';
                 }
                 else if(data.closed == false){
                     var closed = '未关闭';
                 }
-                str += "<tr><td>"
-                    +data.host_name+"</td><td>"
-                    +data.point_name+"</td><td>"
-                    +data.item_name+"</td><td>"
-                    +data.threshold+"</td><td>"
-                    +data.trigger_name+"</td><td>"
-                    +data.problem_time+"</td><td>"
-                    +data.recovery_time+"</td><td>"
-                    +closed+"("+data.closed_user+")</td></tr>"
+                str += "<tr><td>所属主机</td><td>"
+                    +data.host_name+"</td></tr><tr><td>监控点</td><td>"
+                    +data.point_name+"</td></tr><tr><td>监控项</td><td>"
+                    +data.item_name+"</td></tr><tr><td>阀值</td><td>"
+                    +data.threshold+"</td></tr>"
                 $("#detailTable").html(str);
+                str1 += "<tr><td>手动关闭(操作人)</td><td>"
+                    +closed+"("+data.closed_user+")</td></tr><tr><td>发生时间</td><td>"
+                    +data.problem_time+"</td></tr><tr><td>恢复时间</td><td>"
+                    +data.recovery_time+"</td></tr><tr><td>触发器描述</td><td title='"+data.trigger_name+"'>"
+                    +data.trigger_name+"</td></tr>"
+                $("#detailTable1").html(str1);
             }
             //连接确认记录提示框
             function confirmpopup(event_id) {
@@ -597,14 +672,14 @@
                 else if(data.closed == false){
                     var closed = '未关闭';
                 }
-                str += "<tr><td>"
-                    +data.host_name+"</td><td>"
-                    +data.point_name+"</td><td>"
-                    +data.item_name+"</td><td>"
-                    +data.threshold+"</td><td>"
-                    +data.trigger_name+"</td><td>"
-                    +data.problem_time+"</td><td>"
-                    +data.recovery_time+"</td><td>"
+                str += "<tr><td>所属主机</td><td>"
+                    +data.host_name+"</td></tr><tr><td>监控点</td><td>"
+                    +data.point_name+"</td></tr><tr><td>监控项</td><td>"
+                    +data.item_name+"</td></tr><tr><td>阀值</td><td>"
+                    +data.threshold+"</td></tr><tr><td>触发器描述</td><td  title='"+data.trigger_name+"'>"
+                    +data.trigger_name+"</td></tr><tr><td>发生时间</td><td>"
+                    +data.problem_time+"</td></tr><tr><td>恢复时间</td><td>"
+                    +data.recovery_time+"</td></tr><tr><td>手动关闭(操作人)</td><td>"
                     +closed+"("+data.closed_user+")</td></tr>"
                 $("#detailTable_tab").html(str);
             }
@@ -696,30 +771,14 @@
                     },
                     "drawCallback": function () {//初始化后回调
                         //点击开始时间，事件详情事件
-                        $('#problemsTable a.detail').on('click',function(){
-                            var event_id=$(this).attr("data-id");
-                            //初始化事件详情模态框
-                            $('.ui.menu.detail a').removeClass("active");
-                            $('.ui.tab.detail').removeClass("active");
-                            $('.ui.menu.detail a:eq(0)').addClass("active");
-                            $('.ui.tab.detail:first').addClass("active");
-                            detailmodal(event_id);
-                            $('.ui.modal.detail').modal('setting', 'closable', false).modal('show');
-                            //初始化事件详情模态框
-                            $('.secondary.pointing.menu .item')
-                                .tab({
-                                    'onVisible': function (path) {
-                                        if (path === 'detailConfirm') {
-                                            //初始化确认列表
-                                            detailconfirm();
-                                        }
-                                        if (path === 'detailRecord') {
-                                            //初始化记录列表
-                                            detailrecord();
-                                        }
-                                    }
-                                });
-                        })
+						$('#problemsTable a.detail').on('click',function(){
+							var event_id=$(this).attr("data-id");
+							//初始化事件详情模态框
+							detailmodal(event_id);
+							detailconfirm(event_id);
+							detailrecord(event_id);
+							$('.ui.modal.detail').modal('show');
+						})
                         //浮动确认记录事件
                         $('#problemsTable a.confirm').hover(function() {
                             var event_id=$(this).attr("data-id");
