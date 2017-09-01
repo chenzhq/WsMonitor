@@ -342,23 +342,40 @@ public class GraphServiceImpl implements GraphService {
                 );
                 clusterList.add(clusterTree);
             }else {
-                //是设备
-                //color,type
-                String type = PlatformTreeTypeEnum.HOST.code;
-                String state = "";
-                for(BriefHostDTO hostDTO : hostDTOS) {
-                    if(cluster.getId().equals(hostDTO.getHostId())) {
-                        state = StatusConverter.getTextStatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                if(cluster.getType().equals(PlatformTreeTypeEnum.CLUSTER.code)) {
+                    //是集群
+                    //color,type
+                    String type = PlatformTreeTypeEnum.CLUSTER.code;
+                    String state = StatusEnum.OK.text;
+                    PlatformTreeVO clusterTreeVO = new PlatformTreeVO(
+                            cluster.getId(),
+                            cluster.getLabel(),
+                            state,
+                            type,
+                            context_url
+                    );
+                    clusterList.add(clusterTreeVO);
+                }else {
+                    //是设备
+                    //color,type
+                    String type = PlatformTreeTypeEnum.HOST.code;
+                    String state = "";
+                    for(BriefHostDTO hostDTO : hostDTOS) {
+                        if(cluster.getId().equals(hostDTO.getHostId())) {
+                            state = StatusConverter.getTextStatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                        }
                     }
+                    PlatformTreeVO hostTreeVO = new PlatformTreeVO(
+                            cluster.getId(),
+                            cluster.getLabel(),
+                            state,
+                            type,
+                            context_url
+                    );
+                    clusterList.add(hostTreeVO);
                 }
-                PlatformTreeVO hostTreeVO = new PlatformTreeVO(
-                        cluster.getId(),
-                        cluster.getLabel(),
-                        state,
-                        type,
-                        context_url
-                );
-                clusterList.add(hostTreeVO);
+
+
             }
         }
         //查询业务平台状态
@@ -402,7 +419,7 @@ public class GraphServiceImpl implements GraphService {
                         hostDTO.getHostId(),
                         hostDTO.getName(),
                         state,
-                        PlatformTreeTypeEnum.HOST.getName(),
+                        PlatformTreeTypeEnum.HOST.code,
                         context_url
                 );
                 hostListVO.add(hostTreeVO);

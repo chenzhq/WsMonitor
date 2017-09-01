@@ -2,6 +2,7 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
+import com.ws.stoner.model.view.OverViewHostVO;
 
 import java.util.List;
 
@@ -70,6 +71,13 @@ public interface OverviewService {
      * @throws ServiceException
      */
     List<OverviewListGroupDTO> getMoveGroupTree(String groupName) throws ServiceException;
+
+    /**
+     * 获取主机选择树
+     * @return
+     * @throws ServiceException
+     */
+    List<OverViewHostVO> getSelectHostVOS() throws ServiceException;
 
 
 

@@ -205,23 +205,27 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui segments">
-						<div class="ui segment no-padding">
-							<div class="ui secondary menu">
-								<a class="header item">
-									<h3><i class="bar large chart icon"></i>日历图</h3>
-								</a>
-								<div class="right menu">
-									<a class="item">
+                    <div class="ui container">
+                        <div class="header item">
+                            <h3><i class="bar large chart icon"></i>日历图</h3>
+                        </div>
+                        <div class="ui container segment">
+                            <!--<div class="ui secondary menu">-->
+
+                            <div class="ui horizontal right list">
+                                <div class="item">
 										设备：
-										<select id="ui_dropdown" class="ui dropdown">
-											<option value="">选择设备</option>
-											<option>设备1</option>
-											<option>设备2</option>
-											<option>设备2</option>
-										</select>
-									</a>
-									<a class="item">
+                                    <div class="ui compact selection dropdown">
+                                        <input type="hidden" name="hosts">
+                                        <i class="dropdown icon"></i>
+                                        <div class="default text">选择设备</div>
+                                        <div class="menu">
+                                            <div class="item" data-value="1">设备</div>
+                                            <div class="item" data-value="0">业务平台</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="item">
 										问题数：
 										<select id="ui_dropdown" class="ui dropdown">
 											<option value="">选择问题数</option>
@@ -229,8 +233,8 @@
 											<option>2~5</option>
 											<option>5以上</option>
 										</select>
-									</a>
-									<a class="item">
+                                </div>
+                                <div class="item">
 										严重性：
 										<select id="ui_dropdown" class="ui dropdown">
 											<option value="">选择严重性</option>
@@ -238,8 +242,8 @@
 											<option>严重性2</option>
 											<option>严重性3</option>
 										</select>
-									</a>
-									<a class="item">
+                                </div>
+                                <div class="item">
 										问题状态：
 										<select id="ui_dropdown" class="ui dropdown">
 											<option value="">选择问题状态</option>
@@ -247,19 +251,21 @@
 											<option>问题状态2</option>
 											<option>问题状态3</option>
 										</select>
-									</a>
-								</div>
-							</div>
-						</div>
-						<div class="ui segment"  style=" min-height : 500px;">
-							<div class="sixteen wide column chartBar">
-								<div class="ui grid">
-									<div class="sixteen wide column">
-										<div class="ui segment left aligned row1Height">
-											<div id="calendarChart" class="chartBar"></div>
-										</div>
-									</div>
-									<div class="sixteen wide column">
+                                </div>
+
+                            </div>
+                            <!--<div class="sixteen wide column">-->
+                            <div class="ui container" style="margin-top: 7px;">
+                                <div id="calendarChart" class="chartBar"></div>
+                            </div>
+                            <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                        <div class="ui container" style=" min-height : 500px;">
+                            <div class="sixteen wide column chartBar">
+                                <div class="ui grid">
+
+                                    <div class="sixteen wide column">
 										<div  class="ui segment">
 											<div id="host_table_dimmer" class="ui inverted dimmer">
 												<div class="ui text loader">加载</div>

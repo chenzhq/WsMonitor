@@ -328,7 +328,7 @@
 										</div>
 										<div class="sixteen wide column">
 											<div class="ui segment row4Height">
-												<h3>监控点</h3>
+												<h3><span id="host_name"></span>监控点</h3>
 												<div class="ui six column grid" id="pointButton">
 												</div>
 											</div>
@@ -844,43 +844,8 @@
 					dataType: "json",
 					success: function (result) {
 						if(result.success) {
-							var data = result.data;
-							//temp mock data
-							var mock = {
-                                "data": {
-                                    "children": [
-                                        {
-                                            "children": [],
-                                            "color": "#5FB878",
-                                            "id": "10206",
-                                            "label": "win_yang_feng",
-                                            "shape": "设备"
-                                        },
-                                        {
-                                            "children": [
-                                                {
-                                                    "color": "#DB2828",
-                                                    "id": "10205",
-                                                    "label": "ZKF_WIN_90",
-                                                    "shape": "设备"
-                                                }
-                                            ],
-                                            "color": "#DB2828",
-                                            "id": "j6_6",
-                                            "label": "2333",
-                                            "shape": "../static/images/0.jpg"
-                                        }
-                                    ],
-                                    "color": "#DB2828",
-                                    "id": "8",
-                                    "label": "windows",
-                                    "shape": "业务平台"
-                                },
-                                "message": "更新成功",
-                                "success": true
-                            }
-                            data = mock.data
-							getplatformTree(data);
+							var tree_data = result.data;
+							getplatformTree(tree_data);
 						}
 						else {
 							errorMsg_no_data("业务树 Tree");
@@ -891,89 +856,102 @@
 					}
 				})
 			}
-			function getplatformTree(data){
+			function getplatformTree(tree_data){
 				$("#tree_area").html("");
-				/*调试数据
-				data = {
-                    "children": [
-                        {
-                            "children": [
-                                {
-                                    "id": "01",
-                                    "label": "child1",
-                                    "type": "设备",
-                                    "shape":"https://zos.alipayobjects.com/rmsportal/kmjjtiERUwnvDEOrlidg.png",
-                                    "size":[50,50]
-                                },
-                                {
-                                    "id": "02",
-                                    "label": "child2",
-                                    "type": "设备",
-                                    "shape":"https://zos.alipayobjects.com/rmsportal/kmjjtiERUwnvDEOrlidg.png",
-                                    "size":[50,50]
-                                }
-                            ],
-                            "id": "1",
-                            "label": "parent1",
-                            "type": "集群",
-                            "shape":"../../../static/集群-green.png",
-                            "size":[50,30]
-                        },
-                        {
-                            "children": [
-                                {
-                                    "id": "03",
-                                    "label": "child3",
-                                    "type": "设备",
-                                    "shape":"https://zos.alipayobjects.com/rmsportal/kmjjtiERUwnvDEOrlidg.png",
-                                    "size":[50,50]
-                                },
-                                {
-                                    "id": "04",
-                                    "label": "child4",
-                                    "type": "设备",
-                                    "shape":"https://zos.alipayobjects.com/rmsportal/kmjjtiERUwnvDEOrlidg.png",
-                                    "size":[50,50]
-                                }
-                            ],
-                            "id": "2",
-                            "label": "parent2",
-                            "type": "集群",
-                            "shape":"https://zos.alipayobjects.com/rmsportal/EchvJdFiaKqaUoaDSJRS.png",
-                            "size":[50,30]
-                        }
-                    ],
-                    "id": "0",
-                    "label": "rootrootroot",
-                    "type": "业务平台"
+                //自定义线
+                function afterDrawEdge(cfg, group, keyShape){
+                    return keyShape;
                 };
-				var tree = new G6.Tree({
-					id: 'tree_area',
-					width: 1100,
-					height: 240 ,
-					fitView: 'autoZoom',
-					layoutCfg: {
-						direction: 'TB',
-						getHGap: function(/!* d *!/) {
-							return 50;
-						},
-						getVGap: function(/!* d *!/) {
-							return 20;
-						},
-					},
-				});*/
-				tree.source(data);
-				tree.node()
-					.label(function (obj) {
-						return obj.name;
-					})
-					.style({
-						fillOpacity: 1
-					})
-				tree.edge().shape('smooth');
-				tree.render();
+                //自定义注册节点画板 整个节点
+                function drawCard(cfg, group){
+                    console.log("cfg",cfg);
+                    var model = cfg.model;
+                    var x = 100 ;
+                    var y = 100 ;
+                    var width = 120;
+                    var height = 150;
+                    var upRectHeight = 100;
+                    var padding = 10;
+                    var keyShape;
+                    //整个点画板
+                    keyShape = group.addShape('rect', {
+                        attrs: {
+                            x: x,
+                            y: y,
+                            width: width,
+                            height: height,
+                            stroke:'white',
+                            fill: 'white'
+                        }
+                    });
+                    //标题名称
+                    group.addShape('text', {
+                        attrs: {
+                            x: x,
+                            y: y + upRectHeight + padding,
+                            width: width,
+                            height:height - upRectHeight - padding,
+                            text: model.label,
+                            fontSize:'25',
+                            textBaseline: 'top',
+                            textAlign: 'left',
+                            fill: 'black'
+                        }
+                    });
+                    // 图片
+                    group.addShape('image', {
+                        attrs: {
+                            x: x,
+                            y: y,
+                            width: width,
+                            height:upRectHeight,
+                            //img:cfg.url + cfg.state
+                            img:model.url + model.type + '-' + model.state + '.png'
+                        }
+                    });
+                    return keyShape;
+                }
+                //注册节点
+                G6.registNode('customNode', {
+                    draw: function(cfg, group){
+                        return drawCard(cfg, group);
+                    }
+                });
+                //注册线
+                G6.registEdge('customLine', {
+                    afterDraw: function(cfg , group, keyShape){
+                        return afterDrawEdge(cfg, group, keyShape);
+                    }
+                }, 'smooth');
+                //初始化
+                var tree = new G6.Tree({
+                    id: 'tree_area',
+                    width: 1100,
+                    height: 240 ,
+                    fitView: 'autoZoom',
+                    layoutCfg: {
+                        direction: 'TB',
+                        getHGap: function(/* d */) {
+                            return 100;
+                        },
+                        getVGap: function(/* d */) {
+                            return 50;
+                        },
+                    },
+                });
+                tree.source(tree_data);
+                tree.node()
+                    .style({
+                        fillOpacity: 1
+                    })
+                    .shape('customNode');
+                tree.edge().shape('smooth');
+                tree.render();
 				tree.on('dblclick', function(ev){
-					if (ev.item.get('model').shape == "设备"){
+					if (ev.item.get('model').type == "host"){
+                        //写主机名称
+                        var host_name = ev.item.get('model').label;
+                        $("#host_name").text(host_name + " : ");
                         pointButton(ev.item.get('model').id);
 					}
 				});

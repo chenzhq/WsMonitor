@@ -393,7 +393,7 @@
                     "width": "20%",
                     "title": "名称",
                     render: function(data, type, row, meta) {
-                        if (data.state == "正常") {
+                        if (data.state === "正常") {
                             if (row.type === '组') {
                                 return '<i class="green folder icon"></i>' + row.name;
                             } else if(row.type === '监控点') {
@@ -402,7 +402,7 @@
                                 return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
 									'<i class="green desktop icon"></i>' + row.name + '</a>';
                             }
-                        } else if (data.state == "严重") {
+                        } else if (data.state === "严重") {
                             if (row.type === '组') {
                                 return '<i class="red folder icon"></i>' + row.name;
                             } else if(row.type === '监控点') {
@@ -412,7 +412,7 @@
 									'<i class="red desktop icon"></i>' + row.name + '</a>';
 							}
 
-                        } else if (data.state == "警告") {
+                        } else if (data.state === "警告") {
                             if (row.type === '组') {
                                 return '<i class="yellow folder icon"></i>' + row.name;
                             } else if(row.type === '监控点') {
@@ -438,7 +438,7 @@
                     "width": "20%",
                     "title": "操作",
                     render: function(data, type, row, meta) {
-                        if(row.type=="组"){
+                        if (row.type === "组") {
                             if(row.cid === 'g0') {
                                 return '<div class="ui secondary menu">' +
                                 '<a class="right item new" id="'+row.cid+'"> 新建</a></div>';
@@ -512,7 +512,6 @@
                 allGroups.forEach(function (v, i, a) {
 					if(v.name === group) {
 					    _group = a.slice(i,i+1)[0];
-					    return;
                     }
                 });
                 var res = {
@@ -537,6 +536,39 @@
 				}
 			}
 
+            function genTreeHost(groupName, allGroups) {
+                var _group = {}
+                allGroups.forEach(function (v, i, a) {
+                    if (v.name === groupName) {
+                        _group = a.slice(i, i + 1)[0]
+                    }
+                })
+                var res = {
+                    'text': group,
+                    'state': {
+                        'disabled': !_group.enable,
+                        'opened': true
+                    },
+                    'data': {
+                        'cid': _group.cid,
+                        'pid': _group.pid
+                    },
+                    'children': []
+                }
+                if (_group.group_children.length > 0) {
+                    _group.group_children.forEach(function (v, i, a) {
+                        res.children.push(genTreeGroup(v, allGroups))
+                    })
+                    return res;
+                }
+                if (_group.host_children.length > 0) {
+                    _group.host_children.forEach(function (v) {
+                        res.children.push()
+                    })
+                } else {
+                    return res;
+                }
+            }
 
             var sourceArr = host_table.data().toArray();
             var moved_index= host_table.row($(this).parents('tr')).index();
