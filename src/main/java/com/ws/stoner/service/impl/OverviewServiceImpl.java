@@ -446,7 +446,7 @@ public class OverviewServiceImpl implements OverviewService {
                             hostDTO.getHostId(),
                             group.getcId(),
                             hostDTO.getName(),
-                            OverviewTypeEnum.HOST.getName(),
+                            OverviewTypeEnum.HOST.text,
                             hostState
                     );
                     hostVOS.add(hostVO);
@@ -477,7 +477,7 @@ public class OverviewServiceImpl implements OverviewService {
                     group.getcId(),
                     parent,
                     group.getName(),
-                    OverviewTypeEnum.GROUP.getName(),
+                    OverviewTypeEnum.GROUP.text,
                     groupState
             );
             hostVOS.add(groupVO);

@@ -9,17 +9,17 @@ public class OverViewHostVO {
     private String parent;
     private String text;
     private String type;
-    private String state;
+    private String status;
 
     public OverViewHostVO() {
     }
 
-    public OverViewHostVO(String id, String parent, String text, String type, String state) {
+    public OverViewHostVO(String id, String parent, String text, String type, String status) {
         this.id = id;
         this.parent = parent;
         this.text = text;
         this.type = type;
-        this.state = state;
+        this.status = status;
     }
 
     public String getId() {
@@ -58,12 +58,12 @@ public class OverViewHostVO {
         return this;
     }
 
-    public String getState() {
-        return state;
+    public String getStatus() {
+        return status;
     }
 
-    public OverViewHostVO setState(String state) {
-        this.state = state;
+    public OverViewHostVO setStatus(String status) {
+        this.status = status;
         return this;
     }
 }
