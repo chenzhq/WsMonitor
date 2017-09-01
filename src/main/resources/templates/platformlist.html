@@ -371,12 +371,6 @@
                 $('#manage_modal').modal({
                     onApprove: function () {
                         var _tree = $tree.jstree(true)
-                        console.log(_tree.get_json(platform_id, {
-                            no_state: true,
-                            no_data: true,
-                            no_li_attr: true,
-                            no_a_attr: true
-                        }))
                         $.ajax({
                             type: 'post',
                             url: '/platformtree/update_tree',
