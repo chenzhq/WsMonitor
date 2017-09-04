@@ -250,6 +250,18 @@
                                         <div class="menu">
                                             <div class="yellow item" data-value="warning">警告</div>
                                             <div class="red item" data-value="high">严重</div>
+                                            <div class="item" data-value="all">所有级别</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <div id="select_acknowledge" class="ui selection dropdown">
+                                        <input type="hidden" name="acknowledge">
+                                        <i class="dropdown icon"></i>
+                                        <div class="default text">确认状态</div>
+                                        <div class="menu">
+                                            <div class="yellow item" data-value="1">已确认</div>
+                                            <div class="red item" data-value="0">未确认</div>
                                             <div class="item" data-value="all">所有</div>
                                         </div>
                                     </div>
@@ -558,6 +570,13 @@
                     }
                     return new_data;
                 }
+                //持久化数据
+                var send_data = {
+                    hostIds: [],
+                    problemNum: [],
+                    priority: "",
+                    acknowledge: ""
+                }
                 //链接一天的问题列表数据
                 function todaycalendarchart(acknowledge,hostIds,priority,problemNum,today){
                     $.ajax({
@@ -596,7 +615,7 @@
                         data: send_data,
                         success: function (result) {
                             if (result.success) {
-                                //重新渲染日历图
+                                //TODO:重新渲染日历图
                             } else {
                                 console.error(result.message)
                             }
@@ -606,28 +625,37 @@
                         }
                     })
                 }
-                //选择设备Modal中的确认按钮
-                $("#select_host").on('click', function (e) {
-                    var $host_tree = $('#host_tree')
-                    genHostsTree($host_tree, function () {
-                        console.log('树结构生成结束')
-                        $('#select_host_modal').modal({
-                            onApprove: function () {
-                                var selected_hosts = $host_tree.jstree(true).get_selected()
-                                send_data.hostIds = selected_hosts;
-                                console.log(selected_hosts)
-                                //选择设备后，执行的操作
-                                filter_post();
-                            }
-                        }).modal('show')
-                    })
+                $host_dropdown = $('#host_select_dropdown')
+                $host_dropdown.dropdown({
+                    action: function (text, value) {
+                        $host_dropdown.addClass('loading disabled')
+                        if (value === 'host') {
+                            var $host_tree = $('#host_tree')
+                            genHostsTree($host_tree, send_data.hostIds, function () {
+                                $('#select_host_modal').modal({
+                                    onApprove: function () {
+                                        var selected_hosts = $host_tree.jstree(true).get_bottom_checked()
+                                        send_data.hostIds = selected_hosts
+                                        console.log(selected_hosts)
+                                        //选择设备后，执行的操作
+                                        filter_post();
+                                    },
+                                    onHidden: function () {
+                                        $('#host_select_dropdown').dropdown('set text', "已选择" + send_data.hostIds.length + "个设备")
+                                        $host_dropdown.removeClass('loading disabled')
+                                    }
+                                }).modal('show')
+                            })
+                            $('#host_select_dropdown').dropdown('set text', "正在选择设备")
+                        } else if (value === 'all') {
+                            send_data.hostIds = []
+                            filter_post()
+                            $('#host_select_dropdown').dropdown('set text', "所有设备").dropdown('hide')
+                            $host_dropdown.removeClass('loading disabled')
+                        }
+                    }
                 })
 
-                $('#select_all').on('click', function () {
-                    //选择所有设备，设备筛选字段为空
-                    send_data.hostIds = []
-                    filter_post()
-                })
 
                 //问题数量筛选按钮
                 $('#num_filter_btn').popup({
@@ -661,6 +689,12 @@
                 $('#select_severity').dropdown({
                     onChange: function (value, text) {
                         send_data.priority = value
+                        filter_post()
+                    }
+                })
+                $('#select_acknowledge').dropdown({
+                    onChange: function (value, text) {
+                        send_data.acknowledge = value
                         filter_post()
                     }
                 })
