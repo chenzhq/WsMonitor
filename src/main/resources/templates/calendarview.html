@@ -363,8 +363,9 @@
             }
 
             //var data = getVirtulData(2017);
-            var data1 = [['2017-01-01',20],['2017-01-03',10]];
-            var data2 = [['2017-01-02',20]];
+            var data1 = [['2017-01-01',20,true],['2017-01-02',20,true],['2017-01-03',10,false]];
+            //var data1 = [['2017-01-01',30],['2017-01-02',10],['2017-01-03',10]];
+            //var data2 = [['2017-01-02',20]];
             option = {
                 backgroundColor: '#404a59',
 
@@ -433,10 +434,11 @@
                         name: '未确认',
                         type: 'effectScatter',
                         coordinateSystem: 'calendar',
-                        //data: data.sort(function (a, b) {
-                        //    return b[1] - a[1];
-                        //}).slice(0, 2),
-                        data: data2,
+						data : getLightDatas(data1),
+//                        data: data1.sort(function (a, b) {
+//                            return b[1] - a[1];
+//                        }).slice(0, 1),
+                        //data: data2,
                         symbolSize: function (val) {
                             return val[1];
                         },
@@ -463,6 +465,16 @@
                 var calendar =params.data;
                 console.log(calendar[0])
             });
+            function getLightDatas(data) {
+                console.log("data",data);
+                var new_data = [];
+                for(var i=0;i<data.length;i++) {
+                    if(data[i][2]) {
+                        new_data.push(data[i]);
+                    }
+                }
+                return new_data;
+            }
 		</script>
 	</th:block>
 </th:block>
