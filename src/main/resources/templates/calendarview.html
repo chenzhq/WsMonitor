@@ -455,7 +455,7 @@
                             //data: data.sort(function (a, b) {
                             //    return b[1] - a[1];
                             //}).slice(0, 2),
-                            data: data2,
+                            data: getLightDatas(data1),
                             symbolSize: function (val) {
                                 return val[1];
                             },
@@ -482,12 +482,16 @@
                     var calendar = params.data;
                     console.log(calendar[0])
                 });
-                //持久化数据
-                var send_data = {
-                    hostIds: [],
-                    problemNum: [],
-                    priority: "",
-                    acknowledge: ""
+
+                function getLightDatas(data) {
+                    console.log("data",data);
+                    var new_data = [];
+                    for(var i=0;i<data.length;i++) {
+                        if(data[i][2]) {
+                            new_data.push(data[i]);
+                        }
+                    }
+                    return new_data;
                 }
 
                 //发送筛选数据请求
