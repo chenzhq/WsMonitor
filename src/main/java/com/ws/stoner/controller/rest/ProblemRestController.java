@@ -2,7 +2,6 @@ package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.constant.CookieConsts;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.PlatformGraph;
 import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
 import com.ws.stoner.model.query.CalendarFormQuery;
@@ -142,8 +141,8 @@ public class ProblemRestController {
      * 根据查询参数 获取告警日历数据
      * @return
      */
-    @RequestMapping(value = "calendar/get_datas", method = RequestMethod.POST)
-    public String getCalendarDatas(@RequestBody CalendarFormQuery formQuery) throws ServiceException {
+    @RequestMapping(value = "calendar/get_data", method = RequestMethod.POST)
+    public String getCalendarData(@RequestBody CalendarFormQuery formQuery) throws ServiceException {
         CalendarVO calendarVO = graphService.getCalendarGraphDatas(formQuery);
         return RestResultGenerator.genResult(calendarVO, REST_UPDATE_SUCCESS).toString();
     }
