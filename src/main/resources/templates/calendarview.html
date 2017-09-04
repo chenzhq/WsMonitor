@@ -270,54 +270,10 @@
 
                                     <div class="sixteen wide column">
                                         <div class="ui segment">
-                                            <div id="host_table_dimmer" class="ui inverted dimmer">
-                                                <div class="ui text loader">加载</div>
+                                            <div class="sixteen wide column">
+                                                <table  id="problemsTable" class="ui compact basic table center aligned ">
+                                                </table>
                                             </div>
-                                            <table id="host_table" class="ui compact very basic table center aligned ">
-                                                <!--静态数据 start-->
-                                                <thead>
-                                                <tr>
-                                                    <th class="two wide">发生时间</th>
-                                                    <th class="two wide">设备</th>
-                                                    <th class="four wide">问题</th>
-                                                    <th class="two wide">严重性</th>
-                                                    <th class="two wide">持续时间</th>
-                                                    <th class="two wide">[告警状态]</th>
-                                                    <th class="two wide">确认[是/否/无]</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <td>2017-8-22 15:10:03</td>
-                                                    <td>HOST1</td>
-                                                    <td><a href="javascript:void(0)">HOST1主机的内存不足</a></td>
-                                                    <td>严重</td>
-                                                    <td>2秒</td>
-                                                    <td style="color: yellow">问题（已恢复）</td>
-                                                    <td>无</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2017-8-22 15:10:03</td>
-                                                    <td>HOST2</td>
-                                                    <td><a href="javascript:void(0)">HOST2主机的内存不足</a></td>
-                                                    <td>严重</td>
-                                                    <td>2秒</td>
-                                                    <td style="color: red">问题</td>
-                                                    <td><a href="javascript:void(0)" class="confirm">是</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2017-8-22 15:10:03</td>
-                                                    <td>HOST3</td>
-                                                    <td><a href="javascript:void(0)">HOST3主机的内存不足</a></td>
-                                                    <td>严重</td>
-                                                    <td>2秒</td>
-                                                    <td style="color: green">正常</td>
-                                                    <td><a href="javascript:void(0)" class="confirm" id="是pop_id">是</a>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                                <!--静态数据 end-->
-                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -357,134 +313,243 @@
             <script type="text/javascript">
                 //页面加载完加载基础数据
                 $(function () {
-                    //初始折叠菜单
+                    var acknowledge="all";
+                    var hostIds=["10023","10073"];
+                    var priority="warning";
+                    var problemNum=[2,5];
+                    //获取日历图数据
+                    calendarchart(acknowledge,hostIds,priority,problemNum);
                 })
+                $(document).ready(function() {
+                    //初始当前问题列表
+                    var problems_Table = $("#problemsTable").DataTable({
+                        "iDisplayLength" : 10,
+                        order: [0, 'desc'],
+                        "createdRow": function (row, data, dataIndex) {
+                            $('td', row).eq(1).addClass('left aligned');
+                            $('td', row).eq(2).addClass('left aligned');
+                        },
+                        "drawCallback": function () {//初始化后回调
+                        },
+                        ajax: {
+                            url: '/problemlist/get_allproblems',
+                            dataSrc: 'data'
+                        },
+                        columns: [
+                            {
+                                "data": "problem_time",
+                                "width": "15%",
+                                "title": "发生时间",
+                                "orderable": false,
+                            },
+                            {
+                                "data": "host_name",
+                                "width": "10%",
+                                "title": "设备",
+                                "orderable": false,
+                            },
+                            {
+                                "data": null,
+                                "width": "25%",
+                                "title": "问题",
+                                "orderable": false,
+                                render: function(data, type, row, meta) {
+                                    return '<a href="problemdetail?trigger_id=' + row.trigger_id + '">' + row.description + '</a>';
+                                }
+                            },
+                            {
+                                "data": "priority_state",
+                                "width": "5%",
+                                "title": "严重性",
+                                "orderable": false,
+                                //priority_state<td style="color: red">严重</td>
+                            },
+                            {
+                                "data": null,
+                                "width": "5%",
+                                "title": "状态",
+                                "orderable": false,
+                                render: function(data, type, row, meta) {
+                                    if(row.problem_state != "问题"){
+                                        return row.problem_state;
+                                    }
+                                    else {
+                                        return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="alarmed">' + row.problem_state + '</a>';
+                                    }
+                                }
+                            },
+                            {
+                                "data": "recover_time",
+                                "width": "10%",
+                                "title": "恢复时间",
+                                "orderable": false,
+                            },
+                            {
+                                "data": "duration_string",
+                                "width": "10%",
+                                "title": "持续时间",
+                                "orderable": false,
+                            },
+                            {
+                                "data": null,
+                                "width": "15%",
+                                "title": "告警状态",
+                                "orderable": false,
+                                render: function(data, type, row, meta) {
+                                    return row.alert_state + '(' + row.alert_num + ')';
+                                }
+                            },
+                            {
+                                "data": null,
+                                "width": "5%",
+                                "title": "确认",
+                                "orderable": false,
+                                render: function(data, type, row, meta) {
+                                    if(row.acknowledged == "是"){
+                                        return row.acknowledged;
+                                    }
+                                    else {
+                                        return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="confirm">' + row.acknowledged + '</a>';
+                                    }
+                                }
+                            },
+                            {
+                                "data": null,
+                                "width": "5%",
+                                "title": "操作",
+                                "orderable": false,
+                                render: function(data, type, row, meta) {
+                                    return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="detail">详情</a>';
+                                }
+                            }
+                        ],
+                    });
+                });
             </script>
             <script>
-                //绘制图标数据
-                var calendar_chart = echarts.init(document.getElementById("calendarChart"));
-                //配置option
-                function getVirtulData(year) {
-                    year = year || '2017';
-                    var date = +echarts.number.parseDate(year + '-01-01');
-                    var end = +echarts.number.parseDate((+year + 1) + '-01-01');
-                    var dayTime = 3600 * 24 * 1000;
-                    var data = [];
-                    for (var time = date; time < end; time += dayTime) {
-                        data.push([
-                            echarts.format.formatTime('yyyy-MM-dd', time),
-                            //Math.floor(Math.random() * 10000)
-                            5000
-                        ]);
-                    }
-                    return data;
-                }
-
-            //var data = getVirtulData(2017);
-            var data1 = [['2017-01-01',20,true],['2017-01-02',20,true],['2017-01-03',10,false]];
-            //var data1 = [['2017-01-01',30],['2017-01-02',10],['2017-01-03',10]];
-            //var data2 = [['2017-01-02',20]];
-            option = {
-                backgroundColor: '#404a59',
-
-                    title: {
-                        top: 0,
-                        text: '2017年',
-                        left: 'center',
-                        textStyle: {
-                            color: '#fff'
-                        }
-                    },
-                    tooltip: {
-                        //trigger: 'item'
-                        formatter: "{b}{a} : <br/>{c}个问题"
-                    },
-                    legend: {
-                        top: '10',
-                        left: '100',
-                        data: ['已确认', '未确认'],
-                        textStyle: {
-                            color: '#fff'
-                        }
-                    },
-                    calendar: [{
-                        top: 60,
-                        left: 'center',
-                        range: ['2017-01-01', '2017-01-20'],
-                        splitLine: {
-                            show: true,
-                            lineStyle: {
-                                color: '#000',
-                                width: 4,
-                                type: 'solid'
+                function calendarchart(acknowledge,hostIds,priority,problemNum) {
+                    $.ajax({
+                        type: "get",
+                        url: "/calendar/get_data?acknowledge="+acknowledge
+                        +"&hostIds="+hostIds
+                        +"&priority="+priority
+                        +"&problemNum="+problemNum,
+                        dataType: "json",
+                        success: function (result) {
+                            if(result.success) {
+                                var data = result.data;
+                                getcalendarchart(data);
+                            }
+                            else {
+                                errorMsg_no_data("日历图 Chart");
                             }
                         },
-                        yearLabel: {
-                            formatter: '{start}  1st',
+                        error: function () {
+                            errorMsg_no_connect("日历图 Chart");
+                        }
+                    });
+                }
+                function getcalendarchart(data) {
+                    //绘制图标数据
+                    var calendar_chart = echarts.init(document.getElementById("calendarChart"));
+                    //配置option
+                    var option = {
+                        backgroundColor: '#404a59',
+                        title: {
+                            top: 0,
+                            text: data.title,
+                            left: 'center',
                             textStyle: {
                                 color: '#fff'
                             }
                         },
-                        itemStyle: {
-                            normal: {
-                                color: '#323c48',
-                                borderWidth: 1,
-                                borderColor: '#111'
-                            }
-                        }
-                    }],
-                    series: [
-                        {
-                            name: '已确认',
-                            type: 'scatter',
-                            coordinateSystem: 'calendar',
-                            data: data1,
-                            symbolSize: function (val) {
-                                return val[1];
-                            },
-                            itemStyle: {
-                                normal: {
-                                    color: '#ddb926'
-                                }
+                        tooltip: {
+                            formatter: "{b}{a} : <br/>{c}个问题"
+                        },
+                        legend: {
+                            top: '10',
+                            left: '100',
+                            data: ['已确认', '未确认'],
+                            textStyle: {
+                                color: '#fff'
                             }
                         },
-                        {
-                            name: '未确认',
-                            type: 'effectScatter',
-                            coordinateSystem: 'calendar',
-                            //data: data.sort(function (a, b) {
-                            //    return b[1] - a[1];
-                            //}).slice(0, 2),
-                            data: getLightDatas(data1),
-                            symbolSize: function (val) {
-                                return val[1];
-                            },
-                            showEffectOn: 'render',
-                            rippleEffect: {
-                                brushType: 'stroke'
-                            },
-                            hoverAnimation: true,
-                            itemStyle: {
-                                normal: {
-                                    color: '#f4e925',
-                                    shadowBlur: 10,
-                                    shadowColor: '#333'
+                        calendar: [{
+                            top: 60,
+                            left: 'center',
+                            range: data.range,
+                            //range: ['2017-01-01', '2017-01-20'],
+                            splitLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: '#000',
+                                    width: 4,
+                                    type: 'solid'
                                 }
                             },
-                            zlevel: 1
-                        }
-                    ]
-                };
-                //根据配置绘制图形
-                calendar_chart.setOption(option);
-                //点击每个节点，展示当天所有的问题列表
-                calendar_chart.on('click', function (params) {
-                    var calendar = params.data;
-                    console.log(calendar[0])
-                });
-
+                            yearLabel: {
+                                formatter: '{start}  1st',
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#323c48',
+                                    borderWidth: 1,
+                                    borderColor: '#111'
+                                }
+                            }
+                        }],
+                        series: [
+                            {
+                                name: '已确认',
+                                type: 'scatter',
+                                coordinateSystem: 'calendar',
+                                data: data.datas,
+                                symbolSize: function (val) {
+                                    return val[1];
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color: '#ddb926'
+                                    }
+                                }
+                            },
+                            {
+                                name: '未确认',
+                                type: 'effectScatter',
+                                coordinateSystem: 'calendar',
+                                data: getLightDatas(data.datas),
+                                symbolSize: function (val) {
+                                    return val[1];
+                                },
+                                showEffectOn: 'render',
+                                rippleEffect: {
+                                    brushType: 'stroke'
+                                },
+                                hoverAnimation: true,
+                                itemStyle: {
+                                    normal: {
+                                        color: '#f4e925',
+                                        shadowBlur: 10,
+                                        shadowColor: '#333'
+                                    }
+                                },
+                                zlevel: 1
+                            }
+                        ]
+                    };
+                    //根据配置绘制图形
+                    calendar_chart.setOption(option);
+                    //点击每个节点，展示当天所有的问题列表
+                    calendar_chart.on('click', function (params) {
+                        var calendar = params.data;
+                        var today=calendar[0];
+                        todaycalendarchart(acknowledge,hostIds,priority,problemNum,today);
+                    });
+                }
                 function getLightDatas(data) {
-                    console.log("data",data);
                     var new_data = [];
                     for(var i=0;i<data.length;i++) {
                         if(data[i][2]) {
@@ -492,6 +557,34 @@
                         }
                     }
                     return new_data;
+                }
+                //链接一天的问题列表数据
+                function todaycalendarchart(acknowledge,hostIds,priority,problemNum,today){
+                    $.ajax({
+                        type: "get",
+                        url: "/calendar/get_list?acknowledge="+acknowledge
+                        +"&hostIds="+hostIds
+                        +"&priority="+priority
+                        +"&problemNum="+problemNum
+                        +"&today="+today,
+                        dataType: "json",
+                        success: function (result) {
+                            if(result.success) {
+                                var data = result.data;
+                                gettodaycalendarchart(data);
+                            }
+                            else {
+                                errorMsg_no_data("日历图一天 Chart");
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("日历图一天 Chart");
+                        }
+                    });
+                }
+                //获取一天的问题列表数据
+                function gettodaycalendarchart(day){
+
                 }
 
                 //发送筛选数据请求
