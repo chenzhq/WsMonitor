@@ -1,210 +1,224 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="layout::common_head(~{::title}, ~{::supplement})">
-	<meta charset="UTF-8">
-	<title>日历图</title>
-	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
-	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
-	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
-	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
-	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
-	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
-	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
-	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+    <meta charset="UTF-8">
+    <title>日历图</title>
+    <script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
+    <script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+    <link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+    <link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+    <link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
+    <link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+    <link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+    <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 
-	<th:block th:fragment="supplement">
-		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
-		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
-		<style type="text/css">
-			.chartBar{ height: 200px; }
-		</style>
-	</th:block>
+    <th:block th:fragment="supplement">
+        <script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+        <script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+        <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=1"></script>
+        <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
+        <script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
+        <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
+              th:href="@{css/jstree-default/style.min.css}">
+        <link rel="stylesheet" href="../static/css/ion.rangeSlider.css"
+              th:href="@{css/ion.rangeSlider.css}">
+        <link rel="stylesheet" href="../static/css/ion.rangeSlider.skinFlat.css"
+              th:href="@{css/ion.rangeSlider.skinFlat.css}">
+        <style type="text/css">
+            .chartBar {
+                height: 200px;
+            }
+
+            #pop_num_filter {
+                width: 150px;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 <!--header start-->
 <div id="contextWrap">
-	<!--sidebar-->
-	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
-		 th:replace="layout::left_menu">
-		<a class="item logo" href="index.html">
-			<img src="../static/images/logo.png" alt="stagblogo"/><img src="../static/images/thumblogo.png"
-																	   alt="stagblogo" class="displaynone"/>
-		</a>
-		<div class="ui accordion inverted">
-			<div class="title item">
+    <!--sidebar-->
+    <div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
+         th:replace="layout::left_menu">
+        <a class="item logo" href="index.html">
+            <img src="../static/images/logo.png" alt="stagblogo"/><img src="../static/images/thumblogo.png"
+                                                                       alt="stagblogo" class="displaynone"/>
+        </a>
+        <div class="ui accordion inverted">
+            <div class="title item">
                 <i class="ion-speedometer titleIcon icon"></i>仪表盘
-			</div>
-			<div class="content">
-				<a class="item" href="#" th:href="@{/dashboard}">仪表盘</a>
-			</div>
-			<div class="title item" href="#">
-				<i class="ion-ios-world titleIcon  icon"></i>业务概览
-			</div>
-			<div class="content">
-			</div>
-			<div class="title item">
-				<i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
-			</div>
-			<div class="content">
-				<a class="item" href="#" th:href="@{/overview}">设备总览</a>
-				<a class="item" href="#">设备详情</a>
-			</div>
-			<div class="title item" href="#">
-				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
-			</div>
-			<div class="content">
-			</div>
-			<div class="title item">
-				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
-			</div>
-			<div class="content">
-				<a class="item" href="#">告警日历</a>
-				<a class="item" href="#">告警列表</a>
-			</div>
-			<div class="title item" href="#">
-				<i class="ion-briefcase titleIcon icon"></i>报表统计
-			</div>
-			<div class="content">
-			</div>
-		</div>
+            </div>
+            <div class="content">
+                <a class="item" href="#" th:href="@{/dashboard}">仪表盘</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-ios-world titleIcon  icon"></i>业务概览
+            </div>
+            <div class="content">
+            </div>
+            <div class="title item">
+                <i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
+            </div>
+            <div class="content">
+                <a class="item" href="#" th:href="@{/overview}">设备总览</a>
+                <a class="item" href="#">设备详情</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+            </div>
+            <div class="content">
+            </div>
+            <div class="title item">
+                <i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+            </div>
+            <div class="content">
+                <a class="item" href="#">告警日历</a>
+                <a class="item" href="#">告警列表</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-briefcase titleIcon icon"></i>报表统计
+            </div>
+            <div class="content">
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>仪表盘1</span>
-			<i class="ion-speedometer icon"></i>
-			<div class="menu">
-				<div class="header">
-					仪表盘1
-				</div>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>仪表盘1</span>
+            <i class="ion-speedometer icon"></i>
+            <div class="menu">
+                <div class="header">
+                    仪表盘1
+                </div>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>业务概览</span>
-			<i class="ion-ios-world icon"></i>
-			<div class="menu">
-				<div class="header">
-					业务概览
-				</div>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>业务概览</span>
+            <i class="ion-ios-world icon"></i>
+            <div class="menu">
+                <div class="header">
+                    业务概览
+                </div>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>设备监控</span>
-			<i class="ion-mouse icon"></i>
-			<div class="menu">
-				<div class="header">
-					设备监控
-				</div>
-				<div class="ui divider"></div>
-				<a class="item" href="tab.html">设备总览</a>
-				<a class="item" href="table.html">设备详情</a>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>设备监控</span>
+            <i class="ion-mouse icon"></i>
+            <div class="menu">
+                <div class="header">
+                    设备监控
+                </div>
+                <div class="ui divider"></div>
+                <a class="item" href="tab.html">设备总览</a>
+                <a class="item" href="table.html">设备详情</a>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>视图展示</span>
-			<i class="ion-arrow-graph-up-right icon"></i>
-			<div class="menu">
-				<div class="header">
-					视图展示
-				</div>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>视图展示</span>
+            <i class="ion-arrow-graph-up-right icon"></i>
+            <div class="menu">
+                <div class="header">
+                    视图展示
+                </div>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>告警展示</span>
-			<i class="ion-paintbrush icon"></i>
-			<div class="menu">
-				<div class="header">
-					告警展示
-				</div>
-				<div class="ui divider"></div>
-				<a class="item" href="error.html">告警日历</a>
-				<a class="item" href="error.html">告警列表</a>
-			</div>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>告警展示</span>
+            <i class="ion-paintbrush icon"></i>
+            <div class="menu">
+                <div class="header">
+                    告警展示
+                </div>
+                <div class="ui divider"></div>
+                <a class="item" href="error.html">告警日历</a>
+                <a class="item" href="error.html">告警列表</a>
+            </div>
+        </div>
 
-		<div class="ui dropdown item displaynone scrolling">
-			<span>报表统计</span>
-			<a href="error.html">
-				<i class="ion-briefcase icon"></i>
-			</a>
-		</div>
+        <div class="ui dropdown item displaynone scrolling">
+            <span>报表统计</span>
+            <a href="error.html">
+                <i class="ion-briefcase icon"></i>
+            </a>
+        </div>
 
-		<div class="ui divider"></div>
+        <div class="ui divider"></div>
 
-	</div>
+    </div>
 
-	<!--sidebar-->
+    <!--sidebar-->
 
-	<div class="pusher">
-		<!--navbar-->
-		<div class="navslide navwrap" th:replace="layout::top_nav">
-			<div class="ui menu icon borderless grid" data-color="inverted white">
-				<a class="item labeled openbtn">
-					<i class="ion-navicon-round big icon"></i>
-				</a>
-				<div class="item ui colhidden">
-					<div class="ui icon input">
-						<input type="text" placeholder="Search...">
-						<i class="search icon"></i>
-					</div>
-				</div>
-				<div class="right menu colhidden">
-					<div class="ui dropdown item labeled icon">
-						<i class="bell icon"></i>   告警
-						<div class="ui red label mini circular">6</div>
-						<div class="menu" >
-							<div class="header">
-								紧急告警
-							</div>
-							<div class="item">
-								告警信息1……
-								<div class="ui teal left pointing label">1</div>
-							</div>
-							<div class="item">
-								告警信息2……
-								<div class="ui label">51</div>
-							</div>
-							<div class="item">
-								告警信息3……
-								<div class="ui label">1</div>
-							</div>
-							<div class="header">
-								严重告警
-							</div>
-							<div class="item">
-								<i class="dropdown icon"></i>
-								<span class="text">更多</span>
-								<div class="menu">
-									<div class="item">告警信息……</div>
-									<div class="item">告警信息……</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="ui dropdown item">
+    <div class="pusher">
+        <!--navbar-->
+        <div class="navslide navwrap" th:replace="layout::top_nav">
+            <div class="ui menu icon borderless grid" data-color="inverted white">
+                <a class="item labeled openbtn">
+                    <i class="ion-navicon-round big icon"></i>
+                </a>
+                <div class="item ui colhidden">
+                    <div class="ui icon input">
+                        <input type="text" placeholder="Search...">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
+                <div class="right menu colhidden">
+                    <div class="ui dropdown item labeled icon">
+                        <i class="bell icon"></i> 告警
+                        <div class="ui red label mini circular">6</div>
+                        <div class="menu">
+                            <div class="header">
+                                紧急告警
+                            </div>
+                            <div class="item">
+                                告警信息1……
+                                <div class="ui teal left pointing label">1</div>
+                            </div>
+                            <div class="item">
+                                告警信息2……
+                                <div class="ui label">51</div>
+                            </div>
+                            <div class="item">
+                                告警信息3……
+                                <div class="ui label">1</div>
+                            </div>
+                            <div class="header">
+                                严重告警
+                            </div>
+                            <div class="item">
+                                <i class="dropdown icon"></i>
+                                <span class="text">更多</span>
+                                <div class="menu">
+                                    <div class="item">告警信息……</div>
+                                    <div class="item">告警信息……</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui dropdown item">
                         <img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/0.jpg}"
                              alt="label-image"/>
-						<div class="menu">
-							<a class="item" href="#" th:text="${session.userInfo.name}">whstone</a>
-							<a class="item" href="mail.html" th:href="@{/logout}">注销</a>
-						</div>
-					</div>
-					<a class="item labeled rightsidebar computer only">
-						<i class="ion-wrench large icon"></i>工具
-					</a>
+                        <div class="menu">
+                            <a class="item" href="#" th:text="${session.userInfo.name}">whstone</a>
+                            <a class="item" href="mail.html" th:href="@{/logout}">注销</a>
+                        </div>
+                    </div>
+                    <a class="item labeled rightsidebar computer only">
+                        <i class="ion-wrench large icon"></i>工具
+                    </a>
 
-				</div>
-			</div>
-		</div>
-		<!--navbar-->
-		<!--maincontent-->
-		<div class="mainWrap navslide">
-			<div class="ui equal width left aligned padded grid stackable">
-				<!--Site Content-->
-				<div class="sixteen wide column">
+                </div>
+            </div>
+        </div>
+        <!--navbar-->
+        <!--maincontent-->
+        <div class="mainWrap navslide">
+            <div class="ui equal width left aligned padded grid stackable">
+                <!--Site Content-->
+                <div class="sixteen wide column">
                     <div class="ui container">
                         <div class="header item">
                             <h3><i class="bar large chart icon"></i>日历图</h3>
@@ -212,46 +226,35 @@
                         <div class="ui container segment">
                             <!--<div class="ui secondary menu">-->
 
-                            <div class="ui horizontal right list">
+                            <div class="ui horizontal list buttons">
                                 <div class="item">
-										设备：
-                                    <div class="ui compact selection dropdown">
+                                    <div class="ui selection dropdown">
                                         <input type="hidden" name="hosts">
                                         <i class="dropdown icon"></i>
                                         <div class="default text">选择设备</div>
                                         <div class="menu">
-                                            <div class="item" data-value="1">设备</div>
-                                            <div class="item" data-value="0">业务平台</div>
+                                            <div id="select_host" class="item">设备</div>
+                                            <div class="disabled item">业务平台</div>
+                                            <div id="select_all" class="item">所有</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="item">
-										问题数：
-										<select id="ui_dropdown" class="ui dropdown">
-											<option value="">选择问题数</option>
-											<option>0~2</option>
-											<option>2~5</option>
-											<option>5以上</option>
-										</select>
+                                    <button id="num_filter_btn" class="ui basic button">问题数量</button>
                                 </div>
                                 <div class="item">
-										严重性：
-										<select id="ui_dropdown" class="ui dropdown">
-											<option value="">选择严重性</option>
-											<option>严重性1</option>
-											<option>严重性2</option>
-											<option>严重性3</option>
-										</select>
+                                    <div id="select_severity" class="ui selection dropdown">
+                                        <input type="hidden" name="severity">
+                                        <i class="dropdown icon"></i>
+                                        <div class="default text">选择严重性</div>
+                                        <div class="menu">
+                                            <div class="yellow item" data-value="warning">警告</div>
+                                            <div class="red item" data-value="high">严重</div>
+                                            <div class="item" data-value="all">所有</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="item">
-										问题状态：
-										<select id="ui_dropdown" class="ui dropdown">
-											<option value="">选择问题状态</option>
-											<option>问题状态1</option>
-											<option>问题状态2</option>
-											<option>问题状态3</option>
-										</select>
-                                </div>
+
 
                             </div>
                             <!--<div class="sixteen wide column">-->
@@ -266,205 +269,305 @@
                                 <div class="ui grid">
 
                                     <div class="sixteen wide column">
-										<div  class="ui segment">
-											<div id="host_table_dimmer" class="ui inverted dimmer">
-												<div class="ui text loader">加载</div>
-											</div>
-											<table  id="host_table" class="ui compact very basic table center aligned ">
-												<!--静态数据 start-->
-												<thead>
-												<tr>
-													<th class="two wide">发生时间</th>
-													<th class="two wide">设备</th>
-													<th class="four wide">问题</th>
-													<th class="two wide">严重性</th>
-													<th class="two wide">持续时间</th>
-													<th class="two wide">[告警状态]</th>
-													<th class="two wide">确认[是/否/无]</th>
-												</tr></thead>
-												<tbody>
-												<tr>
-													<td>2017-8-22 15:10:03</td>
-													<td>HOST1</td>
-													<td><a href="javascript:void(0)">HOST1主机的内存不足</a></td>
-													<td>严重</td>
-													<td>2秒</td>
-													<td style="color: yellow">问题（已恢复）</td>
-													<td>无</td>
-												</tr>
-												<tr>
-													<td>2017-8-22 15:10:03</td>
-													<td>HOST2</td>
-													<td><a href="javascript:void(0)">HOST2主机的内存不足</a></td>
-													<td>严重</td>
-													<td>2秒</td>
-													<td style="color: red">问题</td>
-													<td><a href="javascript:void(0)" class="confirm">是</a></td>
-												</tr>
-												<tr>
-													<td>2017-8-22 15:10:03</td>
-													<td>HOST3</td>
-													<td><a href="javascript:void(0)">HOST3主机的内存不足</a></td>
-													<td>严重</td>
-													<td>2秒</td>
-													<td style="color: green">正常</td>
-													<td><a href="javascript:void(0)" class="confirm"  id="是pop_id">是</a></td>
-												</tr>
-												</tbody>
-												<!--静态数据 end-->
-											</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!--modal end-->
-				<!--Site Content-->
-			</div>
-		</div>
-		<!--maincontent-->
-	</div>
+                                        <div class="ui segment">
+                                            <div id="host_table_dimmer" class="ui inverted dimmer">
+                                                <div class="ui text loader">加载</div>
+                                            </div>
+                                            <table id="host_table" class="ui compact very basic table center aligned ">
+                                                <!--静态数据 start-->
+                                                <thead>
+                                                <tr>
+                                                    <th class="two wide">发生时间</th>
+                                                    <th class="two wide">设备</th>
+                                                    <th class="four wide">问题</th>
+                                                    <th class="two wide">严重性</th>
+                                                    <th class="two wide">持续时间</th>
+                                                    <th class="two wide">[告警状态]</th>
+                                                    <th class="two wide">确认[是/否/无]</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>2017-8-22 15:10:03</td>
+                                                    <td>HOST1</td>
+                                                    <td><a href="javascript:void(0)">HOST1主机的内存不足</a></td>
+                                                    <td>严重</td>
+                                                    <td>2秒</td>
+                                                    <td style="color: yellow">问题（已恢复）</td>
+                                                    <td>无</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2017-8-22 15:10:03</td>
+                                                    <td>HOST2</td>
+                                                    <td><a href="javascript:void(0)">HOST2主机的内存不足</a></td>
+                                                    <td>严重</td>
+                                                    <td>2秒</td>
+                                                    <td style="color: red">问题</td>
+                                                    <td><a href="javascript:void(0)" class="confirm">是</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2017-8-22 15:10:03</td>
+                                                    <td>HOST3</td>
+                                                    <td><a href="javascript:void(0)">HOST3主机的内存不足</a></td>
+                                                    <td>严重</td>
+                                                    <td>2秒</td>
+                                                    <td style="color: green">正常</td>
+                                                    <td><a href="javascript:void(0)" class="confirm" id="是pop_id">是</a>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                                <!--静态数据 end-->
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--modal end-->
+                <!--Site Content-->
+            </div>
+        </div>
+        <!--maincontent-->
+    </div>
 
-<th:block th:replace="layout::bottom_script(~{::supple})">
-	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
-	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
-	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
-	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
-	<th:block th:fragment="supple">
-		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
-		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
-		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
-		<script type="text/javascript">
-            //页面加载完加载基础数据
-			$(function() {
-                //初始折叠菜单
-			})
-     	</script>
-		<script>
-            //绘制图标数据
-            var calendar_chart = echarts.init(document.getElementById("calendarChart"));
-            //配置option
-            function getVirtulData(year) {
-                year = year || '2017';
-                var date = +echarts.number.parseDate(year + '-01-01');
-                var end = +echarts.number.parseDate((+year + 1) + '-01-01');
-                var dayTime = 3600 * 24 * 1000;
-                var data = [];
-                for (var time = date; time < end; time += dayTime) {
-                    data.push([
-                        echarts.format.formatTime('yyyy-MM-dd', time),
-                        //Math.floor(Math.random() * 10000)
-                        5000
-                    ]);
+    <div id="select_host_modal" class="ui small modal">
+        <div id="host_tree"></div>
+        <div id="host_action" class="actions">
+            <div class="ui button deny">取消</div>
+            <div class="ui green button approve" id="host_submit">确认</div>
+        </div>
+    </div>
+
+    <div id="pop_num_filter" class="ui custom popup bottom left transition">
+        <input type="text" id="num_filter" name="num_filter" value=""/>
+    </div>
+
+    <th:block th:replace="layout::bottom_script(~{::supple})">
+        <script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
+        <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
+        <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
+        <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
+        <th:block th:fragment="supple">
+            <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+            <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+            <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+            <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
+            <script type="text/javascript">
+                //页面加载完加载基础数据
+                $(function () {
+                    //初始折叠菜单
+                })
+            </script>
+            <script>
+                //绘制图标数据
+                var calendar_chart = echarts.init(document.getElementById("calendarChart"));
+                //配置option
+                function getVirtulData(year) {
+                    year = year || '2017';
+                    var date = +echarts.number.parseDate(year + '-01-01');
+                    var end = +echarts.number.parseDate((+year + 1) + '-01-01');
+                    var dayTime = 3600 * 24 * 1000;
+                    var data = [];
+                    for (var time = date; time < end; time += dayTime) {
+                        data.push([
+                            echarts.format.formatTime('yyyy-MM-dd', time),
+                            //Math.floor(Math.random() * 10000)
+                            5000
+                        ]);
+                    }
+                    return data;
                 }
-                return data;
-            }
 
-            //var data = getVirtulData(2017);
-            var data1 = [['2017-01-01',20],['2017-01-03',10]];
-            var data2 = [['2017-01-02',20]];
-            option = {
-                backgroundColor: '#404a59',
+                //var data = getVirtulData(2017);
+                var data1 = [['2017-01-01', 20], ['2017-01-03', 10]];
+                var data2 = [['2017-01-02', 20]];
+                option = {
+                    backgroundColor: '#404a59',
 
-                title: {
-                    top: 0,
-                    text: '2017年',
-                    left: 'center',
-                    textStyle: {
-                        color: '#fff'
-                    }
-                },
-                tooltip : {
-                    //trigger: 'item'
-                    formatter: "{b}{a} : <br/>{c}个问题"
-                },
-                legend: {
-                    top: '10',
-                    left: '100',
-                    data:['已确认', '未确认'],
-                    textStyle: {
-                        color: '#fff'
-                    }
-                },
-                calendar: [{
-                    top: 60,
-                    left: 'center',
-                    range: ['2017-01-01', '2017-01-20'],
-                    splitLine: {
-                        show: true,
-                        lineStyle: {
-                            color: '#000',
-                            width: 4,
-                            type: 'solid'
-                        }
-                    },
-                    yearLabel: {
-                        formatter: '{start}  1st',
+                    title: {
+                        top: 0,
+                        text: '2017年',
+                        left: 'center',
                         textStyle: {
                             color: '#fff'
                         }
                     },
-                    itemStyle: {
-                        normal: {
-                            color: '#323c48',
-                            borderWidth: 1,
-                            borderColor: '#111'
-                        }
-                    }
-                }],
-                series : [
-                    {
-                        name: '已确认',
-                        type: 'scatter',
-                        coordinateSystem: 'calendar',
-                        data: data1,
-                        symbolSize: function (val) {
-                            return val[1];
-                        },
-                        itemStyle: {
-                            normal: {
-                                color: '#ddb926'
-                            }
+                    tooltip: {
+                        //trigger: 'item'
+                        formatter: "{b}{a} : <br/>{c}个问题"
+                    },
+                    legend: {
+                        top: '10',
+                        left: '100',
+                        data: ['已确认', '未确认'],
+                        textStyle: {
+                            color: '#fff'
                         }
                     },
-                    {
-                        name: '未确认',
-                        type: 'effectScatter',
-                        coordinateSystem: 'calendar',
-                        //data: data.sort(function (a, b) {
-                        //    return b[1] - a[1];
-                        //}).slice(0, 2),
-                        data: data2,
-                        symbolSize: function (val) {
-                            return val[1];
-                        },
-                        showEffectOn: 'render',
-                        rippleEffect: {
-                            brushType: 'stroke'
-                        },
-                        hoverAnimation: true,
-                        itemStyle: {
-                            normal: {
-                                color: '#f4e925',
-                                shadowBlur: 10,
-                                shadowColor: '#333'
+                    calendar: [{
+                        top: 60,
+                        left: 'center',
+                        range: ['2017-01-01', '2017-01-20'],
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                color: '#000',
+                                width: 4,
+                                type: 'solid'
                             }
                         },
-                        zlevel: 1
+                        yearLabel: {
+                            formatter: '{start}  1st',
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+                        itemStyle: {
+                            normal: {
+                                color: '#323c48',
+                                borderWidth: 1,
+                                borderColor: '#111'
+                            }
+                        }
+                    }],
+                    series: [
+                        {
+                            name: '已确认',
+                            type: 'scatter',
+                            coordinateSystem: 'calendar',
+                            data: data1,
+                            symbolSize: function (val) {
+                                return val[1];
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
+                        },
+                        {
+                            name: '未确认',
+                            type: 'effectScatter',
+                            coordinateSystem: 'calendar',
+                            //data: data.sort(function (a, b) {
+                            //    return b[1] - a[1];
+                            //}).slice(0, 2),
+                            data: data2,
+                            symbolSize: function (val) {
+                                return val[1];
+                            },
+                            showEffectOn: 'render',
+                            rippleEffect: {
+                                brushType: 'stroke'
+                            },
+                            hoverAnimation: true,
+                            itemStyle: {
+                                normal: {
+                                    color: '#f4e925',
+                                    shadowBlur: 10,
+                                    shadowColor: '#333'
+                                }
+                            },
+                            zlevel: 1
+                        }
+                    ]
+                };
+                //根据配置绘制图形
+                calendar_chart.setOption(option);
+                //点击每个节点，展示当天所有的问题列表
+                calendar_chart.on('click', function (params) {
+                    var calendar = params.data;
+                    console.log(calendar[0])
+                });
+                //持久化数据
+                var send_data = {
+                    hostIds: [],
+                    problemNum: [],
+                    priority: "",
+                    acknowledge: ""
+                }
+
+                //发送筛选数据请求
+                function filter_post() {
+                    $.ajax({
+                        type: "get",
+                        url: "/calendar/get_data",
+                        dataType: "json",
+                        data: send_data,
+                        success: function (result) {
+                            if (result.success) {
+                                //重新渲染日历图
+                            } else {
+                                console.error(result.message)
+                            }
+                        },
+                        error: function (e) {
+                            console.error(e)
+                        }
+                    })
+                }
+                //选择设备Modal中的确认按钮
+                $("#select_host").on('click', function (e) {
+                    var $host_tree = $('#host_tree')
+                    genHostsTree($host_tree, function () {
+                        console.log('树结构生成结束')
+                        $('#select_host_modal').modal({
+                            onApprove: function () {
+                                var selected_hosts = $host_tree.jstree(true).get_selected()
+                                send_data.hostIds = selected_hosts;
+                                console.log(selected_hosts)
+                                //选择设备后，执行的操作
+                                filter_post();
+                            }
+                        }).modal('show')
+                    })
+                })
+
+                $('#select_all').on('click', function () {
+                    //选择所有设备，设备筛选字段为空
+                    send_data.hostIds = []
+                    filter_post()
+                })
+
+                //问题数量筛选按钮
+                $('#num_filter_btn').popup({
+                    popup: $('#pop_num_filter'),
+                    on: 'click'
+                })
+
+                //问题数量选择条
+                $("#num_filter").ionRangeSlider({
+                    type: "double",
+                    min: 1,
+                    max: 20,
+                    from: 1,
+                    to: 20,
+                    step: 1,
+                    onStart: function (data) {
+//                        console.log(data);
+                    },
+                    onChange: function (data) {
+//                        console.log(data);
+                    },
+                    onFinish: function (data) {
+                        console.log(data);
+                        send_data.problemNum = [data.from, data.to]
+                        filter_post()
+                    },
+                    onUpdate: function (data) {
+//                        console.log(data);
                     }
-                ]
-            };
-            //根据配置绘制图形
-            calendar_chart.setOption(option);
-            //点击每个节点，展示当天所有的问题列表
-            calendar_chart.on('click', function (params) {
-                var calendar =params.data;
-                console.log(calendar[0])
-            });
-		</script>
-	</th:block>
-</th:block>
+                });
+                $('#select_severity').dropdown({
+                    onChange: function (value, text) {
+                        send_data.priority = value
+                        filter_post()
+                    }
+                })
+            </script>
+        </th:block>
+    </th:block>
 </body>
 </html>
