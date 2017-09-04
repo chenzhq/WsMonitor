@@ -1,10 +1,13 @@
 package com.ws.stoner.model.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.ws.stoner.model.view.ProblemListVO;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -169,5 +172,15 @@ public class BriefAlertDTO {
                 ", users=" + users +
                 ", mediatypes=" + mediatypes +
                 '}';
+    }
+
+    //alertDTO 步骤 排序
+    public static void sortListByEscStep(List<BriefAlertDTO> list){
+        Collections.sort(list, new Comparator<BriefAlertDTO>() {
+            @Override
+            public int compare(BriefAlertDTO o1, BriefAlertDTO o2) {
+                return o2.getEscStep().compareTo(o1.getEscStep());
+            }
+        });
     }
 }

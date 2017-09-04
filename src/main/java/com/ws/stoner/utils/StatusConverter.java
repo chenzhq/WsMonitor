@@ -172,4 +172,19 @@ public class StatusConverter {
 
     }
 
+    //根据触发器的 priority 获取对应的状态text return "green，yellow，red"
+    public static String getTextByTriggerPriority(Integer priority) {
+        //PriorityState
+        if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.WARNING.value) ) {
+            return StatusEnum.WARNING.color;
+        }else if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.HIGH.value)) {
+            return StatusEnum.HIGH.color;
+        }else if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.INFORMATION.value)) {
+            return StatusEnum.WARNING.color;
+        }else {
+            return StatusEnum.OK.color;
+        }
+
+    }
+
 }

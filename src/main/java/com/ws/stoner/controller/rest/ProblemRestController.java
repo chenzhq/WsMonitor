@@ -113,8 +113,8 @@ public class ProblemRestController {
      */
     @RequestMapping(value = "problemdetail/get_list", method = RequestMethod.GET)
     public String getDetailListByTriggerId(@RequestParam("trigger_id") String triggerId) throws ServiceException {
-        List<ProblemDetailListVO> problemDetailListVOS = eventService.getDetailListVOSByTriggerId(triggerId);
-        return RestResultGenerator.genResult(problemDetailListVOS, REST_UPDATE_SUCCESS).toString();
+        ProblemDetailDatasVO problemDetailDatasVO = eventService.getDetailDatasVOSByTriggerId(triggerId);
+        return RestResultGenerator.genResult(problemDetailDatasVO, REST_UPDATE_SUCCESS).toString();
     }
 
     /**

@@ -6,6 +6,7 @@ import com.ws.bix4j.access.event.EventAcknowledgeRequest;
 import com.ws.bix4j.access.event.EventGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
@@ -13,6 +14,7 @@ import com.ws.stoner.model.query.CalendarFormQuery;
 import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.AlertStatusConverter;
+import com.ws.stoner.utils.BaseUtils;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
@@ -317,14 +319,15 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * 根据指定的 triggerId 获取 问题详情中 详情事件列表
+     * 根据指定的 triggerId 组装 问题详情中 详情事件列表 和 时序属性 组合成的对象
      * @param triggerId
      * @return
      * @throws ServiceException
      */
     @Override
-    public List<ProblemDetailListVO> getDetailListVOSByTriggerId(String triggerId) throws ServiceException {
+    public ProblemDetailDatasVO getDetailDatasVOSByTriggerId(String triggerId) throws ServiceException {
         List<ProblemDetailListVO> problemDetailListVOS = new ArrayList<>();
+        List<ProblemGraphVO> problemGraphVOS = new ArrayList<>();
         List<String> triggerIds = new ArrayList<>();
         triggerIds.add(triggerId);
         String beginTime = "0";
@@ -336,34 +339,45 @@ public class EventServiceImpl implements EventService {
         //处理第一条 事件
         BriefEventDTO firstDTO = eventDTOS.get(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
-        ProblemDetailListVO firstVO = new ProblemDetailListVO();
-        firstVO.setEventId(firstDTO.getEventId());
-        firstVO.setBeginTime(firstDTO.getClock().format(formatter));
-        firstVO.setDurationString(firstDTO.getClock(), LocalDateTime.now());
+        ProblemDetailListVO firstListVO = new ProblemDetailListVO();
+        ProblemGraphVO firstGraphVO = new ProblemGraphVO();
+        firstListVO.setEventId(firstDTO.getEventId());
+        firstListVO.setBeginTime(firstDTO.getClock().format(formatter));
+        firstListVO.setDurationString(firstDTO.getClock(), LocalDateTime.now());
+        firstGraphVO.setBeginTime(firstDTO.getClock().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        firstGraphVO.setEndTime(System.currentTimeMillis());
+        firstGraphVO.setIsAlert(1);
+        firstGraphVO.setTooltip(BaseUtils.getDurationStringByTime(firstDTO.getClock(), LocalDateTime.now()));
         if(firstDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
             //该触发器的最新状态为问题
-            firstVO.setStatus("问题");
+            firstListVO.setStatus("问题");
+            firstGraphVO.setColor(StatusConverter.getTextByTriggerPriority(firstDTO.getRelatedObject().getPriority()));
             //确认
             if(firstDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
-                firstVO.setAcknowledged("是");
+                firstListVO.setAcknowledged("是");
             }else {
-                firstVO.setAcknowledged("否");
+                firstListVO.setAcknowledged("否");
             }
             List<BriefAlertDTO> firstDTOAlerts = firstDTO.getAlerts();
             //问题和恢复的告警,告警数
             Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(firstDTOAlerts);
-            firstVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-            firstVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+            firstListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
+            firstListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+            //添加告警记录到graphvo
+            List<ProblemGraphVO> firstAlertGraphVOS = ProblemGraphVO.getGraphVOByAlertDTOS(firstDTOAlerts);
+            problemGraphVOS.addAll(firstAlertGraphVOS);
         }else {
             //该触发器的最新状态为正常
-            firstVO.setStatus("正常");
+            firstListVO.setStatus("正常");
             //确认
-            firstVO.setAcknowledged("无");
-            firstVO.setAlertNum(0);
-            firstVO.setAlertState("无");
+            firstListVO.setAcknowledged("无");
+            firstListVO.setAlertNum(0);
+            firstListVO.setAlertState("无");
+            firstGraphVO.setColor(StatusEnum.OK.color);
         }
         //添加第一个元素
-        problemDetailListVOS.add(firstVO);
+        problemDetailListVOS.add(firstListVO);
+        problemGraphVOS.add(firstGraphVO);
         //定义上一个 DetailTime 用于指定 结束时间和持续时间
         LocalDateTime beforeTimeDTO = null;
         LocalDateTime currentTimeDTO = firstDTO.getClock();
@@ -374,12 +388,19 @@ public class EventServiceImpl implements EventService {
                 beforeTimeDTO = currentTimeDTO;
                 currentTimeDTO = eventDTO.getClock();
                 ProblemDetailListVO currentVO = new ProblemDetailListVO();
+                ProblemGraphVO curentGraphVO = new ProblemGraphVO();
                 //赋值
                 currentVO.setEventId(eventDTO.getEventId());
                 currentVO.setBeginTime(eventDTO.getClock().format(formatter));
                 currentVO.setEndTime(beforeTimeDTO.format(formatter));
                 currentVO.setDurationString(eventDTO.getClock(),beforeTimeDTO);
+                curentGraphVO.setBeginTime(eventDTO.getClock().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                curentGraphVO.setEndTime(beforeTimeDTO.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                curentGraphVO.setTooltip(BaseUtils.getDurationStringByTime(eventDTO.getClock(),beforeTimeDTO));
+                curentGraphVO.setIsAlert(1);
                 if(eventDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+                    //graphVO
+                    curentGraphVO.setColor(StatusConverter.getTextByTriggerPriority(firstDTO.getRelatedObject().getPriority()));
                     //recoveryEventid
                     currentVO.setRecoveryEventid(eventDTO.getrEventid());
                     // eventDTO 状态为问题
@@ -395,8 +416,12 @@ public class EventServiceImpl implements EventService {
                     Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
                     currentVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
                     currentVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+                    //添加告警记录到graphvo
+                    List<ProblemGraphVO> alertGraphVOS = ProblemGraphVO.getGraphVOByAlertDTOS(alertDTOS);
+                    problemGraphVOS.addAll(alertGraphVOS);
                 }else {
-                    // eventDTO 状态为问题
+                    curentGraphVO.setColor(StatusEnum.OK.color);
+                    // eventDTO 状态为正常
                     currentVO.setStatus("正常");
                     //确认
                     currentVO.setAcknowledged("无");
@@ -404,9 +429,11 @@ public class EventServiceImpl implements EventService {
                     currentVO.setAlertState("无");
                 }
                 problemDetailListVOS.add(currentVO);
+                problemGraphVOS.add(curentGraphVO);
             }
         }
-        return problemDetailListVOS;
+
+        return new ProblemDetailDatasVO(problemDetailListVOS,problemGraphVOS);
     }
 
     /**
@@ -488,29 +515,9 @@ public class EventServiceImpl implements EventService {
         List<BriefEventDTO> resultEventDTOS = new ArrayList<>();
         //处理查询条件 resultEventDTOS
         for(BriefEventDTO eventDTO : problemEventDTOS) {
-            boolean selectHost;
-            boolean selectPrority ;
-            boolean selectAcknowledge;
-            //host查询
-            if(formQuery.getHostId() == null) {
-                selectHost = true;
-            }else {
-                selectHost = eventDTO.getHosts().get(0).getHostId().equals(formQuery.getHostId());
-            }
-            //严重性查询
-            if(formQuery.getPriority() == null) {
-                selectPrority = true;
-            }else {
-                selectPrority = eventDTO.getRelatedObject().getPriority().equals(formQuery.getPriority());
-            }
-            //确认查询
-            if(formQuery.getAcknowledge() == null) {
-                selectAcknowledge = true;
-            }else {
-                selectAcknowledge = eventDTO.getAcknowledged().equals(formQuery.getAcknowledge());
-            }
+            boolean selectByQuery = CalendarFormQuery.selectEventByFormQuery(formQuery,eventDTO);
             //执行过滤条件
-            if(selectHost && selectPrority && selectAcknowledge) {
+            if(selectByQuery) {
                 resultEventDTOS.add(eventDTO);
             }
         }

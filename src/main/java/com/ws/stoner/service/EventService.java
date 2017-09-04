@@ -93,12 +93,12 @@ public interface EventService {
     AcknowledgeVO acknowledgeEvent(BriefAcknowledgeDTO acknowledgeDTO) throws ServiceException;
 
     /**
-     * 根据指定的 triggerId 组装 问题详情中 详情事件列表
+     * 根据指定的 triggerId 组装 问题详情中 详情事件列表 和 时序属性 组合成的对象 ProblemDetailDatasVO
      * @param triggerId
      * @return
      * @throws ServiceException
      */
-    List<ProblemDetailListVO> getDetailListVOSByTriggerId(String triggerId) throws ServiceException;
+    ProblemDetailDatasVO getDetailDatasVOSByTriggerId(String triggerId) throws ServiceException;
 
     /**
      * 根据 eventId 组装 事件详情弹出框 事件细节信息 EventDetailVO

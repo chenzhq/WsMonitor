@@ -1,5 +1,6 @@
 package com.ws.stoner.service.impl;
 
+import com.ws.bix4j.ZApiParameter;
 import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.PlatformTreeTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
@@ -788,13 +789,9 @@ public class GraphServiceImpl implements GraphService {
             boolean selectNum ;
             if(formQuery.getProblemNum() == null) {
                 selectNum = true;
-            }else if(formQuery.getProblemNum() == "0~2" && calendarDayVO.getProblemNum() <= 2 ) {
+            }else if(calendarDayVO.getProblemNum() >= formQuery.getProblemNum().get(0)  && calendarDayVO.getProblemNum() <= formQuery.getProblemNum().get(1) ) {
                 selectNum = true;
-            }else if(formQuery.getProblemNum() == "2~5" && calendarDayVO.getProblemNum() > 2 && calendarDayVO.getProblemNum() <= 5) {
-                selectNum = true;
-            }else if(formQuery.getProblemNum() == "5个以上" && calendarDayVO.getProblemNum() > 5){
-                selectNum = true;
-            }else{
+            }else {
                 selectNum = false;
             }
             //problemNum条件过滤
@@ -851,29 +848,9 @@ public class GraphServiceImpl implements GraphService {
             LocalDate day = eventDTO.getClock().toLocalDate();
             //满足当天的 event
             if((day.isAfter(today)||day.isEqual(today)) && day.isBefore(nextDay)) {
-                boolean selectHost;
-                boolean selectPrority ;
-                boolean selectAcknowledge;
-                //host查询
-                if(formQuery.getHostId() == null) {
-                    selectHost = true;
-                }else {
-                    selectHost = eventDTO.getHosts().get(0).getHostId().equals(formQuery.getHostId());
-                }
-                //严重性查询
-                if(formQuery.getPriority() == null) {
-                    selectPrority = true;
-                }else {
-                    selectPrority = eventDTO.getRelatedObject().getPriority().equals(formQuery.getPriority());
-                }
-                //确认查询
-                if(formQuery.getAcknowledge() == null) {
-                    selectAcknowledge = true;
-                }else {
-                    selectAcknowledge = eventDTO.getAcknowledged().equals(formQuery.getAcknowledge());
-                }
+                boolean selectByQuery = CalendarFormQuery.selectEventByFormQuery(formQuery,eventDTO);
                 //执行过滤条件
-                if(selectHost && selectPrority && selectAcknowledge) {
+                if(selectByQuery) {
                     if(problemNum >= 100) {
                         problemNum = 100;
                     }else {
