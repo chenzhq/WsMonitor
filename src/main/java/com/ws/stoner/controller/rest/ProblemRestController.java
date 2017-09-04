@@ -81,7 +81,7 @@ public class ProblemRestController {
      *  确认操作 判断是否可关闭问题
      * @return
      */
-    @RequestMapping(value = "problemlist/is_acknowlegde", method = RequestMethod.GET)
+    @RequestMapping(value = "acknowledge/is_closed", method = RequestMethod.GET)
     public String getAcknowledgeCheckBoxByEventId(@RequestParam("event_id") String eventId,HttpSession session) throws ServiceException {
         UserInfoDTO userInfoDTO = (UserInfoDTO) session.getAttribute(CookieConsts.USER_INFO);
         AcknowledgeCheckboxVO checkboxVO = eventService.getCheckboxVOByEventId(eventId,userInfoDTO.getUserId());
