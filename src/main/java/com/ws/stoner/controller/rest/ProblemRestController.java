@@ -114,18 +114,18 @@ public class ProblemRestController {
      */
     @RequestMapping(value = "problem/detail_list", method = RequestMethod.GET)
     public String getDetailListByTriggerId(@RequestParam("trigger_id") String triggerId,@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
-        ProblemDetailDatasVO problemDetailDatasVO = eventService.getDetailDatasVOSByTriggerId(triggerId);
-        return RestResultGenerator.genResult(problemDetailDatasVO, REST_UPDATE_SUCCESS).toString();
+        List<ProblemDetailListVO> problemDetailListVOS = eventService.getDetailListByTriggerId(triggerId,beginTime,endTime);
+        return RestResultGenerator.genResult(problemDetailListVOS, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
-     * 问题详情  时序图形
+     * 问题详情  时序图形 1504594265 1501915865 15170
      * @return
      */
     @RequestMapping(value = "problem/detail_graph", method = RequestMethod.GET)
     public String getDetailGraphByTriggerId(@RequestParam("trigger_id") String triggerId,@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
-        ProblemDetailDatasVO problemDetailDatasVO = eventService.getDetailDatasVOSByTriggerId(triggerId);
-        return RestResultGenerator.genResult(problemDetailDatasVO, REST_UPDATE_SUCCESS).toString();
+        List<ProblemGraphVO> problemGraphVOS = eventService.getGraphProblemByTriggerId(triggerId, beginTime, endTime);
+        return RestResultGenerator.genResult(problemGraphVOS, REST_UPDATE_SUCCESS).toString();
     }
 
 

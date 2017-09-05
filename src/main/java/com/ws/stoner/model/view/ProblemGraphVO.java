@@ -23,6 +23,17 @@ public class ProblemGraphVO {
     @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String color;
 
+    public ProblemGraphVO() {
+    }
+
+    public ProblemGraphVO(Long beginTime, Long endTime, int isAlert, String tooltip, String color) {
+        this.beginTime = beginTime;
+        this.endTime = endTime;
+        this.isAlert = isAlert;
+        this.tooltip = tooltip;
+        this.color = color;
+    }
+
     public Long getBeginTime() {
         return beginTime;
     }

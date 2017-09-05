@@ -319,19 +319,23 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * 根据指定的 triggerId 组装 问题详情中 详情事件列表 和 时序属性 组合成的对象
+     * 根据指定的 triggerId 组装 问题详情中 详情事件列表  ProblemDetailListVO list
+     * ProblemDetailDatasVO
      * @param triggerId
+     * @param beginTime
+     * @param endTime
      * @return
      * @throws ServiceException
      */
     @Override
-    public ProblemDetailDatasVO getDetailDatasVOSByTriggerId(String triggerId) throws ServiceException {
+    public  List<ProblemDetailListVO> getDetailListByTriggerId(String triggerId, String beginTime,String endTime ) throws ServiceException {
+        LocalDateTime localBeginTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(beginTime)), ZoneId.systemDefault());
+        LocalDateTime localEndTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTime)), ZoneId.systemDefault());
         List<ProblemDetailListVO> problemDetailListVOS = new ArrayList<>();
-        List<ProblemGraphVO> problemGraphVOS = new ArrayList<>();
         List<String> triggerIds = new ArrayList<>();
         triggerIds.add(triggerId);
-        String beginTime = "0";
-        String endTime = String.valueOf(System.currentTimeMillis() / 1000);
+        //获取最新的event
+        BriefEventDTO lastEventDTO = triggerService.getTriggersByTriggerIds(triggerIds).get(0).getLastEvent();
         List<BriefEventDTO> eventDTOS = getAllEventsByTime(beginTime,endTime,triggerIds);
         if(eventDTOS.size() == 0) {
             return null;
@@ -340,44 +344,65 @@ public class EventServiceImpl implements EventService {
         BriefEventDTO firstDTO = eventDTOS.get(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
         ProblemDetailListVO firstListVO = new ProblemDetailListVO();
-        ProblemGraphVO firstGraphVO = new ProblemGraphVO();
-        firstListVO.setEventId(firstDTO.getEventId());
-        firstListVO.setBeginTime(firstDTO.getClock().format(formatter));
-        firstListVO.setDurationString(firstDTO.getClock(), LocalDateTime.now());
-        firstGraphVO.setBeginTime(firstDTO.getClock().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        firstGraphVO.setEndTime(System.currentTimeMillis());
-        firstGraphVO.setIsAlert(1);
-        firstGraphVO.setTooltip(BaseUtils.getDurationStringByTime(firstDTO.getClock(), LocalDateTime.now()));
-        if(firstDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
-            //该触发器的最新状态为问题
-            firstListVO.setStatus("问题");
-            firstGraphVO.setColor(StatusConverter.getTextByTriggerPriority(firstDTO.getRelatedObject().getPriority()));
-            //确认
-            if(firstDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
-                firstListVO.setAcknowledged("是");
+        if(firstDTO.equals(lastEventDTO)) {
+            //第一条是最新事件
+            firstListVO.setEventId(firstDTO.getEventId());
+            firstListVO.setBeginTime(firstDTO.getClock().format(formatter));
+            firstListVO.setDurationString(firstDTO.getClock(), LocalDateTime.now());
+            if(firstDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+                //该触发器的最新状态为问题
+                firstListVO.setStatus("问题");
+                //确认
+                if(firstDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
+                    firstListVO.setAcknowledged("是");
+                }else {
+                    firstListVO.setAcknowledged("否");
+                }
+                List<BriefAlertDTO> firstDTOAlerts = firstDTO.getAlerts();
+                //问题和恢复的告警,告警数
+                Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(firstDTOAlerts);
+                firstListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
+                firstListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
             }else {
-                firstListVO.setAcknowledged("否");
+                //该触发器的最新状态为正常
+                firstListVO.setStatus("正常");
+                //确认
+                firstListVO.setAcknowledged("无");
+                firstListVO.setAlertNum(0);
+                firstListVO.setAlertState("无");
             }
-            List<BriefAlertDTO> firstDTOAlerts = firstDTO.getAlerts();
-            //问题和恢复的告警,告警数
-            Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(firstDTOAlerts);
-            firstListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-            firstListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
-            //添加告警记录到graphvo
-            List<ProblemGraphVO> firstAlertGraphVOS = ProblemGraphVO.getGraphVOByAlertDTOS(firstDTOAlerts);
-            problemGraphVOS.addAll(firstAlertGraphVOS);
         }else {
-            //该触发器的最新状态为正常
-            firstListVO.setStatus("正常");
-            //确认
-            firstListVO.setAcknowledged("无");
-            firstListVO.setAlertNum(0);
-            firstListVO.setAlertState("无");
-            firstGraphVO.setColor(StatusEnum.OK.color);
+            //第一条不是最新事件
+            firstListVO.setEventId(firstDTO.getEventId());
+            firstListVO.setBeginTime(firstDTO.getClock().format(formatter));
+            firstListVO.setEndTime(localEndTime.format(formatter));
+            firstListVO.setDurationString(firstDTO.getClock(),localEndTime);
+            if(firstDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+                //且还是问题事件
+                firstListVO.setStatus("问题(已恢复)");
+                firstListVO.setRecoveryEventid(firstDTO.getrEventid());
+                //确认
+                if(firstDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
+                    firstListVO.setAcknowledged("是");
+                }else {
+                    firstListVO.setAcknowledged("否");
+                }
+                List<BriefAlertDTO> firstDTOAlerts = firstDTO.getAlerts();
+                //问题和恢复的告警,告警数
+                Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(firstDTOAlerts);
+                firstListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
+                firstListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+            }else {
+                //正常事件
+                firstListVO.setStatus("正常");
+                //确认
+                firstListVO.setAcknowledged("无");
+                firstListVO.setAlertNum(0);
+                firstListVO.setAlertState("无");
+            }
         }
         //添加第一个元素
         problemDetailListVOS.add(firstListVO);
-        problemGraphVOS.add(firstGraphVO);
         //定义上一个 DetailTime 用于指定 结束时间和持续时间
         LocalDateTime beforeTimeDTO = null;
         LocalDateTime currentTimeDTO = firstDTO.getClock();
@@ -388,19 +413,12 @@ public class EventServiceImpl implements EventService {
                 beforeTimeDTO = currentTimeDTO;
                 currentTimeDTO = eventDTO.getClock();
                 ProblemDetailListVO currentVO = new ProblemDetailListVO();
-                ProblemGraphVO curentGraphVO = new ProblemGraphVO();
                 //赋值
                 currentVO.setEventId(eventDTO.getEventId());
                 currentVO.setBeginTime(eventDTO.getClock().format(formatter));
                 currentVO.setEndTime(beforeTimeDTO.format(formatter));
                 currentVO.setDurationString(eventDTO.getClock(),beforeTimeDTO);
-                curentGraphVO.setBeginTime(eventDTO.getClock().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                curentGraphVO.setEndTime(beforeTimeDTO.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                curentGraphVO.setTooltip(BaseUtils.getDurationStringByTime(eventDTO.getClock(),beforeTimeDTO));
-                curentGraphVO.setIsAlert(1);
                 if(eventDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
-                    //graphVO
-                    curentGraphVO.setColor(StatusConverter.getTextByTriggerPriority(firstDTO.getRelatedObject().getPriority()));
                     //recoveryEventid
                     currentVO.setRecoveryEventid(eventDTO.getrEventid());
                     // eventDTO 状态为问题
@@ -416,11 +434,7 @@ public class EventServiceImpl implements EventService {
                     Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
                     currentVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
                     currentVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
-                    //添加告警记录到graphvo
-                    List<ProblemGraphVO> alertGraphVOS = ProblemGraphVO.getGraphVOByAlertDTOS(alertDTOS);
-                    problemGraphVOS.addAll(alertGraphVOS);
                 }else {
-                    curentGraphVO.setColor(StatusEnum.OK.color);
                     // eventDTO 状态为正常
                     currentVO.setStatus("正常");
                     //确认
@@ -429,11 +443,86 @@ public class EventServiceImpl implements EventService {
                     currentVO.setAlertState("无");
                 }
                 problemDetailListVOS.add(currentVO);
-                problemGraphVOS.add(curentGraphVO);
             }
         }
+        //处理起始时间至第一个事件的 事件段
+        BriefEventDTO endEventDTO = eventDTOS.get(eventDTOS.size()-1);
+        ProblemDetailListVO endListVO = new ProblemDetailListVO();
+        endListVO.setBeginTime(localBeginTime.format(formatter));
+        endListVO.setEndTime(endEventDTO.getClock().format(formatter));
+        endListVO.setDurationString(localBeginTime,endEventDTO.getClock());
+        if(endEventDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+            endListVO.setStatus("正常");
+            //确认
+            endListVO.setAcknowledged("无");
+            endListVO.setAlertNum(0);
+            endListVO.setAlertState("无");
+        }else {
+            //事件段 由问题变为正常
+            endListVO.setRecoveryEventid(endEventDTO.getrEventid());
+            //确认
+            if(endEventDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
+                endListVO.setAcknowledged("是");
+            }else {
+                endListVO.setAcknowledged("否");
+            }
+            // eventDTO 状态为问题
+            endListVO.setStatus("问题(已恢复)");
+            List<BriefAlertDTO> alertDTOS = endEventDTO.getAlerts();
+            //问题和恢复的告警,告警数
+            Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
+            endListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
+            endListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+        }
+        problemDetailListVOS.add(endListVO);
+        return problemDetailListVOS;
+    }
 
-        return new ProblemDetailDatasVO(problemDetailListVOS,problemGraphVOS);
+    /**
+     * 根据指定的 triggerId 时间段 获取 问题详情中 时序图形 数据 ProblemGraphVO list
+     * @param triggerId
+     * @param beginTime
+     * @param endTime
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<ProblemGraphVO> getGraphProblemByTriggerId(String triggerId, String beginTime, String endTime) throws ServiceException {
+        List<ProblemGraphVO> problemGraphVOS = new ArrayList<>();
+        List<String> triggerIds = new ArrayList<>();
+        triggerIds.add(triggerId);
+        List<BriefEventDTO> eventDTOS = getAllEventsByTime(beginTime,endTime,triggerIds);
+        if(eventDTOS.size() == 0) {
+            return null;
+        }
+        //定义上一个 DetailTime 用于指定 结束时间和持续时间
+        LocalDateTime beforeTimeDTO = null;
+        LocalDateTime currentTimeDTO = LocalDateTime.now();
+        //处理后面的events
+        for(BriefEventDTO eventDTO : eventDTOS) {
+            //保存前一个DTOTime 用于赋值持续时间和结束时间
+            beforeTimeDTO = currentTimeDTO;
+            currentTimeDTO = eventDTO.getClock();
+            ProblemGraphVO curentGraphVO = new ProblemGraphVO();
+            //赋值
+            curentGraphVO.setBeginTime(eventDTO.getClock().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            curentGraphVO.setEndTime(beforeTimeDTO.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            curentGraphVO.setTooltip(BaseUtils.getDurationStringByTime(eventDTO.getClock(),beforeTimeDTO));
+            curentGraphVO.setIsAlert(1);
+            if(eventDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+                //graphVO
+                curentGraphVO.setColor(StatusConverter.getColorByTriggerPriority(eventDTO.getRelatedObject().getPriority()));
+                List<BriefAlertDTO> alertDTOS = eventDTO.getAlerts();
+                //添加告警记录到graphvo
+                List<ProblemGraphVO> alertGraphVOS = ProblemGraphVO.getGraphVOByAlertDTOS(alertDTOS);
+                problemGraphVOS.addAll(alertGraphVOS);
+            }else {
+                curentGraphVO.setColor(StatusEnum.OK.color);
+            }
+            problemGraphVOS.add(curentGraphVO);
+        }
+
+        return problemGraphVOS;
     }
 
     /**
