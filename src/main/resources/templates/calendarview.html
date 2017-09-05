@@ -228,19 +228,19 @@
 
                             <div class="ui horizontal list buttons">
                                 <div class="item">
-                                    <div class="ui selection dropdown">
+                                    <button id="num_filter_btn" class="ui basic button">问题数量</button>
+                                </div>
+                                <div class="item">
+                                    <div id="host_select_dropdown" class="ui selection dropdown">
                                         <input type="hidden" name="hosts">
                                         <i class="dropdown icon"></i>
                                         <div class="default text">选择设备</div>
                                         <div class="menu">
-                                            <div id="select_host" class="item">设备</div>
-                                            <div class="disabled item">业务平台</div>
-                                            <div id="select_all" class="item">所有</div>
+                                            <div id="select_host" class="item" data-value="host">设备</div>
+                                            <div class="disabled item" data-value="platform">业务平台</div>
+                                            <div id="select_all" class="item" data-value="all">所有</div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="item">
-                                    <button id="num_filter_btn" class="ui basic button">问题数量</button>
                                 </div>
                                 <div class="item">
                                     <div id="select_severity" class="ui selection dropdown">
@@ -299,7 +299,7 @@
         </div>
         <!--maincontent-->
     </div>
-
+</div>
     <div id="select_host_modal" class="ui small modal">
         <div id="host_tree"></div>
         <div id="host_action" class="actions">
