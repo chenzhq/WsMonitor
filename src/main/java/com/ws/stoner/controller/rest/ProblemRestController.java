@@ -38,7 +38,7 @@ public class ProblemRestController {
      * 问题列表模块  当前问题 请求
      * @return
      */
-    @RequestMapping(value = "problemlist/get_allproblems", method = RequestMethod.GET)
+    @RequestMapping(value = "/problems/get_current", method = RequestMethod.GET)
     public String getAllProblems() throws ServiceException {
         List<ProblemListVO> problemListVOS = triggerService.listProblemListVO();
         return RestResultGenerator.genResult(problemListVOS, REST_UPDATE_SUCCESS).toString();
@@ -48,7 +48,7 @@ public class ProblemRestController {
      * 问题列表模块 最近问题 30分钟内恢复的问题和所有没有恢复的问题
      * @return
      */
-    @RequestMapping(value = "problemlist/get_lastproblems", method = RequestMethod.GET)
+    @RequestMapping(value = "problems/get_last", method = RequestMethod.GET)
     public String getLastProblems() throws ServiceException {
         List<ProblemListVO> problemListVOS = problemService.getLastProblems();
         return RestResultGenerator.genResult(problemListVOS, REST_UPDATE_SUCCESS).toString();
@@ -58,7 +58,7 @@ public class ProblemRestController {
      * 问题列表模块  历史记录 请求 指定时间段 1503640848  1503642952
      * @return
      */
-    @RequestMapping(value = "problemlist/get_historyproblems", method = RequestMethod.GET)
+    @RequestMapping(value = "problems/get_history", method = RequestMethod.GET)
     public String getHistoryProblems(@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
         //时间格式：秒数
         List<ProblemListVO> problemListVOS = eventService.getHistoryProblemsByTime(beginTime,endTime);
@@ -70,7 +70,7 @@ public class ProblemRestController {
      * 问题列表  确认记录 pop
      * @return
      */
-    @RequestMapping(value = "problemlist/get_acknowledges", method = RequestMethod.GET)
+    @RequestMapping(value = "acknowledges/get_acknowledge", method = RequestMethod.GET)
     public String getAcknowledgesByEventId(@RequestParam("event_id") String eventId) throws ServiceException {
         List<ProblemAcknowledgeVO> acknowledgeVOS = eventService.getAcknowledgeVOSByEventId(eventId);
         return RestResultGenerator.genResult(acknowledgeVOS, REST_UPDATE_SUCCESS).toString();
@@ -84,6 +84,7 @@ public class ProblemRestController {
     public String getAcknowledgeCheckBoxByEventId(@RequestParam("event_id") String eventId,HttpSession session) throws ServiceException {
         UserInfoDTO userInfoDTO = (UserInfoDTO) session.getAttribute(CookieConsts.USER_INFO);
         AcknowledgeCheckboxVO checkboxVO = eventService.getCheckboxVOByEventId(eventId,userInfoDTO.getUserId());
+        checkboxVO.setAcknowledgeHistory(eventService.getAcknowledgeVOSByEventId(eventId));
         return RestResultGenerator.genResult(checkboxVO, REST_UPDATE_SUCCESS).toString();
     }
 
@@ -101,27 +102,38 @@ public class ProblemRestController {
      * 问题列表  告警记录 pop
      * @return
      */
-    @RequestMapping(value = "problemlist/get_alerts", method = RequestMethod.GET)
+    @RequestMapping(value = "alerts/get_alert", method = RequestMethod.GET)
     public String getAlertsByEventId(@RequestParam("event_id") String eventId) throws ServiceException {
         List<ProblemAlertVO> alertVOS = alertService.getAlertVOByEventId(eventId);
         return RestResultGenerator.genResult(alertVOS, REST_UPDATE_SUCCESS).toString();
     }
 
-    /**
+       /**
      * 问题详情  详情列表
      * @return
      */
-    @RequestMapping(value = "problemdetail/get_list", method = RequestMethod.GET)
-    public String getDetailListByTriggerId(@RequestParam("trigger_id") String triggerId) throws ServiceException {
+    @RequestMapping(value = "problem/detail_list", method = RequestMethod.GET)
+    public String getDetailListByTriggerId(@RequestParam("trigger_id") String triggerId,@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
         ProblemDetailDatasVO problemDetailDatasVO = eventService.getDetailDatasVOSByTriggerId(triggerId);
         return RestResultGenerator.genResult(problemDetailDatasVO, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
+     * 问题详情  时序图形
+     * @return
+     */
+    @RequestMapping(value = "problem/detail_graph", method = RequestMethod.GET)
+    public String getDetailGraphByTriggerId(@RequestParam("trigger_id") String triggerId,@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
+        ProblemDetailDatasVO problemDetailDatasVO = eventService.getDetailDatasVOSByTriggerId(triggerId);
+        return RestResultGenerator.genResult(problemDetailDatasVO, REST_UPDATE_SUCCESS).toString();
+    }
+
+
+    /**
      * 事件详情  事件细节信息
      * @return
      */
-    @RequestMapping(value = "eventdetail/get_detail", method = RequestMethod.GET)
+    @RequestMapping(value = "event/get_detail", method = RequestMethod.GET)
     public String getEventDetailByEventId(@RequestParam("event_id") String eventId) throws ServiceException {
         EventDetailVO eventDetailVO = eventService.getEventDetailByEventId(eventId);
         return RestResultGenerator.genResult(eventDetailVO, REST_UPDATE_SUCCESS).toString();
@@ -131,7 +143,7 @@ public class ProblemRestController {
      * 事件详情  告警详情信息
      * @return
      */
-    @RequestMapping(value = "alertdetail/get_detail", method = RequestMethod.GET)
+    @RequestMapping(value = "alerts/get_detail", method = RequestMethod.GET)
     public String getAlertDetailByEventId(@RequestParam("event_id") String eventId) throws ServiceException {
         List<ProblemAlertVO> problemAlertVOS = alertService.getDetailAlertByEventId(eventId);
         return RestResultGenerator.genResult(problemAlertVOS, REST_UPDATE_SUCCESS).toString();
@@ -141,7 +153,7 @@ public class ProblemRestController {
      * 根据查询参数 获取告警日历数据
      * @return
      */
-    @RequestMapping(value = "calendar/get_data", method = RequestMethod.POST)
+    @RequestMapping(value = "calendar/get_graph", method = RequestMethod.POST)
     public String getCalendarData(@RequestBody CalendarFormQuery formQuery) throws ServiceException {
         CalendarVO calendarVO = graphService.getCalendarGraphDatas(formQuery);
         return RestResultGenerator.genResult(calendarVO, REST_UPDATE_SUCCESS).toString();

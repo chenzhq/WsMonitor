@@ -1,5 +1,7 @@
 package com.ws.stoner.model.view;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.List;
 
 /**
@@ -7,7 +9,9 @@ import java.util.List;
  */
 public class ProblemDetailDatasVO {
 
+    @JSONField(name = "list_datas")
     private List<ProblemDetailListVO> listVOS;
+    @JSONField(name = "graph_datas")
     private List<ProblemGraphVO> graphVOS;
 
     public ProblemDetailDatasVO() {
