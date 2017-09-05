@@ -27,13 +27,12 @@
 				height: 260px;overflow-y:auto;overflow-x:hidden
 			}
 			.ui.segment.detailconfirm{
-				height: 232px;overflow-y:auto;overflow-x:hidden
+				height: 232px;
 			}
 			.ui.segment.detailalarmed{
 				height: 180px;overflow-y:auto;overflow-x:hidden
 			}
-			.chartBar{ height: 110px; }
-			.row1Height{ height: 130px; }
+			.chartBar{ height: 230px; }
 		</style>
 	</th:block>
 </head>
@@ -241,8 +240,8 @@
 						<div class="ui segment"  style=" min-height : 500px;">
 							<div class="sixteen wide column chartBar">
 								<div class="ui grid">
-									<div class="eight wide column">
-										<div class="ui segment  row1Height">
+									<div class="six wide column">
+										<div class="ui segment detailconfirm">
 											<div class="ui two column divided grid">
 												<div class="column" style="padding: 0px">
 													<table class="ui very basic compact single line fixed definition table center aligned">
@@ -253,20 +252,11 @@
 														</tbody>
 													</table>
 												</div>
-												<div class="column" style="padding: 0px">
-													<table class="ui very basic compact single line fixed definition table center aligned">
-														<tbody id="detailTable1">
-														<tr>
-															<td colspan="2">无数据</td>
-														</tr>
-														</tbody>
-													</table>
-												</div>
 											</div>
 										</div>
 									</div>
-									<div class="eight wide column">
-										<div class="ui segment left aligned row1Height">
+									<div class="ten wide column">
+										<div class="ui segment left aligned detailconfirm">
 											<div id="problemChart" class="chartBar"></div>
 										</div>
 									</div>
@@ -489,7 +479,7 @@
                     }
                 }
 
-                option = {
+                var option = {
                     tooltip: {
                         formatter: function (params) {
                             return params.marker + params.value[3] + ': ' + params.value[2] + ' ms';
@@ -506,7 +496,7 @@
                         type: 'slider',
                         filterMode: 'weakFilter',
                         showDataShadow: false,
-                        top: 100,
+                        top: 190,
                         height: 10,
                         borderColor: 'transparent',
                         backgroundColor: '#e2e2e2',
@@ -522,8 +512,10 @@
                         minSpan: 10
                     }],
                     grid: {
-                        height:60,
-                        top: -0,
+                        height:140,
+                        top: '1%',
+						left:'5%',
+						right:'3%',
                     },
                     xAxis: {
                         type: 'time',
@@ -585,7 +577,6 @@
             //获取事件细节信息
             function getdetailtable(data){
                 var str = '';
-                var str1 = '';
                 if(data.closed == true){
                     var closed = '已关闭';
                 }
@@ -596,14 +587,12 @@
                     +data.host_name+"</td></tr><tr><td>监控点</td><td>"
                     +data.point_name+"</td></tr><tr><td>监控项</td><td>"
                     +data.item_name+"</td></tr><tr><td>阀值</td><td>"
-                    +data.threshold+"</td></tr>"
-                $("#detailTable").html(str);
-                str1 += "<tr><td>手动关闭(操作人)</td><td>"
+                    +data.threshold+"</td></tr><tr><td>手动关闭(操作人)</td><td>"
                     +closed+"("+data.closed_user+")</td></tr><tr><td>发生时间</td><td>"
                     +data.problem_time+"</td></tr><tr><td>恢复时间</td><td>"
                     +data.recovery_time+"</td></tr><tr><td>触发器描述</td><td title='"+data.trigger_name+"'>"
                     +data.trigger_name+"</td></tr>"
-                $("#detailTable1").html(str1);
+                $("#detailTable").html(str);
             }
             //连接确认记录提示框
             function confirmpopup(event_id) {
