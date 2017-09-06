@@ -1,10 +1,9 @@
 package com.ws.stoner.service.impl;
 
-import com.ws.bix4j.ZApiParameter;
+import com.ws.stoner.constant.BaseConsts;
 import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.PlatformTreeTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.constant.BaseConsts;
 import com.ws.stoner.dao.MongoGraphDAO;
 import com.ws.stoner.dao.MongoPlatformGraphDAO;
 import com.ws.stoner.dao.MongoPlatformTreeDAO;
@@ -17,7 +16,6 @@ import com.ws.stoner.model.view.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
-import org.omg.PortableInterceptor.ObjectReferenceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -787,7 +785,7 @@ public class GraphServiceImpl implements GraphService {
             CalendarDayVO calendarDayVO = getOneDayCalendar(today,problemEventDTOS,formQuery);
             //问题数筛选
             boolean selectNum ;
-            if(formQuery.getProblemNum() == null) {
+            if (formQuery.getProblemNum() == null || formQuery.getProblemNum().size() == 0) {
                 selectNum = true;
             }else if(calendarDayVO.getProblemNum() >= formQuery.getProblemNum().get(0)  && calendarDayVO.getProblemNum() <= formQuery.getProblemNum().get(1) ) {
                 selectNum = true;

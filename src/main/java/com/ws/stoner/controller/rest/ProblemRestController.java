@@ -174,8 +174,17 @@ public class ProblemRestController {
      * 根据查询参数 获取一天的日历信息 ： 一天的问题历史记录  List<ProblemListVO>
      * @return
      */
-    @RequestMapping(value = "calendar/get_list", method = RequestMethod.POST)
-    public String getOneDayListCalendar(@RequestBody CalendarFormQuery formQuery) throws ServiceException {
+    @RequestMapping(value = "calendar/get_list", method = RequestMethod.GET)
+    public String getOneDayListCalendar(@RequestParam(required = false) List<String> hostIds,
+                                        @RequestParam(required = false) List<Integer> problemNum,
+                                        @RequestParam String priority,
+                                        @RequestParam String acknowledge,
+                                        @RequestParam(required = false) String date) throws ServiceException {
+        CalendarFormQuery formQuery = new CalendarFormQuery();
+        formQuery.setHostIds(hostIds).setProblemNum(problemNum).setPriority(priority).setAcknowledge(acknowledge);
+        if (null != date) {
+            formQuery.setDate(date);
+        }
         List<ProblemListVO> problemListVOS = eventService.getOneDayProblemListVOS(formQuery);
         return RestResultGenerator.genResult(problemListVOS, REST_UPDATE_SUCCESS).toString();
     }

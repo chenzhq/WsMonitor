@@ -15,7 +15,7 @@ public class CalendarFormQuery {
     private List<Integer> problemNum;
     private String priority;
     private String acknowledge;
-    private String today;//当天
+    private String date;//当天
 
     public List<String> getHostIds() {
         return hostIds;
@@ -53,12 +53,12 @@ public class CalendarFormQuery {
         return this;
     }
 
-    public String getToday() {
-        return today;
+    public String getDate() {
+        return date;
     }
 
-    public CalendarFormQuery setToday(String today) {
-        this.today = today;
+    public CalendarFormQuery setDate(String date) {
+        this.date = date;
         return this;
     }
 
