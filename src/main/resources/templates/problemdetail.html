@@ -27,7 +27,7 @@
 				height: 260px;overflow-y:auto;overflow-x:hidden
 			}
 			.ui.segment.detailconfirm{
-				height: 232px;
+				height: 225px;
 			}
 			.ui.segment.detailalarmed{
 				height: 180px;overflow-y:auto;overflow-x:hidden
@@ -241,44 +241,42 @@
 							<div class="sixteen wide column chartBar">
 								<div class="ui grid">
 									<div class="six wide column">
-										<div class="ui segment detailconfirm">
-											<div class="ui two column divided grid">
-												<div class="column" style="padding: 0px">
-													<table class="ui very basic compact single line fixed definition table center aligned">
-														<tbody id="detailTable">
-														<tr>
-															<td style="display: none" id="trigger_id" th:text="${problemDetailVO.triggerId}"></td>
-															<td>所属主机</td>
-															<td th:text="${problemDetailVO.hostName}"></td>
-														</tr>
-														<tr>
-															<td>监控点</td>
-															<td th:text="${problemDetailVO.pointName}"></td>
-														</tr>
-														<tr>
-															<td>监控项</td>
-															<td th:text="${problemDetailVO.itemName}"></td>
-														</tr>
-														<tr>
-															<td>触发器描述</td>
-															<td th:text="${problemDetailVO.triggerName}"></td>
-														</tr>
-														<tr>
-															<td>严重性</td>
-															<td th:text="${problemDetailVO.level}"></td>
-														</tr>
-														<tr>
-															<td>最新状态</td>
-															<td th:text="${problemDetailVO.state}"></td>
-														</tr>
-														<tr>
-															<td>阀值</td>
-															<td th:text="${problemDetailVO.hostName}"></td>
-														</tr>
-														</tbody>
-													</table>
-												</div>
-											</div>
+										<div class="ui segment detailconfirm no-padding">
+											<table class="ui very basic compact single line fixed definition table center aligned">
+												<tbody id="detailTable">
+												<tr>
+													<td>所属主机</td>
+													<td th:text="${problemDetailVO.hostName}"></td>
+												</tr>
+												<tr>
+													<td>监控点</td>
+													<td th:text="${problemDetailVO.pointName}"></td>
+												</tr>
+												<tr>
+													<td>监控项</td>
+													<td th:text="${problemDetailVO.itemName}"></td>
+												</tr>
+												<tr>
+													<td>触发器描述</td>
+													<td th:text="${problemDetailVO.triggerName}"></td>
+												</tr>
+												<tr>
+													<td>严重性</td>
+													<td th:text="${problemDetailVO.level}"></td>
+												</tr>
+												<tr>
+													<td>最新状态</td>
+													<td th:text="${problemDetailVO.state}"></td>
+												</tr>
+												<tr>
+													<td>阀值</td>
+													<td th:text="${problemDetailVO.hostName}"></td>
+												</tr>
+												<tr>
+													<td style="display: none" id="trigger_id" th:text="${problemDetailVO.triggerId}"></td>
+												</tr>
+												</tbody>
+											</table>
 										</div>
 									</div>
 									<div class="ten wide column">
