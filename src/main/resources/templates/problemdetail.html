@@ -15,7 +15,7 @@
 	<th:block th:fragment="supplement">
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 			.ui.table.dataTable thead th {
 				border-left: 0px;
@@ -558,7 +558,7 @@
             function detailtable(event_id) {
                 $.ajax({
                     type: "get",
-                    url: "/eventdetail/get_detail?event_id=" + event_id,
+                    url: "/event/get_detail?event_id=" + event_id,
                     dataType: "json",
                     success: function (result) {
                         if (result.success) {
@@ -598,7 +598,7 @@
             function confirmpopup(event_id) {
                 $.ajax({
                     type: "get",
-                    url: "/problemlist/get_acknowledges?event_id=" + event_id,
+                    url: "/acknowledges/get_acknowledge?event_id=" + event_id,
                     dataType: "json",
                     success: function (result) {
                         if (result.success) {
@@ -636,7 +636,7 @@
             function detailmodal(event_id) {
                 $.ajax({
                     type: "get",
-                    url: "/eventdetail/get_detail?event_id=" + event_id,
+                    url: "/event/get_detail?event_id=" + event_id,
                     dataType: "json",
                     success: function (result) {
                         if (result.success) {
@@ -676,7 +676,7 @@
             function detailconfirm(event_id) {
                 $.ajax({
                     type: "get",
-                    url: "/problemlist/get_acknowledges?event_id=" + event_id,
+                    url: "/acknowledges/get_acknowledge?event_id=" + event_id,
                     dataType: "json",
                     success: function (result) {
                         if (result.success) {
@@ -715,7 +715,7 @@
             function detailrecord(event_id) {
                 $.ajax({
                     type: "get",
-                    url: "/alertdetail/get_detail?event_id=" + event_id,
+                    url: "/alerts/get_detail?event_id=" + event_id,
                     dataType: "json",
                     success: function (result) {
                         if (result.success) {
@@ -783,7 +783,7 @@
                         });
                     },
                     ajax: {
-                        url: '/problemdetail/get_list?trigger_id=' + trigger_id	,
+                        url: '/problem/detail_list?trigger_id=' + trigger_id	,
                         dataSrc: 'data'
                     },
                     columns: [

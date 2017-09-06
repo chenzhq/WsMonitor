@@ -12,7 +12,7 @@
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<th:block th:fragment="supplement">
 		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.ui.table.dataTable thead th {
 				border-left: 0px;
@@ -511,7 +511,7 @@
                 });
             },
             ajax: {
-                url: '/problemlist/get_allproblems',
+                url: '/problems/get_current',
                 dataSrc: 'data'
             },
             columns: [
@@ -608,13 +608,13 @@
             $('#problemsMenu button').removeClass('active');
             $(this).addClass('active');
             if(this.value == "currentProblems"){
-                problems_Table.ajax.url('/problemlist/get_allproblems').load();
+                problems_Table.ajax.url('/problems/get_current').load();
 			}else if(this.value == "recentProblems"){
-                problems_Table.ajax.url('/problemlist/get_lastproblems').load();
+                problems_Table.ajax.url('/problems/get_last').load();
 			}else if(this.value == "historicalRecord"){
 			    var begin_time='2017-1-29';
                 var end_time='2017-8-29';
-                problems_Table.ajax.url('/problemlist/get_historyproblems?begin_time='+begin_time+'&end_time='+end_time).load();
+                problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
             }
         })
     })
@@ -622,7 +622,7 @@
     function confirmpopup(event_id) {
         $.ajax({
             type: "get",
-            url: "/problemlist/get_acknowledges?event_id=" + event_id,
+            url: "/acknowledges/get_acknowledge?event_id=" + event_id,
             dataType: "json",
             success: function (result) {
                 if (result.success) {
@@ -660,7 +660,7 @@
     function alarmedpopup(event_id) {
         $.ajax({
             type: "get",
-            url: "/problemlist/get_alerts?event_id=" + event_id,
+            url: "/alerts/get_alert?event_id=" + event_id,
             dataType: "json",
             success: function (result) {
                 if (result.success) {
@@ -693,7 +693,7 @@
     function detailmodal(event_id) {
         $.ajax({
             type: "get",
-            url: "/eventdetail/get_detail?event_id=" + event_id,
+            url: "/event/get_detail?event_id=" + event_id,
             dataType: "json",
             success: function (result) {
                 if (result.success) {
@@ -733,7 +733,7 @@
     function detailconfirm(event_id) {
         $.ajax({
             type: "get",
-            url: "/problemlist/get_acknowledges?event_id=" + event_id,
+            url: "/acknowledges/get_acknowledge?event_id=" + event_id,
             dataType: "json",
             success: function (result) {
                 if (result.success) {
@@ -772,7 +772,7 @@
     function detailrecord(event_id) {
         $.ajax({
             type: "get",
-            url: "/alertdetail/get_detail?event_id=" + event_id,
+            url: "/alerts/get_detail?event_id=" + event_id,
             dataType: "json",
             success: function (result) {
                 if (result.success) {
@@ -835,7 +835,7 @@
 		//历史确认记录
         $.ajax({
             type: "get",
-            url: "/problemlist/get_acknowledges?event_id=" + event_id,
+            url: "/acknowledges/get_acknowledge?event_id=" + event_id,
             dataType: "json",
             success: function (result) {
                 if (result.success) {
