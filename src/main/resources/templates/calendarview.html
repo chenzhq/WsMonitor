@@ -15,7 +15,7 @@
     <th:block th:fragment="supplement">
         <script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
         <script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-        <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=1"></script>
+        <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
         <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
         <script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
         <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
@@ -31,6 +31,11 @@
 
             #pop_num_filter {
                 width: 150px;
+            }
+
+            /*原生label 有个下外边距*/
+            .ui .label {
+                margin-bottom: 0;
             }
         </style>
     </th:block>
@@ -221,7 +226,7 @@
                 <div class="sixteen wide column">
                     <div class="ui container">
                         <div class="header item">
-                            <h3><i class="bar large chart icon"></i>日历图</h3>
+                            <h2><i class="bar large chart icon"></i>日历图</h2>
                         </div>
                         <div class="ui container segment">
                             <!--<div class="ui secondary menu">-->
@@ -282,10 +287,14 @@
 
                                     <div class="sixteen wide column">
                                         <div class="ui segment">
-                                            <div class="sixteen wide column">
-                                                <table  id="problemsTable" class="ui compact basic table center aligned ">
-                                                </table>
+                                            <!--<div class="sixteen wide column">-->
+                                            <h3 id="table-title">当前问题</h3>
+                                            <table id="problems-table" class="ui compact basic table center aligned ">
+                                            </table>
+                                            <div id="table-dimmer" class="ui inverted dimmer">
+                                                <div class="ui text loader">正在查询</div>
                                             </div>
+                                            <!--</div>-->
                                         </div>
                                     </div>
                                 </div>
@@ -300,406 +309,451 @@
         <!--maincontent-->
     </div>
 </div>
-    <div id="select_host_modal" class="ui small modal">
-        <div id="host_tree"></div>
-        <div id="host_action" class="actions">
-            <div class="ui button deny">取消</div>
-            <div class="ui green button approve" id="host_submit">确认</div>
-        </div>
+<div id="select_host_modal" class="ui small modal">
+    <div id="host_tree"></div>
+    <div id="host_action" class="actions">
+        <div class="ui button deny">取消</div>
+        <div class="ui green button approve" id="host_submit">确认</div>
     </div>
+</div>
 
-    <div id="pop_num_filter" class="ui custom popup bottom left transition">
-        <input type="text" id="num_filter" name="num_filter" value=""/>
-    </div>
+<div id="pop_num_filter" class="ui custom popup bottom left transition">
+    <input type="text" id="num_filter" name="num_filter" value=""/>
+</div>
 
-    <th:block th:replace="layout::bottom_script(~{::supple})">
-        <script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
-        <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
-        <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
-        <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
-        <th:block th:fragment="supple">
-            <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
-            <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
-            <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
-            <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
-            <script type="text/javascript">
-                //页面加载完加载基础数据
-                $(function () {
-                    var acknowledge="all";
-                    var hostIds=["10023","10073"];
-                    var priority="warning";
-                    var problemNum=[2,5];
-                    //获取日历图数据
-                    calendarchart(acknowledge,hostIds,priority,problemNum);
-                })
-                $(document).ready(function() {
-                    //初始当前问题列表
-                    var problems_Table = $("#problemsTable").DataTable({
-                        "iDisplayLength" : 10,
-                        order: [0, 'desc'],
-                        "createdRow": function (row, data, dataIndex) {
-                            $('td', row).eq(1).addClass('left aligned');
-                            $('td', row).eq(2).addClass('left aligned');
-                        },
-                        "drawCallback": function () {//初始化后回调
-                        },
-                        ajax: {
-                            url: '/problemlist/get_allproblems',
-                            dataSrc: 'data'
-                        },
-                        columns: [
-                            {
-                                "data": "problem_time",
-                                "width": "15%",
-                                "title": "发生时间",
-                                "orderable": false,
-                            },
-                            {
-                                "data": "host_name",
-                                "width": "10%",
-                                "title": "设备",
-                                "orderable": false,
-                            },
-                            {
-                                "data": null,
-                                "width": "25%",
-                                "title": "问题",
-                                "orderable": false,
-                                render: function(data, type, row, meta) {
-                                    return '<a href="problemdetail?trigger_id=' + row.trigger_id + '">' + row.description + '</a>';
-                                }
-                            },
-                            {
-                                "data": "priority_state",
-                                "width": "5%",
-                                "title": "严重性",
-                                "orderable": false,
-                                //priority_state<td style="color: red">严重</td>
-                            },
-                            {
-                                "data": null,
-                                "width": "5%",
-                                "title": "状态",
-                                "orderable": false,
-                                render: function(data, type, row, meta) {
-                                    if(row.problem_state != "问题"){
-                                        return row.problem_state;
-                                    }
-                                    else {
-                                        return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="alarmed">' + row.problem_state + '</a>';
-                                    }
-                                }
-                            },
-                            {
-                                "data": "recover_time",
-                                "width": "10%",
-                                "title": "恢复时间",
-                                "orderable": false,
-                            },
-                            {
-                                "data": "duration_string",
-                                "width": "10%",
-                                "title": "持续时间",
-                                "orderable": false,
-                            },
-                            {
-                                "data": null,
-                                "width": "15%",
-                                "title": "告警状态",
-                                "orderable": false,
-                                render: function(data, type, row, meta) {
-                                    return row.alert_state + '(' + row.alert_num + ')';
-                                }
-                            },
-                            {
-                                "data": null,
-                                "width": "5%",
-                                "title": "确认",
-                                "orderable": false,
-                                render: function(data, type, row, meta) {
-                                    if(row.acknowledged == "是"){
-                                        return row.acknowledged;
-                                    }
-                                    else {
-                                        return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="confirm">' + row.acknowledged + '</a>';
-                                    }
-                                }
-                            },
-                            {
-                                "data": null,
-                                "width": "5%",
-                                "title": "操作",
-                                "orderable": false,
-                                render: function(data, type, row, meta) {
-                                    return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="detail">详情</a>';
-                                }
+<th:block th:replace="layout::bottom_script(~{::supple})">
+    <script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
+    <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
+    <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
+    <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
+    <th:block th:fragment="supple">
+        <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+        <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+        <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+        <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
+        <script type="text/javascript">
+            var send_data = {
+                hostIds: [],
+                problemNum: [],
+                priority: "all",
+                acknowledge: "all",
+                date: ""
+            }
+            //获取日历图数据
+            var calendar = initCalendar(send_data);
+            var problemTable = initProblemTable();
+            //初始问题列表
+            function initProblemTable() {
+                var problemsTable = $("#problems-table").DataTable({
+                    iDisplayLength: 10,
+                    order: [0, 'desc'],
+                    createdRow: function (row, rowData) {
+                        console.log('row render', arguments)
+                        $('td', row).eq(1).addClass('left aligned');
+                        $('td', row).eq(2).addClass('left aligned');
+                        if (rowData.problem_state === '问题') {
+                            if (rowData.priority_state === '警告') {
+                                row.classList.add("warning")
+                            } else if (rowData.priority_state === '严重') {
+                                row.classList.add("negative")
+                            } else {
                             }
-                        ],
-                    });
-                });
-            </script>
-            <script>
-                function calendarchart(acknowledge,hostIds,priority,problemNum) {
-                    $.ajax({
-                        type: "get",
-                        url: "/calendar/get_data?acknowledge="+acknowledge
-                        +"&hostIds="+hostIds
-                        +"&priority="+priority
-                        +"&problemNum="+problemNum,
-                        dataType: "json",
-                        success: function (result) {
-                            if(result.success) {
-                                var data = result.data;
-                                getcalendarchart(data);
-                            }
-                            else {
-                                errorMsg_no_data("日历图 Chart");
-                            }
-                        },
-                        error: function () {
-                            errorMsg_no_connect("日历图 Chart");
                         }
-                    });
-                }
-                function getcalendarchart(data) {
-                    //绘制图标数据
-                    var calendar_chart = echarts.init(document.getElementById("calendarChart"));
-                    //配置option
-                    var option = {
-                        backgroundColor: '#404a59',
-                        title: {
-                            top: 0,
-                            text: data.title,
-                            left: 'center',
+                    },
+                    drawCallback: function () {//初始化后回调
+                    },
+                    data: [],
+                    columns: [
+                        {
+                            "data": "problem_time",
+                            "width": "18%",
+                            "title": "发生时间",
+                            "orderable": false,
+                            render: function (data, type, row, meta) {
+                                return '<a href="#" data-id="' + row.problem_eventid + '" >' + row.problem_time + '</a>';
+                            }
+                        },
+                        {
+                            "data": "host_name",
+                            "width": "10%",
+                            "title": "设备",
+                            "orderable": false,
+                        },
+                        {
+                            "data": null,
+                            "width": "25%",
+                            "title": "问题",
+                            "orderable": false,
+                            render: function (data, type, row, meta) {
+                                return '<a href="problemdetail?trigger_id=' + row.trigger_id + '">' + row.description + '</a>';
+                            }
+                        },
+                        {
+                            "data": "priority_state",
+                            "width": "7%",
+                            "title": "级别",
+                            "orderable": false,
+                            //priority_state<td style="color: red">严重</td>
+                        },
+                        {
+                            "data": null,
+                            "width": "9%",
+                            "title": "状态",
+                            "orderable": false,
+                            render: function (data, type, row, meta) {
+//                                console.log('render 状态', arguments)
+                                if (row.problem_state !== "问题") {
+                                    return '<div class="ui mini green label" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
+                                } else {
+                                    return '<div class="ui mini red label" >' + row.problem_state + '</div>';
+                                }
+                            }
+                        },
+//                        {
+//                            "data": "recover_time",
+//                            "width": "9%",
+//                            "title": "恢复时间",
+//                            "orderable": false,
+//                        },
+                        {
+                            "data": "duration_string",
+                            "width": "15%",
+                            "title": "持续时间",
+                            "orderable": false,
+                        },
+                        {
+                            "data": null,
+                            "width": "9%",
+                            "title": "告警状态",
+                            "orderable": false,
+                            render: function (data, type, row, meta) {
+                                return row.alert_state + '(' + row.alert_num + ')';
+                            }
+                        },
+                        {
+                            "data": null,
+                            "width": "7%",
+                            "title": "确认",
+                            "orderable": false,
+                            render: function (data, type, row, meta) {
+                                if (row.acknowledged == "是") {
+                                    return row.acknowledged;
+                                }
+                                else {
+                                    return '<a href="javascript:void(0)" data-id="' + row.problem_eventid + '" class="confirm">' + row.acknowledged + '</a>';
+                                }
+                            }
+                        },
+//                        {
+//                            "data": null,
+//                            "width": "5%",
+//                            "title": "操作",
+//                            "orderable": false,
+//                            render: function (data, type, row, meta) {
+//                                return '<a href="javascript:void(0)" data-id="' + row.problem_eventid + '" class="detail">详情</a>';
+//                            }
+//                        }
+                    ]
+                });
+                $.ajax({
+                    type: "get",
+                    url: '/problems/get_current',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            problemsTable.rows.add(result.data).draw()
+                        } else {
+
+                        }
+                    },
+                    error: function (e) {
+
+                    }
+                })
+                return problemsTable
+            }
+
+
+            //初始化 日历图
+            function initCalendar(send_data) {
+                var calendar = echarts.init(document.getElementById("calendarChart"));
+                var option = {
+                    backgroundColor: '#404a59',
+                    title: {
+                        top: 0,
+                        text: '最近6个月的问题',
+                        left: 'center',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    tooltip: {
+                        formatter: function (params) {
+                            return '日期：' + params.data[0] + "</br>" + '问题数：' + params.data[1]
+                        }
+                    },
+                    legend: {
+                        top: '10',
+                        left: '100',
+                        data: ['当前问题'],
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    calendar: [{
+                        top: 60,
+                        left: 'center',
+                        range: ["2017-01-01", "2017-07-01"],
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                color: '#000',
+                                width: 4,
+                                type: 'solid'
+                            }
+                        },
+                        yearLabel: {
+                            formatter: '{start}  1st',
                             textStyle: {
                                 color: '#fff'
                             }
                         },
-                        tooltip: {
-                            formatter: "{b}{a} : <br/>{c}个问题"
-                        },
-                        legend: {
-                            top: '10',
-                            left: '100',
-                            data: ['已确认', '未确认'],
-                            textStyle: {
-                                color: '#fff'
+                        itemStyle: {
+                            normal: {
+                                color: '#323c48',
+                                borderWidth: 1,
+                                borderColor: '#111'
                             }
-                        },
-                        calendar: [{
-                            top: 60,
-                            left: 'center',
-                            range: data.range,
-                            //range: ['2017-01-01', '2017-01-20'],
-                            splitLine: {
-                                show: true,
-                                lineStyle: {
-                                    color: '#000',
-                                    width: 4,
-                                    type: 'solid'
-                                }
-                            },
-                            yearLabel: {
-                                formatter: '{start}  1st',
-                                textStyle: {
-                                    color: '#fff'
-                                }
+                        }
+                    }],
+                    series: [
+                        {
+                            name: '所有问题',
+                            type: 'scatter',
+                            coordinateSystem: 'calendar',
+                            data: [],
+                            symbolSize: function (val) {
+                                return val[1];
                             },
                             itemStyle: {
                                 normal: {
-                                    color: '#323c48',
-                                    borderWidth: 1,
-                                    borderColor: '#111'
+                                    color: '#ddb926'
                                 }
                             }
-                        }],
-                        series: [
-                            {
-                                name: '已确认',
-                                type: 'scatter',
-                                coordinateSystem: 'calendar',
-                                data: data.datas,
-                                symbolSize: function (val) {
-                                    return val[1];
-                                },
-                                itemStyle: {
-                                    normal: {
-                                        color: '#ddb926'
-                                    }
+                        },
+                        {
+                            name: '当前问题',
+                            type: 'effectScatter',
+                            coordinateSystem: 'calendar',
+                            data: [],
+                            symbolSize: function (val) {
+                                return val[1];
+                            },
+                            showEffectOn: 'render',
+                            rippleEffect: {
+                                brushType: 'stroke'
+                            },
+                            hoverAnimation: true,
+                            itemStyle: {
+                                normal: {
+                                    color: '#f4e925',
+                                    shadowBlur: 10,
+                                    shadowColor: '#333'
                                 }
                             },
-                            {
-                                name: '未确认',
-                                type: 'effectScatter',
-                                coordinateSystem: 'calendar',
-                                data: getLightDatas(data.datas),
-                                symbolSize: function (val) {
-                                    return val[1];
-                                },
-                                showEffectOn: 'render',
-                                rippleEffect: {
-                                    brushType: 'stroke'
-                                },
-                                hoverAnimation: true,
-                                itemStyle: {
-                                    normal: {
-                                        color: '#f4e925',
-                                        shadowBlur: 10,
-                                        shadowColor: '#333'
-                                    }
-                                },
-                                zlevel: 1
-                            }
-                        ]
-                    };
-                    //根据配置绘制图形
-                    calendar_chart.setOption(option);
-                    //点击每个节点，展示当天所有的问题列表
-                    calendar_chart.on('click', function (params) {
-                        var calendar = params.data;
-                        var today=calendar[0];
-                        todaycalendarchart(acknowledge,hostIds,priority,problemNum,today);
-                    });
-                }
-                function getLightDatas(data) {
-                    var new_data = [];
-                    for(var i=0;i<data.length;i++) {
-                        if(data[i][2]) {
-                            new_data.push(data[i]);
+                            zlevel: 1
                         }
-                    }
-                    return new_data;
-                }
-                //持久化数据
-                var send_data = {
-                    hostIds: [],
-                    problemNum: [],
-                    priority: "",
-                    acknowledge: ""
-                }
-                //链接一天的问题列表数据
-                function todaycalendarchart(acknowledge,hostIds,priority,problemNum,today){
-                    $.ajax({
-                        type: "get",
-                        url: "/calendar/get_list?acknowledge="+acknowledge
-                        +"&hostIds="+hostIds
-                        +"&priority="+priority
-                        +"&problemNum="+problemNum
-                        +"&today="+today,
-                        dataType: "json",
-                        success: function (result) {
-                            if(result.success) {
-                                var data = result.data;
-                                gettodaycalendarchart(data);
-                            }
-                            else {
-                                errorMsg_no_data("日历图一天 Chart");
-                            }
-                        },
-                        error: function () {
-                            errorMsg_no_connect("日历图一天 Chart");
+                    ]
+                };
+                calendar.setOption(option);
+                //获取数据 完成日历图的渲染
+                $.ajax({
+                    type: "post",
+                    url: "/calendar/get_graph",
+                    data: JSON.stringify(send_data),
+                    dataType: "json",
+                    contentType: 'application/json',
+                    success: function (result) {
+                        if (result.success) {
+                            var data = result.data;
+                            drawCalendar(calendar, data);
                         }
-                    });
-                }
-                //获取一天的问题列表数据
-                function gettodaycalendarchart(day){
-
-                }
-
-                //发送筛选数据请求
-                function filter_post() {
-                    $.ajax({
-                        type: "get",
-                        url: "/calendar/get_data",
-                        dataType: "json",
-                        data: send_data,
-                        success: function (result) {
-                            if (result.success) {
-                                //TODO:重新渲染日历图
-                            } else {
-                                console.error(result.message)
-                            }
-                        },
-                        error: function (e) {
-                            console.error(e)
+                        else {
+                            errorMsg_no_data("日历图 Chart");
                         }
-                    })
-                }
-                $host_dropdown = $('#host_select_dropdown')
-                $host_dropdown.dropdown({
-                    action: function (text, value) {
-                        $host_dropdown.addClass('loading disabled')
-                        if (value === 'host') {
-                            var $host_tree = $('#host_tree')
-                            genHostsTree($host_tree, send_data.hostIds, function () {
-                                $('#select_host_modal').modal({
-                                    onApprove: function () {
-                                        var selected_hosts = $host_tree.jstree(true).get_bottom_checked()
-                                        send_data.hostIds = selected_hosts
-                                        console.log(selected_hosts)
-                                        //选择设备后，执行的操作
-                                        filter_post();
-                                    },
-                                    onHidden: function () {
-                                        $('#host_select_dropdown').dropdown('set text', "已选择" + send_data.hostIds.length + "个设备")
-                                        $host_dropdown.removeClass('loading disabled')
-                                    }
-                                }).modal('show')
-                            })
-                            $('#host_select_dropdown').dropdown('set text', "正在选择设备")
-                        } else if (value === 'all') {
-                            send_data.hostIds = []
-                            filter_post()
-                            $('#host_select_dropdown').dropdown('set text', "所有设备").dropdown('hide')
-                            $host_dropdown.removeClass('loading disabled')
-                        }
-                    }
-                })
-
-
-                //问题数量筛选按钮
-                $('#num_filter_btn').popup({
-                    popup: $('#pop_num_filter'),
-                    on: 'click'
-                })
-
-                //问题数量选择条
-                $("#num_filter").ionRangeSlider({
-                    type: "double",
-                    min: 1,
-                    max: 20,
-                    from: 1,
-                    to: 20,
-                    step: 1,
-                    onStart: function (data) {
-//                        console.log(data);
                     },
-                    onChange: function (data) {
-//                        console.log(data);
-                    },
-                    onFinish: function (data) {
-                        console.log(data);
-                        send_data.problemNum = [data.from, data.to]
-                        filter_post()
-                    },
-                    onUpdate: function (data) {
-//                        console.log(data);
+                    error: function () {
+                        errorMsg_no_connect("日历图 Chart");
                     }
                 });
-                $('#select_severity').dropdown({
-                    onChange: function (value, text) {
-                        send_data.priority = value
-                        filter_post()
-                    }
+                return calendar
+            }
+            //根据api范围的数据绘制日历图
+            function drawCalendar(calendar, data) {
+                calendar.setOption({
+                    calendar: [{
+                        range: data.range
+                    }],
+                    series: [
+                        {
+                            name: '所有问题',
+                            data: data.data
+                        },
+                        {
+                            name: '当前问题',
+                            data: getLightData(data.data)
+                        }
+                    ]
                 })
-                $('#select_acknowledge').dropdown({
-                    onChange: function (value, text) {
-                        send_data.acknowledge = value
-                        filter_post()
+
+            }
+            //点击每个节点，展示当天所有的问题列表
+            calendar.on('click', function (params) {
+//                    console.log(new Date(), params)
+                var calendar = params.data;
+                var date = calendar[0];
+                showOneDayProblems(date);
+            });
+
+            //高亮显示当前存在的问题
+            function getLightData(data) {
+                var new_data = [];
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i][2]) {
+                        new_data.push(data[i]);
                     }
+                }
+                return new_data;
+            }
+
+            //一天的问题列表数据
+            function showOneDayProblems(date) {
+                send_data.date = date
+                $('#table-dimmer').addClass('active')
+                $.ajax({
+                    type: "get",
+                    url: "/calendar/get_list",
+                    data: send_data,
+                    dataType: "json",
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function (result) {
+                        if (result.success) {
+                            var data = result.data;
+                            problemTable.clear().rows.add(data).draw()
+                            var year = date.substr(0, 4),
+                                month = date.substr(5, 2),
+                                day = date.substr(8, 2)
+                            $('#table-title').html(year + '年' + month + '月' + day + '日 发生了' + data.length + '个问题')
+                            $('#table-dimmer').removeClass('active')
+                        }
+                        else {
+                            errorMsg_no_data("日历图一天 Chart");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("日历图一天 Chart");
+                    }
+                });
+            }
+
+
+            //发送筛选数据请求
+            function filter_post() {
+                $.ajax({
+                    type: "post",
+                    url: "/calendar/get_graph",
+                    dataType: "json",
+                    data: JSON.stringify(send_data),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        if (result.success) {
+                            drawCalendar(calendar, result.data)
+                        } else {
+                            console.error(result.message)
+                        }
+                    },
+                    error: function (e) {
+                        console.error(e)
+                    }
+                }).done(function () {
+                    $('#host_select_dropdown, #select_severity, #select_acknowledge').removeClass('loading disabled')
                 })
-            </script>
-        </th:block>
+            }
+            $host_dropdown = $('#host_select_dropdown')
+            $host_dropdown.dropdown({
+                action: function (text, value) {
+                    $host_dropdown.addClass('loading disabled')
+                    if (value === 'host') {
+                        var $host_tree = $('#host_tree')
+                        genHostsTree($host_tree, send_data.hostIds, function () {
+                            $('#select_host_modal').modal({
+                                onApprove: function () {
+                                    send_data.hostIds = $host_tree.jstree(true).get_bottom_checked()
+                                    //选择设备后，执行的操作
+                                    filter_post();
+                                },
+                                onHidden: function () {
+                                    $('#host_select_dropdown').dropdown('set text', "已选择" + send_data.hostIds.length + "个设备")
+                                }
+                            }).modal('show')
+                        })
+                        $('#host_select_dropdown').dropdown('set text', "正在选择设备")
+                    } else if (value === 'all') {
+                        send_data.hostIds = []
+                        filter_post()
+                        $('#host_select_dropdown').dropdown('set text', "所有设备").dropdown('hide')
+                        $host_dropdown.removeClass('loading disabled')
+                    }
+                }
+            })
+
+
+            //问题数量筛选按钮
+            $('#num_filter_btn').popup({
+                popup: $('#pop_num_filter'),
+                on: 'click'
+            })
+
+            //问题数量选择条
+            $("#num_filter").ionRangeSlider({
+                type: "double",
+                min: 1,
+                max: 20,
+                from: 1,
+                //TODO 最好使用返回的问题数中的最大值
+                to: 20,
+                step: 1,
+                onStart: function (data) {
+//                        console.log(data);
+                },
+                onChange: function (data) {
+//                        console.log(data);
+                },
+                onFinish: function (data) {
+                    send_data.problemNum = [data.from, data.to]
+//                        console.log(send_data)
+                    filter_post()
+                },
+                onUpdate: function (data) {
+//                        console.log(data);
+                }
+            });
+            $('#select_severity').dropdown({
+                onChange: function (value) {
+                    $('#select_severity').addClass('loading disabled')
+                    send_data.priority = value
+                    filter_post()
+                }
+            })
+            $('#select_acknowledge').dropdown({
+                onChange: function (value) {
+                    $('#select_acknowledge').addClass('loading disabled')
+                    send_data.acknowledge = value
+                    filter_post()
+                }
+            })
+        </script>
     </th:block>
+</th:block>
 </body>
 </html>

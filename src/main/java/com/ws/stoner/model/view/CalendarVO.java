@@ -9,7 +9,7 @@ public class CalendarVO {
 
     private String title;
     private List<String> range;
-    private List<List<Object>> datas;
+    private List<List<Object>> data;
 
     public CalendarVO() {
     }
@@ -19,7 +19,7 @@ public class CalendarVO {
         return "CalendarVO{" +
                 "title='" + title + '\'' +
                 ", range=" + range +
-                ", datas=" + datas +
+                ", data=" + data +
                 '}';
     }
 
@@ -41,19 +41,19 @@ public class CalendarVO {
         return this;
     }
 
-    public List<List<Object>> getDatas() {
-        return datas;
+    public List<List<Object>> getData() {
+        return data;
     }
 
-    public CalendarVO setDatas(List<List<Object>> datas) {
-        this.datas = datas;
+    public CalendarVO setData(List<List<Object>> data) {
+        this.data = data;
         return this;
     }
 
-    public CalendarVO(String title, List<String> range, List<List<Object>> datas) {
+    public CalendarVO(String title, List<String> range, List<List<Object>> data) {
 
         this.title = title;
         this.range = range;
-        this.datas = datas;
+        this.data = data;
     }
 }

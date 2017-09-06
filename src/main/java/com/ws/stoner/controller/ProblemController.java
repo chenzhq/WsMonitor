@@ -33,4 +33,9 @@ public class ProblemController {
         return mav;
     }
 
+    @RequestMapping(value = {"/calendar", ""})
+    public String calendarview() {
+        return "calendarview";
+    }
+
 }

@@ -22,7 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -590,7 +593,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<ProblemListVO> getOneDayProblemListVOS(CalendarFormQuery formQuery) throws ServiceException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDateTime todayTime = LocalDate.parse(formQuery.getToday(),formatter).atStartOfDay();
+        LocalDateTime todayTime = LocalDate.parse(formQuery.getDate(), formatter).atStartOfDay();
         Long beginTime = todayTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000;
         Long endTime = beginTime + 24 * 3600;
         //处理依赖关系
