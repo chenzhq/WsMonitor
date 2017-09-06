@@ -94,9 +94,7 @@ public class UserServiceImpl implements UserService {
                 .setUserIds(userIds)
                 .setSelectUsrgrps(BriefUserGroupDTO.PROPERTY_NAMES)
                 .setOutput(UserInfoDTO.PROPERTY_NAMES);
-
-
-        return null;
+        return listUser(userGetRequest);
     }
 
 
