@@ -175,8 +175,8 @@ public class ProblemRestController {
      * @return
      */
     @RequestMapping(value = "calendar/get_list", method = RequestMethod.GET)
-    public String getOneDayListCalendar(@RequestParam(required = false) List<String> hostIds,
-                                        @RequestParam(required = false) List<Integer> problemNum,
+    public String getOneDayListCalendar(@RequestParam(required = false, value = "hostIds[]") List<String> hostIds,
+                                        @RequestParam(required = false, value = "problemNum[]") List<Integer> problemNum,
                                         @RequestParam String priority,
                                         @RequestParam String acknowledge,
                                         @RequestParam(required = false) String date) throws ServiceException {

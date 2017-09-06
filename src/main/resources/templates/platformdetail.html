@@ -646,7 +646,7 @@
                                         type: 'bar',
                                         stack: '设备总数',
                                         barWidth : 25,
-                                        data: platform_data.datas[0],
+                                        data: platform_data.data[0],
                                         color: ['#5FB878']
                                     },
                                     {
@@ -654,7 +654,7 @@
                                         type: 'bar',
                                         stack: '设备总数',
                                         barWidth : 25,
-                                        data: platform_data.datas[1],
+                                        data: platform_data.data[1],
                                         color: ['#F7B824']
                                     },
                                     {
@@ -662,7 +662,7 @@
                                         type: 'bar',
                                         stack: '设备总数',
                                         barWidth : 25,
-                                        data: platform_data.datas[2],
+                                        data: platform_data.data[2],
                                         color: ['#DB2828']
                                     }
                                 ]
@@ -1133,7 +1133,7 @@
                                                         textStyle: {
                                                             fontWeight: 'bolder', fontSize: 16,color: '#333',
                                                         }},
-                                                    data: [{value: graph_datas[i].datas[0], name: ''}]
+                                                    data: [{value: graph_datas[i].data[0], name: ''}]
                                                 }
                                             ]
                                         };
@@ -1208,7 +1208,7 @@
                                             series: [{
                                                 name: graph_datas[i].item_name,
                                                 type: graph_datas[i].graph_type,
-                                                data: graph_datas[i].datas,
+                                                data: graph_datas[i].data,
                                                 color: [myColor],
                                             }]
                                         };
