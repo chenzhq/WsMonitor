@@ -612,6 +612,7 @@
 			}else if(this.value == "recentProblems"){
                 problems_Table.ajax.url('/problems/get_last').load();
 			}else if(this.value == "historicalRecord"){
+			    //这里差一个时间区间控件，时间格式为秒数
 			    var begin_time='2017-1-29';
                 var end_time='2017-8-29';
                 problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
@@ -709,7 +710,7 @@
             }
         })
     }
-    //获取事件详情模态框，细节列表
+    /*//获取事件详情模态框，细节列表
     function getdetailmodal(data){
         var str = '';
 		if(data.closed == true){
@@ -728,7 +729,7 @@
 			+data.recovery_time+"</td></tr><tr><td>手动关闭(操作人)</td><td>"
 			+closed+"("+data.closed_user+")</td></tr>"
         $("#detailTable_tab").html(str);
-    }
+    }*/
     //连接事件详情模态框，确认列表
     function detailconfirm(event_id) {
         $.ajax({

@@ -94,7 +94,7 @@ public interface EventService {
 
     /**
      * 根据指定的 triggerId 组装 问题详情中 详情事件列表  ProblemDetailListVO list
-     * ProblemDetailDatasVO
+     * ProblemDetailListVO
      * @param triggerId
      * @param beginTime
      * @param endTime

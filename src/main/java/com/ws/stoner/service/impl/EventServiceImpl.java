@@ -320,7 +320,7 @@ public class EventServiceImpl implements EventService {
 
     /**
      * 根据指定的 triggerId 组装 问题详情中 详情事件列表  ProblemDetailListVO list
-     * ProblemDetailDatasVO
+     * ProblemDetailListVO
      * @param triggerId
      * @param beginTime
      * @param endTime
@@ -582,7 +582,7 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * 组装当天一天的 问题事件数量 ProblemListVOS
+     * 组装当天一天的 问题日历中 问题事件 ProblemListVOS
      * @param formQuery
      * @return
      * @throws ServiceException

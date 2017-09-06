@@ -16,8 +16,11 @@ import java.util.List;
  */
 public class ProblemGraphVO {
 
+    @JSONField(name = "begin_time")
     private Long beginTime;
+    @JSONField(name = "end_time")
     private Long endTime;
+    @JSONField(name = "is_alert")
     private int isAlert; //1表示告警，是线；0表示没有告警，即是块
     private String tooltip;
     @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
@@ -97,7 +100,7 @@ public class ProblemGraphVO {
         List<ProblemGraphVO> graphVOS = new ArrayList<>();
         Integer currStep = 0;
         for(BriefAlertDTO alertDTO : alertDTOS) {
-            if(!currStep.equals(alertDTO)) {
+            if(!currStep.equals(alertDTO.getEscStep())) {
                 ProblemGraphVO graphVO = new ProblemGraphVO();
                 graphVO.setBeginTime(alertDTO.getClock().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
                 graphVO.setEndTime(0L);

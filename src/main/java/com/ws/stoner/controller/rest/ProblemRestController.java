@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ws.stoner.constant.MessageConsts.REST_UPDATE_SUCCESS;
@@ -125,7 +126,17 @@ public class ProblemRestController {
     @RequestMapping(value = "problem/detail_graph", method = RequestMethod.GET)
     public String getDetailGraphByTriggerId(@RequestParam("trigger_id") String triggerId,@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
         List<ProblemGraphVO> problemGraphVOS = eventService.getGraphProblemByTriggerId(triggerId, beginTime, endTime);
-        return RestResultGenerator.genResult(problemGraphVOS, REST_UPDATE_SUCCESS).toString();
+        List<List<Object>> graphDatas = new ArrayList<>();
+        for(ProblemGraphVO graphVO : problemGraphVOS) {
+            List<Object> graphData = new ArrayList<>();
+            graphData.add(graphVO.getBeginTime());
+            graphData.add(graphVO.getEndTime());
+            graphData.add(graphVO.getIsAlert());
+            graphData.add(graphVO.getColor() == null ? "" : graphVO.getColor());
+            graphData.add(graphVO.getTooltip());
+            graphDatas.add(graphData);
+        }
+        return RestResultGenerator.genResult(graphDatas, REST_UPDATE_SUCCESS).toString();
     }
 
 

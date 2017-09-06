@@ -92,16 +92,10 @@ public class CalendarFormQuery {
             }
         }
         //确认查询
-        if(formQuery.getAcknowledge() == null) {
-            selectAcknowledge = true;
-        }else if("0".equals(formQuery.getAcknowledge())) {
-            selectAcknowledge = eventDTO.getAcknowledged().equals(formQuery.getAcknowledge());
-        }else if("1".equals(formQuery.getAcknowledge())) {
-            selectAcknowledge = eventDTO.getAcknowledged().equals(formQuery.getAcknowledge());
-        }else if("all".equals(formQuery.getAcknowledge())) {
+        if(formQuery.getAcknowledge() == null || "all".equals(formQuery.getAcknowledge()) ) {
             selectAcknowledge = true;
         }else {
-            selectAcknowledge = false;
+            selectAcknowledge = eventDTO.getAcknowledged().equals(Integer.parseInt(formQuery.getAcknowledge()));
         }
         return selectHost && selectAcknowledge && selectPrority;
     }

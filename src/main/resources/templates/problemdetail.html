@@ -15,7 +15,7 @@
 	<th:block th:fragment="supplement">
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.ui.table.dataTable thead th {
 				border-left: 0px;
@@ -247,7 +247,33 @@
 													<table class="ui very basic compact single line fixed definition table center aligned">
 														<tbody id="detailTable">
 														<tr>
-															<td colspan="2">无数据</td>
+															<td style="display: none" id="trigger_id" th:text="${problemDetailVO.triggerId}"></td>
+															<td>所属主机</td>
+															<td th:text="${problemDetailVO.hostName}"></td>
+														</tr>
+														<tr>
+															<td>监控点</td>
+															<td th:text="${problemDetailVO.pointName}"></td>
+														</tr>
+														<tr>
+															<td>监控项</td>
+															<td th:text="${problemDetailVO.itemName}"></td>
+														</tr>
+														<tr>
+															<td>触发器描述</td>
+															<td th:text="${problemDetailVO.triggerName}"></td>
+														</tr>
+														<tr>
+															<td>严重性</td>
+															<td th:text="${problemDetailVO.level}"></td>
+														</tr>
+														<tr>
+															<td>最新状态</td>
+															<td th:text="${problemDetailVO.state}"></td>
+														</tr>
+														<tr>
+															<td>阀值</td>
+															<td th:text="${problemDetailVO.hostName}"></td>
 														</tr>
 														</tbody>
 													</table>
@@ -394,9 +420,9 @@
 		<script type="text/javascript">
             //页面加载完加载基础数据
 			$(function() {
-                var event_id="123";
+                //var event_id="123";
                 //初始化事件细节信息
-                detailtable(event_id);
+                //detailtable(event_id);
                 //加载图形数据
                 getproblemchart();
 			})
@@ -751,7 +777,7 @@
 		<script>
             $(document).ready(function() {
                 //初始当前问题列表
-				var trigger_id="123";
+				var trigger_id=$("#trigger_id").text();
                 var problems_Table = $("#problemsTable").DataTable({
                     "iDisplayLength" : 5,
                     "ordering":false,
@@ -783,7 +809,7 @@
                         });
                     },
                     ajax: {
-                        url: '/problem/detail_list?trigger_id=' + trigger_id	,
+                        url: '/problem/detail_list?trigger_id=' + trigger_id,
                         dataSrc: 'data'
                     },
                     columns: [
