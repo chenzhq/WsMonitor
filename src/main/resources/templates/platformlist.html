@@ -204,58 +204,52 @@
             <div class="ui equal width left aligned padded grid stackable">
                 <!--Site Content-->
                 <div class="sixteen wide column">
-                    <div class="ui segments">
-                        <div class="ui segment">
-                            <h3 class="ui header">
-                                业务列表
-                            </h3>
-                        </div>
-                        <div class="ui segment" style=" min-height : 500px;">
-                            <div class="row">
-                                <table class="ui compact  very basic table center aligned">
-                                    <thead>
-                                    <tr>
-                                        <th width="25%">名称</th>
-                                        <th width="10%">状态</th>
-                                        <th width="15%">健康度（%）</th>
-                                        <th width="10%">严重设备数量</th>
-                                        <th width="10%">警告设备数量</th>
-                                        <th width="10%">总设备数量</th>
-                                        <th width="20%">操作</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="tableSummary">
-                                    <tr th:each="platformListVO : ${platformListVOS}">
+                    <div class="header item">
+                        <h2><i class="bar large chart icon"></i>业务列表</h2>
+                    </div>
+                    <div class="ui segment" style=" min-height : 487px;">
+                        <table class="ui compact  very basic table center aligned">
+                            <thead>
+                            <tr>
+                                <th width="25%">名称</th>
+                                <th width="10%">状态</th>
+                                <th width="15%">健康度（%）</th>
+                                <th width="10%">严重设备数量</th>
+                                <th width="10%">警告设备数量</th>
+                                <th width="10%">总设备数量</th>
+                                <th width="20%">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tableSummary">
+                            <tr th:each="platformListVO : ${platformListVOS}">
 
-                                        <td th:text="${platformListVO.platformName}">
-                                            <input text="hidden" th:id="${platformListVO.platformId}"/>
-                                            OA
-                                        </td>
-                                        <td><i class="red square icon" th:class="${platformListVO.state} == '正常' ?
-                                            'green square icon' :
-                                                (${platformListVO.state} =='警告' ?
-                                                'yellow square icon' : 'red square icon') "></i></td>
-                                        <td th:text="${#numbers.formatDecimal(platformListVO.health, 0, 2)} "
-                                        >%
-                                        </td>
-                                        <td th:text="${platformListVO.highNum}">30</td>
-                                        <td th:text="${platformListVO.warningNum}">30</td>
-                                        <td th:text="${platformListVO.allNum}">30</td>
-                                        <td>
-                                            <ul class="ui horizontal relaxed list">
-                                                <a class="manage_btn item" data-th-pfid="${platformListVO.platformId}"
-                                                   href="#">管理</a>
-                                                <a class="item" href="">>></a>
-                                            </ul>
+                                <td th:text="${platformListVO.platformName}">
+                                    <input text="hidden" th:id="${platformListVO.platformId}"/>
+                                    OA
+                                </td>
+                                <td><i class="red square icon" th:class="${platformListVO.state} == '正常' ?
+                                    'green square icon' :
+                                        (${platformListVO.state} =='警告' ?
+                                        'yellow square icon' : 'red square icon') "></i></td>
+                                <td th:text="${#numbers.formatDecimal(platformListVO.health, 0, 2)} "
+                                >%
+                                </td>
+                                <td th:text="${platformListVO.highNum}">30</td>
+                                <td th:text="${platformListVO.warningNum}">30</td>
+                                <td th:text="${platformListVO.allNum}">30</td>
+                                <td>
+                                    <ul class="ui horizontal relaxed list">
+                                        <a class="manage_btn item" data-th-pfid="${platformListVO.platformId}"
+                                           href="#">管理</a>
+                                        <a class="item" href="">>></a>
+                                    </ul>
 
 
-                                        </td>
-                                    </tr>
+                                </td>
+                            </tr>
 
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <!--Site Content-->

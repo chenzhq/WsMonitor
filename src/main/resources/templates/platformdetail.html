@@ -23,20 +23,18 @@
 				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
 				white-space: nowrap;/*强制不换行*/
 			}
-			.ui.tab.segment.noMargin{ margin:0; }
-			.ui.segment.noBorder{ border:0; }
-			.ui.tab.segment.fixedHeight{ height: 500px; }
+			.ui.tab.fixedHeight{ height: 500px; }
 			.chartBar{ height: 140px; }
 			.row1Height{ height: 160px; }
 			.row2Height{
-				height: 300px;
+				height: 310px;
 				width: 100%;
 				overflow:auto;
 				overflow-x:hidden
 			}
 			.row3Height{  height: 240px;  }
 			.row4Height{
-				height: 196px;
+				height: 206px;
 				width: 100%;
 				overflow:auto;
 				overflow-x:hidden
@@ -49,7 +47,7 @@
 			}
 			.chart-style{  height: 160px; }
 			.ui.styled.fluid.accordion.report{
-				height: 500px;
+				height: 485px;
 				width: 100%;
 				overflow:auto;
 				overflow-x:hidden
@@ -247,68 +245,61 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui segments">
-						<div class="ui segment">
-							<div class="ui secondary pointing menu">
-								<a class="active item" data-tab="platformDetail">业务概述</a>
-								<a class="item" data-tab="platformTree">业务树</a>
-								<a class="item" data-tab="platformReport">业务图形报告</a>
-								<div class="right menu">
-									<select id="platform_select" class="ui mini dropdown ">
-									</select>
+					<div class="ui secondary pointing menu">
+						<a class="active item" data-tab="platformDetail">业务概述</a>
+						<a class="item" data-tab="platformTree">业务树</a>
+						<a class="item" data-tab="platformReport">业务图形报告</a>
+						<div class="right menu">
+							<select id="platform_select" class="ui mini dropdown ">
+							</select>
+						</div>
+					</div>
+					<div class="ui active tab fixedHeight no-padding" data-tab="platformDetail">
+						<div class="sixteen wide column">
+							<div class="ui grid">
+								<div class="six wide column">
+									<div class="ui segment center aligned row1Height">
+										<h2 class="ui left aligned header">健康度</h2>
+										<div class="ui huge statistic" id="healthStatistic">
+											<div class="value">
+												<span id="health_value" class="counter"></span> %
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
-							<div class="ui active tab segment noMargin noBorder fixedHeight no-padding" data-tab="platformDetail">
-								<div class="row">
-									<div class="sixteen wide column">
+								<div class="ten wide column" style="padding-left: 0px;">
+									<div class="ui segment left aligned row1Height">
+										<div id="platform_graph" class="chartBar"></div>
+									</div>
+								</div>
+								<div class="sixteen wide column" style="padding-top: 0px;">
+									<div  class="ui segment" style="padding: 0px">
 										<div class="ui grid">
-											<div class="six wide column">
-												<div class="ui segment center aligned row1Height">
-													<h2 class="ui left aligned header">健康度</h2>
-													<div class="ui huge statistic" id="healthStatistic">
-														<div class="value">
-															<span id="health_value" class="counter"></span> %
-														</div>
-													</div>
+											<div class="three wide column" style="padding-left: 15px;">
+												<div class="ui secondary vertical menu row2Height" id="hostsMenu">
+												</div>
+											</div>
+											<div class="three wide column">
+												<div class="ui secondary vertical menu row2Height" id="pointsMenu" style="margin: 0px">
 												</div>
 											</div>
 											<div class="ten wide column">
-												<div class="ui segment left aligned row1Height">
-													<div id="platform_graph" class="chartBar"></div>
-												</div>
-											</div>
-											<div class="sixteen wide column">
-												<div  class="ui segment" style="padding: 0px">
+												<div class="ui row2Height"  id="itemsMenu" style="padding-top: 10px;">
 													<div class="ui grid">
-														<div class="three wide column" style="padding-left: 15px;padding-right: 0px;">
-															<div class="ui secondary vertical menu row2Height" id="hostsMenu">
-															</div>
-														</div>
-														<div class="three wide column"  style="padding-left: 0px;">
-															<div class="ui secondary vertical menu row2Height" id="pointsMenu" style="margin: 0px">
-															</div>
-														</div>
-														<div class="ten wide column">
-															<div class="ui segment noBorder row2Height"  id="itemsMenu">
-																<div class="ui grid">
-																	<div class="row">
-																		<div class="sixteen wide column">
-																			<table class="ui very basic fixed single line table">
-																				<thead>
-																				<tr>
-																					<th>名字</th>
-																					<th>值</th>
-																					<th>状态</th>
-																					<th>权值</th>
-																				</tr>
-																				</thead>
-																				<tbody id="itemsTable">
-
-																				</tbody>
-																			</table>
-																		</div>
-																	</div>
-																</div>
+														<div class="row">
+															<div class="sixteen wide column">
+																<table class="ui very basic fixed single line table">
+																	<thead>
+																	<tr>
+																		<th>名字</th>
+																		<th>值</th>
+																		<th>状态</th>
+																		<th>权值</th>
+																	</tr>
+																	</thead>
+																	<tbody id="itemsTable">
+																	</tbody>
+																</table>
 															</div>
 														</div>
 													</div>
@@ -318,28 +309,28 @@
 									</div>
 								</div>
 							</div>
-							<div class="ui tab segment noMargin noBorder fixedHeight no-padding" data-tab="platformTree">
-								<div class="row">
-									<div class="ui grid">
-										<div class="sixteen wide column">
-											<div class="ui segment">
-												<div id="tree_area"  class="sixteen wide column row3Height"></div>
-											</div>
-										</div>
-										<div class="sixteen wide column">
-											<div class="ui segment row4Height">
-												<h3><span id="host_name"></span>监控点</h3>
-												<div class="ui six column grid" id="pointButton">
-												</div>
-											</div>
+						</div>
+					</div>
+					<div class="ui tab fixedHeight no-padding" data-tab="platformTree">
+						<div class="row">
+							<div class="ui grid">
+								<div class="sixteen wide column">
+									<div class="ui segment">
+										<div id="tree_area"  class="sixteen wide column row3Height"></div>
+									</div>
+								</div>
+								<div class="sixteen wide column" style="padding-top: 0px;">
+									<div class="ui segment row4Height">
+										<h3><span id="host_name"></span>监控点</h3>
+										<div class="ui six column grid" id="pointButton">
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="ui tab segment noMargin noBorder fixedHeight no-padding report" data-tab="platformReport">
-								<div class="ui styled fluid accordion report" id="hostAccordion">
-                                </div>
-							</div>
+						</div>
+					</div>
+					<div class="ui tab fixedHeight no-padding report" data-tab="platformReport">
+						<div class="ui styled fluid accordion report" id="hostAccordion">
 						</div>
 					</div>
 				</div>
