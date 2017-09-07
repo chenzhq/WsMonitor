@@ -289,7 +289,7 @@
                                         <div class="ui segment">
                                             <!--<div class="sixteen wide column">-->
                                             <h3 id="table-title">当前问题</h3>
-                                            <table id="problems-table" class="ui compact basic table center aligned ">
+                                            <table id="problems_table" class="ui compact basic table center aligned ">
                                             </table>
                                             <div id="table-dimmer" class="ui inverted dimmer">
                                                 <div class="ui text loader">正在查询</div>
@@ -321,6 +321,8 @@
     <input type="text" id="num_filter" name="num_filter" value=""/>
 </div>
 
+<div id="alert_popup"></div>
+
 <th:block th:replace="layout::bottom_script(~{::supple})">
     <script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
     <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
@@ -331,6 +333,10 @@
         <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
         <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
         <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
+        <script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
+        <script>
+
+        </script>
         <script type="text/javascript">
             var send_data = {
                 hostIds: [],
@@ -342,9 +348,11 @@
             //获取日历图数据
             var calendar = initCalendar(send_data);
             var problemTable = initProblemTable();
+
+
             //初始问题列表
             function initProblemTable() {
-                var problemsTable = $("#problems-table").DataTable({
+                var problemsTable = $("#problems_table").DataTable({
                     iDisplayLength: 10,
                     order: [0, 'desc'],
                     createdRow: function (row, rowData) {
@@ -360,7 +368,8 @@
                             }
                         }
                     },
-                    drawCallback: function () {//初始化后回调
+                    drawCallback: function () {
+                        popAlert($('.alert'), $('#alert_popup'))
                     },
                     data: [],
                     columns: [
@@ -427,7 +436,11 @@
                             "title": "告警状态",
                             "orderable": false,
                             render: function (data, type, row, meta) {
-                                return row.alert_state + '(' + row.alert_num + ')';
+                                if (row.alert_state === '未告警') {
+                                    return row.alert_state;
+                                } else {
+                                    return '<a href="#" data-id="' + row.problem_eventid + '" class="alert" >' + row.alert_state + '(' + row.alert_num + ') </a>';
+                                }
                             }
                         },
                         {
