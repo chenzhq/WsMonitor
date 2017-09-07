@@ -14,6 +14,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
+
 /**
  * @Date 2017/4/4
  * @Author chen
@@ -46,8 +48,8 @@ public class ZApiMethod {
 
         String responseBody;
         try {
-            httpPost.setHeader("Content-Type", "application/json-rpc");
-            httpPost.setEntity(new StringEntity(requestJson));
+            httpPost.setHeader("Content-Type", "application/json-rpc; charset=utf-8");
+            httpPost.setEntity(new StringEntity(requestJson, Charset.forName("UTF-8")));
 
             CloseableHttpClient client = HttpClients.createDefault();
             httpResponse = client.execute(httpPost);
