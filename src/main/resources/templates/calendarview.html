@@ -480,7 +480,7 @@
                 var option = {
                     backgroundColor: '#404a59',
                     title: {
-                        top: 0,
+                        top: 5,
                         text: '最近6个月的问题',
                         left: 'center',
                         textStyle: {
@@ -493,7 +493,7 @@
                         }
                     },
                     legend: {
-                        top: '10',
+                        top: '15',
                         left: '100',
                         data: ['当前问题'],
                         textStyle: {
@@ -502,6 +502,7 @@
                     },
                     calendar: [{
                         top: 60,
+                        bottom: 20,
                         left: 'center',
                         range: ["2017-01-01", "2017-07-01"],
                         splitLine: {
@@ -568,9 +569,9 @@
                 calendar.setOption(option);
                 //获取数据 完成日历图的渲染
                 $.ajax({
-                    type: "post",
+                    type: "get",
                     url: "/calendar/get_graph",
-                    data: JSON.stringify(send_data),
+                    data: send_data,
                     dataType: "json",
                     contentType: 'application/json',
                     success: function (result) {
@@ -591,6 +592,9 @@
             //根据api范围的数据绘制日历图
             function drawCalendar(calendar, data) {
                 calendar.setOption({
+                    title: {
+                        text: data.title
+                    },
                     calendar: [{
                         range: data.range
                     }],
@@ -660,10 +664,10 @@
             //发送筛选数据请求
             function filter_post() {
                 $.ajax({
-                    type: "post",
+                    type: "get",
                     url: "/calendar/get_graph",
                     dataType: "json",
-                    data: JSON.stringify(send_data),
+                    data: send_data,
                     contentType: 'application/json',
                     success: function (result) {
                         if (result.success) {

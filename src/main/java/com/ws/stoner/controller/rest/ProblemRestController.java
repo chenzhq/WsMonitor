@@ -164,8 +164,13 @@ public class ProblemRestController {
      * 根据查询参数 获取告警日历数据
      * @return
      */
-    @RequestMapping(value = "calendar/get_graph", method = RequestMethod.POST)
-    public String getCalendarData(@RequestBody CalendarFormQuery formQuery) throws ServiceException {
+    @RequestMapping(value = "calendar/get_graph", method = RequestMethod.GET)
+    public String getCalendarData(@RequestParam(required = false, value = "hostIds[]") List<String> hostIds,
+                                  @RequestParam(required = false, value = "problemNum[]") List<Integer> problemNum,
+                                  @RequestParam String priority,
+                                  @RequestParam String acknowledge) throws ServiceException {
+        CalendarFormQuery formQuery = new CalendarFormQuery();
+        formQuery.setHostIds(hostIds).setProblemNum(problemNum).setPriority(priority).setAcknowledge(acknowledge);
         CalendarVO calendarVO = graphService.getCalendarGraphDatas(formQuery);
         return RestResultGenerator.genResult(calendarVO, REST_UPDATE_SUCCESS).toString();
     }
@@ -181,10 +186,7 @@ public class ProblemRestController {
                                         @RequestParam String acknowledge,
                                         @RequestParam(required = false) String date) throws ServiceException {
         CalendarFormQuery formQuery = new CalendarFormQuery();
-        formQuery.setHostIds(hostIds).setProblemNum(problemNum).setPriority(priority).setAcknowledge(acknowledge);
-        if (null != date) {
-            formQuery.setDate(date);
-        }
+        formQuery.setHostIds(hostIds).setProblemNum(problemNum).setPriority(priority).setAcknowledge(acknowledge).setDate(date);
         List<ProblemListVO> problemListVOS = eventService.getOneDayProblemListVOS(formQuery);
         return RestResultGenerator.genResult(problemListVOS, REST_UPDATE_SUCCESS).toString();
     }
