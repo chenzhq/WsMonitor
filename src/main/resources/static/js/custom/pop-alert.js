@@ -65,3 +65,67 @@ function popAlert($_target, $_popup) {
         }
     })
 }
+
+function popAck($_target, $_popup) {
+    if (!$_target instanceof jQuery || !$_popup instanceof jQuery) {
+        console.error("参数必须是jquery对象")
+    }
+    if ($_popup.children('table').length === 0) {
+        $_popup.append('<table class="ui single line very basic table">' +
+            '<thead>' +
+            '<tr>' +
+            '<th class="center aligned">时间</th>' +
+            '<th class="center aligned">用户</th>' +
+            '<th class="center aligned">消息</th>' +
+            '<th class="center aligned">动作</th>' +
+            '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+            '</tbody>' +
+            '</table>')
+    }
+    if (!$_popup.hasClass('ui popup')) {
+        $_popup.addClass('ui popup')
+    }
+    $_target.popup({
+        popup: $_popup,
+        on: 'hover',
+        delay: {
+            show: 500
+        },
+        inline: false,
+        position: 'top right',
+        onShow: function (target) {
+
+            $_popup.find('tbody').html('')
+            $.ajax({
+                type: 'get',
+                url: 'acknowledges/get_acknowledge',
+                dataType: 'json',
+                data: {event_id: $(target).attr('data-id')},
+                success: function (result) {
+                    if (result.success) {
+                        var body_html = []
+                        var data = result.data
+                        data.forEach(function (v) {
+                            var close_action = v.action === 0 ? '' : '关闭问题'
+                            body_html.push(
+                                '<tr>' +
+                                '<td>' + v.clock + '</td>' +
+                                '<td>' + v.alias + '</td>' +
+                                '<td>' + v.message + '</td>' +
+                                '<td>' + close_action + '</td>' +
+                                '</tr>')
+                        })
+                        $_popup.find('tbody').html(body_html.join())
+                    } else {
+
+                    }
+                },
+                error: function (e) {
+
+                }
+            })
+        }
+    })
+}

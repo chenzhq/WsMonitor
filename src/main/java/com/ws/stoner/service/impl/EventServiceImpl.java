@@ -222,7 +222,7 @@ public class EventServiceImpl implements EventService {
                         acknowledgeDTO.getClock().format(formatter),
                         acknowledgeDTO.getAlias(),
                         acknowledgeDTO.getMessage(),
-                        "0".equals(acknowledgeDTO.getAction()) ? "否" : "是"
+                        acknowledgeDTO.getAction()
                 );
                 acknowledgeVOS.add(acknowledgeVO);
 

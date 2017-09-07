@@ -322,6 +322,7 @@
 </div>
 
 <div id="alert_popup"></div>
+<div id="ack_popup"></div>
 
 <th:block th:replace="layout::bottom_script(~{::supple})">
     <script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
@@ -370,6 +371,7 @@
                     },
                     drawCallback: function () {
                         popAlert($('.alert'), $('#alert_popup'))
+                        popAck($('.confirm'), $('#ack_popup'))
                     },
                     data: [],
                     columns: [
@@ -449,7 +451,7 @@
                             "title": "确认",
                             "orderable": false,
                             render: function (data, type, row, meta) {
-                                if (row.acknowledged == "是") {
+                                if (row.acknowledged !== "是") {
                                     return row.acknowledged;
                                 }
                                 else {
