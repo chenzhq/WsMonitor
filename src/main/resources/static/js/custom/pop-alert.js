@@ -108,7 +108,7 @@ function popAck($_target, $_popup) {
                         var body_html = []
                         var data = result.data
                         data.forEach(function (v) {
-                            var close_action = v.action === 0 ? '' : '关闭问题'
+                            var close_action = v.action === "0" ? '' : '关闭问题'
                             body_html.push(
                                 '<tr>' +
                                 '<td>' + v.clock + '</td>' +

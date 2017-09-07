@@ -42,7 +42,7 @@ public class BaseUtils {
         StringBuilder timeStringBuilder = new StringBuilder();
         timeStringBuilder.append(days == 0 ? "" : days + "天");
         timeStringBuilder.append(hours == 0 ? "" : hours + "小时");
-        timeStringBuilder.append(minute == 0 ? "" : minute + "分钟");
+        timeStringBuilder.append(minute == 0 ? "" : minute + "分");
         return timeStringBuilder.toString();
     }
 }

@@ -223,7 +223,7 @@
 		</div>
 		<!--navbar-->
 		<!--maincontent-->
-		<div class="mainWrap navslide">
+		<div  class="mainWrap navslide">
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide tablet sixteen wide computer column">
@@ -252,154 +252,128 @@
 						</div>
 					</div>
 				</div>
-				<!--已告警提示框 start-->
-				<div class="ui special popup alarmed">
-					<div class="sixteen wide column">
-						<table class="ui very basic compact collapsing celled fixed single line table center aligned">
-							<thead>
-							<tr>
-								<th class="four wide">步骤</th>
-								<th class="four wide">时间</th>
-								<th class="four wide">状态（重试次数）</th>
-								<th class="four wide">接收者</th>
-							</tr></thead>
-							<tbody id="alarmedTable">
-							<tr>
-								<td colspan="4">无数据</td>
-							</tr>
-							</tbody>
-						</table>
+				<div th:fragment="problem_common_page">
+					<!--已告警提示框 start-->
+					<div id="alert_pop">
 					</div>
-				</div>
-				<!--已告警提示框 end-->
-				<!--确认记录提示框 start-->
-				<div class="ui special popup confirm">
-					<table class="ui very basic compact collapsing celled fixed single line table center aligned">
-						<thead>
-						<tr>
-							<th class="four wide">时间</th>
-							<th class="four wide">用户</th>
-							<th class="four wide">消息</th>
-							<th class="four wide">用户动作</th>
-						</tr></thead>
-						<tbody id="confirmTable">
-						<tr>
-							<td colspan="4">无数据</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-				<!--确认记录提示框 end-->
-				<!--确认记录模态框 start-->
-				<div class="ui small modal confirm">
-					<div class="content">
-						<div class="ui form">
-							<div class="required inline field" id="text_field">
-								<input type="text" id="confirmmodal_text" placeholder="不能为空">
-							</div>
-							<div id="table_modal_confirm">
-								<table class="ui celled striped compact single line table center aligned">
-									<thead>
-									<tr>
-										<th class="four wide">时间</th>
-										<th class="four wide">用户</th>
-										<th class="four wide">消息</th>
-										<th class="four wide">用户动作</th>
-									</tr></thead>
-									<tbody id="confirmTable_modal">
-									<tr>
-										<td colspan="4">无数据</td>
-									</tr>
-									</tbody>
-								</table>
-							</div>
-							<div class="required inline field" id="text_checkbox">
-								<div class="ui checkbox">
-									<input type="checkbox" tabindex="0" class="hidden">
-									<label  id="label_checkbox">关闭问题</label>
+
+					<!--确认记录提示框 start-->
+					<div id="acknowledge_pop">
+
+					</div>
+
+					<!--确认记录弹出框 start-->
+					<div class="ui small modal confirm">
+						<div class="content">
+							<div class="ui form">
+								<div class="required inline field" id="text_field">
+									<input type="hidden" id="acknowledge_eventid">
+									<input type="text" id="acknowledge_message" placeholder="不能为空">
+								</div>
+								<div id="acknowledge_history">
+									<table class="ui celled striped compact single line table center aligned">
+										<thead>
+										<tr>
+											<th class="four wide">时间</th>
+											<th class="four wide">用户</th>
+											<th class="four wide">消息</th>
+											<th class="four wide">用户动作</th>
+										</tr></thead>
+										<tbody id="acknowledge_data">
+										<tr>
+											<td colspan="4">无数据</td>
+										</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="required inline field" id="text_checkbox">
+									<div class="ui checkbox">
+										<input id="acknowledge_checkbox" type="checkbox" tabindex="0" class="hidden">
+										<label  id="label_checkbox">关闭问题</label>
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="actions">
+							<div id="submit_bnt" class="ui approve submit button">确认</div>
+							<div class="ui cancel button">取消</div>
+						</div>
 					</div>
-					<div class="actions">
-						<div class="ui approve submit button">确认</div>
-						<div class="ui cancel button">取消</div>
-					</div>
-				</div>
-				<!--确认记录模态框 end-->
-				<!--事件详情模态框 start-->
-				<div class="ui big modal detail">
-					<div class="content">
-						<div class="sixteen wide column">
-							<div class="ui grid">
-								<div class="eight wide column">
-									<div class="ui segments">
-										<div class="ui segment">
-											<h4 class="ui header">
-												事件细节
-											</h4>
-										</div>
-										<div class="ui segment no-padding detailconfirm">
-											<table class="ui very basic compact fixed definition table center aligned">
-												<tbody id="detailTable_tab">
-												<tr>
-													<td colspan="2">无数据</td>
-												</tr>
-												</tbody>
-											</table>
+
+					<!--事件详情弹出框 start-->
+					<div class="ui big modal detail">
+						<div class="content">
+							<div class="sixteen wide column">
+								<div class="ui grid">
+									<div class="eight wide column">
+										<div class="ui segments">
+											<div class="ui segment">
+												<h4 class="ui header">
+													事件细节
+												</h4>
+											</div>
+											<div class="ui segment no-padding detailconfirm">
+												<table class="ui very basic compact fixed definition table center aligned">
+													<tbody id="eventDetailModal">
+													<tr>
+														<td colspan="2">无数据</td>
+													</tr>
+													</tbody>
+												</table>
+											</div>
 										</div>
 									</div>
-								</div>
-								<div class="eight wide column">
-									<div class="ui segments">
-										<div class="ui segment">
-											<h4 class="ui header">
-												确认记录
-											</h4>
-										</div>
-										<div class="ui segment detailconfirm">
-											<table class="ui very basic compact fixed single line table center aligned">
-												<thead>
-												<tr>
-													<th class="four wide">时间</th>
-													<th class="four wide">用户</th>
-													<th class="four wide">消息</th>
-													<th class="four wide">用户动作</th>
-												</tr></thead>
-												<tbody id="confirmTable_tab">
-												<tr>
-													<td colspan="4">无历史确认记录</td>
-												</tr>
-												</tbody>
-											</table>
+									<div class="eight wide column">
+										<div class="ui segments">
+											<div class="ui segment">
+												<h4 class="ui header">
+													确认记录
+												</h4>
+											</div>
+											<div class="ui segment detailconfirm">
+												<table class="ui very basic compact fixed single line table center aligned">
+													<thead>
+													<tr>
+														<th class="four wide">时间</th>
+														<th class="four wide">用户</th>
+														<th class="four wide">消息</th>
+														<th class="four wide">用户动作</th>
+													</tr></thead>
+													<tbody id="acknowledgeModal">
+													<tr>
+														<td colspan="4">无历史确认记录</td>
+													</tr>
+													</tbody>
+												</table>
+											</div>
 										</div>
 									</div>
-								</div>
-								<div class="sixteen wide column">
-									<div class="ui segments">
-										<div class="ui segment">
-											<h4 class="ui header">
-												告警记录
-											</h4>
-										</div>
-										<div class="ui segment detailalarmed">
-											<table class="ui very basic compact fixed single line table center aligned">
-												<thead>
-												<tr>
-													<th class="one wide">步骤</th>
-													<th class="three wide">时间</th>
-													<th class="two wide">接收者</th>
-													<th class="one wide">方式</th>
-													<th class="four wide">主题</th>
-													<th class="four wide">信息</th>
-													<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
-												</tr></thead>
-												<tbody id="alarmedTable_tab">
-												<tr>
-													<td colspan="7">无历史确认记录</td>
-												</tr>
-												</tbody>
-											</table>
+									<div class="sixteen wide column">
+										<div class="ui segments">
+											<div class="ui segment">
+												<h4 class="ui header">
+													告警记录
+												</h4>
+											</div>
+											<div class="ui segment detailalarmed">
+												<table class="ui very basic compact fixed single line table center aligned">
+													<thead>
+													<tr>
+														<th class="one wide">步骤</th>
+														<th class="three wide">时间</th>
+														<th class="two wide">接收者</th>
+														<th class="one wide">方式</th>
+														<th class="four wide">主题</th>
+														<th class="four wide">信息</th>
+														<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
+													</tr></thead>
+													<tbody id="alertDetailModal">
+													<tr>
+														<td colspan="7">无历史确认记录</td>
+													</tr>
+													</tbody>
+												</table>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -407,16 +381,11 @@
 						</div>
 					</div>
 				</div>
-				<!--事件详情模态框 end-->
 			</div>
 		</div>
 	</div>
 </div>
 
-<div id="del-pop" class="ui custom popup transition hidden">
-	<div class="description">是否删除该分组？</div>
-	<i class="mini checkmark negative icon "></i>
-</div>
 <th:block th:replace="layout::bottom_script(~{::specialScript})">
 	<script src="../static/js/js.cookie.js"></script>
 	<script src="../static/js/jquery.nicescroll.min.js"></script>
@@ -427,24 +396,14 @@
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
+		<script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
-    //页面加载完加载基础数据
+    //页面加载完加载表格数据
     $(function() {
-        //初始化选项页
-        $('.secondary.pointing.menu .item')
-            .tab();
-        //下拉框事件
-        $("#ui_dropdown").change(function(){
-            var tmp=$("#ui_dropdown").val()
-            host_table.search(tmp).draw();
-        });
-    })
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        //初始当前问题列表
+        //初始问题列表
         var problems_Table = $("#problemsTable").DataTable({
             "iDisplayLength" : 10,
             order: [0, 'desc'],
@@ -453,65 +412,23 @@
                 $('td', row).eq(2).addClass('left aligned');
             },
             "drawCallback": function () {//初始化后回调
-                //点击事件详情事件
-                $('#problemsTable a.detail').on('click',function(){
-                    var event_id=$(this).attr("data-id");
-                    //初始化事件详情模态框
-                    detailmodal(event_id);
-                    detailconfirm(event_id);
-                    detailrecord(event_id);
-                    $('.ui.modal.detail').modal('show');
-                })
-                //点击确认记录事件
-                $('#problemsTable a.confirm').on('click',function(){
-                    var event_id=$(this).attr("data-id");
-                    confirmmodal(event_id);
-                    $('.ui.modal.confirm').modal({
-                        onApprove: function () {
-                            //验证是否为空
-                            if($("#confirmmodal_text").val()=="")
-                            {
-                                $("#text_field").addClass("error");
-                                return false;
-                            }else {
-                                if(!$('.ui.checkbox').checkbox("is checked")){
-                                var action = 0;
-                            	}else {
-                                    var action = 1;
-                                }
-                                var message = $("#confirmmodal_text").val();
-                                //完成一次关闭问题的确认操作，接口详情有问题，待完成"
-                                acknowledgeapprove(event_id,message,action);
-							}
-                        }
-                    }).modal('setting', 'closable', false).modal('show');
-                })
-                //浮动确认记录事件
-                $('#problemsTable a.confirm').hover(function() {
-                    var event_id=$(this).attr("data-id");
-                    confirmpopup(event_id);
-                }).popup({
-                    popup: '.special.popup.confirm',
-                    inline: true,
-                    hoverable  : true,
-                    delay: {
-                        show: 800,
-                        hide: 300
-                    }
-                });
-                //浮动已告警事件
-                $('#problemsTable a.alarmed').hover(function() {
-                    var event_id=$(this).attr("data-id");
-                    alarmedpopup(event_id);
-                }).popup({
-                    popup: '.special.popup.alarmed',
-                    inline: true,
-                    hoverable  : true,
-                    delay: {
-                        show: 800,
-                        hide: 300
-                    }
-                });
+				//事件详情 modal 框
+				$("a.problem_time").on("click",function(){
+				   var event_id = $(this).attr("data-id");
+                    eventDetailModal(event_id);
+				});
+
+				//确认事件 modal 框
+                $("a.AcknowledgeCol").on("click",function(){
+                    var event_id = $(this).attr("data-id");
+                    getAcknowledgeModal(event_id);
+				})
+				//告警pop
+                popAlert($("a.alertCol"), $("#alert_pop"));
+
+                //确认记录pop
+                popAck($("a.AcknowledgeCol"), $("#acknowledge_pop"));
+
             },
             ajax: {
                 url: '/problems/get_current',
@@ -523,6 +440,9 @@
                     "width": "15%",
                     "title": "发生时间",
                     "orderable": false,
+                    render: function(data, type, row, meta) {
+                        return '<a  href="javascript:void(0)" class="problem_time" data-id="'+ row.problem_eventid +'">' + row.problem_time + '</a>';
+                    }
                 },
                 {
                     "data": "host_name",
@@ -543,34 +463,30 @@
                     "data": "priority_state",
                     "width": "5%",
                     "title": "严重性",
-                    "orderable": false,
-                       //priority_state<td style="color: red">严重</td>
+                    "orderable": false
+
                 },
                 {
-                    "data": null,
+                    "data": 'problem_state',
                     "width": "5%",
                     "title": "状态",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        if(row.problem_state != "问题"){
-                            return row.problem_state;
-						}
-                        else {
-                            return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="alarmed">' + row.problem_state + '</a>';
-						}
-                    }
-				},
+                    "orderable": false
+
+                },
                 {
                     "data": "recover_time",
                     "width": "10%",
                     "title": "恢复时间",
                     "orderable": false,
+                    render: function(data, type, row, meta) {
+                        return '<a  href="javascript:void(0)" class="problem_time" data-id="'+ row.problem_eventid +'">' + row.recover_time + '</a>';
+                    }
                 },
                 {
                     "data": "duration_string",
                     "width": "10%",
                     "title": "持续时间",
-                    "orderable": false,
+                    "orderable": false
                 },
                 {
                     "data": null,
@@ -578,7 +494,13 @@
                     "title": "告警状态",
                     "orderable": false,
                     render: function(data, type, row, meta) {
-                        return row.alert_state + '(' + row.alert_num + ')';
+                        if(row.alert_state == "未告警") {
+                            //无悬浮事件
+                            return row.alert_state ;
+                        }else {
+                            //有悬浮事件
+                            return '<a data-id="'+ row.problem_eventid +'" class="alertCol" >' + row.alert_state + '(' + row.alert_num + ')</a>';
+                        }
                     }
                 },
                 {
@@ -587,320 +509,62 @@
                     "title": "确认",
                     "orderable": false,
                     render: function(data, type, row, meta) {
-						if(row.acknowledged == "是"){
-							return row.acknowledged;
-						}
-						else {
-							return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="confirm">' + row.acknowledged + '</a>';
-						}
-                    }
-                },
-                {
-                    "data": null,
-                    "width": "5%",
-                    "title": "操作",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-						return '<a href="javascript:void(0)" data-id="'+row.problem_eventid+'" class="detail">详情</a>';
+                        return '<a href="javascript:void(0)" data-id="'+ row.problem_eventid +'" class="AcknowledgeCol">' + row.acknowledged + '</a>';
                     }
                 }
             ],
         });
-        //点击问题列表菜单
+
+        //点击问题 teb 切换
         $('#problemsMenu button').on('click',function () {
             $('#problemsMenu button').removeClass('active');
             $(this).addClass('active');
             if(this.value == "currentProblems"){
                 problems_Table.ajax.url('/problems/get_current').load();
-			}else if(this.value == "recentProblems"){
+            }else if(this.value == "recentProblems"){
                 problems_Table.ajax.url('/problems/get_last').load();
-			}else if(this.value == "historicalRecord"){
-			    //这里差一个时间区间控件，时间格式为秒数
-			    var begin_time='2017-1-29';
-                var end_time='2017-8-29';
+            }else if(this.value == "historicalRecord"){
+                //这里差一个时间区间控件，时间格式为秒数
+                var begin_time='1502084621';
+                var end_time='1504763021';
                 problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
             }
-        })
-    })
-    //完成一次关闭问题的确认操作
-    function acknowledgeapprove(event_id,message,action){
-        $.ajax({
-            type: "post",
-            url: "/acknowledge/acknowledge_event",
-			data:{event_id: event_id,message:message,action:action},
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    var data = result.data;
-                    console.log(data)
-                    //getacknowledgeapprove(data)
-                } else {
-                    errorMsg_no_data("一次关闭问题的确认 modal");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("一次关闭问题的确认 modal");
-            }
-        })
-    }
-    //获取完成一次关闭问题的确认操作
-    function getacknowledgeapprove(data) {
-        /*var str = '';
-        待完成*/
-    }
-    //连接确认记录提示框
-    function confirmpopup(event_id) {
-        $.ajax({
-            type: "get",
-            url: "/acknowledges/get_acknowledge?event_id=" + event_id,
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    var data = result.data;
-                    getconfirmpopup(data)
-                } else {
-                    errorMsg_no_data("确认记录 Popup");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("确认记录 Popup");
-            }
-        })
-    }
-    //获取确认记录提示框内容
-    function getconfirmpopup(data) {
-        var str = '';
-        for(var i=0;i<data.length;i++)
-        {
-            if(data[i].action == '0'){
-                var action = '未确认';
-            }
-            else if(data[i].action == '1'){
-                var action = '已确认';
-            }
-			str += "<tr><td>"
-				+data[i].clock+"</td><td>"
-				+data[i].alias+"</td><td class='left aligned'>"
-				+data[i].message+"</td><td>"
-				+action+"</td></tr>"
-        }
-        $("#confirmTable").html(str);
-    }
-    //连接已告警提示框
-    function alarmedpopup(event_id) {
-        $.ajax({
-            type: "get",
-            url: "/alerts/get_alert?event_id=" + event_id,
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    var data = result.data;
-                    getalarmedpopup(data)
-                } else {
-                    errorMsg_no_data("已告警 Popup");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("已告警 Popup");
-            }
-        })
-    }
-    //获取已告警提示框
-    function getalarmedpopup(data){
-        var str = '';
-        for(var i=0;i<data.length;i++)
-        {
-            str += "<tr><td>"
-                +data[i].esc_step+"</td><td>"
-                +data[i].last_time+"</td><td>"
-                +data[i].status+"("+data[i].retries+")</td><td>"
-                +data[i].sendto+"</td></tr>"
-        }
-        $("#alarmedTable").html(str);
-	}
+        });
 
-    //连接事件详情模态框，细节列表
-    function detailmodal(event_id) {
-        $.ajax({
-            type: "get",
-            url: "/event/get_detail?event_id=" + event_id,
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    var data = result.data;
-                    //初始化细节列表
-                    getdetailmodal(data);
-                } else {
-                    errorMsg_no_data("细节列表 modal");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("细节列表 modal");
+        //浮动已告警事件
+        $("#problemsTable .alertCol").hover(function() {
+            var event_id = $(this).attr("id").substring(3);
+            console.log("event_id",$(this).attr("id"));
+            alertPopup(event_id);
+        }).popup({
+            popup: '.special.popup.alarmed',
+            inline: true,
+            hoverable  : true,
+            delay: {
+                show: 800,
+                hide: 300
             }
-        })
-    }
-    /*//获取事件详情模态框，细节列表
-    function getdetailmodal(data){
-        var str = '';
-		if(data.closed == true){
-			var closed = '已关闭';
-		}
-		else if(data.closed == false){
-			var closed = '未关闭';
-		}
-		str += "<tr><td>所属主机</td><td>"
-			+data.host_name+"</td></tr><tr><td>监控点</td><td>"
-			+data.point_name+"</td></tr><tr><td>监控项</td><td>"
-			+data.item_name+"</td></tr><tr><td>阀值</td><td>"
-			+data.threshold+"</td></tr><tr><td>触发器描述</td><td  title='"+data.trigger_name+"'>"
-			+data.trigger_name+"</td></tr><tr><td>发生时间</td><td>"
-			+data.problem_time+"</td></tr><tr><td>恢复时间</td><td>"
-			+data.recovery_time+"</td></tr><tr><td>手动关闭(操作人)</td><td>"
-			+closed+"("+data.closed_user+")</td></tr>"
-        $("#detailTable_tab").html(str);
-    }*/
-    //连接事件详情模态框，确认列表
-    function detailconfirm(event_id) {
-        $.ajax({
-            type: "get",
-            url: "/acknowledges/get_acknowledge?event_id=" + event_id,
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    var data = result.data;
-                    //初始化细节列表
-                    getdetailconfirm(data);
-                } else {
-                    errorMsg_no_data("确认列表 modal");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("确认列表 modal");
+        });
+
+        //浮动确认记录事件
+        $("#problemsTable a.AcknowledgeCol").hover(function() {
+            var event_id = $(this).attr("id").substring(3);
+            console.log("event_id",$(this).attr("id"));
+            acknowledgePopup(event_id);
+        }).popup({
+            popup: '.special.popup.confirm',
+            inline: true,
+            hoverable  : true,
+            delay: {
+                show: 800,
+                hide: 300
             }
-        })
-    }
-    //获取事件详情模态框，确认列表
-    function getdetailconfirm(data){
-        var str = '';
-        for(var i=0;i<data.length;i++)
-        {
-            if(data[i].action == '0'){
-                var action = '未确认';
-            }
-            else if(data[i].action == '1'){
-                var action = '已确认';
-            }
-            str += "<tr><td>"
-                +data[i].clock+"</td><td>"
-                +data[i].alias+"</td><td class='left aligned'>"
-                +data[i].message+"</td><td>"
-                +action+"</td></tr>"
-        }
-        $("#confirmTable_tab").html(str);
-    }
-    //连接事件详情模态框，记录列表
-    function detailrecord(event_id) {
-        $.ajax({
-            type: "get",
-            url: "/alerts/get_detail?event_id=" + event_id,
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    var data = result.data;
-                    //初始化细节列表
-                    getdetailrecord(data);
-                } else {
-                    errorMsg_no_data("记录列表 modal");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("记录列表 modal");
-            }
-        })
-    }
-    //获取事件详情模态框，记录列表
-    function getdetailrecord(data){
-        var str = '';
-        for(var i=0;i<data.length;i++)
-        {
-            str += "<tr><td>"
-                +data[i].esc_step+"</td><td>"
-                +data[i].last_time+"</td><td>"
-                +data[i].sendto+"</td><td>"
-                +data[i].alert_type+"</td><td class='left aligned' title='"+data[i].subject+"'>"
-                +data[i].subject+"</td><td class='left aligned' title='"+data[i].message+"'>"
-                +data[i].message+"</td><td>"
-                +data[i].status+"("+data[i].retries+")</td></tr>"
-        }
-        $("#alarmedTable_tab").html(str);
-    }
-    //连接确认记录模态框，历史确认记录
-    function confirmmodal(event_id) {
-        $("#confirmmodal_text").val("");
-		$("#text_field").removeClass("error");
-        $("#text_checkbox").removeClass("error");
-        $('.ui.checkbox').checkbox("set unchecked");
-        //用户是否可以关闭问题
-        $.ajax({
-            type: "get",
-            url: "/acknowledge/is_closed?event_id=" + event_id,
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    var data = result.data;
-                    if (data.checkbox_enable==false){
-                        $('.ui.checkbox').addClass("disabled");
-                        $("#label_checkbox").html(data.disable_message)
-                    }else {
-                        $("#label_checkbox").html("问题可关闭")
-					}
-                } else {
-                    errorMsg_no_data("用户是否可关闭问题 modal");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("用户是否可关闭问题 modal");
-            }
-        })
-		//历史确认记录
-        $.ajax({
-            type: "get",
-            url: "/acknowledges/get_acknowledge?event_id=" + event_id,
-            dataType: "json",
-            success: function (result) {
-                if (result.success) {
-                    var data = result.data;
-                    getconfirmmodal(data);
-                } else {
-                    errorMsg_no_data("历史确认记录 modal");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("历史确认记录 modal");
-            }
-        })
-    }
-    //获取确认记录模态框，历史确认记录
-    function getconfirmmodal(data){
-        var str = '';
-        for(var i=0;i<data.length;i++)
-        {
-            if(data[i].action == '0'){
-                var action = '未确认';
-            }
-            else if(data[i].action == '1'){
-                var action = '已确认';
-            }
-            str += "<tr><td>"
-                +data[i].clock+"</td><td>"
-                +data[i].alias+"</td><td class='left aligned'>"
-                +data[i].message+"</td><td>"
-                +action+"</td></tr>"
-        }
-        $("#confirmTable_modal").html(str);
-    }
+        });
+
+    })
 
 </script>
+
 </body>
 </html>
 

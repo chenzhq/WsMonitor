@@ -696,6 +696,7 @@
                     +closed+"("+data.closed_user+")</td></tr>"
                 $("#detailTable_tab").html(str);
             }
+
             //连接事件详情模态框，确认列表
             function detailconfirm(event_id) {
                 $.ajax({
@@ -716,6 +717,7 @@
                     }
                 })
             }
+
             //获取事件详情模态框，确认列表
             function getdetailconfirm(data){
                 var str = '';
@@ -735,6 +737,7 @@
                 }
                 $("#confirmTable_tab").html(str);
             }
+
             //连接事件详情模态框，记录列表
             function detailrecord(event_id) {
                 $.ajax({
@@ -755,6 +758,7 @@
                     }
                 })
             }
+
             //获取事件详情模态框，记录列表
             function getdetailrecord(data){
                 var str = '';
@@ -771,11 +775,13 @@
                 }
                 $("#alarmedTable_tab").html(str);
             }
+
 		</script>
 		<script>
             $(document).ready(function() {
                 //初始当前问题列表
 				var trigger_id=$("#trigger_id").text();
+				console.log("triggerId",trigger_id);
                 var problems_Table = $("#problemsTable").DataTable({
                     "iDisplayLength" : 5,
                     "ordering":false,
