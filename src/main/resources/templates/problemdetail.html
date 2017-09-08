@@ -15,6 +15,11 @@
 	<th:block th:fragment="supplement">
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
+		<link rel="stylesheet" href="../static/css/ion.rangeSlider.css"
+			  th:href="@{css/ion.rangeSlider.css}">
+		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinFlat.css"
+			  th:href="@{css/ion.rangeSlider.skinFlat.css}">
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.ui.table.dataTable thead th {
@@ -250,11 +255,11 @@
 									</tr>
 									<tr>
 										<td>最新状态</td>
-										<td th:text="${problemDetailVO.state}"></td>
+										<td th:text="${problemDetailVO.state} == 1 ? '问题' : '正常' "></td>
 									</tr>
 									<tr>
 										<td>阀值</td>
-										<td th:text="${problemDetailVO.hostName}"></td>
+										<td th:text="${problemDetailVO.threshold}"></td>
 									</tr>
 									<tr>
 										<td style="display: none" id="trigger_id" th:text="${problemDetailVO.triggerId}"></td>
@@ -266,7 +271,11 @@
 						<div class="ten wide column chartBar" style="padding-left: 0px">
 							<div class="ui segment left aligned detailconfirm">
 								<div id="problemChart" class="chartBar"></div>
+								<div id="filter_content" style="display: none;">
+									<input type="text" id="time_filter" name="time_filter" value=""/>fsdfsfsd
+								</div>
 							</div>
+
 						</div>
 					</div>
 					<div class="ui segment" style="margin-top: 30px">
@@ -275,105 +284,19 @@
 						</table>
 					</div>
 				</div>
-				<!--确认记录提示框 start-->
-				<div class="ui special popup confirm">
-					<table class="ui very basic compact collapsing celled fixed single line table center aligned">
-						<thead>
-						<tr>
-							<th class="four wide">时间</th>
-							<th class="four wide">用户</th>
-							<th class="four wide">消息</th>
-							<th class="four wide">用户动作</th>
-						</tr></thead>
-						<tbody id="confirmTable">
-						<tr>
-							<td colspan="4">无数据</td>
-						</tr>
-						</tbody>
-					</table>
+
+				<!--已告警提示框 -->
+				<div id="alert_pop">
 				</div>
-				<!--确认记录提示框 end-->
-				<!--事件详情模态框 start-->
-				<div class="ui big modal detail">
-					<div class="content">
-						<div class="sixteen wide column">
-							<div class="ui grid">
-								<div class="eight wide column">
-									<div class="ui segments">
-										<div class="ui segment">
-											<h4 class="ui header">
-												事件细节
-											</h4>
-										</div>
-										<div class="ui segment no-padding detailconfirm">
-											<table class="ui very basic compact fixed definition table center aligned">
-												<tbody id="detailTable_tab">
-												<tr>
-													<td colspan="2">无数据</td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-								<div class="eight wide column">
-									<div class="ui segments">
-										<div class="ui segment">
-											<h4 class="ui header">
-												确认记录
-											</h4>
-										</div>
-										<div class="ui segment detailconfirm">
-											<table class="ui very basic compact fixed single line table center aligned">
-												<thead>
-												<tr>
-													<th class="four wide">时间</th>
-													<th class="four wide">用户</th>
-													<th class="four wide">消息</th>
-													<th class="four wide">用户动作</th>
-												</tr></thead>
-												<tbody id="confirmTable_tab">
-												<tr>
-													<td colspan="4">无历史确认记录</td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-								<div class="sixteen wide column">
-									<div class="ui segments">
-										<div class="ui segment">
-											<h4 class="ui header">
-												告警记录
-											</h4>
-										</div>
-										<div class="ui segment detailalarmed">
-											<table class="ui very basic compact fixed single line table center aligned">
-												<thead>
-												<tr>
-													<th class="one wide">步骤</th>
-													<th class="three wide">时间</th>
-													<th class="two wide">接收者</th>
-													<th class="one wide">方式</th>
-													<th class="four wide">主题</th>
-													<th class="four wide">信息</th>
-													<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
-												</tr></thead>
-												<tbody id="alarmedTable_tab">
-												<tr>
-													<td colspan="7">无历史确认记录</td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+
+				<!--确认记录提示框 -->
+				<div id="acknowledge_pop">
 				</div>
-				<!--事件详情模态框 end-->
+				<!--事件详情模态框 -->
+				<div  th:replace="problemlist::problem_event_page"></div>
+				<!--确认事件模态框 -->
+				<div th:replace="problemlist::problem_acknowledge_page"></div>
+
 			</div>
 		</div>
 		<!--maincontent-->
@@ -388,48 +311,50 @@
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+		<script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
+		<script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
 		<script type="text/javascript">
+            var trigger_id = $("#trigger_id").text();
+            //初始化三个月数据
+            var send_data = {
+                trigger_id : trigger_id,
+                begin_time : "",
+                end_time : ""
+            }
+            console.log("send_data",send_data);
             //页面加载完加载基础数据
 			$(function() {
-                //var event_id="123";
-                //初始化事件细节信息
-                //detailtable(event_id);
-                //加载图形数据
-                getproblemchart();
+
+                //获取数据
+                showTimeCons();
+
 			})
-            //加载健康度和图形数据
-            function problemchart() {
+
+
+			function initProblemchart(send_data) {
                 $.ajax({
                     type: "get",
-                    url: "/platformdetail/get_datas?platform_id="+platform_id,
-                    dataType: "json",
+                    url: '/problem/detail_graph',
+                    data:send_data,
+                    dataType: 'json',
                     success: function (result) {
-                        if(result.success) {
-                            var data = result.data;
-                            //getproblemchart(data);
-                        }
-                        else {
-                            errorMsg_no_data("图形 Chart");
+                        if (result.success) {
+                            drawProblemChart(result.data);
+                        } else {
+
                         }
                     },
-                    error: function () {
-                        errorMsg_no_connect("图形 Chart");
+                    error: function (e) {
+
                     }
                 });
-            }
-            function getproblemchart() {
+			}
+			//绘制时序图形
+            function drawProblemChart(data_sourse) {
                 //绘制图标数据
-                var platform_chart = echarts.init(document.getElementById("problemChart"));
+                var problemChart = echarts.init(document.getElementById("problemChart"));
                 //配置option
-                var data = [
-                    [1447923064, 1567933064, 1, 'green'],
-                    [1567933064, 1607943064, 1, 'yellow'],
-                    [1607943064, 1647953064, 1, 'red'],
-                    [1547944064, 0, 0, ' '],
-                    [1597955064, 0, 0, ' '],
-                    [1647953064, 0, 0, ' '],
-                ]
-                data = echarts.util.map(data, function(item, index) {
+                var data = echarts.util.map(data_sourse, function(item, index) {
                     return {
                         name: '状态',
                         value: item,
@@ -440,7 +365,6 @@
                         }
                     }
                 })
-
                 function renderItem(params, api) {
                     var start = api.coord([api.value(0), 0])
                     var end = api.coord([api.value(1), 0])
@@ -479,7 +403,7 @@
                 var option = {
                     tooltip: {
                         formatter: function (params) {
-                            return params.marker + params.value[3] + ': ' + params.value[2] + ' ms';
+                            return params.value[4];
                         }
                     },
                     title: {
@@ -489,25 +413,6 @@
                     legend: {
                         data: ['bar', 'error']
                     },
-                    dataZoom: [{
-                        type: 'slider',
-                        filterMode: 'weakFilter',
-                        showDataShadow: false,
-                        top: 190,
-                        height: 10,
-                        borderColor: 'transparent',
-                        backgroundColor: '#e2e2e2',
-                        handleIcon: 'M10.7,11.9H9.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z', // jshint ignore:line
-                        handleSize: 20,
-                        handleStyle: {
-                            shadowBlur: 6,
-                            shadowOffsetX: 1,
-                            shadowOffsetY: 2,
-                            shadowColor: '#aaa'
-                        },
-                        labelFormatter: '',
-                        minSpan: 10
-                    }],
                     grid: {
                         height:140,
                         top: '1%',
@@ -535,9 +440,9 @@
                     }]
                 };
                 //根据配置绘制图形
-                platform_chart.setOption(option);
+                problemChart.setOption(option);
                 //点击每个节点，获取时间段
-                platform_chart.on('click', function (params) {
+                problemChart.on('click', function (params) {
                     var calendar =params.data;
                     console.log(calendar.value)
 					var starttime=new Date(calendar.value[0])
@@ -549,245 +454,32 @@
 					alert("开始时间:"+starttime+"结束时间:"+endtime)
                 });
             }
-		</script>
-		<script>
-            //连接事件细节信息
-            function detailtable(event_id) {
-                $.ajax({
-                    type: "get",
-                    url: "/event/get_detail?event_id=" + event_id,
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.success) {
-                            var data = result.data;
-                            //初始化细节列表
-                            getdetailtable(data);
-                        } else {
-                            errorMsg_no_data("细节列表 modal");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("细节列表 modal");
-                    }
-                })
-            }
-            //获取事件细节信息
-            function getdetailtable(data){
-                var str = '';
-                if(data.closed == true){
-                    var closed = '已关闭';
-                }
-                else if(data.closed == false){
-                    var closed = '未关闭';
-                }
-                str += "<tr><td>所属主机</td><td>"
-                    +data.host_name+"</td></tr><tr><td>监控点</td><td>"
-                    +data.point_name+"</td></tr><tr><td>监控项</td><td>"
-                    +data.item_name+"</td></tr><tr><td>阀值</td><td>"
-                    +data.threshold+"</td></tr><tr><td>手动关闭(操作人)</td><td>"
-                    +closed+"("+data.closed_user+")</td></tr><tr><td>发生时间</td><td>"
-                    +data.problem_time+"</td></tr><tr><td>恢复时间</td><td>"
-                    +data.recovery_time+"</td></tr><tr><td>触发器描述</td><td title='"+data.trigger_name+"'>"
-                    +data.trigger_name+"</td></tr>"
-                $("#detailTable").html(str);
-            }
-            //连接确认记录提示框
-            function confirmpopup(event_id) {
-                $.ajax({
-                    type: "get",
-                    url: "/acknowledges/get_acknowledge?event_id=" + event_id,
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.success) {
-                            var data = result.data;
-                            getconfirmpopup(data)
-                        } else {
-                            errorMsg_no_data("确认记录 Popup");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("确认记录 Popup");
-                    }
-                })
-            }
-            //获取确认记录提示框内容
-            function getconfirmpopup(data) {
-                var str = '';
-                for(var i=0;i<data.length;i++)
-                {
-                    if(data[i].action == '0'){
-                        var action = '未确认';
-                    }
-                    else if(data[i].action == '1'){
-                        var action = '已确认';
-                    }
-                    str += "<tr><td>"
-                        +data[i].clock+"</td><td>"
-                        +data[i].alias+"</td><td class='left aligned'>"
-                        +data[i].message+"</td><td>"
-                        +action+"</td></tr>"
-                }
-                $("#confirmTable").html(str);
-            }
-            //连接事件详情模态框，细节列表
-            function detailmodal(event_id) {
-                $.ajax({
-                    type: "get",
-                    url: "/event/get_detail?event_id=" + event_id,
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.success) {
-                            var data = result.data;
-                            //初始化细节列表
-                            getdetailmodal(data);
-                        } else {
-                            errorMsg_no_data("细节列表 modal");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("细节列表 modal");
-                    }
-                })
-            }
-            //获取事件详情模态框，细节列表
-            function getdetailmodal(data){
-                var str = '';
-                if(data.closed == true){
-                    var closed = '已关闭';
-                }
-                else if(data.closed == false){
-                    var closed = '未关闭';
-                }
-                str += "<tr><td>所属主机</td><td>"
-                    +data.host_name+"</td></tr><tr><td>监控点</td><td>"
-                    +data.point_name+"</td></tr><tr><td>监控项</td><td>"
-                    +data.item_name+"</td></tr><tr><td>阀值</td><td>"
-                    +data.threshold+"</td></tr><tr><td>触发器描述</td><td  title='"+data.trigger_name+"'>"
-                    +data.trigger_name+"</td></tr><tr><td>发生时间</td><td>"
-                    +data.problem_time+"</td></tr><tr><td>恢复时间</td><td>"
-                    +data.recovery_time+"</td></tr><tr><td>手动关闭(操作人)</td><td>"
-                    +closed+"("+data.closed_user+")</td></tr>"
-                $("#detailTable_tab").html(str);
-            }
 
-            //连接事件详情模态框，确认列表
-            function detailconfirm(event_id) {
-                $.ajax({
-                    type: "get",
-                    url: "/acknowledges/get_acknowledge?event_id=" + event_id,
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.success) {
-                            var data = result.data;
-                            //初始化细节列表
-                            getdetailconfirm(data);
-                        } else {
-                            errorMsg_no_data("确认列表 modal");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("确认列表 modal");
-                    }
-                })
-            }
-
-            //获取事件详情模态框，确认列表
-            function getdetailconfirm(data){
-                var str = '';
-                for(var i=0;i<data.length;i++)
-                {
-                    if(data[i].action == '0'){
-                        var action = '未确认';
-                    }
-                    else if(data[i].action == '1'){
-                        var action = '已确认';
-                    }
-                    str += "<tr><td>"
-                        +data[i].clock+"</td><td>"
-                        +data[i].alias+"</td><td class='left aligned'>"
-                        +data[i].message+"</td><td>"
-                        +action+"</td></tr>"
-                }
-                $("#confirmTable_tab").html(str);
-            }
-
-            //连接事件详情模态框，记录列表
-            function detailrecord(event_id) {
-                $.ajax({
-                    type: "get",
-                    url: "/alerts/get_detail?event_id=" + event_id,
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.success) {
-                            var data = result.data;
-                            //初始化细节列表
-                            getdetailrecord(data);
-                        } else {
-                            errorMsg_no_data("记录列表 modal");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("记录列表 modal");
-                    }
-                })
-            }
-
-            //获取事件详情模态框，记录列表
-            function getdetailrecord(data){
-                var str = '';
-                for(var i=0;i<data.length;i++)
-                {
-                    str += "<tr><td>"
-                        +data[i].esc_step+"</td><td>"
-                        +data[i].last_time+"</td><td>"
-                        +data[i].sendto+"</td><td>"
-                        +data[i].alert_type+"</td><td class='left aligned' title='"+data[i].subject+"'>"
-                        +data[i].subject+"</td><td class='left aligned' title='"+data[i].message+"'>"
-                        +data[i].message+"</td><td>"
-                        +data[i].status+"("+data[i].retries+")</td></tr>"
-                }
-                $("#alarmedTable_tab").html(str);
-            }
-
-		</script>
-		<script>
-            $(document).ready(function() {
-                //初始当前问题列表
-				var trigger_id=$("#trigger_id").text();
-				console.log("triggerId",trigger_id);
-                var problems_Table = $("#problemsTable").DataTable({
+			//初始当前问题列表
+			function initProblemTable(send_data) {
+                var problemsTable = $("#problemsTable").DataTable({
                     "iDisplayLength" : 5,
                     "ordering":false,
                     "createdRow": function (row, data, dataIndex) {
                         $('td', row).eq(3).addClass('right aligned');
                     },
                     "drawCallback": function () {//初始化后回调
-                        //点击开始时间，事件详情事件
-						$('#problemsTable a.detail').on('click',function(){
-							var event_id=$(this).attr("data-id");
-							//初始化事件详情模态框
-							detailmodal(event_id);
-							detailconfirm(event_id);
-							detailrecord(event_id);
-							$('.ui.modal.detail').modal('show');
-						})
-                        //浮动确认记录事件
-                        $('#problemsTable a.confirm').hover(function() {
-                            var event_id=$(this).attr("data-id");
-                            confirmpopup(event_id);
-                        }).popup({
-                            popup: '.special.popup.confirm',
-                            inline: true,
-                            hoverable  : true,
-                            delay: {
-                                show: 800,
-                                hide: 300
-                            }
+                        //事件详情 modal 框
+                        $("a.problem_time").on("click",function(){
+                            var event_id = $(this).attr("data-id");
+                            eventDetailModal(event_id);
                         });
-                    },
-                    ajax: {
-                        url: '/problem/detail_list?trigger_id=' + trigger_id,
-                        dataSrc: 'data'
+
+                        //确认事件 modal 框
+                        $("a.AcknowledgeCol").on("click",function(){
+                            var event_id = $(this).attr("data-id");
+                            getAcknowledgeModal(event_id);
+                        })
+                        //告警pop
+                        popAlert($("a.alertCol"), $("#alert_pop"));
+
+                        //确认记录pop
+                        popAck($("a.AcknowledgeCol"), $("#acknowledge_pop"));
                     },
                     columns: [
                         {
@@ -796,7 +488,7 @@
                             "title": "开始时间",
                             "orderable": false,
                             render: function(data, type, row, meta) {
-								return '<a href="javascript:void(0)" data-id="'+row.event_id+'" class="detail">' + row.begin_time + '</a>';
+                                return '<a href="javascript:void(0)" data-id="'+row.event_id+'" class="problem_time">' + row.begin_time + '</a>';
                             }
                         },
                         {
@@ -818,36 +510,126 @@
                             "orderable": false,
                         },
                         {
-                            "data": null,
-                            "width": "10%",
-                            "title": "确认",
-                            "orderable": false,
-                            render: function(data, type, row, meta) {
-                                if(row.acknowledged == "是"){
-                                    return '<a href="javascript:void(0)" data-id="'+row.event_id+'" class="confirm">' + row.acknowledged + '</a>';
-                                }
-                                else {
-                                    return row.acknowledged;
-                                }
-                            }
-                        },
-                        {
                             "data": "recover_time",
                             "width": "10%",
                             "title": "告警",
                             "orderable": false,
                             render: function(data, type, row, meta) {
-                                if(row.alert_state == "无"){
-                                    return row.alert_state;
-                                }
-                                else {
-                                    return row.alert_state + '(' + row.alert_num + ')';
+                                if(row.alert_state == "未告警") {
+                                    //无悬浮事件
+                                    return row.alert_state ;
+                                }else if(row.alert_state == "无") {
+                                    return "";
+                                }else {
+                                    //有悬浮事件
+                                    return '<a href="javascript:void(0)" data-id="'+ row.event_id +'" class="alertCol" >' + row.alert_state + '(' + row.alert_num + ')</a>';
                                 }
                             }
+                        },
+                        {
+                            "data": null,
+                            "width": "10%",
+                            "title": "确认",
+                            "orderable": false,
+                            render: function(data, type, row, meta) {
+                                    return '<a href="javascript:void(0)" data-id="'+row.event_id+'" class="AcknowledgeCol">' + row.acknowledged + '</a>';
+                            }
                         }
+
                     ],
                 });
-            })
+                //三个月的数据
+                console.log("list-send-data",send_data);
+                $.ajax({
+                    type: "get",
+                    url: '/problem/detail_list',
+					data:send_data,
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            problemsTable.rows.add(result.data).draw()
+                        } else {
+
+                        }
+                    },
+                    error: function (e) {
+
+                    }
+                });
+                return problemsTable;
+			}
+
+            //显示时间控件
+            function showTimeCons() {
+                var now = new Date();
+                var end_time = new Date(now);
+                end_time.setMinutes(0);
+                end_time.setSeconds(0);
+                end_time.setMilliseconds(0);
+                var begin_time = new Date(end_time);
+                //3表示三个月
+                if(end_time.getMonth() > 3) {
+                    begin_time.setMonth(end_time.getMonth() - 3);
+                }else {
+                    begin_time.setFullYear(end_time.getFullYear() - 1);
+                    begin_time.setMonth(end_time.getMonth() + 9);
+                }
+
+                var begin_second = begin_time.getTime();
+                var end_second = end_time.getTime();
+				/*      console.log("begin_second",begin_second);
+				 console.log("end_second",end_second);*/
+                var time_arr = [];
+                var vo_arr = [];
+                var s = begin_second;
+                while(s <= end_second) {
+                    var dura_date = new Date();
+                    dura_date.setTime(s);
+                    time_arr.push(dura_date.Format("yyyy-MM-dd hh:mm:ss"));
+                    vo_arr.push(dura_date.Format("MM-dd hh:mm"));
+                    s += 3600 * 1000;
+                }
+                time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
+                vo_arr.push(now.Format("MM-dd hh:mm"));
+                console.log("time_arr",time_arr);
+                console.log("vo_arr",vo_arr);
+                $('#filter_content').css('display','block');
+                $('#time_filter').ionRangeSlider({
+                    type: "double",
+//			grid:true,
+                    from: vo_arr[0],
+                    //TODO 最好使用返回的问题数中的最大值
+                    to: vo_arr[time_arr.length-1],
+                    values:vo_arr,
+                    onStart: function (data) {
+                       send_data.begin_time = time_arr[data.from];
+                       send_data.end_time = time_arr[data.to];
+						//初始化图形
+						initProblemchart(send_data);
+
+						//初始化列表
+						initProblemTable(send_data);
+                    },
+                    onChange: function (data) {
+//                        console.log(data);
+                    },
+                    onFinish: function (data) {
+//                console.log("begin",time_arr[data.from]);
+//                console.log("end",time_arr[data.to]);
+                        send_data.begin_time = time_arr[data.from];
+                        send_data.end_time = time_arr[data.to];
+                        //获取图形
+                        initProblemchart(send_data);
+
+                        //获取列表
+                        initProblemTable(send_data);
+                    },
+                    onUpdate: function (data) {
+//                        console.log(data);
+                    }
+                });
+            }
+
 		</script>
 	</th:block>
 </th:block>

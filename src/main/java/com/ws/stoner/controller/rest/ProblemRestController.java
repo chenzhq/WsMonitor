@@ -121,7 +121,11 @@ public class ProblemRestController {
      */
     @RequestMapping(value = "problem/detail_list", method = RequestMethod.GET)
     public String getDetailListByTriggerId(@RequestParam("trigger_id") String triggerId,@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
-        List<ProblemDetailListVO> problemDetailListVOS = eventService.getDetailListByTriggerId(triggerId,beginTime,endTime);
+        //时间格式："2017-02-04 13:03:21"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String beginTimeString = String.valueOf(LocalDateTime.parse(beginTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
+        String endTimeString = String.valueOf(LocalDateTime.parse(endTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
+        List<ProblemDetailListVO> problemDetailListVOS = eventService.getDetailListByTriggerId(triggerId,beginTimeString,endTimeString);
         return RestResultGenerator.genResult(problemDetailListVOS, REST_UPDATE_SUCCESS).toString();
     }
 
@@ -131,7 +135,11 @@ public class ProblemRestController {
      */
     @RequestMapping(value = "problem/detail_graph", method = RequestMethod.GET)
     public String getDetailGraphByTriggerId(@RequestParam("trigger_id") String triggerId,@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
-        List<ProblemGraphVO> problemGraphVOS = eventService.getGraphProblemByTriggerId(triggerId, beginTime, endTime);
+        //时间格式："2017-02-04 13:03:21"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String beginTimeString = String.valueOf(LocalDateTime.parse(beginTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
+        String endTimeString = String.valueOf(LocalDateTime.parse(endTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
+        List<ProblemGraphVO> problemGraphVOS = eventService.getGraphProblemByTriggerId(triggerId, beginTimeString, endTimeString);
         List<List<Object>> graphDatas = new ArrayList<>();
         for(ProblemGraphVO graphVO : problemGraphVOS) {
             List<Object> graphData = new ArrayList<>();

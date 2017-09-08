@@ -268,7 +268,7 @@
 				<div id="acknowledge_pop">
 
 				</div>
-				<div th:fragment="problem_common_page">
+				<div th:fragment="problem_acknowledge_page">
 
 					<!--确认记录弹出框 start-->
 					<div class="ui small modal confirm">
@@ -307,7 +307,8 @@
 							<div class="ui cancel button">取消</div>
 						</div>
 					</div>
-
+                </div>
+                <div th:fragment="problem_event_page">
 					<!--事件详情弹出框 start-->
 					<div class="ui big modal detail">
 						<div class="content">
@@ -544,8 +545,10 @@
             $('#problemsMenu button').removeClass('active');
             $(this).addClass('active');
             if(this.value == "currentProblems"){
+                $('#filter_content').css('display','none');
                 problems_Table.ajax.url('/problems/get_current').load();
             }else if(this.value == "recentProblems"){
+                $('#filter_content').css('display','none');
                 problems_Table.ajax.url('/problems/get_last').load();
             }else if(this.value == "historicalRecord"){
                 showTimeCons(problems_Table);
