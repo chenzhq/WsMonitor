@@ -6,6 +6,7 @@
 function popAlert($_target, $_popup) {
     if (!$_target instanceof jQuery || !$_popup instanceof jQuery) {
         console.error("参数必须是jquery对象")
+        return
     }
     if ($_popup.children('table').length === 0) {
         $_popup.append('<table class="ui single line very basic compact table">' +
@@ -20,7 +21,7 @@ function popAlert($_target, $_popup) {
             '<tbody>' +
             '</tbody>' +
             '<tfoot>' +
-            '<tr>><th colspan="4"><i class="announcement red icon"></i><span class="ui red">问题告警</span>&nbsp;' +
+            '<tr><th colspan="4"><i class="announcement red icon"></i><span class="ui red">问题告警</span>&nbsp;&nbsp;' +
             '<i class="announcement green icon"></i>恢复通知</th></tr>' +
             '</tfoot>' +
             '</table>')
@@ -88,6 +89,7 @@ function popAlert($_target, $_popup) {
 function popAck($_target, $_popup) {
     if (!$_target instanceof jQuery || !$_popup instanceof jQuery) {
         console.error("参数必须是jquery对象")
+        return
     }
     if ($_popup.children('table').length === 0) {
         $_popup.append('<table class="ui single line very basic compact table">' +
