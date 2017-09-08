@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +64,11 @@ public class ProblemRestController {
      */
     @RequestMapping(value = "problems/get_history", method = RequestMethod.GET)
     public String getHistoryProblems(@RequestParam("begin_time") String beginTime,@RequestParam("end_time") String endTime) throws ServiceException {
-        //时间格式：秒数
-        List<ProblemListVO> problemListVOS = eventService.getHistoryProblemsByTime(beginTime,endTime);
+        //时间格式："2017-02-04 13:03:21"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String beginTimeString = String.valueOf(LocalDateTime.parse(beginTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
+        String endTimeString = String.valueOf(LocalDateTime.parse(endTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
+        List<ProblemListVO> problemListVOS = eventService.getHistoryProblemsByTime(beginTimeString,endTimeString);
         return RestResultGenerator.genResult(problemListVOS, REST_UPDATE_SUCCESS).toString();
     }
 

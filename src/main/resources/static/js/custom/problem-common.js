@@ -231,7 +231,7 @@ function getAcknowledgeModal(event_id) {
                         url: "/acknowledge/acknowledge_event",
                         data:JSON.stringify(dataInfo),
                         dataType: "json",
-                        contentType : 'application/json',
+                        contentType:'application/json;charset=UTF-8',
                         success: function (result) {
                             if (result.success) {
                                 var data = result.data;
