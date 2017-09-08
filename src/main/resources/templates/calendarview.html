@@ -224,81 +224,65 @@
             <div class="ui equal width left aligned padded grid stackable">
                 <!--Site Content-->
                 <div class="sixteen wide column">
-                    <div class="ui container">
-                        <div class="header item">
-                            <h2><i class="bar large chart icon"></i>日历图</h2>
+                    <div class="header item">
+                        <h2><i class="bar large chart icon"></i>日历图</h2>
+                    </div>
+                    <div class="ui segment">
+                        <!--<div class="ui secondary menu">-->
+                        <div class="ui horizontal list buttons">
+                            <div class="item">
+                                <button id="num_filter_btn" class="ui basic button">问题数量</button>
+                            </div>
+                            <div class="item">
+                                <div id="host_select_dropdown" class="ui selection dropdown">
+                                    <input type="hidden" name="hosts">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">选择设备</div>
+                                    <div class="menu">
+                                        <div id="select_host" class="item" data-value="host">设备</div>
+                                        <div class="disabled item" data-value="platform">业务平台</div>
+                                        <div id="select_all" class="item" data-value="all">所有</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div id="select_severity" class="ui selection dropdown">
+                                    <input type="hidden" name="severity">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">选择严重性</div>
+                                    <div class="menu">
+                                        <div class="yellow item" data-value="warning">警告</div>
+                                        <div class="red item" data-value="high">严重</div>
+                                        <div class="item" data-value="all">所有级别</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div id="select_acknowledge" class="ui selection dropdown">
+                                    <input type="hidden" name="acknowledge">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">确认状态</div>
+                                    <div class="menu">
+                                        <div class="yellow item" data-value="1">已确认</div>
+                                        <div class="red item" data-value="0">未确认</div>
+                                        <div class="item" data-value="all">所有</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="ui container segment">
-                            <!--<div class="ui secondary menu">-->
-
-                            <div class="ui horizontal list buttons">
-                                <div class="item">
-                                    <button id="num_filter_btn" class="ui basic button">问题数量</button>
-                                </div>
-                                <div class="item">
-                                    <div id="host_select_dropdown" class="ui selection dropdown">
-                                        <input type="hidden" name="hosts">
-                                        <i class="dropdown icon"></i>
-                                        <div class="default text">选择设备</div>
-                                        <div class="menu">
-                                            <div id="select_host" class="item" data-value="host">设备</div>
-                                            <div class="disabled item" data-value="platform">业务平台</div>
-                                            <div id="select_all" class="item" data-value="all">所有</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div id="select_severity" class="ui selection dropdown">
-                                        <input type="hidden" name="severity">
-                                        <i class="dropdown icon"></i>
-                                        <div class="default text">选择严重性</div>
-                                        <div class="menu">
-                                            <div class="yellow item" data-value="warning">警告</div>
-                                            <div class="red item" data-value="high">严重</div>
-                                            <div class="item" data-value="all">所有级别</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div id="select_acknowledge" class="ui selection dropdown">
-                                        <input type="hidden" name="acknowledge">
-                                        <i class="dropdown icon"></i>
-                                        <div class="default text">确认状态</div>
-                                        <div class="menu">
-                                            <div class="yellow item" data-value="1">已确认</div>
-                                            <div class="red item" data-value="0">未确认</div>
-                                            <div class="item" data-value="all">所有</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                            </div>
-                            <!--<div class="sixteen wide column">-->
-                            <div class="ui container" style="margin-top: 7px;">
-                                <div id="calendarChart" class="chartBar"></div>
-                            </div>
-                            <!--</div>-->
-                            <!--</div>-->
+                        <!--<div class="sixteen wide column">-->
+                        <div class="ui container">
+                            <div id="calendarChart" class="chartBar"></div>
                         </div>
-                        <div class="ui container" style=" min-height : 500px;">
-                            <div class="sixteen wide column chartBar">
-                                <div class="ui grid">
-
-                                    <div class="sixteen wide column">
-                                        <div class="ui segment">
-                                            <!--<div class="sixteen wide column">-->
-                                            <h3 id="table-title">当前问题</h3>
-                                            <table id="problems_table" class="ui compact basic table center aligned ">
-                                            </table>
-                                            <div id="table-dimmer" class="ui inverted dimmer">
-                                                <div class="ui text loader">正在查询</div>
-                                            </div>
-                                            <!--</div>-->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                    <div class="ui segment chartBar">
+                        <h3 id="table-title">当前问题</h3>
+                        <table id="problems_table" class="ui compact basic table center aligned ">
+                        </table>
+                        <div id="table-dimmer" class="ui inverted dimmer">
+                            <div class="ui text loader">正在查询</div>
                         </div>
                     </div>
                 </div>

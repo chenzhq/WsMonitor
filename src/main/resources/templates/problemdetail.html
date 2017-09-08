@@ -220,86 +220,59 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui segments">
-						<div class="ui segment no-padding">
-							<div class="ui secondary menu">
-								<a class="header item">
-									<h3><i class="bar large chart icon"></i>问题详情</h3>
-								</a>
-								<a class="right item">
-									时间段？：
-									<select id="ui_dropdown" class="ui dropdown">
-										<option value="">选择告警状态</option>
-										<option>未告警</option>
-										<option>告警失败</option>
-										<option>已告警</option>
-									</select>
-								</a>
+					<div class="header item">
+						<h2><i class="bar large chart icon"></i>问题详情</h2>
+					</div>
+					<div class="ui grid" style="padding-top: 10px">
+						<div class="six wide column chartBar">
+							<div class="ui segment detailconfirm no-padding">
+								<table class="ui very basic compact single line fixed definition table center aligned">
+									<tbody id="detailTable">
+									<tr>
+										<td>所属主机</td>
+										<td th:text="${problemDetailVO.hostName}"></td>
+									</tr>
+									<tr>
+										<td>监控点</td>
+										<td th:text="${problemDetailVO.pointName}"></td>
+									</tr>
+									<tr>
+										<td>监控项</td>
+										<td th:text="${problemDetailVO.itemName}"></td>
+									</tr>
+									<tr>
+										<td>触发器描述</td>
+										<td th:text="${problemDetailVO.triggerName}"></td>
+									</tr>
+									<tr>
+										<td>严重性</td>
+										<td th:text="${problemDetailVO.level}"></td>
+									</tr>
+									<tr>
+										<td>最新状态</td>
+										<td th:text="${problemDetailVO.state}"></td>
+									</tr>
+									<tr>
+										<td>阀值</td>
+										<td th:text="${problemDetailVO.hostName}"></td>
+									</tr>
+									<tr>
+										<td style="display: none" id="trigger_id" th:text="${problemDetailVO.triggerId}"></td>
+									</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
-						<div class="ui segment"  style=" min-height : 500px;">
-							<div class="sixteen wide column chartBar">
-								<div class="ui grid">
-									<div class="six wide column">
-										<div class="ui segment detailconfirm no-padding">
-											<table class="ui very basic compact single line fixed definition table center aligned">
-												<tbody id="detailTable">
-												<tr>
-													<td>所属主机</td>
-													<td th:text="${problemDetailVO.hostName}"></td>
-												</tr>
-												<tr>
-													<td>监控点</td>
-													<td th:text="${problemDetailVO.pointName}"></td>
-												</tr>
-												<tr>
-													<td>监控项</td>
-													<td th:text="${problemDetailVO.itemName}"></td>
-												</tr>
-												<tr>
-													<td>触发器描述</td>
-													<td th:text="${problemDetailVO.triggerName}"></td>
-												</tr>
-												<tr>
-													<td>严重性</td>
-													<td th:text="${problemDetailVO.level}"></td>
-												</tr>
-												<tr>
-													<td>最新状态</td>
-													<td th:text="${problemDetailVO.state}"></td>
-												</tr>
-												<tr>
-													<td>阀值</td>
-													<td th:text="${problemDetailVO.hostName}"></td>
-												</tr>
-												<tr>
-													<td style="display: none" id="trigger_id" th:text="${problemDetailVO.triggerId}"></td>
-												</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-									<div class="ten wide column">
-										<div class="ui segment left aligned detailconfirm">
-											<div id="problemChart" class="chartBar"></div>
-										</div>
-									</div>
-									<div class="sixteen wide column">
-										<div class="ui segments">
-											<div class="ui segment">
-												<h4 class="ui header">
-													历史记录
-												</h4>
-											</div>
-											<div class="ui segment">
-												<table  id="problemsTable" class="ui compact very basic table center aligned ">
-												</table>
-											</div>
-										</div>
-									</div>
-								</div>
+						<div class="ten wide column chartBar" style="padding-left: 0px">
+							<div class="ui segment left aligned detailconfirm">
+								<div id="problemChart" class="chartBar"></div>
 							</div>
 						</div>
+					</div>
+					<div class="ui segment" style="margin-top: 30px">
+						<h3>历史记录</h3>
+						<table  id="problemsTable" class="ui compact very basic table center aligned">
+						</table>
 					</div>
 				</div>
 				<!--确认记录提示框 start-->
