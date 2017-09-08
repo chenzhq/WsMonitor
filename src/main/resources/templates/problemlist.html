@@ -236,23 +236,24 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui grid">
-						<div class="row">
-							<div class="eight wide column">
-								<h2><i class="bar large chart icon"></i>问题列表</h2>
-							</div>
-							<div class="eight wide column">
-								<div class="ui basic top attached right floated buttons"  id="problemsMenu">
-									<button value="currentProblems" class="ui active button">当前问题</button>
-									<button value="recentProblems" class="ui button">最近问题</button>
-									<button value="historicalRecord" class="ui button">历史记录</button>
-								</div>
-							</div>
-						</div>
-					</div>
-                    <div id="filter_content" style="display: none;">
-                        <input type="text" id="time_filter" name="time_filter" value=""/>
+                    <div class="header item">
+                        <h2><i class="bar large chart icon"></i>问题列表</h2>
                     </div>
+					<div class="ui grid">
+                        <div class="eight wide column">
+                            <div id="filter_content" style="display: none;margin-bottom: -10px">
+                                <input type="text" id="time_filter" name="time_filter" value=""/>
+                            </div>
+                        </div>
+                        <div class="eight wide column">
+                            <div class="ui basic top attached right floated buttons"  id="problemsMenu">
+                                <button value="currentProblems" class="ui active button">当前问题</button>
+                                <button value="recentProblems" class="ui button">最近问题</button>
+                                <button value="historicalRecord" class="ui button">历史记录</button>
+                            </div>
+                        </div>
+					</div>
+
 					<div class="ui segment"  style=" min-height : 500px;">
 						<div class="sixteen wide column">
 								<table  id="problemsTable" class="ui compact basic table center aligned " width="100%">
@@ -491,9 +492,9 @@
                     render: function (data, type, row, meta) {
 //                                console.log('render 状态', arguments)
                         if (row.problem_state !== "问题") {
-                            return '<div class="ui mini green label" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
+                            return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
                         } else {
-                            return '<div class="ui mini red label" >' + row.problem_state + '</div>';
+                            return '<div class="ui mini red label" style="margin-bottom: 0px">' + row.problem_state + '</div>';
                         }
                     }
 
