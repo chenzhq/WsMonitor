@@ -37,7 +37,8 @@
 			.ui.segment.detailalarmed{
 				height: 180px;overflow-y:auto;overflow-x:hidden
 			}
-			.chartBar{ height: 230px; }
+			.row1Height{ height: 230px; }
+			.chartBar{ height: 160px; }
 		</style>
 	</th:block>
 </head>
@@ -229,7 +230,7 @@
 						<h2><i class="bar large chart icon"></i>问题详情</h2>
 					</div>
 					<div class="ui grid" style="padding-top: 10px">
-						<div class="six wide column chartBar">
+						<div class="six wide column row1Height">
 							<div class="ui segment detailconfirm no-padding">
 								<table class="ui very basic compact single line fixed definition table center aligned">
 									<tbody id="detailTable">
@@ -268,11 +269,11 @@
 								</table>
 							</div>
 						</div>
-						<div class="ten wide column chartBar" style="padding-left: 0px">
+						<div class="ten wide column row1Height" style="padding-left: 0px">
 							<div class="ui segment left aligned detailconfirm">
 								<div id="problemChart" class="chartBar"></div>
 								<div id="filter_content" style="display: none;">
-									<input type="text" id="time_filter" name="time_filter" value=""/>fsdfsfsd
+									<input type="text" id="time_filter" name="time_filter" value=""/>
 								</div>
 							</div>
 
@@ -414,7 +415,7 @@
                         data: ['bar', 'error']
                     },
                     grid: {
-                        height:140,
+                        height:120,
                         top: '1%',
 						left:'5%',
 						right:'3%',
