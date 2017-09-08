@@ -308,7 +308,10 @@
 <div id="alert_popup"></div>
 <div id="ack_popup"></div>
 
-<div th:replace="problemlist::problem_common_page"></div>
+<!--事件详情modal框 -->
+<div  th:replace="problemlist::problem_event_page"></div>
+<!--确认事件modal框 -->
+<div th:replace="problemlist::problem_acknowledge_page"></div>
 
 <th:block th:replace="layout::bottom_script(~{::supple})">
     <script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
