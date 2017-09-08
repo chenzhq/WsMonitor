@@ -8,17 +8,21 @@ function popAlert($_target, $_popup) {
         console.error("参数必须是jquery对象")
     }
     if ($_popup.children('table').length === 0) {
-        $_popup.append('<table class="ui single line very basic table">' +
+        $_popup.append('<table class="ui single line very basic compact table">' +
             '<thead>' +
             '<tr>' +
             '<th class="center aligned">步骤</th>' +
             '<th class="center aligned">时间</th>' +
-            '<th class="center aligned">接受者</th>' +
-            '<th class="center aligned">状态</th>' +
+            '<th class="center aligned">接收者</th>' +
+            '<th class="center aligned">状态(重试)</th>' +
             '</tr>' +
             '</thead>' +
             '<tbody>' +
             '</tbody>' +
+            '<tfoot>' +
+            '<tr>><th colspan="4"><i class="announcement red icon"></i><span class="ui red">问题告警</span>&nbsp;' +
+            '<i class="announcement green icon"></i>恢复通知</th></tr>' +
+            '</tfoot>' +
             '</table>')
     }
     if (!$_popup.hasClass('ui popup')) {
@@ -27,6 +31,7 @@ function popAlert($_target, $_popup) {
     $_target.popup({
         popup: $_popup,
         on: 'hover',
+        hoverable: true,
         delay: {
             show: 500
         },
@@ -44,13 +49,27 @@ function popAlert($_target, $_popup) {
                     if (result.success) {
                         var body_html = []
                         var data = result.data
-                        data.forEach(function (v) {
+                        data.forEach(function (v, i) {
+                            var oneAlert = v || {
+                                        alert_id: "0",
+                                        alias: "BTW",
+                                        esc_step: 0,
+                                        last_time: "2018-00-00 00:00:00",
+                                        recovery: false,
+                                        retries: 0,
+                                        sendto: "ok",
+                                        status: "成功"
+                                    },
+                                alert_type,
+                                alert_status
+                            alert_type = oneAlert.recovery ? '<i class="announcement green icon"></i>' : '<i class="announcement red icon"></i>'
+                            alert_status = oneAlert.status === '成功' ? '<i class="green checkmark icon"></i>' : '<i class="red close icon"></i>'
                             body_html.push(
                                 '<tr>' +
-                                '<td>' + v.esc_step + '</td>' +
-                                '<td>' + v.last_time + '</td>' +
-                                '<td>' + v.alias + '(' + v.sendto + ')' + '</td>' +
-                                '<td>' + v.status + '(' + v.retries + ')' + '</td>' +
+                                '<td >' + alert_type + oneAlert.esc_step + '</td>' +
+                                '<td class="center aligned">' + oneAlert.last_time + '</td>' +
+                                '<td>' + oneAlert.alias + '(' + oneAlert.sendto + ')' + '</td>' +
+                                '<td class="center aligned">' + alert_status + '(' + oneAlert.retries + ')' + '</td>' +
                                 '</tr>')
                         })
                         $_popup.find('tbody').html(body_html.join())
@@ -71,7 +90,7 @@ function popAck($_target, $_popup) {
         console.error("参数必须是jquery对象")
     }
     if ($_popup.children('table').length === 0) {
-        $_popup.append('<table class="ui single line very basic table">' +
+        $_popup.append('<table class="ui single line very basic compact table">' +
             '<thead>' +
             '<tr>' +
             '<th class="center aligned">时间</th>' +
@@ -90,6 +109,7 @@ function popAck($_target, $_popup) {
     $_target.popup({
         popup: $_popup,
         on: 'hover',
+        hoverable: true,
         delay: {
             show: 500
         },
