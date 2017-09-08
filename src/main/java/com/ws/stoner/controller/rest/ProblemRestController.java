@@ -126,6 +126,9 @@ public class ProblemRestController {
         String beginTimeString = String.valueOf(LocalDateTime.parse(beginTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
         String endTimeString = String.valueOf(LocalDateTime.parse(endTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
         List<ProblemDetailListVO> problemDetailListVOS = eventService.getDetailListByTriggerId(triggerId,beginTimeString,endTimeString);
+        if(problemDetailListVOS == null) {
+            problemDetailListVOS = new ArrayList<>();
+        }
         return RestResultGenerator.genResult(problemDetailListVOS, REST_UPDATE_SUCCESS).toString();
     }
 
@@ -141,14 +144,16 @@ public class ProblemRestController {
         String endTimeString = String.valueOf(LocalDateTime.parse(endTime,formatter).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
         List<ProblemGraphVO> problemGraphVOS = eventService.getGraphProblemByTriggerId(triggerId, beginTimeString, endTimeString);
         List<List<Object>> graphDatas = new ArrayList<>();
-        for(ProblemGraphVO graphVO : problemGraphVOS) {
-            List<Object> graphData = new ArrayList<>();
-            graphData.add(graphVO.getBeginTime());
-            graphData.add(graphVO.getEndTime());
-            graphData.add(graphVO.getIsAlert());
-            graphData.add(graphVO.getColor() == null ? "" : graphVO.getColor());
-            graphData.add(graphVO.getTooltip());
-            graphDatas.add(graphData);
+        if(problemGraphVOS != null && problemGraphVOS.size() != 0) {
+            for(ProblemGraphVO graphVO : problemGraphVOS) {
+                List<Object> graphData = new ArrayList<>();
+                graphData.add(graphVO.getBeginTime());
+                graphData.add(graphVO.getEndTime());
+                graphData.add(graphVO.getIsAlert());
+                graphData.add(graphVO.getColor() == null ? "" : graphVO.getColor());
+                graphData.add(graphVO.getTooltip());
+                graphDatas.add(graphData);
+            }
         }
         return RestResultGenerator.genResult(graphDatas, REST_UPDATE_SUCCESS).toString();
     }

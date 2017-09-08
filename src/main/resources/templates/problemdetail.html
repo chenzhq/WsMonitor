@@ -325,14 +325,18 @@
             console.log("send_data",send_data);
             //页面加载完加载基础数据
 			$(function() {
+				//初始化表格
+                var problemTable = initProblemTable();
+				//初始化图形
+                var problemChart = drawProblemChart();
 
                 //获取数据
-                showTimeCons();
+                showTimeCons(problemTable,problemChart);
 
 			})
 
-
-			function initProblemchart(send_data) {
+			//获取图形数据
+			function getProblemchart(problemChart) {
                 $.ajax({
                     type: "get",
                     url: '/problem/detail_graph',
@@ -340,7 +344,32 @@
                     dataType: 'json',
                     success: function (result) {
                         if (result.success) {
-                            drawProblemChart(result.data);
+                            var data_source ;
+                            if(result.data.length != 0) {
+                                data_source = echarts.util.map(result.data, function(item, index) {
+                                    return {
+                                        name: '状态',
+                                        value: item,
+                                        itemStyle: {
+                                            normal: {
+                                                color: item[3]
+                                            }
+                                        }
+                                    }
+                                });
+							}else {
+                                data_source = [];
+							}
+
+                            problemChart.setOption(
+								{
+                                    series:[
+										{data:data_source}
+									]
+								}
+							);
+
+
                         } else {
 
                         }
@@ -351,21 +380,9 @@
                 });
 			}
 			//绘制时序图形
-            function drawProblemChart(data_sourse) {
+            function drawProblemChart() {
                 //绘制图标数据
                 var problemChart = echarts.init(document.getElementById("problemChart"));
-                //配置option
-                var data = echarts.util.map(data_sourse, function(item, index) {
-                    return {
-                        name: '状态',
-                        value: item,
-                        itemStyle: {
-                            normal: {
-                                color: item[3]
-                            }
-                        }
-                    }
-                })
                 function renderItem(params, api) {
                     var start = api.coord([api.value(0), 0])
                     var end = api.coord([api.value(1), 0])
@@ -437,12 +454,12 @@
                                 opacity: 0.5
                             }
                         },
-                        data: data
+                        data: []
                     }]
                 };
                 //根据配置绘制图形
                 problemChart.setOption(option);
-                //点击每个节点，获取时间段
+                /*//点击每个节点，获取时间段
                 problemChart.on('click', function (params) {
                     var calendar =params.data;
                     console.log(calendar.value)
@@ -453,11 +470,12 @@
                         var endtime="无";
 					}
 					alert("开始时间:"+starttime+"结束时间:"+endtime)
-                });
+                });*/
+                return problemChart;
             }
 
-			//初始当前问题列表
-			function initProblemTable(send_data) {
+			//初始当前问题列表 无数据
+			function initProblemTable() {
                 var problemsTable = $("#problemsTable").DataTable({
                     "iDisplayLength" : 5,
                     "ordering":false,
@@ -539,16 +557,21 @@
 
                     ],
                 });
-                //三个月的数据
+
+                return problemsTable;
+			}
+
+			//获取带有数据的表格
+			function getTableList(problemsTable) {
                 console.log("list-send-data",send_data);
                 $.ajax({
                     type: "get",
                     url: '/problem/detail_list',
-					data:send_data,
+                    data:send_data,
                     dataType: 'json',
                     success: function (result) {
                         if (result.success) {
-                            problemsTable.rows.add(result.data).draw()
+							problemsTable.clear().rows.add(result.data).draw();
                         } else {
 
                         }
@@ -557,11 +580,10 @@
 
                     }
                 });
-                return problemsTable;
 			}
 
             //显示时间控件
-            function showTimeCons() {
+            function showTimeCons(problemsTable,problemChart) {
                 var now = new Date();
                 var end_time = new Date(now);
                 end_time.setMinutes(0);
@@ -606,10 +628,10 @@
                        send_data.begin_time = time_arr[data.from];
                        send_data.end_time = time_arr[data.to];
 						//初始化图形
-						initProblemchart(send_data);
+                        getProblemchart(problemChart);
 
 						//初始化列表
-						initProblemTable(send_data);
+                        getTableList(problemsTable)
                     },
                     onChange: function (data) {
 //                        console.log(data);
@@ -620,10 +642,10 @@
                         send_data.begin_time = time_arr[data.from];
                         send_data.end_time = time_arr[data.to];
                         //获取图形
-                        initProblemchart(send_data);
+                        getProblemchart(problemChart);
 
                         //获取列表
-                        initProblemTable(send_data);
+                        getTableList(problemsTable)
                     },
                     onUpdate: function (data) {
 //                        console.log(data);
