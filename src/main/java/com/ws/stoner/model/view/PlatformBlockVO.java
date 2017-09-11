@@ -15,15 +15,15 @@ public class PlatformBlockVO {
     private Float health;
     private String state;
     private String[] types;
-    private Integer[][] datas;
+    private Integer[][] data;
 
-    public PlatformBlockVO(String platformId, String platformName, Float health, String state, String[] types, Integer[][] datas) {
+    public PlatformBlockVO(String platformId, String platformName, Float health, String state, String[] types, Integer[][] data) {
         this.platformId = platformId;
         this.platformName = platformName;
         this.health = health;
         this.state = state;
         this.types = types;
-        this.datas = datas;
+        this.data = data;
     }
 
     public String getPlatformId() {
@@ -62,12 +62,12 @@ public class PlatformBlockVO {
         return this;
     }
 
-    public Integer[][] getDatas() {
-        return datas;
+    public Integer[][] getData() {
+        return data;
     }
 
-    public PlatformBlockVO setDatas(Integer[][] datas) {
-        this.datas = datas;
+    public PlatformBlockVO setData(Integer[][] data) {
+        this.data = data;
         return this;
     }
 
@@ -87,7 +87,7 @@ public class PlatformBlockVO {
                 ", platformName='" + platformName + '\'' +
                 ", health=" + health +
                 ", types=" + Arrays.toString(types) +
-                ", datas=" + Arrays.deepToString(datas) +
+                ", data=" + Arrays.deepToString(data) +
                 ", state=" + state +
                 '}';
     }

@@ -211,9 +211,10 @@ public class TriggerServiceImpl implements TriggerService {
         TriggerGetRequest request = new TriggerGetRequest();
         Map<String, Integer> triggerFilter = new HashMap<>();
         triggerFilter.put("state", ZApiParameter.TRIGGER_STATE.UP_TO_DATE.value);
+        triggerFilter.put("value", ZApiParameter.TRIGGER_VALUE.PROBLEM.value);
         request.getParams()
                 .setMonitored(true)
-                .setOnlyTrue(true)
+//                .setOnlyTrue(true)
                 .setExpandDescription(true)
                 .setExpandExpression(true)
                 .setSkipDependent(true)

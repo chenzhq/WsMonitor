@@ -6,13 +6,13 @@ import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.DashboardHostVO;
 import com.ws.stoner.model.view.DashboardPlatformVO;
 import com.ws.stoner.model.view.DashboardPointVO;
+import com.ws.stoner.model.view.StateNumVO;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.PlatformService;
 import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.utils.RestResultGenerator;
 import com.ws.stoner.utils.StatusConverter;
-import javafx.scene.input.DataFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,17 +46,17 @@ public class DashboardRestController {
 
     @RequestMapping(value = "host/count", method = RequestMethod.GET)
     public String countHost() throws ServiceException {
-        StateNumDTO hostState = new StateNumDTO();
-        List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
+        StateNumVO hostState = new StateNumVO();
+        List<StateNumVO.StateNum> stateNums = new ArrayList<>();
         int allHostNum = 0;
         int warningHostNum = 0;
         int highHostNum = 0;
         allHostNum = hostService.countAllHost();
         warningHostNum = hostService.countWarningHost();
         highHostNum = hostService.countHighHost();
-        StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningHostNum);
-        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highHostNum);
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allHostNum - warningHostNum - highHostNum);
+        StateNumVO.StateNum warningStateNum = new StateNumVO.StateNum(StatusEnum.WARNING,warningHostNum);
+        StateNumVO.StateNum highStateNum = new StateNumVO.StateNum(StatusEnum.HIGH, highHostNum);
+        StateNumVO.StateNum okStateNum = new StateNumVO.StateNum(StatusEnum.OK,allHostNum - warningHostNum - highHostNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
         stateNums.add(highStateNum);
@@ -66,17 +66,17 @@ public class DashboardRestController {
 
     @RequestMapping(value = "point/count",method = RequestMethod.GET)
     public String countPoint() throws ServiceException {
-        StateNumDTO pointState = new StateNumDTO();
-        List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
+        StateNumVO pointState = new StateNumVO();
+        List<StateNumVO.StateNum> stateNums = new ArrayList<>();
         int allPointNum;
         int warningPointNum;
         int highPointNum;
         allPointNum = pointSerivce.countAllPoint();
         warningPointNum = pointSerivce.countWarningPoint();
         highPointNum = pointSerivce.countHighPoint();
-        StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPointNum);
-        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPointNum);
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPointNum - warningPointNum - highPointNum);
+        StateNumVO.StateNum warningStateNum = new StateNumVO.StateNum(StatusEnum.WARNING,warningPointNum);
+        StateNumVO.StateNum highStateNum = new StateNumVO.StateNum(StatusEnum.HIGH, highPointNum);
+        StateNumVO.StateNum okStateNum = new StateNumVO.StateNum(StatusEnum.OK,allPointNum - warningPointNum - highPointNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
         stateNums.add(highStateNum);
@@ -86,17 +86,17 @@ public class DashboardRestController {
 
     @RequestMapping(value = "platform/count", method = RequestMethod.GET)
     public String countPlatform() throws ServiceException {
-        StateNumDTO platformState = new StateNumDTO();
-        List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
+        StateNumVO platformState = new StateNumVO();
+        List<StateNumVO.StateNum> stateNums = new ArrayList<>();
         int allPlatformNum;
         int warningPlatformNum;
         int highPlatformNum;
         allPlatformNum = platformService.countAllPlatform();
         warningPlatformNum = platformService.countWarningPlatform();
         highPlatformNum = platformService.countHighPlatform();
-        StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPlatformNum);
-        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPlatformNum);
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPlatformNum - warningPlatformNum - highPlatformNum);
+        StateNumVO.StateNum warningStateNum = new StateNumVO.StateNum(StatusEnum.WARNING,warningPlatformNum);
+        StateNumVO.StateNum highStateNum = new StateNumVO.StateNum(StatusEnum.HIGH, highPlatformNum);
+        StateNumVO.StateNum okStateNum = new StateNumVO.StateNum(StatusEnum.OK,allPlatformNum - warningPlatformNum - highPlatformNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
         stateNums.add(highStateNum);

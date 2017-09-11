@@ -1,4 +1,4 @@
-package com.ws.stoner.model.dto;
+package com.ws.stoner.model.view;
 
 import com.ws.stoner.constant.StatusEnum;
 
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by chenzheqi on 2017/5/24.
  */
-public class StateNumDTO {
+public class StateNumVO {
 
     private int totalNum;
     private List<StateNum> stateNum;
@@ -16,7 +16,7 @@ public class StateNumDTO {
         return totalNum;
     }
 
-    public StateNumDTO setTotalNum(int totalNum) {
+    public StateNumVO setTotalNum(int totalNum) {
         this.totalNum = totalNum;
         return this;
     }
@@ -25,7 +25,7 @@ public class StateNumDTO {
         return stateNum;
     }
 
-    public StateNumDTO setStateNum(List<StateNum> stateNum) {
+    public StateNumVO setStateNum(List<StateNum> stateNum) {
         this.stateNum = stateNum;
         return this;
     }
@@ -73,7 +73,7 @@ public class StateNumDTO {
 
     @Override
     public String toString() {
-        return "StateNumDTO{" +
+        return "StateNumVO{" +
                 "totalNum=" + totalNum +
                 ", stateNum=" + stateNum +
                 '}';

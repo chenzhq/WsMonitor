@@ -262,8 +262,8 @@
                     dataType: "json",
                     success: function (result) {
                         if(result.success) {
-                            //console.log("length: " + result.data.length);
                             var blocks = result.data;
+                            console.log("blocks: " + blocks);
                             $(".ui.three.column.grid").empty();
                             var block_str = "";
                             for(var i=0 ;i < blocks.length; i++) {
