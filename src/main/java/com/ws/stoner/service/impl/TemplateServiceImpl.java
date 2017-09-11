@@ -30,13 +30,11 @@ public class TemplateServiceImpl implements TemplateService {
     @Autowired
     private ZApi zApi;
 
-    @Override
-    public int countTemplate(TemplateGetRequest request) throws ServiceException {
+    private int countTemplate(TemplateGetRequest request) throws ServiceException {
         throw new NotImplementedException();
     }
 
-    @Override
-    public List<BriefTemplateDTO> listTemplate(TemplateGetRequest request) throws ServiceException {
+    private List<BriefTemplateDTO> listTemplate(TemplateGetRequest request) throws ServiceException {
         List<BriefTemplateDTO> templates;
         try {
             templates = zApi.Template().get(request,BriefTemplateDTO.class);

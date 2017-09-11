@@ -11,14 +11,18 @@ import com.ws.stoner.service.PlatformService;
 import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.utils.RestResultGenerator;
+import com.ws.stoner.utils.StatusConverter;
+import javafx.scene.input.DataFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.ws.stoner.constant.MessageConsts.REST_RESPONSE_SUCCESS;
 
@@ -46,16 +50,16 @@ public class DashboardRestController {
         List<StateNumDTO.StateNum> stateNums = new ArrayList<>();
         int allHostNum = 0;
         int warningHostNum = 0;
-        int hightHostNum = 0;
+        int highHostNum = 0;
         allHostNum = hostService.countAllHost();
         warningHostNum = hostService.countWarningHost();
-        hightHostNum = hostService.countHighHost();
+        highHostNum = hostService.countHighHost();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningHostNum);
-        StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, hightHostNum);
-        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allHostNum - warningHostNum - hightHostNum);
+        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highHostNum);
+        StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allHostNum - warningHostNum - highHostNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
-        stateNums.add(hightStateNum);
+        stateNums.add(highStateNum);
         hostState.setTotalNum(allHostNum).setStateNum(stateNums);
         return RestResultGenerator.genResult(hostState, REST_RESPONSE_SUCCESS).toString();
     }
@@ -69,13 +73,13 @@ public class DashboardRestController {
         int highPointNum;
         allPointNum = pointSerivce.countAllPoint();
         warningPointNum = pointSerivce.countWarningPoint();
-        highPointNum = pointSerivce.countHightPoint();
+        highPointNum = pointSerivce.countHighPoint();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPointNum);
-        StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPointNum);
+        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPointNum);
         StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPointNum - warningPointNum - highPointNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
-        stateNums.add(hightStateNum);
+        stateNums.add(highStateNum);
         pointState.setTotalNum(allPointNum).setStateNum(stateNums);
         return RestResultGenerator.genResult(pointState, REST_RESPONSE_SUCCESS).toString();
     }
@@ -89,13 +93,13 @@ public class DashboardRestController {
         int highPlatformNum;
         allPlatformNum = platformService.countAllPlatform();
         warningPlatformNum = platformService.countWarningPlatform();
-        highPlatformNum = platformService.countHightPlatform();
+        highPlatformNum = platformService.countHighPlatform();
         StateNumDTO.StateNum warningStateNum = new StateNumDTO.StateNum(StatusEnum.WARNING,warningPlatformNum);
-        StateNumDTO.StateNum hightStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPlatformNum);
+        StateNumDTO.StateNum highStateNum = new StateNumDTO.StateNum(StatusEnum.HIGH, highPlatformNum);
         StateNumDTO.StateNum okStateNum = new StateNumDTO.StateNum(StatusEnum.OK,allPlatformNum - warningPlatformNum - highPlatformNum);
         stateNums.add(okStateNum);
         stateNums.add(warningStateNum);
-        stateNums.add(hightStateNum);
+        stateNums.add(highStateNum);
         platformState.setTotalNum(allPlatformNum).setStateNum(stateNums);
         return RestResultGenerator.genResult(platformState, REST_RESPONSE_SUCCESS).toString();
     }
@@ -117,14 +121,7 @@ public class DashboardRestController {
             hostVO.setName(hostDTO.getName());
             //ip
             hostVO.setIp(hostDTO.getInterfaces().get(0).getIp());
-            //state
-            if(StatusEnum.OK.code == hostDTO.getCustomState() && "0".equals(hostDTO.getCustomAvailableState())) {
-                hostVO.setState(StatusEnum.OK.getName());
-            }else if(StatusEnum.WARNING.code == hostDTO.getCustomState() && "0".equals(hostDTO.getCustomAvailableState())) {
-                hostVO.setState(StatusEnum.WARNING.getName());
-            }else {
-                hostVO.setState(StatusEnum.HIGH.getName());
-            }
+            hostVO.setState(StatusConverter.StatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState()));
             //type
             if(hostDTO.getParentTemplates().size() != 0) {
                 String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
@@ -137,19 +134,19 @@ public class DashboardRestController {
             //allNum
             hostVO.setAllNum(hostDTO.getPoints().size());
             //warningNum
-            //hightNum
+            //highNum
             int warningNum = 0;
-            int hightNum = 0;
+            int highNum = 0;
             for(BriefPointDTO point : hostDTO.getPoints()) {
-                if("1".equals(point.getCustomState())) {
+                if(StatusEnum.WARNING.code == point.getCustomState()) {
                     warningNum++;
                 }
-                if("2".equals(point.getCustomState())) {
-                    hightNum++;
+                if(StatusEnum.HIGH.code == point.getCustomState()) {
+                    highNum++;
                 }
             }
             hostVO.setWarningNum(warningNum);
-            hostVO.setHightNum(hightNum);
+            hostVO.setHighNum(highNum);
             hostVOS.add(hostVO);
         }
         return RestResultGenerator.genResult(hostVOS, REST_RESPONSE_SUCCESS).toString();
@@ -167,6 +164,12 @@ public class DashboardRestController {
         for(BriefHostDTO host : hostDTOS) {
             hostIds.add(host.getHostId());
         }
+        List<String> platformIds = new ArrayList<>();
+        for(BriefPlatformDTO platformDTO : allPlatformDTO) {
+            platformIds.add(platformDTO.getPlatformId());
+        }
+        //获取 健康值 的map对象
+        Map<String,Float> healthMap = platformService.getHealthByPlatformIds(platformIds);
         //step3:新建List<DashboardPlatformVO>，循环allplatformDTO，新建DashboardPlatformVO，分别赋值
         List<DashboardPlatformVO> platformVOS = new ArrayList<>();
         for(BriefPlatformDTO platform : allPlatformDTO) {
@@ -174,19 +177,12 @@ public class DashboardRestController {
             //赋值 id,name,availability
             platformVO.setPlatformId(platform.getPlatformId());
             platformVO.setName(platform.getName());
-            platformVO.setAvailability(100);
-            //state
-            if("1".equals(platform.getCustomState())) {
-                platformVO.setState(StatusEnum.WARNING.getName());
-            }else if("2".equals(platform.getCustomState())) {
-                platformVO.setState(StatusEnum.HIGH.getName());
-            }else {
-                platformVO.setState(StatusEnum.OK.getName());
-            }
+            platformVO.setAvailability(healthMap.get(platform.getPlatformId()));
+            platformVO.setState(StatusConverter.StatusTransform(platform.getCustomState()));
             //allNum，warningNum,highNum
             int allNum = 0;
             int warningNum = 0;
-            int hightNum = 0;
+            int highNum = 0;
             for(BriefHostDTO host : platform.getHosts()) {
                 if(hostIds.contains(host.getHostId())) {
                     allNum++;
@@ -195,12 +191,12 @@ public class DashboardRestController {
                     warningNum++;
                 }
                 if(StatusEnum.HIGH.code == host.getCustomState() || StatusEnum.WARNING.code == host.getCustomAvailableState()) {
-                    hightNum++;
+                    highNum++;
                 }
             }
             platformVO.setAllNum(allNum);
             platformVO.setWarningNum(warningNum);
-            platformVO.setHightNum(hightNum);
+            platformVO.setHighNum(highNum);
 
             platformVOS.add(platformVO);
         }
@@ -214,6 +210,7 @@ public class DashboardRestController {
         allPointDTO = pointSerivce.listAllPoint();
         //step2:新建List<DashboardPointVO>，循环allPointDTO，新建DashboardPointVO，分别赋值
         List<DashboardPointVO> pointVOS = new ArrayList<>();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         for(BriefPointDTO point :allPointDTO) {
             DashboardPointVO pointVO = new DashboardPointVO();
             //赋值 id,name,hostid,hostname
@@ -221,24 +218,25 @@ public class DashboardRestController {
             pointVO.setName(point.getName());
             pointVO.setHostId(point.getHostId());
             pointVO.setHostName(point.getHost().getName());
-            //state
-            if(StatusEnum.WARNING.code == point.getCustomState()) {
-                pointVO.setState(StatusEnum.WARNING.getName());
-            }else if(StatusEnum.HIGH.code == point.getCustomState()){
-                pointVO.setState(StatusEnum.HIGH.getName());
-            }else {
-                pointVO.setState(StatusEnum.OK.getName());
-            }
+            pointVO.setState(StatusConverter.StatusTransform(point.getCustomState()));
             //lastTime
             List<BriefItemDTO> items = point.getItems();
             if(items.size() != 0) {
-                LocalDateTime lastTime = items.get(0).getLastTime();
+                LocalDateTime lastTime = null;
                 for(BriefItemDTO item : items) {
-                    if(lastTime.compareTo(item.getLastTime()) < 0) {
+                    if(item.getLastTime() != null) {
+                        lastTime = item.getLastTime();
+                        break;
+                    }
+                }
+                for(BriefItemDTO item : items) {
+                    if(item.getLastTime() != null && lastTime.compareTo(item.getLastTime()) < 0) {
                         lastTime = item.getLastTime();
                     }
                 }
-                pointVO.setLastTime(lastTime);
+                if(lastTime != null) {
+                    pointVO.setLastTime(lastTime.format(dateTimeFormatter));
+                }
             }
             pointVOS.add(pointVO);
         }

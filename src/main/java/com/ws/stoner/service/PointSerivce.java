@@ -3,8 +3,6 @@ package com.ws.stoner.service;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPointDTO;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
@@ -13,22 +11,9 @@ import java.util.List;
  */
 public interface PointSerivce {
 
-    /**
-     * 根据 request 获取监控点数量
-     * @param request
-     * @return
-     * @throws ServiceException
-     */
-    int countPoint(ApplicationGetRequest request) throws ServiceException;
-
-    /**
-     * List applications list.
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefPointDTO> listPoint(ApplicationGetRequest request) throws ServiceException;
-
+/*
+ *zabbix api方法
+ */
     /**
      * 获取所有的监控点
      * @return
@@ -44,11 +29,11 @@ public interface PointSerivce {
     int countWarningPoint() throws ServiceException;
 
     /**
-     * 获取所有的严重监控点  point  hight
+     * 获取所有的严重监控点  point  high
      * @return
      * @throws ServiceException
      */
-    int countHightPoint() throws ServiceException;
+    int countHighPoint() throws ServiceException;
 
     /**
      * 获取正常监控点
@@ -57,24 +42,10 @@ public interface PointSerivce {
      */
     int countOkPoint() throws  ServiceException;
 
-    /**
-     * 获取指定主机的所有监控点数量  all point hostids number
-     * @return
-     * @throws ServiceException
-     */
-    int countAllPointByHostIds(List<String> hostIds) throws ServiceException;
 
-    /**
-     * 获取指定主机的问题监控点数量  problem point hostids number
-     * @param hostIds
-     * @return
-     * @throws ServiceException
+    /*
+     * list point
      */
-    int countProblemPointByHostIds(List<String> hostIds) throws ServiceException;
-
-/*
- * list point
- */
 
     /**
      * 获取简约监控点application list
@@ -91,11 +62,28 @@ public interface PointSerivce {
     List<BriefPointDTO> listWarningPoint() throws ServiceException;
 
     /**
-     * 获取严重监控点 point list hight
+     * 获取严重监控点 point list high
      * @return
      * @throws ServiceException
      */
-    List<BriefPointDTO> listHightPoint() throws ServiceException;
+    List<BriefPointDTO> listHighPoint() throws ServiceException;
+
+    /**
+     * 根据 hostIds 获取  List<BriefPointDTO> list 用于 分类菜单 显示
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefPointDTO> getPointsByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
+     * 根据 itemIds 获取 List<BriefPointDTO> list 用于基础信息 名称
+     * @param itemIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefPointDTO> getPointsByItemIds(List<String> itemIds) throws ServiceException;
+
 
 
 }

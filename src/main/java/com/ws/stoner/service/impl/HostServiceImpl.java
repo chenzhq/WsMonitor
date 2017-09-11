@@ -5,18 +5,25 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
+import com.ws.stoner.model.view.HostDetailInterfaceVO;
+import com.ws.stoner.model.view.HostDetailPointVO;
+import com.ws.stoner.model.view.HostDetailVO;
 import com.ws.stoner.service.HostService;
+import com.ws.stoner.service.TemplateService;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +41,14 @@ public class HostServiceImpl implements HostService {
     @Autowired
     private ZApi zApi;
 
+    @Autowired
+    private TemplateService templateServiceImpl;
+
 /*
  *count host
  */
 
-    @Override
-    public int countHost(HostGetRequest request) throws ServiceException {
+    private int countHost(HostGetRequest request) throws ServiceException {
         int allHost;
         try {
             allHost = zApi.Host().count(request);
@@ -59,8 +68,7 @@ public class HostServiceImpl implements HostService {
      * @return
      * @throws ServiceException
      */
-    @Override
-    public List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException {
+    private List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException {
         List<BriefHostDTO> hosts;
         try {
             hosts = zApi.Host().get(request,BriefHostDTO.class);
@@ -135,8 +143,8 @@ public class HostServiceImpl implements HostService {
                 .setFilter(hostFilter)
                 .setSearchByAny(true)
                 .setCountOutput(true);
-        int hostHightNum = countHost(hostGetRequest);
-        return hostHightNum;
+        int hostHighNum = countHost(hostGetRequest);
+        return hostHighNum;
     }
 
     /**
@@ -249,6 +257,132 @@ public class HostServiceImpl implements HostService {
                 .setFilter(hostFilter);
         List<BriefHostDTO> hosts = listHost(hostGetRequest);
         return hosts;
+    }
+
+    /**
+     * 根据指定的 hostids 获取 List<BriefHostDTO> list
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefHostDTO> getHostsByHostIds(List<String> hostIds) throws ServiceException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        hostGetRequest.getParams()
+                .setHostIds(hostIds)
+                .setSelectInterfaces(BriefHostInterfaceDTO.PROPERTY_NAMES)
+                .setSelectParentTemplates(BriefTemplateDTO.PROPERTY_NAMES)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setOutput(BriefHostDTO.PROPERTY_NAMES);
+        List<BriefHostDTO> hostDTOS = listHost(hostGetRequest);
+        return hostDTOS;
+    }
+
+    /**
+     * 根据指定的 platformIds 获取 List<BriefHostDTO> list 用于 分类菜单 显示设备
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefHostDTO> getHostByPlatformIds(List<String> platformIds) throws ServiceException {
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        hostGetRequest.getParams()
+                .setMonitoredHosts(true)
+                .setGroupIds(platformIds)
+                .setSelectParentTemplates(BriefPointDTO.PROPERTY_NAMES)
+                .setOutput(BriefHostDTO.PROPERTY_NAMES);
+        List<BriefHostDTO> hostDTOS = listHost(hostGetRequest);
+        return hostDTOS;
+    }
+
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 基本信息的 HostDetailVO
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public HostDetailVO getHostDetailByHostDTO(BriefHostDTO hostDTO) throws ServiceException {
+        HostDetailVO hostDetailVO = new HostDetailVO();
+        //取所有模板
+        List<BriefTemplateDTO>  allTemplateDTO = templateServiceImpl.listAllTemplate();
+        //step2:组装 HostDetailVO 对象，赋值：
+        // hostDetail[hostid,name,state,type,ip,description],
+        hostDetailVO.setHostId(hostDTO.getHostId());
+        hostDetailVO.setHostName(hostDTO.getName());
+        hostDetailVO.setIp(hostDTO.getInterfaces().get(0).getIp());
+        hostDetailVO.setDescription(hostDTO.getDescription());
+        //state
+        if(StatusEnum.OK.code == hostDTO.getCustomState() && StatusEnum.OK.code == hostDTO.getCustomAvailableState()) {
+            hostDetailVO.setState(StatusEnum.OK.getName());
+        }else if(StatusEnum.WARNING.code == hostDTO.getCustomState() && StatusEnum.OK.code == hostDTO.getCustomAvailableState()) {
+            hostDetailVO.setState(StatusEnum.WARNING.getName());
+        }else {
+            hostDetailVO.setState(StatusEnum.HIGH.getName());
+        }
+        //type
+        if(hostDTO.getParentTemplates().size() != 0) {
+            String DTOTemplateId = hostDTO.getParentTemplates().get(0).getTemplateId();
+            for(BriefTemplateDTO template : allTemplateDTO) {
+                if(template.getTemplateId().equals(DTOTemplateId)) {
+                    hostDetailVO.setType(template.getTemplateGroups().get(0).getName());
+                }
+            }
+        }
+        return hostDetailVO;
+    }
+
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 设备接口信息的 InterfaceVO
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public HostDetailInterfaceVO getHostInterfaceByHostDTO(BriefHostDTO hostDTO) throws ServiceException {
+        HostDetailInterfaceVO interfaceVO = new HostDetailInterfaceVO();
+        // interfaces[interfaceid,dns ,hostid ,ip ,type],
+        List<BriefHostInterfaceDTO> interfaces = hostDTO.getInterfaces();
+        interfaceVO.setHostId(hostDTO.getHostId());
+        for(BriefHostInterfaceDTO interfaceDTO : interfaces) {
+            if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.AGENT.value).equals(interfaceDTO.getType())) {
+                interfaceVO.setAgentDNS(interfaceDTO.getDns());
+                interfaceVO.setAgentIp(interfaceDTO.getIp());
+                interfaceVO.setAgentPort(interfaceDTO.getPort());
+            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.SNMP.value).equals(interfaceDTO.getType())) {
+                interfaceVO.setSNMPDNS(interfaceDTO.getDns());
+                interfaceVO.setSNMPIp(interfaceDTO.getIp());
+                interfaceVO.setSNMPPort(interfaceDTO.getPort());
+            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.IPMI.value).equals(interfaceDTO.getType())) {
+                interfaceVO.setIPMIDNS(interfaceDTO.getDns());
+                interfaceVO.setIPMIIp(interfaceDTO.getIp());
+                interfaceVO.setIPMIPort(interfaceDTO.getPort());
+            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.JMX.value).equals(interfaceDTO.getType())) {
+                interfaceVO.setJMXDNS(interfaceDTO.getDns());
+                interfaceVO.setJMXIp(interfaceDTO.getIp());
+                interfaceVO.setJMXPort(interfaceDTO.getPort());
+            }
+        }
+        return interfaceVO;
+    }
+
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 设备下所有监控点状态信息 的 pointVO
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<HostDetailPointVO> getPointsByHostDTO(BriefHostDTO hostDTO) throws ServiceException {
+        List<HostDetailPointVO> pointVOS = new ArrayList<>();
+        // Points[pointId,name,hostId,state]
+        List<BriefPointDTO> pointDTOS = hostDTO.getPoints();
+        for(BriefPointDTO pointDTO : pointDTOS) {
+            HostDetailPointVO pointVO = new HostDetailPointVO();
+            pointVO.setName(pointDTO.getName());
+            pointVO.setPointId(pointDTO.getPointId());
+            pointVO.setState(StatusConverter.StatusTransform(pointDTO.getCustomState()));
+            pointVOS.add(pointVO);
+        }
+        return pointVOS;
     }
 
 

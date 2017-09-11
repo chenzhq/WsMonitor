@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
+	<meta charset="UTF-8">
+	<title>问题列表</title>
+	<script src="../static/js/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/semantic.js"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css"  />
+	<link rel="stylesheet" href="../static/css/icon.css"  />
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
+	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+	<th:block th:fragment="supplement">
+		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+		<script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
+		<link rel="stylesheet" href="../static/css/ion.rangeSlider.css"
+			  th:href="@{css/ion.rangeSlider.css}">
+		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinFlat.css"
+			  th:href="@{css/ion.rangeSlider.skinFlat.css}">
+		<style type="text/css">
+			.ui.table.dataTable thead th {
+				border-left: 0px;
+			}
+			.ui.special.popup.confirm{
+				max-height: 260px;overflow-y:auto;overflow-x:hidden
+			}
+			.ui.special.popup.alarmed{
+				max-height: 260px;overflow-y:auto;overflow-x:hidden
+			}
+			#table_modal_confirm{
+				overflow-y:auto;
+				overflow-x:hidden;
+				max-height:160px;
+				margin-bottom: 10px;
+			}
+			.ui.segment.detailconfirm{
+				height: 232px;overflow-y:auto;overflow-x:hidden
+			}
+			.ui.segment.detailalarmed{
+				height: 180px;overflow-y:auto;overflow-x:hidden
+			}
+			#filter_content {
+				width: 80%;
+				margin-left:100px;
+			}
+		</style>
+	</th:block>
+</head>
+<body>
+<div id="contextWrap">
+	<!--sidebar-->
+	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
+		 th:replace="layout::left_menu">
+		<a class="item logo" href="index.html">
+			<img src="../static/images/logo.png" alt="stagblogo"/><img src="../static/images/thumblogo.png"
+																	   alt="stagblogo" class="displaynone"/>
+		</a>
+		<div class="ui accordion inverted">
+			<a class="title item" href="dashboard.html">
+				<i class="ion-speedometer titleIcon icon"></i>仪表盘
+			</a>
+			<a class="title item" href="tab.html">
+				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
+			</a>
+			<a class="item active" href="overview.html">
+				<i class="ion-ios-world titleIcon  icon"></i>业务概览
+			</a>
+			<div class="title item">
+				<i class="ion-mouse titleIcon icon"></i>设备概览<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="#">服务器</a>
+				<a class="item" href="#">网络设备</a>
+				<a class="item" href="#">数据库</a>
+				<a class="item" href="#">应用</a>
+			</div>
+			<a class="title item" href="#">
+				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+			</a>
+			<div class="title item">
+				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="#">告警日历</a>
+				<a class="item" href="#">告警列表</a>
+			</div>
+			<a class="title item" href="#">
+				<i class="ion-briefcase titleIcon icon"></i>报表统计
+			</a>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>仪表盘1</span>
+			<i class="ion-speedometer icon"></i>
+			<div class="menu">
+				<div class="header">
+					仪表盘1
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>监控视图</span>
+			<i class="ion-ios-lightbulb icon"></i>
+			<div class="menu">
+				<div class="header">
+					监控视图
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>业务概览</span>
+			<i class="ion-ios-world icon"></i>
+			<div class="menu">
+				<div class="header">
+					业务概览
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>设备概览</span>
+			<i class="ion-mouse icon"></i>
+			<div class="menu">
+				<div class="header">
+					设备概览
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="tab.html">服务器</a>
+				<a class="item" href="table.html">网络设备</a>
+				<a class="item" href="error.html">数据库</a>
+				<a class="item" href="login.html">应用</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>视图展示</span>
+			<i class="ion-arrow-graph-up-right icon"></i>
+			<div class="menu">
+				<div class="header">
+					视图展示
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>告警展示</span>
+			<i class="ion-paintbrush icon"></i>
+			<div class="menu">
+				<div class="header">
+					告警展示
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="error.html">告警日历</a>
+				<a class="item" href="error.html">告警列表</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>报表统计</span>
+			<a href="error.html">
+				<i class="ion-briefcase icon"></i>
+			</a>
+		</div>
+
+		<div class="ui divider"></div>
+
+	</div>
+
+	<!--sidebar-->
+
+	<div class="pusher">
+		<!--navbar-->
+		<div class="navslide navwrap" th:replace="layout::top_nav">
+			<div class="ui menu icon borderless grid" data-color="inverted white">
+				<a class="item labeled openbtn">
+					<i class="ion-navicon-round big icon"></i>
+				</a>
+				<div class="item ui colhidden">
+					<div class="ui icon input">
+						<input type="text" placeholder="Search...">
+						<i class="search icon"></i>
+					</div>
+				</div>
+				<div class="right menu colhidden">
+					<div class="ui dropdown item labeled icon">
+						<i class="bell icon"></i> 告警
+						<div class="ui red label mini circular">6</div>
+						<div class="menu">
+							<div class="header">
+								紧急告警
+							</div>
+							<div class="item">
+								告警信息1……
+								<div class="ui teal left pointing label">1</div>
+							</div>
+							<div class="item">
+								告警信息2……
+								<div class="ui label">51</div>
+							</div>
+							<div class="item">
+								告警信息3……
+								<div class="ui label">1</div>
+							</div>
+							<div class="header">
+								严重告警
+							</div>
+							<div class="item">
+								<i class="dropdown icon"></i>
+								<span class="text">更多</span>
+								<div class="menu">
+									<div class="item">告警信息……</div>
+									<div class="item">告警信息……</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="ui dropdown item">
+						<img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/0.jpg}"
+							 alt="label-image"/>
+						<div class="menu">
+							<a class="item" href="mail.html">注销</a>
+						</div>
+					</div>
+					<a class="item labeled rightsidebar computer only">
+						<i class="ion-wrench large icon"></i>工具
+					</a>
+				</div>
+			</div>
+		</div>
+		<!--navbar-->
+		<!--maincontent-->
+		<div  class="mainWrap navslide">
+			<div class="ui equal width left aligned padded grid stackable">
+				<!--Site Content-->
+				<div class="sixteen wide column">
+                    <div class="header item">
+                        <h2><i class="bar large chart icon"></i>问题列表</h2>
+                    </div>
+					<div class="ui grid">
+                        <div class="eight wide column">
+                            <div id="filter_content" style="display: none;margin-bottom: -10px">
+                                <input type="text" id="time_filter" name="time_filter" value=""/>
+                            </div>
+                        </div>
+                        <div class="eight wide column">
+                            <div class="ui basic top attached right floated buttons"  id="problemsMenu">
+                                <button value="currentProblems" class="ui active button">当前问题</button>
+                                <button value="recentProblems" class="ui button">最近问题</button>
+                                <button value="historicalRecord" class="ui button">历史记录</button>
+                            </div>
+                        </div>
+					</div>
+
+					<div class="ui segment"  style=" min-height : 500px;">
+						<div class="sixteen wide column">
+								<table  id="problemsTable" class="ui compact basic table center aligned " width="100%">
+								</table>
+						</div>
+					</div>
+				</div>
+				<!--已告警提示框 start-->
+				<div id="alert_pop">
+				</div>
+
+				<!--确认记录提示框 start-->
+				<div id="acknowledge_pop">
+
+				</div>
+				<div th:fragment="problem_acknowledge_page">
+
+					<!--确认记录弹出框 start-->
+					<div class="ui small modal confirm">
+						<div class="content">
+							<div class="ui form">
+								<div class="required inline field" id="text_field">
+									<input type="hidden" id="acknowledge_eventid">
+									<input type="text" id="acknowledge_message" placeholder="不能为空">
+								</div>
+								<div id="acknowledge_history">
+									<table class="ui celled striped compact single line table center aligned">
+										<thead>
+										<tr>
+											<th class="four wide">时间</th>
+											<th class="four wide">用户</th>
+											<th class="four wide">消息</th>
+											<th class="four wide">用户动作</th>
+										</tr></thead>
+										<tbody id="acknowledge_data">
+										<tr>
+											<td colspan="4">无数据</td>
+										</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="required inline field" id="text_checkbox">
+									<div class="ui checkbox">
+										<input id="acknowledge_checkbox" type="checkbox" tabindex="0" class="hidden">
+										<label  id="label_checkbox">关闭问题</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="actions">
+							<div id="submit_bnt" class="ui approve submit button">确认</div>
+							<div class="ui cancel button">取消</div>
+						</div>
+					</div>
+                </div>
+                <div th:fragment="problem_event_page">
+					<!--事件详情弹出框 start-->
+					<div class="ui big modal detail">
+						<div class="content">
+							<div class="sixteen wide column">
+								<div class="ui grid">
+									<div class="eight wide column">
+										<div class="ui segments">
+											<div class="ui segment">
+												<h4 class="ui header">
+													事件细节
+												</h4>
+											</div>
+											<div class="ui segment no-padding detailconfirm">
+												<table class="ui very basic compact fixed definition table center aligned">
+													<tbody id="eventDetailModal">
+													<tr>
+														<td colspan="2">无数据</td>
+													</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="eight wide column">
+										<div class="ui segments">
+											<div class="ui segment">
+												<h4 class="ui header">
+													确认记录
+												</h4>
+											</div>
+											<div class="ui segment detailconfirm">
+												<table class="ui very basic compact fixed single line table center aligned">
+													<thead>
+													<tr>
+														<th class="four wide">时间</th>
+														<th class="four wide">用户</th>
+														<th class="four wide">消息</th>
+														<th class="four wide">用户动作</th>
+													</tr></thead>
+													<tbody id="acknowledgeModal">
+													<tr>
+														<td colspan="4">无历史确认记录</td>
+													</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									<div class="sixteen wide column">
+										<div class="ui segments">
+											<div class="ui segment">
+												<h4 class="ui header">
+													告警记录
+												</h4>
+											</div>
+											<div class="ui segment detailalarmed">
+												<table class="ui very basic compact fixed single line table center aligned">
+													<thead>
+													<tr>
+														<th class="one wide">步骤</th>
+														<th class="three wide">时间</th>
+														<th class="two wide">接收者</th>
+														<th class="one wide">方式</th>
+														<th class="four wide">主题</th>
+														<th class="four wide">信息</th>
+														<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
+													</tr></thead>
+													<tbody id="alertDetailModal">
+													<tr>
+														<td colspan="7">无历史确认记录</td>
+													</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<th:block th:replace="layout::bottom_script(~{::specialScript})">
+	<script src="../static/js/js.cookie.js"></script>
+	<script src="../static/js/jquery.nicescroll.min.js"></script>
+	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
+	<script src="../static/js/main.js"></script>
+	<th:block th:fragment="specialScript">
+		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
+		<script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
+	</th:block>
+</th:block>
+<script type="text/javascript">
+    //页面加载完加载表格数据
+    $(function() {
+        //初始问题列表
+        var problems_Table = $("#problemsTable").DataTable({
+            "iDisplayLength" : 10,
+            order: [0, 'desc'],
+            "createdRow": function (row, rowData) {
+                $('td', row).eq(1).addClass('left aligned');
+                $('td', row).eq(2).addClass('left aligned');
+                if (rowData.problem_state === '问题') {
+                    if (rowData.priority_state === '警告') {
+                        row.classList.add("warning")
+                    } else if (rowData.priority_state === '严重') {
+                        row.classList.add("negative")
+                    } else {
+                    }
+                }
+            },
+            "drawCallback": function () {//初始化后回调
+				//事件详情 modal 框
+				$("a.problem_time").on("click",function(){
+				   var event_id = $(this).attr("data-id");
+                    eventDetailModal(event_id);
+				});
+
+				//确认事件 modal 框
+                $("a.AcknowledgeCol").on("click",function(){
+                    var event_id = $(this).attr("data-id");
+                    getAcknowledgeModal(event_id);
+				})
+				//告警pop
+                popAlert($("a.alertCol"), $("#alert_pop"));
+
+                //确认记录pop
+                popAck($("a.AcknowledgeCol"), $("#acknowledge_pop"));
+
+            },
+            ajax: {
+                url: '/problems/get_current',
+                dataSrc: 'data'
+            },
+            columns: [
+                {
+                    "data": "problem_time",
+                    "width": "15%",
+                    "title": "发生时间",
+                    "orderable": false,
+                    render: function(data, type, row, meta) {
+                        return '<a  href="javascript:void(0)" class="problem_time" data-id="'+ row.problem_eventid +'">' + row.problem_time + '</a>';
+                    }
+                },
+                {
+                    "data": "host_name",
+                    "width": "10%",
+                    "title": "设备",
+                    "orderable": false,
+                },
+                {
+                    "data": null,
+                    "width": "25%",
+                    "title": "问题",
+                    "orderable": false,
+                    render: function(data, type, row, meta) {
+                        return '<a href="problemdetail?trigger_id=' + row.trigger_id + '">' + row.description + '</a>';
+                    }
+                },
+                {
+                    "data": "priority_state",
+                    "width": "5%",
+                    "title": "严重性",
+                    "orderable": false
+
+                },
+                {
+                    "data": 'problem_state',
+                    "width": "15%",
+                    "title": "状态",
+                    "orderable": false,
+                    render: function (data, type, row, meta) {
+//                                console.log('render 状态', arguments)
+                        if (row.problem_state !== "问题") {
+                            return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
+                        } else {
+                            return '<div class="ui mini red label" style="margin-bottom: 0px">' + row.problem_state + '</div>';
+                        }
+                    }
+
+                },
+//                {
+//                    "data": "recover_time",
+//                    "width": "10%",
+//                    "title": "恢复时间",
+//                    "orderable": false,
+//                    render: function(data, type, row, meta) {
+//                        return '<a  href="javascript:void(0)" class="problem_time" data-id="'+ row.problem_eventid +'">' + row.recover_time + '</a>';
+//                    }
+//                },
+                {
+                    "data": "duration_string",
+                    "width": "10%",
+                    "title": "持续时间",
+                    "orderable": false
+                },
+                {
+                    "data": null,
+                    "width": "15%",
+                    "title": "告警状态",
+                    "orderable": false,
+                    render: function(data, type, row, meta) {
+                        if(row.alert_state == "未告警") {
+                            //无悬浮事件
+                            return row.alert_state ;
+                        }else {
+                            //有悬浮事件
+                            return '<a href="javascript:void(0)" data-id="'+ row.problem_eventid +'" class="alertCol" >' + row.alert_state + '(' + row.alert_num + ')</a>';
+                        }
+                    }
+                },
+                {
+                    "data": null,
+                    "width": "5%",
+                    "title": "确认",
+                    "orderable": false,
+                    render: function(data, type, row, meta) {
+                        return '<a href="javascript:void(0)" data-id="'+ row.problem_eventid +'" class="AcknowledgeCol">' + row.acknowledged + '</a>';
+                    }
+                }
+            ],
+        });
+
+        //点击问题 teb 切换
+        $('#problemsMenu button').on('click',function () {
+            $('#problemsMenu button').removeClass('active');
+            $(this).addClass('active');
+            if(this.value == "currentProblems"){
+                $('#filter_content').css('display','none');
+                problems_Table.ajax.url('/problems/get_current').load();
+            }else if(this.value == "recentProblems"){
+                $('#filter_content').css('display','none');
+                problems_Table.ajax.url('/problems/get_last').load();
+            }else if(this.value == "historicalRecord"){
+                showTimeCons(problems_Table);
+            }
+        });
+
+
+    })
+
+    //显示时间控件
+	function showTimeCons(problems_Table) {
+        var now = new Date();
+        var end_time = new Date(now);
+        end_time.setMinutes(0);
+        end_time.setSeconds(0);
+        end_time.setMilliseconds(0);
+        var begin_time = new Date(end_time);
+        //3表示三个月
+		if(end_time.getMonth() > 3) {
+            begin_time.setMonth(end_time.getMonth() - 3);
+		}else {
+            begin_time.setFullYear(end_time.getFullYear() - 1);
+            begin_time.setMonth(end_time.getMonth() + 9);
+		}
+
+        var begin_second = begin_time.getTime();
+        var end_second = end_time.getTime();
+  /*      console.log("begin_second",begin_second);
+        console.log("end_second",end_second);*/
+        var time_arr = [];
+        var vo_arr = [];
+        var s = begin_second;
+        while(s <= end_second) {
+            var dura_date = new Date();
+            dura_date.setTime(s);
+            time_arr.push(dura_date.Format("yyyy-MM-dd hh:mm:ss"));
+            vo_arr.push(dura_date.Format("MM-dd hh:mm"));
+            s += 3600 * 1000;
+		}
+		time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
+        vo_arr.push(now.Format("MM-dd hh:mm"));
+		console.log("time_arr",time_arr);
+        console.log("vo_arr",vo_arr);
+        $('#filter_content').css('display','block');
+        $('#time_filter').ionRangeSlider({
+            type: "double",
+//			grid:true,
+            from: vo_arr[0],
+            //TODO 最好使用返回的问题数中的最大值
+            to: vo_arr[time_arr.length-1],
+            values:vo_arr,
+            onStart: function (data) {
+                var begin_time = time_arr[data.from];
+                var end_time = time_arr[data.to];
+                problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
+            },
+            onChange: function (data) {
+//                        console.log(data);
+            },
+            onFinish: function (data) {
+//                console.log("begin",time_arr[data.from]);
+//                console.log("end",time_arr[data.to]);
+                var begin_time = time_arr[data.from];
+                var end_time = time_arr[data.to];
+                problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
+            },
+            onUpdate: function (data) {
+//                        console.log(data);
+            }
+        });
+	}
+
+
+</script>
+
+</body>
+</html>
+
+
+

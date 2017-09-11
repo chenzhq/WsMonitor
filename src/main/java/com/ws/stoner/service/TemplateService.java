@@ -1,6 +1,5 @@
 package com.ws.stoner.service;
 
-import com.ws.bix4j.access.template.TemplateGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
 import org.springframework.cache.annotation.CacheConfig;
@@ -13,22 +12,6 @@ import java.util.List;
  */
 @CacheConfig(cacheNames = "templateManager")
 public interface TemplateService {
-    /**
-     * 根据 request 获取模板总数量
-     * @return
-     * @throws ServiceException
-     */
-    int countTemplate(TemplateGetRequest request) throws ServiceException;
-
-
-
-    /**
-     * List template list.
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefTemplateDTO> listTemplate(TemplateGetRequest request) throws ServiceException;
 
     /**
      * 获取所有模板 list all template

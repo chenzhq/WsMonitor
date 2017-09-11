@@ -1,6 +1,9 @@
 package com.ws.bix4j;
 
+import com.ws.bix4j.access.alert.Alert;
 import com.ws.bix4j.access.application.Application;
+import com.ws.bix4j.access.event.Event;
+import com.ws.bix4j.access.history.History;
 import com.ws.bix4j.access.host.Host;
 import com.ws.bix4j.access.hostInterface.HostInterface;
 import com.ws.bix4j.access.hostgroup.HostGroup;
@@ -9,6 +12,8 @@ import com.ws.bix4j.access.problem.Problem;
 import com.ws.bix4j.access.template.Template;
 import com.ws.bix4j.access.trigger.Trigger;
 import com.ws.bix4j.access.user.*;
+import com.ws.bix4j.access.usergroup.Usergroup;
+import com.ws.bix4j.access.valuemap.Valuemap;
 import com.ws.bix4j.exception.ZApiException;
 
 import java.net.URI;
@@ -74,7 +79,6 @@ public class ZApi {
     public Host Host() {
         return new Host(uri.toString(), auth);
     }
-
     public HostGroup Group() {
         return new HostGroup(uri.toString(), auth);
     }
@@ -87,7 +91,7 @@ public class ZApi {
     public Item Item() {
         return new Item(uri.toString(), auth);
     }
-    public Problem Problems() {
+    public Problem Problem() {
         return new Problem(uri.toString(), auth);
     }
     public Template Template() {
@@ -95,6 +99,21 @@ public class ZApi {
     }
     public HostInterface HostInterface() {
         return new HostInterface(uri.toString(), auth);
+    }
+    public Valuemap Valuemap() {
+        return new Valuemap(uri.toString(), auth);
+    }
+    public History History() {
+        return new History(uri.toString(), auth);
+    }
+    public Event Event() {
+        return new Event(uri.toString(), auth);
+    }
+    public Alert Alert() {
+        return new Alert(uri.toString(), auth);
+    }
+    public Usergroup Usergroup() {
+        return new Usergroup(uri.toString(), auth);
     }
 
 }

@@ -6,10 +6,10 @@ package com.ws.stoner.model.view;
 public class DashboardPlatformVO {
 
     private String platformId;
-    private Integer availability;
+    private Float availability;
     private String name;
     private Integer warningNum; //警告主机数量
-    private Integer hightNum; //严重主机数量
+    private Integer highNum; //严重主机数量
     private String state;
     private Integer allNum;
 
@@ -22,11 +22,11 @@ public class DashboardPlatformVO {
         return this;
     }
 
-    public Integer getAvailability() {
+    public Float getAvailability() {
         return availability;
     }
 
-    public DashboardPlatformVO setAvailability(Integer availability) {
+    public DashboardPlatformVO setAvailability(Float availability) {
         this.availability = availability;
         return this;
     }
@@ -47,7 +47,7 @@ public class DashboardPlatformVO {
                 ", availability=" + availability +
                 ", name='" + name + '\'' +
                 ", warningNum=" + warningNum +
-                ", hightNum=" + hightNum +
+                ", hightNum=" + highNum +
                 ", state='" + state + '\'' +
                 ", allNum=" + allNum +
                 '}';
@@ -62,12 +62,12 @@ public class DashboardPlatformVO {
         return this;
     }
 
-    public Integer getHightNum() {
-        return hightNum;
+    public Integer getHighNum() {
+        return highNum;
     }
 
-    public DashboardPlatformVO setHightNum(Integer hightNum) {
-        this.hightNum = hightNum;
+    public DashboardPlatformVO setHighNum(Integer highNum) {
+        this.highNum = highNum;
         return this;
     }
 

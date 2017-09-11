@@ -12,7 +12,7 @@ public class BriefPlatformDTO {
     private String platformId;
     private String name;
     @JSONField(name = "custom_state")
-    private String customState;
+    private int customState;
     @JSONField(name = "hosts")
     private List<BriefHostDTO> hosts;
 
@@ -28,11 +28,11 @@ public class BriefPlatformDTO {
                 '}';
     }
 
-    public String getCustomState() {
+    public int getCustomState() {
         return customState;
     }
 
-    public BriefPlatformDTO setCustomState(String customState) {
+    public BriefPlatformDTO setCustomState(int customState) {
         this.customState = customState;
         return this;
     }

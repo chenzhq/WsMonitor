@@ -3,14 +3,17 @@ package com.ws.stoner.service.impl;
 
 import com.ws.stoner.constant.OverviewTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.dao.OverviewDAO;
+import com.ws.stoner.dao.MongoGroupDAO;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Group;
 import com.ws.stoner.model.dto.*;
+import com.ws.stoner.model.view.OverViewHostVO;
+import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.service.TemplateService;
+import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +38,13 @@ public class OverviewServiceImpl implements OverviewService {
     private OverviewGroupRepository overviewGroupRepository;
 
     @Autowired
-    private HostServiceImpl hostServiceImpl;
+    private HostService hostService;
 
     @Autowired
     private TemplateService templateService;
 
     @Autowired
-    private OverviewDAO overviewDAO;
+    private MongoGroupDAO mongoGroupDAO;
 
 
     @Override
@@ -49,15 +52,10 @@ public class OverviewServiceImpl implements OverviewService {
         //step1:调用  listAllHost()，listProblemHost(triggerIds) ,listAllTemplate(),组装ProblemHostIds
         List<BriefHostDTO> allHosts ;
         List<BriefTemplateDTO> allTemplates;
-        try {
-            allHosts = hostServiceImpl.listAllHost();
-            allTemplates = templateService.listAllTemplate();
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            logger.error("查询API错误！{}", e.getMessage());
-            return null;
-        }
-        //step:2初始化 root节点
+        allHosts = hostService.listAllHost();
+        allTemplates = templateService.listAllTemplate();
+        //step:2 初始化 root节点
+            //root节点为空
         Group root = overviewGroupRepository.findByName("root");
         if(root.getHostChildren().length == 0 && root.getGroupChildren().length == 0) {
             List<String> hostIds = new ArrayList<>();
@@ -67,10 +65,54 @@ public class OverviewServiceImpl implements OverviewService {
             String[] hostIdsString = hostIds.toArray(new String[hostIds.size()]);
             root.setHostChildren(hostIdsString);
             overviewGroupRepository.save(root);
+        }else {
+            //有新添加或删减的设备
+            //取所有 group 节点 host_children 形成hostIds ，和allHosts 的hostIds比较是否相同
+            List<Group> allGroups = overviewGroupRepository.findAll();
+            List<String> allHostIds = new ArrayList<>();
+            List<String> allHostIdsAPI = new ArrayList<>();
+            for(Group g : allGroups) {
+                List<String> hostIds = Arrays.asList(g.getHostChildren());
+                allHostIds.addAll(hostIds);
+            }
+            for(BriefHostDTO host : allHosts) {
+                allHostIdsAPI.add(host.getHostId());
+            }
+            //不相同
+            if(allHostIds.size() != allHostIdsAPI.size()) {
+                //删减 allgroups中含有 delHostIds 的hostId
+                for(Group g : allGroups) {
+                    List<String> hostIdsTemp = Arrays.asList(g.getHostChildren());
+                    List<String> hostIds = new ArrayList<>(hostIdsTemp);
+                    for(String hostId : hostIdsTemp) {
+                        if(!allHostIdsAPI.contains(hostId)) {
+                            hostIds.remove(hostId);
+                        }
+                    }
+                    g.setHostChildren(hostIds.toArray(new String[0]));
+                    //批量更新的方法还未找到，先一个一个的save
+                    overviewGroupRepository.save(g);
+                }
+                //新增 提取出新增的hostIds 组成String[] 赋值给root的 hostChildren
+                Group newRoot = overviewGroupRepository.findByName("root");
+                List<String> addHostIds = new ArrayList<>();
+                for(String hostId : allHostIdsAPI) {
+                    if(!allHostIds.contains(hostId)) {
+                        addHostIds.add(hostId);
+                    }
+                }
+                if(addHostIds.size() != 0) {
+                    List<String> rootHostIdsTemp = Arrays.asList(root.getHostChildren());
+                    List<String> rootHostIds = new ArrayList<>(rootHostIdsTemp);
+                    rootHostIds.addAll(addHostIds);
+                    newRoot.setHostChildren(rootHostIds.toArray(new String[0]));
+                    overviewGroupRepository.save(newRoot);
+                }
+            }
         }
         //step:3 创建list，调用list = getGroupTree()
         List<OverviewListGroupDTO> overviewListGroupDTOS = new ArrayList<>();
-        overviewListGroupDTOS = getGroupTree("root", overviewListGroupDTOS,allHosts);
+        formatGroupTree("root", overviewListGroupDTOS,allHosts);
         //step:4 反转list，循环 list，
         Collections.reverse(overviewListGroupDTOS);
         for(OverviewListGroupDTO overviewListGroupDTO : overviewListGroupDTOS) {
@@ -115,15 +157,15 @@ public class OverviewServiceImpl implements OverviewService {
     }
 
     @Override
-    public OverviewCreateGroupDTO createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException {
+    public boolean createOverviewGroup(String newGroupName, String supGroupId) throws ServiceException {
+        boolean success = false;
         //step1:查最大cid，设置新的分组cid+1
-        Group maxGroup;
+        Group maxGroup = null;
         try {
-            maxGroup = overviewDAO.findMaxGroupCId();
+            maxGroup = mongoGroupDAO.findMaxGroupCId();
         } catch (DAOException e) {
-            e.printStackTrace();
             logger.error("查询mongodb最大组错误！{}", e.getMessage());
-            return null;
+            new ServiceException(e.getMessage());
         }
         String cId = String.valueOf(Integer.parseInt(maxGroup.getcId()) + 1);
         //step2:设置flag，name，pid，group_children,host_children,save()到mongodb中
@@ -141,52 +183,49 @@ public class OverviewServiceImpl implements OverviewService {
         group.setHostChildren(new String[]{});
         overviewGroupRepository.save(group);
         //step3:更新父级组的group_children，新增name进去。
-        Group supGroup ;
+        Group supGroup = null;
         try {
-            supGroup = overviewDAO.findGroupByCId(pId);
+            supGroup = mongoGroupDAO.findGroupByCId(pId);
         } catch (DAOException e) {
-            e.printStackTrace();
             logger.error("根据CID查询mongodb错误！{}", e.getMessage());
-            return null;
+            new ServiceException(e.getMessage());
         }
         List<String> supGroupListTemp = Arrays.asList(supGroup.getGroupChildren());
         List<String> supGroupList = new ArrayList<>(supGroupListTemp);
         supGroupList.add(newGroupName);
         supGroup.setGroupChildren((String[])supGroupList.toArray(new String[0]));
         overviewGroupRepository.save(supGroup);
-        //step3:返回值：newGroupId，newGroupName,supGroupId
-        OverviewCreateGroupDTO ocg = new OverviewCreateGroupDTO();
-        ocg.setNewGroupId("g" + cId);
-        ocg.setNewGroupName(newGroupName);
-        ocg.setSupGroupId(supGroupId);
-        return ocg;
+        //step3:返回值：
+        success = true;
+        return success;
     }
 
     /**
      * 删除指定分组，并将其下所有子节点移动到上一节点中
      * @param delGroupVOId
-     * @return
-     * @throws ServiceException
+     * @return boolean true表示删除成功，false表示删除失败
      */
     @Override
-    public OverviewDelGroupDTO deleteOverviewGroup(String delGroupVOId) throws ServiceException {
+    public boolean deleteOverviewGroup(String delGroupVOId) throws ServiceException {
+        boolean success = false;
         String delGroupId = delGroupVOId.substring(1);
-        Group delGroup;
-        Group supGroup;
+        Group delGroup = null;
+        Group supGroup = null;
         try {
             //step1:根据删除组cid取要删除组的group_children,host_children；
-            delGroup = overviewDAO.findGroupByCId(delGroupId);
+            delGroup = mongoGroupDAO.findGroupByCId(delGroupId);
             //step2:根据删除组cid取该组的上一级节点
-            supGroup = overviewDAO.findGroupByCId(delGroup.getpId());
+            supGroup = mongoGroupDAO.findGroupByCId(delGroup.getpId());
         } catch (DAOException e) {
-            e.printStackTrace();
             logger.error("根据CID查询mongodb错误！{}", e.getMessage());
-            return null;
+            new ServiceException(e.getMessage());
         }
         //step3:循环delGroup 的 group_children添加到 supGroup 的group_children中,同时更改子成员的pid为supGroup 的 cid
         List<String> delGroupChildren = Arrays.asList(delGroup.getGroupChildren());
         List<String> supGroupChildrenTemp = Arrays.asList(supGroup.getGroupChildren());
         List<String> supGroupChildren = new ArrayList<>(supGroupChildrenTemp);
+        //剔除掉 在sup的group_children 中要删除的group的name
+        supGroupChildren.remove(delGroup.getName());
         for(String groupName : delGroupChildren) {
             supGroupChildren.add(groupName);
             Group childGroup = overviewGroupRepository.findByName(groupName);
@@ -211,10 +250,8 @@ public class OverviewServiceImpl implements OverviewService {
         overviewGroupRepository.save(supGroup);
         //step5:删除指定组
         overviewGroupRepository.delete(delGroup);
-        OverviewDelGroupDTO odg = new OverviewDelGroupDTO();
-        odg.setDelGroupId(delGroupVOId);
-        odg.setToGroupId("g" + supGroup.getcId());
-        return odg;
+        success = true;
+        return success;
     }
 
     /**
@@ -222,22 +259,22 @@ public class OverviewServiceImpl implements OverviewService {
      * @param groupVOId
      * @param fromGroupVOId
      * @param toGroupVOId
-     * @return
+     * @return boolean true表示删除成功，false表示删除失败
      * @throws ServiceException
      */
     @Override
-    public OverviewMoveGroupDTO moveOverviewGroup(String groupVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+    public boolean moveOverviewGroup(String groupVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+        boolean success = false;
         String groupId = groupVOId.substring(1);
         String fromGroupId = fromGroupVOId.substring(1);
         String toGroupId = toGroupVOId.substring(1);
         //step1:Group组的pid更新为toGroupId
-        Group targetGroup;
+        Group targetGroup = null;
         try {
-            targetGroup = overviewDAO.findGroupByCId(groupId);
+            targetGroup = mongoGroupDAO.findGroupByCId(groupId);
         } catch (DAOException e) {
-            e.printStackTrace();
             logger.error("查询mongodb错误！{}", e.getMessage());
-            return null;
+            new ServiceException(e.getMessage());
         }
         targetGroup.setpId(toGroupId);
         if("0".equals(toGroupId)) {
@@ -247,13 +284,12 @@ public class OverviewServiceImpl implements OverviewService {
         }
         overviewGroupRepository.save(targetGroup);
         //step2:from_group组的group_children去掉group的name；
-        Group fromGroup;
+        Group fromGroup = null;
         try {
-            fromGroup = overviewDAO.findGroupByCId(fromGroupId);
+            fromGroup = mongoGroupDAO.findGroupByCId(fromGroupId);
         } catch (DAOException e) {
-            e.printStackTrace();
             logger.error("根据Cid查询mongodb错误！{}", e.getMessage());
-            return null;
+            new ServiceException(e.getMessage());
         }
         List<String> fromGroupChildrenTemp = Arrays.asList(fromGroup.getGroupChildren());
         List<String> fromGroupChildren = new ArrayList<>(fromGroupChildrenTemp);
@@ -261,13 +297,12 @@ public class OverviewServiceImpl implements OverviewService {
         fromGroup.setGroupChildren(fromGroupChildren.toArray(new String[0]));
         overviewGroupRepository.save(fromGroup);
         //step3:to_group组的group_children添加group的name
-        Group toGroup;
+        Group toGroup = null;
         try {
-            toGroup = overviewDAO.findGroupByCId(toGroupId);
+            toGroup = mongoGroupDAO.findGroupByCId(toGroupId);
         } catch (DAOException e) {
-            e.printStackTrace();
             logger.error("根据CId查询mongodb错误！{}", e.getMessage());
-            return null;
+            new ServiceException(e.getMessage());
         }
         List<String> toGroupChildrenTemp = Arrays.asList(toGroup.getGroupChildren());
         List<String> toGroupChildren = new ArrayList<>(toGroupChildrenTemp);
@@ -275,11 +310,8 @@ public class OverviewServiceImpl implements OverviewService {
         toGroup.setGroupChildren(toGroupChildren.toArray(new String[0]));
         overviewGroupRepository.save(toGroup);
         //组装返回数据对象
-        OverviewMoveGroupDTO omg = new OverviewMoveGroupDTO();
-        omg.setGroupId(groupId);
-        omg.setFromGroupId(fromGroupId);
-        omg.setToGroupId(toGroupId);
-        return omg;
+        success = true;
+        return success;
 
     }
 
@@ -288,22 +320,22 @@ public class OverviewServiceImpl implements OverviewService {
      * @param hostVOId
      * @param fromGroupVOId
      * @param toGroupVOId
-     * @return
+     * @return boolean true表示移动成功，false表示移动失败
      * @throws ServiceException
      */
     @Override
-    public OverviewMoveHostDTO moveOverviewHost(String hostVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+    public boolean moveOverviewHost(String hostVOId, String fromGroupVOId, String toGroupVOId) throws ServiceException {
+        boolean success = false;
         String hostId = hostVOId.substring(1);
         String fromGroupId = fromGroupVOId.substring(1);
         String toGroupId = toGroupVOId.substring(1);
         //step1:from_group组的host_children去掉host原设备的id；
-        Group fromGroup ;
+        Group fromGroup = null;
         try {
-            fromGroup = overviewDAO.findGroupByCId(fromGroupId);
+            fromGroup = mongoGroupDAO.findGroupByCId(fromGroupId);
         } catch (DAOException e) {
-            e.printStackTrace();
             logger.error("Cid查询mongodb错误！{}", e.getMessage());
-            return null;
+            new ServiceException(e.getMessage());
         }
         List<String> fromHostChildrenTemp = Arrays.asList(fromGroup.getHostChildren());
         List<String> fromHostChildren = new ArrayList<>(fromHostChildrenTemp);
@@ -311,13 +343,12 @@ public class OverviewServiceImpl implements OverviewService {
         fromGroup.setHostChildren((String[])fromHostChildren.toArray(new String[0]));
         overviewGroupRepository.save(fromGroup);
         //step2:to_group组的host_children添加host原设备的id
-        Group toGroup ;
+        Group toGroup = null;
         try {
-            toGroup= overviewDAO.findGroupByCId(toGroupId);
+            toGroup= mongoGroupDAO.findGroupByCId(toGroupId);
         } catch (DAOException e) {
-            e.printStackTrace();
             logger.error("Cid查询 toGroup 的mongodb错误！{}", e.getMessage());
-            return null;
+            new ServiceException(e.getMessage());
         }
         List<String> toHostChildrenTemp = Arrays.asList(toGroup.getHostChildren());
         List<String> toHostChildren = new ArrayList<>(toHostChildrenTemp);
@@ -325,28 +356,161 @@ public class OverviewServiceImpl implements OverviewService {
         toGroup.setHostChildren((String[])toHostChildren.toArray(new String[0]));
         overviewGroupRepository.save(toGroup);
         //step3:组装返回数据
-        OverviewMoveHostDTO omh = new OverviewMoveHostDTO();
-        omh.setHostId(hostVOId);
-        omh.setFromGroupId(fromGroupVOId);
-        omh.setToGroupId(toGroupVOId);
-        return omh;
+        success = true;
+        return success;
     }
 
-    private List<OverviewListGroupDTO> getGroupTree(String name, List<OverviewListGroupDTO> overviewListGroupDTOS, List<BriefHostDTO> allHosts)  {
+    /**
+     * 编辑修改分组名 service
+     * @param oldGroupName
+     * @param newGroupName
+     * @param supGroupVOId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public OverviewEditGroupDTO editOverviewGroup(String oldGroupName,String newGroupName, String supGroupVOId) throws ServiceException {
+        String supGroupId = supGroupVOId.substring(1);
+        //oldGroupName 查 group,修改name
+        Group oldGroup = overviewGroupRepository.findByName(oldGroupName);
+        oldGroup.setName(newGroupName);
+        overviewGroupRepository.save(oldGroup);
+        // supGroupVOId 查 sup_group，修改group_children
+        Group supGroup = null;
+        try {
+            supGroup = mongoGroupDAO.findGroupByCId(supGroupId);
+        } catch (DAOException e) {
+            logger.error("Cid查询mongodb错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        List<String> groupChildrenTemp = Arrays.asList(supGroup.getGroupChildren());
+        List<String> groupChildren = new ArrayList<>(groupChildrenTemp);
+        groupChildren.remove(oldGroupName);
+        groupChildren.add(newGroupName);
+        supGroup.setGroupChildren(groupChildren.toArray(new String[0]));
+        overviewGroupRepository.save(supGroup);
+        return new OverviewEditGroupDTO(oldGroupName,newGroupName,supGroupVOId);
+    }
+
+    /**
+     * 在移动分组的时候需要先获取分组树供用户选择
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<OverviewListGroupDTO> getMoveGroupTree(String groupName) throws ServiceException {
+        //新建
+        List<OverviewListGroupDTO> rootTree = new ArrayList<>();
+        List<OverviewListGroupDTO> moveGroupTree = new ArrayList<>();
+        //调用
+        formatGroupTree("root",rootTree,new ArrayList<BriefHostDTO>());
+        if(!"".equals(groupName) && groupName != null) {
+            formatGroupTree(groupName,moveGroupTree,new ArrayList<BriefHostDTO>());
+            //状态赋值，state = 0,表示可选择，1表示不可选择
+            for(OverviewListGroupDTO group : rootTree) {
+                if(moveGroupTree.contains(group)) {
+                    group.setEnable(false);
+                }else {
+                    group.setEnable(true);
+                }
+            }
+        }else {
+            //状态赋值，state = 0,表示可选择，1表示不可选择
+            for(OverviewListGroupDTO group : rootTree) {
+                group.setEnable(true);
+            }
+        }
+        return rootTree;
+    }
+
+    /**
+     * 获取主机选择树
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<OverViewHostVO> getSelectHostVOS() throws ServiceException {
+        List<Group> allGroups = overviewGroupRepository.findAll();
+        List<BriefHostDTO> allHosts = hostService.listAllHost();
+        List<OverViewHostVO> hostVOS = new ArrayList<>();
+        for(Group group : allGroups) {
+            List<String> hostIds = Arrays.asList(group.getHostChildren());
+            int okNum = 0;
+            int warningNum  = 0;
+            int highNum = 0;
+            for(BriefHostDTO hostDTO : allHosts) {
+                if(hostIds.contains(hostDTO.getHostId())) {
+                    String hostState = StatusConverter.getTextStatusTransform(hostDTO.getCustomState(),hostDTO.getCustomAvailableState());
+                    OverViewHostVO hostVO = new OverViewHostVO(
+                            hostDTO.getHostId(),
+                            group.getcId(),
+                            hostDTO.getName(),
+                            OverviewTypeEnum.HOST.text,
+                            hostState
+                    );
+                    hostVOS.add(hostVO);
+                   if(StatusEnum.HIGH.text.equals(hostState)) {
+                       highNum++;
+                   }else if(StatusEnum.WARNING.text.equals(hostState)) {
+                       warningNum++;
+                   }else {
+                       okNum++;
+                   }
+                }
+            }
+            String groupState ;
+            String parent ;
+            if(highNum > 0) {
+                groupState = StatusEnum.HIGH.text;
+            }else if(warningNum > 0) {
+                groupState = StatusEnum.WARNING.text;
+            }else {
+                groupState = StatusEnum.OK.text;
+            }
+            if("root".equals(group.getName())) {
+                parent = "#";
+            }else {
+                parent = group.getpId();
+            }
+            OverViewHostVO groupVO = new OverViewHostVO(
+                    group.getcId(),
+                    parent,
+                    group.getName(),
+                    OverviewTypeEnum.GROUP.text,
+                    groupState
+            );
+            hostVOS.add(groupVO);
+        }
+        return hostVOS;
+    }
+
+    /**
+     * 根据指定顺序 格式化树
+     * @param name 从哪个节点开始格式化
+     * @param overviewListGroupDTOS  被格式化组对象
+     * @param allHosts 用于匹配设备id获取 name 和state，若为空则表示不显示设备格式化
+     */
+    private void formatGroupTree(String name, List<OverviewListGroupDTO> overviewListGroupDTOS, List<BriefHostDTO> allHosts)  {
         //step1:新建List<OverviewListGroupDTO> list,OverviewListGroupDTO mongoGroup,根据name查出mongoGroupDO
         Group group = overviewGroupRepository.findByName(name);
-        //step2:给vo赋值，cid，pid，name，添加vo到list中
+        //step2:给vo赋值，cid，pid，name,groupChildren，添加vo到list中
         OverviewListGroupDTO mongoGroup = new OverviewListGroupDTO();
         mongoGroup.setcId("g" + group.getcId());
-        mongoGroup.setpId(group.getpId());
+        if("root".equals(group.getName())) {
+            mongoGroup.setpId(null);
+        }else {
+            mongoGroup.setpId("g" + group.getpId());
+        }
         mongoGroup.setName(group.getName());
         mongoGroup.setType(OverviewTypeEnum.GROUP.getName());
+        mongoGroup.setGroupChildren(group.getGroupChildren());
         overviewListGroupDTOS.add(mongoGroup);
         //step3:判断DO的group_children.length != 0
         if(group.getGroupChildren().length != 0) {
             //是：循环 group_children ，取name，递归调用 list = getGroupTree(name,list)
             for(String groupName : group.getGroupChildren()) {
-                overviewListGroupDTOS = getGroupTree(groupName, overviewListGroupDTOS,allHosts);
+                formatGroupTree(groupName, overviewListGroupDTOS,allHosts);
             }
         }
         //step4:取DO的 host_children,循环 add host 到 list中 return list
@@ -354,12 +518,12 @@ public class OverviewServiceImpl implements OverviewService {
             for(BriefHostDTO host : allHosts) {
                 if(hostId.equals(host.getHostId())) {
                     OverviewListGroupDTO mongoHost = new OverviewListGroupDTO();
-                    mongoHost.setpId(group.getcId());
+                    mongoHost.setpId("g" + group.getcId());
                     mongoHost.setcId("h" + hostId);
                     mongoHost.setName(host.getName());
-                    if(StatusEnum.WARNING.code == host.getCustomState() || 1 == host.getCustomAvailableState()) {
+                    if(StatusEnum.HIGH.code == host.getCustomState() || StatusEnum.WARNING.code == host.getCustomAvailableState()) {
                         mongoHost.setState(StatusEnum.HIGH.getName());
-                    }else if(StatusEnum.WARNING.code ==host.getCustomState() && 0 ==host.getCustomAvailableState()){
+                    }else if(StatusEnum.WARNING.code ==host.getCustomState() && StatusEnum.OK.code ==host.getCustomAvailableState()){
                         mongoHost.setState(StatusEnum.WARNING.getName());
                     }else {
                         mongoHost.setState(StatusEnum.OK.getName());
@@ -370,7 +534,7 @@ public class OverviewServiceImpl implements OverviewService {
                     for(BriefPointDTO point : points) {
                         OverviewListGroupDTO mongoPoint = new OverviewListGroupDTO();
                         mongoPoint.setcId("p" + point.getPointId());
-                        mongoPoint.setpId(hostId);
+                        mongoPoint.setpId("h" + hostId);
                         mongoPoint.setName(point.getName());
                         mongoPoint.setType(OverviewTypeEnum.POINT.getName());
                         if(StatusEnum.WARNING.code == point.getCustomState()) {
@@ -386,7 +550,6 @@ public class OverviewServiceImpl implements OverviewService {
 
             }
         }
-        return overviewListGroupDTOS;
     }
 
 

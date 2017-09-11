@@ -13,7 +13,7 @@ public class DashboardHostVO {
     private String state;
     private String type;
     private Integer warningNum;//主机下监控点警告数
-    private Integer hightNum;//严重数
+    private Integer highNum;//严重数
 
 
     public String getIp() {
@@ -79,12 +79,12 @@ public class DashboardHostVO {
         return this;
     }
 
-    public Integer getHightNum() {
-        return hightNum;
+    public Integer getHighNum() {
+        return highNum;
     }
 
-    public DashboardHostVO setHightNum(Integer hightNum) {
-        this.hightNum = hightNum;
+    public DashboardHostVO setHighNum(Integer highNum) {
+        this.highNum = highNum;
         return this;
     }
 
@@ -98,7 +98,7 @@ public class DashboardHostVO {
                 ", state='" + state + '\'' +
                 ", type='" + type + '\'' +
                 ", warningNum=" + warningNum +
-                ", hightNum=" + hightNum +
+                ", hightNum=" + highNum +
                 '}';
     }
 }

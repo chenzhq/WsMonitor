@@ -1,7 +1,7 @@
 package com.ws.stoner.controller;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.view.BriefProblemVO;
+import com.ws.stoner.model.view.DashboardProblemVO;
 import com.ws.stoner.service.TriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,12 +24,7 @@ public class DashboardController {
     @RequestMapping(value = {"/", ""})
     public ModelAndView dashboard(Model model) throws ServiceException {
         ModelAndView mav = new ModelAndView("dashboard");
-        List<BriefProblemVO> problemVOList = null;
-        try {
-            problemVOList = triggerService.listBriefProblems();
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
+        List<DashboardProblemVO> problemVOList = triggerService.listBriefProblems();
         mav.addObject("problemList", problemVOList);
         return mav;
     }

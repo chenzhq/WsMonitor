@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head  th:replace="layout::common_head(~{::title}, ~{::supplement})">
+	<meta charset="UTF-8">
+	<title >设备详情</title>
+	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
+	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
+	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+	<th:block th:fragment="supplement">
+		<link href="../static/css/jquery.gridly.css" rel="stylesheet" th:href="@{css/jquery.gridly.css}"/>
+		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+		<style type="text/css">
+			.no-padding-bottom{  padding-bottom: 0px;  }
+			.chart-style{  height: 160px  }
+			.gridly {
+				position: relative;
+				width: 100%;
+			}
+			.brick.small {
+				height: 200px;
+				width: 360px;
+			}
+			.modal-height{
+				height: 450px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
+			}
+			.fixed-height{
+				height: 180px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
+			}
+			.tab-height{
+				height: 180px;
+			}
+			.nomarginbottom{
+				margin-bottom: -10px;
+			}
+			.ui.celled.grid > .row > .column {  padding: 0.5em  }
+			.textOverflow{
+				overflow: hidden; /*自动隐藏文字*/
+				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+				white-space: nowrap;/*强制不换行*/
+			}
+			.button_points_hidden{
+				overflow: hidden; /*自动隐藏文字*/
+				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+				white-space: nowrap;/*强制不换行*/
+				width: 10em;/*不允许出现半汉字截断*/
+			}
+		</style>
+	</th:block>
+
+</head>
+<body>
+<!--header start-->
+<div id="contextWrap">
+	<!--sidebar-->
+	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
+		 th:replace="layout::left_menu">
+		<a class="item logo" href="index.html">
+			<img src="../static/images/logo.png" alt="stagblogo"/><img src="../static/images/thumblogo.png"
+																	   alt="stagblogo" class="displaynone"/>
+		</a>
+		<div class="ui accordion inverted">
+			<a class="title item" href="#">
+                <i class="ion-speedometer titleIcon icon"></i>仪表盘
+			</a>
+			<a class="title item" href="#">
+				<i class="ion-ios-lightbulb titleIcon icon"></i>监控视图
+			</a>
+			<a class="item" href="#">
+				<i class="ion-ios-world titleIcon  icon"></i>业务概览
+			</a>
+			<div class="title item">
+				<i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="#">设备总览</a>
+				<a class="item" href="#">网络设备</a>
+				<a class="item" href="#">数据库</a>
+				<a class="item" href="#">应用</a>
+			</div>
+			<a class="title item" href="#">
+				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+			</a>
+			<div class="title item">
+				<i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+			</div>
+			<div class="content">
+				<a class="item" href="#">告警日历</a>
+				<a class="item" href="#">告警列表</a>
+			</div>
+			<a class="title item" href="#">
+				<i class="ion-briefcase titleIcon icon"></i>报表统计
+			</a>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>仪表盘1</span>
+			<i class="ion-speedometer icon"></i>
+			<div class="menu">
+				<div class="header">
+					仪表盘1
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>监控视图</span>
+			<i class="ion-ios-lightbulb icon"></i>
+			<div class="menu">
+				<div class="header">
+					监控视图
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>业务概览</span>
+			<i class="ion-ios-world icon"></i>
+			<div class="menu">
+				<div class="header">
+					业务概览
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>设备概览</span>
+			<i class="ion-mouse icon"></i>
+			<div class="menu">
+				<div class="header">
+					设备概览
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="tab.html">服务器</a>
+				<a class="item" href="table.html">网络设备</a>
+				<a class="item" href="error.html">数据库</a>
+				<a class="item" href="login.html">应用</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>视图展示</span>
+			<i class="ion-arrow-graph-up-right icon"></i>
+			<div class="menu">
+				<div class="header">
+					视图展示
+				</div>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>告警展示</span>
+			<i class="ion-paintbrush icon"></i>
+			<div class="menu">
+				<div class="header">
+					告警展示
+				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="error.html">告警日历</a>
+				<a class="item" href="error.html">告警列表</a>
+			</div>
+		</div>
+
+		<div class="ui dropdown item displaynone scrolling">
+			<span>报表统计</span>
+			<a href="error.html">
+				<i class="ion-briefcase icon"></i>
+			</a>
+		</div>
+
+		<div class="ui divider"></div>
+
+	</div>
+
+	<!--sidebar-->
+
+	<div class="pusher">
+		<!--navbar-->
+		<div class="navslide navwrap" th:replace="layout::top_nav">
+			<div class="ui menu icon borderless grid" data-color="inverted white">
+				<a class="item labeled openbtn">
+					<i class="ion-navicon-round big icon"></i>
+				</a>
+				<div class="item ui colhidden">
+					<div class="ui icon input">
+						<input type="text" placeholder="Search...">
+						<i class="search icon"></i>
+					</div>
+				</div>
+				<div class="right menu colhidden">
+					<div class="ui dropdown item labeled icon">
+						<i class="bell icon"></i>   告警
+						<div class="ui red label mini circular">6</div>
+						<div class="menu" >
+							<div class="header">
+								紧急告警
+							</div>
+							<div class="item">
+								告警信息1……
+								<div class="ui teal left pointing label">1</div>
+							</div>
+							<div class="item">
+								告警信息2……
+								<div class="ui label">51</div>
+							</div>
+							<div class="item">
+								告警信息3……
+								<div class="ui label">1</div>
+							</div>
+							<div class="header">
+								严重告警
+							</div>
+							<div class="item">
+								<i class="dropdown icon"></i>
+								<span class="text">更多</span>
+								<div class="menu">
+									<div class="item">告警信息……</div>
+									<div class="item">告警信息……</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="ui dropdown item">
+                        <img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/0.jpg}"
+                             alt="label-image"/>
+						<div class="menu">
+							<a class="item" href="#" th:text="${session.userInfo.name}">whstone</a>
+							<a class="item" href="mail.html" th:href="@{/logout}">注销</a>
+						</div>
+					</div>
+					<a class="item labeled rightsidebar computer only">
+						<i class="ion-wrench large icon"></i>工具
+					</a>
+				</div>
+			</div>
+		</div>
+		<!--navbar-->
+		<!--maincontent-->
+		<div class="mainWrap navslide">
+			<div class="ui equal width left aligned padded grid stackable">
+				<!--Site Content-->
+				<div class="sixteen wide column">
+					<div class="ui segments">
+						<div class="ui segment">
+							<h3 class="ui header">
+								<span style="display: none" id="host_id" th:text="${hostDetailVO.hostId}">10110</span>
+
+								<span th:class="${hostDetailVO.state}=='正常' ? 'ui green top attached button textOverflow' : (${hostDetailVO.state}=='警告' ? 'ui yellow top attached button textOverflow' : 'ui red top attached button textOverflow')  "  th:text="${hostDetailVO.hostName}">设备名称</span>
+							</h3>
+						</div>
+						<div class="ui segment">
+							<div class="sixteen wide column">
+								<div class="ui grid">
+									<div class="five wide column">
+										<div class="ui top attached tabular menu">
+											<a class="active item" data-tab="first"><h3>配置详情</h3></a>
+											<a class="item" data-tab="second"><h3>连接详情</h3></a>
+										</div>
+										<div class="ui bottom attached active tab segment tab-height" data-tab="first" style="margin-bottom: 0px;">
+											<div class="ui internally celled grid">
+												<div class="row">
+													<div class="eight wide center aligned column">
+														<p>设备名: </p>
+													</div>
+													<div class="eight wide column">
+														<span th:text="${hostDetailVO.hostName}">设备名称</span>
+													</div>
+												</div>
+												<div class="row ">
+													<div class="eight wide center aligned column">
+														<span>IP: </span>
+													</div>
+													<div class="eight wide column">
+														<span th:text="${hostDetailVO.ip}">ip</span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="eight wide center aligned column">
+														<span>类型:</span>
+													</div>
+													<div class="eight wide column">
+														<span th:text="${hostDetailVO.type}">type</span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="sixteen wide column">
+														<span>描述:</span><br>
+														<span th:text="${hostDetailVO.description}">包含一个简单的表格列出设备等信息;</br>部分信息可以伸缩隐藏，例如四种配置接口等数据</span>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="ui bottom attached tab segment tab-height" data-tab="second">
+											<div class="ui relaxed divided list">
+												<div class="item">
+													<i class="big green checkmark icon" th:class="(${interfaceVO.agentIp} == null and ${interfaceVO.agentDNS} == null and ${interfaceVO.agentPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
+													<div class="content">
+														<p class="header">Agent方式</p>
+														<div class="description">
+															<div class="ui form">
+																<div class="inline fields" style="margin-bottom: 0px">
+																	<div class="field" th:class="${interfaceVO.agentIp} == null ?  'disabled field': 'field'">
+																		IP:
+																		<span th:text="${interfaceVO.agentIp}">127.0.0.1</span>
+																	</div>
+																	<div class="field" th:class="${interfaceVO.agentDNS} == null ? 'disabled field': 'field'">
+																		DNS:
+																		<span  th:text="${interfaceVO.agentDNS} "></span>
+
+																	</div>
+																	<div class="field" th:class="${interfaceVO.agentPort} == null ? 'disabled field': 'field'">
+																		端口号:
+																		<span th:text="${interfaceVO.agentPort}">10050</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="item">
+													<i class="big green checkmark icon" th:class="(${interfaceVO.SNMPIp} == null and ${interfaceVO.SNMPDNS} == null and ${interfaceVO.SNMPPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
+													<div class="content">
+														<p class="header">SNMP方式</p>
+														<div class="description">
+															<div class="ui form">
+																<div class="inline fields" style="margin-bottom: 0px">
+																	<div class="field" th:class="${interfaceVO.SNMPIp} == null ? 'disabled field': 'field'">
+																		IP:
+																		<span th:text="${interfaceVO.SNMPIp}">127.0.0.1</span>
+																	</div>
+																	<div class="field" th:class="${interfaceVO.SNMPDNS} == null ? 'disabled field': 'field'">
+																		DNS:
+																		<span  th:text="${interfaceVO.SNMPDNS} "></span>
+
+																	</div>
+																	<div class="field" th:class="${interfaceVO.SNMPPort} == null ? 'disabled field': 'field'">
+																		端口号:
+																		<span th:text="${interfaceVO.SNMPPort}">10050</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="item">
+													<i class="big green checkmark icon" th:class="(${interfaceVO.IPMIIp} == null and ${interfaceVO.IPMIDNS} == null and ${interfaceVO.IPMIPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
+													<div class="content">
+														<p class="header">IPMI</p>
+														<div class="ui description">
+															<div class="ui form">
+																<div class="inline fields" style="margin-bottom: 0px">
+																	<div class="field" th:class="${interfaceVO.IPMIIp} == null ? 'disabled field': 'field'">
+																		IP:
+																		<span th:text="${interfaceVO.IPMIIp}">127.0.0.1</span>
+																	</div>
+																	<div class="field" th:class="${interfaceVO.IPMIDNS} == null ? 'disabled field': 'field'">
+																		DNS:
+																		<span  th:text="${interfaceVO.IPMIDNS} "></span>
+
+																	</div>
+																	<div class="field" th:class="${interfaceVO.IPMIPort} == null ? 'disabled field': 'field'">
+																		端口号:
+																		<span th:text="${interfaceVO.IPMIPort}">10050</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="item">
+													<i class="big green checkmark icon" th:class="(${interfaceVO.JMXIp} == null and ${interfaceVO.JMXDNS} == null and ${interfaceVO.JMXPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
+													<div class="content">
+														<p class="header">JMX方式</p>
+														<div class="description">
+															<div class="ui form">
+																<div class="inline fields no_margin_bottom" style="margin-bottom: 0px">
+																	<div class="field" th:class="${interfaceVO.JMXIp} == null ? 'disabled field': 'field'">
+																		IP:
+																		<span th:text="${interfaceVO.JMXIp}">127.0.0.1</span>
+																	</div>
+																	<div class="field" th:class="${interfaceVO.JMXDNS} == null ? 'disabled field': 'field'">
+																		DNS:
+																		<span  th:text="${interfaceVO.JMXDNS} "></span>
+
+																	</div>
+																	<div class="field" th:class="${interfaceVO.JMXPort} == null ? 'disabled field': 'field'">
+																		端口号:
+																		<span th:text="${interfaceVO.JMXPort}">10050</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="eleven wide column">
+										<div class="ui segments">
+											<div class="ui segment">
+												<h3 class="ui header">
+													监控点详情
+												</h3>
+											</div>
+											<div class="ui segment">
+												<div class="ui five column grid fixed-height" id="pointButton">
+													<div class="column" th:each="pointVO : ${pointVOS}">
+														<div class="ui red top attached button" id="" th:class="${pointVO.state}=='正常' ? 'ui green top attached button textOverflow' : (${pointVO.state}=='警告' ? 'ui yellow top attached button textOverflow' : 'ui red top attached button textOverflow')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
+													</div>
+													<div class="column" th:remove="all">
+														<div class="ui red top attached button" id="0114" >CPU</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+                            <div class="ui special popup" style="height: 260px;width: 260px;overflow:auto;z-index:20">
+                                <div class="ui relaxed divided list">
+                                    <div class="item">
+										<div class="header" id="point_name"></div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="header" id="point_state"></div>
+                                    </div>
+                                    <div class="item">
+                                        <p class="header">监控项：
+                                        <div class="description">
+                                            <table id="item_datas" class="ui very basic compact collapsing celled fixed single line table" style="width: 220px">
+                                            </table>
+                                        </div>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+							<div class="row" style="padding-top:20px; min-height : 220px;">
+                                <div class="column">
+                                </div>
+                                <div id="flag_true" >
+									<h4 class="ui horizontal divider header">
+										<div class="ui secondary menu">
+											<a class="header item editItems">
+												<i class="large icons" data-tooltip="编辑监控项" data-inverted="">
+													<i class="area chart icon"></i>
+													<i class="inverted corner write icon"></i>
+												</i>
+												编辑
+											</a>
+                                            <a class="header item addItems">
+                                                <i class="large icons" data-tooltip="添加监控项" data-inverted="">
+                                                    <i class="area chart icon"></i>
+                                                    <i class="inverted corner add icon"></i>
+                                                </i>
+												自定义监控视图
+                                            </a>
+										</div>
+										</h4>
+									<div class="gridly" id="flag_true_content">
+								</div>
+								<div id="flag_false"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+					<!--监控点详情页-->
+
+					<div th:fragment="point_detail_page" class="ui large modal">
+						<span style="display:none" id="pointDetailArea"></span>
+						<span style="display:none" id="pointDetailFirstItem"></span>
+						<i class="close icon"></i>
+						<!--监控点modal start-->
+						<div class="content">
+						  <div class="ui grid points">
+                            <div id="labelPoints"></div>
+                            <div class="sixteen wide column">
+							<div class="ui pointing secondary menu tab_points">
+								<a class="item active" data-tab="Summary">概述</a>
+								<a class="item" data-tab="Report">报告</a>
+								<a class="item" data-tab="Data">数据</a>
+							</div>
+							<div class="ui tab segment active modal-height" data-tab="Summary" style="margin-bottom: 0px;">
+								<div class="row">
+									<table class="ui compact basic fixed single line table center aligned">
+										<thead>
+										<tr><th width="20%">指标</th>
+											<th width="20%">值</th>
+											<th width="10%">危险阈值</th>
+											<th width="10%">故障阈值</th>
+											<th width="20%">最新时间</th>
+										</tr></thead>
+										<tbody id="tableSummary" >
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="ui tab segment modal-height" data-tab="Report" style="margin-bottom: 0px;">
+								<div class="ui grid">
+									<div class="row">
+										<div class="eight wide column">
+											<div class="ui basic top attached left floated  buttons Time Report">
+												<button value="40" class="ui active button">最新40条</button>
+												<button value="1" class="ui button">1天</button>
+												<button value="3" class="ui button">3天</button>
+												<button value="7" class="ui button">7天</button>
+												<button value="30" class="ui button">30天</button>
+											</div>
+										</div>
+										<div class="eight wide column">
+											<div class="ui basic top attached right floated buttons Type Report">
+												<button value="bar" class="ui button">柱状图</button>
+												<button value="line" class="ui button">线状图</button>
+												<button value="area" class="ui button">面积图</button>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="ui three column grid" id="chartReport">
+											<p></p>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="ui tab segment modal-height" data-tab="Data">
+								<div class="ui grid">
+									<div class="eight wide column">
+										<div class="ui basic top attached left floated buttons Time Data">
+											<button value="40" class="ui active button">最新40条</button>
+											<button value="1" class="ui button">1天</button>
+											<button value="3" class="ui button">3天</button>
+											<button value="7" class="ui button">7天</button>
+											<button value="30" class="ui button">30天</button>
+										</div>
+									</div>
+									<div class="right aligned four wide column">
+										监控项：
+										<select class="ui dropdown itemsTab">
+											<!--<option value="">选择监控项</option>-->
+										</select>
+									</div>
+									<div class="right aligned four wide column">
+										状态：
+										<select class="ui dropdown stateTab">
+											<option value="">请选择状态</option>
+											<option>全部</option>
+											<option>正常</option>
+											<option>严重</option>
+											<option>警告</option>
+										</select>
+									</div>
+								</div>
+								<div class="row" id="rowData">
+
+								</div>
+							</div>
+						  </div>
+						  </div>
+                        </div>
+						<!--监控点modal end-->
+
+					</div>
+
+					<!--modal-->
+					<div th:fragment="graph_conf_page" class="ui small modal">
+						<i class="close icon"></i>
+						<div class="header">
+							添加监控项图形
+						</div>
+						<div class="image content" style="padding-left: 150px;">
+							<div class="ui left floated image">
+								请定义图形的标题：
+								<p></p>
+								<div class="required field">
+									<div class="ui small input graph_name">
+										<input type="text" placeholder="请输入标题">
+									</div>
+								</div>
+								<div id="chart_icon">
+								<i class="massive area chart icon"></i>
+								</div>
+							</div>
+							<div class="description" id="test">
+								请选择图形的内容：
+								<p></p>
+								<form class="ui form">
+									<div class="required inline field" >
+										<label>监控点：</label>
+										<select class="ui dropdown points">
+											<option value="">请选择监控点</option>
+										</select>
+									</div>
+									<div class="required inline field">
+										<label>监控项：</label>
+										<select class="ui dropdown items">
+											<option value="">请选择监控项</option>
+										</select>
+									</div>
+									<div class="required inline field">
+										<label>图类别：</label>
+										<select class="ui dropdown type">
+											<option value="">请选择图类别</option>
+										</select>
+									</div>
+								</form>
+							</div>
+						</div>
+						<div class="actions">
+							<div class="ui button deny">取消</div>
+							<div class="ui green button approve">确认</div>
+						</div>
+					</div>
+				<!--Site Content-->
+			</div>
+		</div>
+		<!--maincontent-->
+	</div>
+</div>
+</div>
+<th:block th:replace="layout::bottom_script(~{::specialScript})">
+	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
+	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
+	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
+	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
+	<th:block th:fragment="specialScript">
+		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+		<script src="../static/js/pointModal.js" th:src="@{js/pointModal.js}"></script>
+		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+	</th:block>
+</th:block>
+<script type="text/javascript">
+
+	//页面加载完之后加载js
+	$(function(){
+		//加载监控项的图形
+        loadHostGraph();
+		//点击编辑监控项
+        $('a.editItems').on('click', function(e) {
+            $('.dimmerStr').dimmer('show');
+		})
+        //点击添加监控项
+        $('a.addItems').on('click', function(e) {
+            e.preventDefault();
+            var graph_type = '';
+            var item_id = '';
+            var graph_type = '';
+            var host_id = $('#host_id').text();
+//        console.log("监控点值：" + $(".dropdown.points select").dropdown('get value'));
+            $('.ui.dropdown').dropdown();
+            //初始化
+            $(".dropdown.points select").dropdown('clear');
+            $(".small.input.graph_name input").val("");
+            $(".dropdown.items select").dropdown('clear');
+            $(".dropdown.type select").dropdown('clear');
+            dropdownPoints(host_id);
+            $('.dropdown.points')
+                .dropdown({
+                    onChange: function(value, text, $selectedItem) {
+                        $(".dropdown.items select").dropdown('clear');
+                        dropdownItems(value);
+                    }
+                });
+            $('.dropdown.items')
+                .dropdown({
+                    onChange: function(value, text, $selectedItem) {
+                        item_id = value.split("_")[1];
+                        $(".dropdown.type select").dropdown('clear');
+                        dropdownType(value.split("_")[0]);
+                    }
+                });
+            $('.dropdown.type')
+                .dropdown({
+                    onChange: function(value, text, $selectedItem) {
+                        graph_type = value;
+                        $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                    }
+                });
+            $('.small.modal').modal({
+                closable  : false,
+                onApprove: function () {
+                    //alert("提交后校验item:" + $("#i"+ item_id).length);
+
+                    if(item_id == "") {
+                        alert("必填项--监控项");
+                        return false;
+                    }else if($('.input.graph_name input').val() == "") {
+                        alert("必填项--名称");
+                        return false;
+                    }else if(graph_type == "") {
+                        alert("必填项--图形类型");
+                        return false;
+                    }else if($("#i"+ item_id).length > 0) {
+                        //校验判断 页面上是否已经存在相同监控项的图形了
+                        alert("已存在图形监控项。。。");
+                        return false;
+                    }else {
+                        $('.button.approve').addClass('loading');
+                        var dataInfo = {
+                            graphName: $('.input.graph_name input').val(),
+                            graphType: graph_type,
+                            hostId: $('#host_id').text(),
+                            itemId: item_id
+                        };
+						/*console.log("graph_name:"+$('.input.graph_name input').val()+"graph_type:"+graph_type+"host_id:"+$('#host_id').text()+"item_id:"+item_id);*/
+                        $.ajax({
+                            type: "post",
+                            url: "/hostgraphs/save_graph",
+                            data: JSON.stringify(dataInfo),
+                            dataType: "json",
+                            contentType : 'application/json',
+                            success: function (result) {
+                                if(result.success) {
+                                    $('.button.approve').removeClass('loading')
+                                    hostgraphs(result);
+                                    $('.small.modal').modal('hide');
+                                } else {
+                                    $('.button.approve').removeClass('loading')
+                                    $('.small.modal').modal('hide')
+                                    errorMsg_no_data("监控项 Modal");
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("监控项 Modal");
+                            }
+                        });
+
+                    }
+                }
+            }).modal('show')
+        });
+
+        //加载监控点悬浮框
+        $('#pointButton .button').hover(
+            function() {
+                var point_id=this.id.substring(1);
+                $.ajax({
+                    type: "get",
+                    url: "/brief/point?point_id="+point_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var Color = ['red', 'yellow', 'green'];
+                            var data = result.data;
+                            var item_datas=data.item_datas;
+                            var str_item_datas = '';
+                            var myColor = '';
+                            for(var i=0; i<item_datas.length; i++){
+                                if (item_datas[i].with_triggers == true) {
+                                    if (item_datas[i].state == "严重") {
+                                        myColor = Color[0]
+                                    }
+                                    if (item_datas[i].state == "警告") {
+                                        myColor = Color[1]
+                                    }
+                                    if (item_datas[i].state == "正常") {
+                                        myColor = Color[2]
+                                    }
+                                }else {
+                                    myColor = ''
+                                }
+                                if(strlen(item_datas[i].item_name) > 16)
+                                {
+                                    var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
+                                }else {
+                                    var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
+                                }
+                                if(strlen(item_datas[i].value) > 16)
+                                {
+                                    var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+                                }else {
+                                    var item_value= "<td><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+                                }
+                                str_item_datas +="<tr>"+item_name+item_value+"</tr>";
+                            }
+
+                            if (data.state == "正常"){ myColor = Color[2] }
+                            if (data.state == "严重"){ myColor = Color[0] }
+                            if (data.state == "警告"){ myColor = Color[1] }
+                            $("#point_name").html("名称："+data.point_name);
+                            $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                            $("#item_datas").html(str_item_datas);
+                        } else {
+                            errorMsg_no_data("监控项 Button");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控点 Button");
+                    }
+                })
+            }).popup({
+            popup: '.special.popup',
+            inline: true,
+            hoverable  : true,
+            delay: {
+                show: 800,
+                hide: 300
+            }
+        });
+
+	})
+
+    //修改图形 function
+    function editGraph(id) {
+        //console.log("ITEMID:" + id);
+        var host_id = $("#host_id").text();
+        var item_id = id.substring(1);
+        var item_name = "";
+        var point_id = "";
+        var point_name = "";
+        var graph_name = "";
+        var graph_type = "";
+        var graph_value = "";
+        var value_type = "";
+        $.ajax({
+            type: "get",
+            async:false,
+            url: "/hostgraphs/get_itemgraph?item_id="+item_id,
+            dataType: "json",
+            success: function (result) {
+                if(result.success) {
+                    var graph_data = result.data;
+                    item_name = graph_data.item_name;
+                    point_id = graph_data.point_id;
+                    point_name = graph_data.point_name;
+                    graph_name = graph_data.graph_name;
+                    graph_type = graph_data.graph_type;
+                    graph_value = graph_data.graph_value;
+                    value_type = graph_data.value_type;
+                }
+                else {
+                    errorMsg_no_data("监控项 Chart");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("监控项 Chart");
+            }
+        });
+        console.log(
+            "   item_id:" + item_id +
+            "   item_name:" + item_name +
+            "   point_id:" + point_id +
+            "   point_name:" + point_name +
+            "   graph_name:" + graph_name +
+            "   graph_type:" + graph_type +
+            "   graph_value:" + graph_value +
+            "   value_type:" + value_type
+        );
+        //$('.ui.dropdown').dropdown();
+        dropdownType(value_type);
+        //初始化
+        $(".small.input.graph_name input").val(graph_name);
+        $(".dropdown.points select").dropdown("set value", point_id);
+        $(".dropdown.points select").dropdown("set text", point_name);
+        $(".dropdown.items select").dropdown("set value", value_type + "_" + item_id);
+        $(".dropdown.items select").dropdown("set text", item_name);
+        $(".dropdown.type select").dropdown("set value", graph_type);
+        $(".dropdown.type select").dropdown("set text", graph_value);
+
+        $(".dropdown.points select").dropdown("remove active");
+        $(".dropdown.items select").dropdown("remove active");
+        $(".dropdown.type select")
+            .dropdown({
+                onChange: function(value, text, $selectedItem) {
+                    graph_type = value;
+                    $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                }
+            });
+        $('.small.modal').modal({
+            closable  : false,
+            onApprove: function () {
+                //alert("提交后校验item:" + $("#i"+ item_id).length);
+
+                if(item_id == "") {
+                    alert("必填项--监控项");
+                    return false;
+                }else if($('.input.graph_name input').val() == "") {
+                    alert("必填项--名称");
+                    return false;
+                }else if(graph_type == "") {
+                    alert("必填项--图形类型");
+                    return false;
+                }else {
+                    $('.button.approve').addClass('loading');
+                    var dataInfo = {
+                        graphName: $('.input.graph_name input').val(),
+                        graphType: graph_type,
+                        hostId: host_id,
+                        itemId: item_id
+                    };
+					/*console.log("graph_name:"+$('.input.graph_name input').val()+"graph_type:"+graph_type+"host_id:"+$('#host_id').text()+"item_id:"+item_id);*/
+                    $.ajax({
+                        type: "post",
+                        url: "/hostgraphs/update_graph",
+                        data: JSON.stringify(dataInfo),
+                        dataType: "json",
+                        contentType : 'application/json',
+                        success: function (result) {
+                            if(result.success) {
+                                $('.button.approve').removeClass('loading');
+                                hostgraphs(result);
+                                $('.small.modal').modal('hide');
+                            } else {
+                                $('.button.approve').removeClass('loading');
+                                $('.small.modal').modal('hide');
+                                errorMsg_no_data("监控项 Modal");
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("监控项 Modal");
+                        }
+                    });
+
+                }
+            }
+        }).modal('show');
+    }
+    //删除图形 function
+    function deleteGraph(id) {
+        if (!confirm("确定删除吗？")){
+            return false;
+        }
+        //console.log(id);
+        var host_id = $("#host_id").text();
+        var item_id = id.substring(1);
+        $.ajax({
+            type: "get",
+            url: "/hostgraphs/delete_graph?item_id="+item_id+"&host_id="+host_id,
+            dataType: "json",
+            success: function (result) {
+                if(result.success) {
+                    alert("删除成功~~~");
+                    hostgraphs(result);
+                }
+                else {
+                    alert("删除失败！！！");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("监控项 Chart");
+            }
+        });
+    }
+
+	//页面加载完后加载监控项的图形
+	function loadHostGraph() {
+        var host_id = $("#host_id").text();
+		/* console.log("加载监控项图形的参数:host_id = " + host_id);*/
+        $.ajax({
+            type: "get",
+            url: "/hostgraphs?host_id="+host_id,
+            dataType: "json",
+            success: function (result) {
+                if(result.success) {
+                    hostgraphs(result);
+                }
+                else {
+                    errorMsg_no_data("监控项 Chart");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("监控项 Chart");
+            }
+        })
+	}
+
+	//绘制设备详情中 监控项图形
+    function hostgraphs(result) {
+        var data = result.data;
+        var str_true = "";
+        var str_false = "";
+        $("#flag_false").empty();
+        $("#flag_true_content").empty();
+        for (var i=0; i<data.length; i++){
+            var title = "";
+            if(data[i].units == "") {
+                title = data[i].graph_name;
+            }else {
+                title =data[i].graph_name + "(" + data[i].units +")";
+            }
+            var id = "i" + data[i].item_id;
+            if (data[i].flag==true)
+            {
+                var strAction = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='g"
+					+ data[i].item_id + "' onclick='editGraph(this.id)'>编辑</div><div class='ui button' id='g"
+					+ data[i].item_id + "' onclick='deleteGraph(this.id)' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
+                str_true = "<div class=' brick small'><div class='dimmerStr'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
+                $("#flag_true_content").append(str_true);
+            }
+            if(data[i].flag==false){
+                if($("#flag_false").children().length == 0)
+                {
+                    $("#flag_false").html("<h4 class='ui horizontal divider header'><i class='tag icon'></i>问题图形视图</h4> <div class='gridly' id='flag_false_content'>");
+                }
+                str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";
+                $("#flag_false_content").append(str_false);
+            }
+            var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+            if (data[i].state == "正常"){ var myColor = Color[0] }
+            if (data[i].state == "严重"){ var myColor = Color[1] }
+            if (data[i].state == "警告"){ var myColor = Color[2] }
+
+            var myChart = echarts.init(document.getElementById(id));
+            var option ;
+            var colorGreen = [0.6, '#5FB878'];
+            var colorYellow = [0.8, '#F7B824'];
+            var colorRed = [1, '#FF5722'];
+            if(data[i].units == "%"){
+                var ymax = 100;
+			}else {
+                var ymax = null;
+			}
+			//图形值
+            /*console.log("图形类型： " + data[i].graph_type);*/
+            switch (data[i].graph_type) {
+                case "gauge":
+					option = {
+						 title: {
+						 text: title},
+						 tooltip : {
+							 formatter: "{a} <br/>{b} : {c}%"
+							 },
+						 series: [
+							 {
+							 name: data[i].item_name,
+							 type: 'gauge',
+							 min:0,
+							 max:100,
+							 splitNumber: 5,
+							 axisLine: {            // 坐标轴线
+							 lineStyle: {       // 属性lineStyle控制线条样式
+								 color: [colorGreen,colorYellow,colorRed],
+								 width: 13
+								 }
+							 },
+							 axisTick: {            // 坐标轴小标记
+								 length: 18,        // 属性length控制线长
+								 lineStyle: {       // 属性lineStyle控制线条样式
+									 color: 'auto'
+									 }
+							 },
+							 splitLine: {           // 分隔线
+								 length: 22,         // 属性length控制线长
+								 lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+									 color: 'auto'
+									 }
+							 },
+							 pointer: {
+								 width:5
+							 },
+							 detail: {
+							     formatter:'{value}%',
+								 offsetCenter:[0,'60%'],
+								 textStyle: {
+									 fontWeight: 'bolder', fontSize: 16,color: '#333',
+								 }},
+								 data: [{value: data[i].data[0], name: ''}]
+							 }
+						 ]
+					 };
+                    break;
+                case "area":
+                    /*console.log("进入到了area域：");*/
+                    option = {
+                        title: {
+                            text: title
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            position: function (pt) {
+                                return [pt[0], '10%'];
+                            }
+                        },
+                        legend: {
+                            data:[]
+                        },
+                        grid: {
+                            left: '2%',
+                            right: '10%',
+                            bottom: '0%',
+                            top:'20%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            data: data[i].data_time
+                        },
+                        yAxis: {
+                            max: ymax,
+                        },
+                        series: [{
+                            name: data[i].item_name,
+                            type: 'line',
+                            data: data[i].data,
+                            areaStyle: {
+                                normal: { }
+                            },
+                            color: [myColor]
+                        }]
+                    };
+                    break;
+                default:
+                    option = {
+                        title: {
+                            text: title
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            position: function (pt) {
+                                return [pt[0], '10%'];
+                            }
+                        },
+                        legend: {
+                            data:[]
+                        },
+                        grid: {
+                            left: '2%',
+                            right: '10%',
+                            bottom: '0%',
+                            top:'20%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            data: data[i].data_time
+                        },
+                        yAxis: {
+                            max: ymax,
+                            splitLine:{show: false},
+                        },
+                        series: [{
+                            name: data[i].item_name,
+                            type: data[i].graph_type,
+                            data: data[i].data,
+                            color: [myColor],
+                        }]
+                    };
+            }
+            myChart.setOption(option);
+        }
+        $('.gridly').gridly({
+            base: 55, // px
+            gutter: 10, // px
+            columns: 18
+        });
+    }
+
+</script>
+</body>
+</html>

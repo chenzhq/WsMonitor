@@ -1,27 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <html>
-<head>
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
 	<title>仪表盘</title>
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="../static/js/jquery-3.2.1.min.js"></script>
 	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{css/semantic.css}"/>
 	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}"/>
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
-	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<!-- 引入 echarts.js -->
-	<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
-	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-    <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
-    <style type="text/css">
-		.pie{height: 200px}
-		.pie_copy{height: 200px;margin-top: 100px}
-		.ui.tab.segment.active{margin: 12px 0 0 0;}
-		.tab_height{height: 540px;}
-    </style>
+	<th:block th:fragment="supplement">
+        <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+		<style type="text/css">
+			.pie{height: 200px}
+			.pie_copy{height: 200px;margin-top: 100px}
+			.tab_height{height: 540px;}
+			.ui.segment.row3height{
+				height: 485px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
+			}
+		</style>
+	</th:block>
 </head>
 
 <body>
@@ -214,143 +220,122 @@
 		<div class="mainWrap navslide">
 			<div class="ui equal width left aligned padded grid stackable" >
 				<!--Site Content-->
-                <div class="sixteen wide tablet sixteen wide computer column">
-                    <div class="ui segments">
-                        <div class="ui segment" >
-                            <div class="ui pointing secondary menu tab_content">
-                                <a class="item active" data-tab="all_datatab">全部</a>
-                                <a class="item" data-tab="platform_datatab">业务系统</a>
-                                <a class="item" data-tab="host_datatab">设备</a>
-                                <a class="item" data-tab="point_datatab">监控点</a>
+				<div class="sixteen wide column">
+                    <div class="ui container">
+                        <div class="header item">
+                            <h2><i class="large dashboard icon"></i>仪表盘</h2>
+                        </div>
+                        <div class="ui pointing secondary menu tab_content">
+                            <a class="item active" data-tab="all_datatab">全部</a>
+                            <a class="item" data-tab="platform_datatab">业务系统</a>
+                            <a class="item" data-tab="host_datatab">设备</a>
+                            <a class="item" data-tab="point_datatab">监控点</a>
+                        </div>
+                        <div class="ui tab active" data-tab="all_datatab">
+                            <div class="ui three column grid segment">
+                                <div class="column">
+                                    <div id="platform_pie" class="pie"></div>
+                                </div>
+                                <div class="column">
+                                    <div id="host_pie" class="pie"></div>
+                                </div>
+                                <div class="column">
+                                    <div id="point_pie" class="pie"></div>
+                                </div>
                             </div>
-                            <div class="ui tab segment active" data-tab="all_datatab">
+
+
+                            <div class="ui grid segment">
                                 <div class="row">
-                                    <div class="ui three column grid">
-                                        <div class="column">
-                                            <div id="platform_pie" class="pie"></div>
-                                        </div>
-                                        <div class="column">
-                                            <div id="host_pie" class="pie"></div>
-                                        </div>
-                                        <div class="column">
-                                            <div id="point_pie" class="pie"></div>
-                                        </div>
+                                    <!--<a class="header item">-->
+                                    <!--<h3><i class="bar large chart icon"></i>最新问题</h3>-->
+                                    <!--</a>-->
+                                    <!--<a class="center item">-->
+                                    <div class="twelve wide column">
+                                        <h3>
+                                            <i class="tag icon"></i>
+                                            当前问题
+                                        </h3>
+                                    </div>
+                                    <div class="ui right floated buttons four wide column">
+                                        <button id="time_today" class="ui button">今天</button>
+                                        <button id="time_days" class="ui button">三天</button>
+                                        <button id="time_week" class="ui button">一周</button>
+                                        <button id="time_month" class="ui button">一月</button>
+                                    </div>
+                                    <!--</a>-->
+                                </div>
+                                <table id="problem_table"
+                                       class="ui very basic collapsing celled table sixteen wide column">
+                                    <thead>
+                                    <tr>
+                                        <th class="one wide center aligned">主机</th>
+                                        <th class="six wide center aligned">问题</th>
+                                        <th class="four wide center aligned">发生时间</th>
+                                        <th class="three wide center aligned">历时</th>
+                                        <th class="two wide center aligned">确认</th>
+                                    </tr></thead>
+                                    <tbody>
+                                    <tr th:each="problem : ${problemList}">
+                                        <td th:text="${problem.hosts[0].name}">机1</td>
+                                        <td th:text="${problem.description}">主机1内存使用率超过90%</td>
+                                        <td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:ss')}">2017-6-21 15:33:20</td>
+                                        <td th:text="${problem.durationString}">2天4小时50分</td>
+                                        <td>不</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab_height ui tab" data-tab="platform_datatab">
+                            <div class="ui grid">
+                                <div class="five wide column">
+                                    <div class="ui segment row3height">
+                                        <div id="platform_pie_copy" class="pie_copy"></div>
                                     </div>
                                 </div>
-                                <div class="ui divider"></div>
-                                <div class="row">
-									<div class="ui secondary menu">
-										<a class="header item">
-											<h3><i class="bar large chart icon"></i>最新问题：</h3>
-										</a>
-										<a class="right item">
-											<div class="ui top attached buttons">
-												<button id="time_today" class="ui button">今天</button>
-												<button id="time_days" class="ui button">三天</button>
-												<button id="time_week" class="ui button">一周</button>
-												<button id="time_month" class="ui button">一月</button>
-											</div>
-										</a>
-									</div>
-									<table id="problem_table" class="ui compact celled table center aligned">
-										<thead>
-										<tr>
-											<th class="two wide">主机</th>
-											<th class="six wide">问题</th>
-											<th class="four wide">上次修改于</th>
-											<th class="two wide">历时</th>
-											<th class="two wide">确认</th>
-										</tr></thead>
-										<tbody>
-										<tr th:each="problem : ${problemList}">
-											<td th:text="${problem.hosts[0].name}">机1</td>
-											<td th:text="${problem.description}">主机1内存使用率超过90%</td>
-											<td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:ss')}">2017-6-21 15:33:20</td>
-											<td th:text="${problem.durationString}">2天4小时50分</td>
-											<td>不</td>
-										</tr>
-										<tr th:remove="all">
-											<td>主机1</td>
-											<td>主机1内存使用率超过90%</td>
-											<td>2017-6-20 15:33:20</td>
-											<td><p>2天4小时50分</p></td>
-											<td>不</td>
-										</tr>
-										<tr th:remove="all">
-											<td>主机1</td>
-											<td>主机1内存使用率超过90%</td>
-											<td>2017-5-19 15:33:20</td>
-											<td><p>2天4小时50分</p></td>
-											<td>不</td>
-										</tr>
-										<tr th:remove="all">
-											<td>主机1</td>
-											<td>主机1内存使用率超过90%</td>
-											<td>2017-6-17 15:33:20</td>
-											<td><p>2天4小时50分</p></td>
-											<td><a class="item">不</a></td>
-										</tr>
-										<tr th:remove="all">
-											<td>主机1</td>
-											<td>主机1内存使用率超过90%</td>
-											<td>2017-6-23 05:33:20</td>
-											<td><p>2天4小时50分</p></td>
-											<td>不</td>
-										</tr>
-										</tbody>
-									</table>
-                                </div>
-                            </div>
-                            <div class="tab_height ui tab segment" data-tab="platform_datatab">
-                                <div class="row">
-                                    <div class="sixteen wide column">
-                                        <div class="ui grid">
-                                            <div class="five wide column">
-                                                <div id="platform_pie_copy" class="pie_copy"></div>
-                                            </div>
-                                            <div class="eleven wide column">
-                                                <table id="platform_table" class="ui compact celled table center aligned" width="100%">
-                                                </table>
-                                            </div>
-                                        </div>
+                                <div class="eleven wide column" style="padding-left: 0px">
+                                    <div class="ui segment row3height">
+                                        <table id="platform_table" class="ui compact celled table center aligned" width="100%">
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-							<div class="tab_height ui tab segment" data-tab="host_datatab">
-								<div class="row">
-									<div class="sixteen wide column">
-										<div class="ui grid">
-											<div class="five wide column">
-												<div id="host_pie_copy" class="pie_copy"></div>
-											</div>
-											<div class="eleven wide column">
-												<table id="host_table" class="ui compact celled table center aligned" width="100%">
-												</table>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-                            <div class="tab_height ui tab segment" data-tab="point_datatab">
-                                <div class="row">
-                                    <div class="sixteen wide column">
-                                        <div class="ui grid">
-                                            <div class="five wide column">
-                                                <div id="point_pie_copy" class="pie_copy"></div>
-                                            </div>
-                                            <div class="eleven wide column">
-                                                <table id="point_table" class="ui compact celled table center aligned" width="100%">
-                                                </table>
-                                            </div>
-                                        </div>
+                        </div>
+                        <div class="tab_height ui tab" data-tab="host_datatab">
+                            <div class="ui grid">
+                                <div class="five wide column">
+                                    <div class="ui segment row3height">
+                                        <div id="host_pie_copy" class="pie_copy"></div>
+                                    </div>
+                                </div>
+                                <div class="eleven wide column">
+                                    <div class="ui segment row3height">
+                                        <table id="host_table" class="ui compact celled table center aligned" width="100%">
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab_height ui tab segment" data-tab="point_datatab">
+                            <div class="ui grid">
+                                <div class="five wide column">
+                                    <div class="ui segment row3height">
+                                        <div id="point_pie_copy" class="pie_copy"></div>
+                                    </div>
+                                </div>
+                                <div class="eleven wide column">
+                                    <div class="ui segment row3height">
+                                        <table id="point_table" class="ui compact celled table center aligned" width="100%">
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 				<!--Site Content-->
 			</div>
+            </div>
 		</div>
 		<!--maincontent-->
 	</div>
@@ -365,13 +350,18 @@
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
     //给搜索按钮绑定点击事件
     $(document).ready(function () {
         var table = $('#problem_table').DataTable({
-            "iDisplayLength" : 10,
+            iDisplayLength: 10,
+            order: [2, 'desc'],// 以升序排列此列
+            columnDefs: [
+                {target: '_all', orderable: false}
+            ]
 		});
         $('#time_today').click(function(){
             drawsearch(1);
@@ -405,16 +395,15 @@
                     var min = new Date(today-days*24*3600*1000);
 				}
                 var date = new Date(data[2]);
-                    if (date >= min && date <= max) {
-                        return true;
-                    }
-                return false;
+                return date >= min && date <= max;
+
             }
         );
     }
 </script>
 <script type="text/javascript">
 	//饼状图
+    var Color = ['#5FB878', '#F7B824', '#f11111','#d2d2d2', '#2F4056'];//绿色#5FB878黄色#F7B824红色#FF5722老红#DB2828
     var platform_index;//记录切换页面时饼状图点击状态
     var host_index;
     var point_index;
@@ -458,7 +447,7 @@
                     },
                 },
                 data: [ ],
-                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
+                color: Color
             }
         ]
     };
@@ -470,26 +459,24 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            platform_myChart.hideLoading();
-            var data = result.data;
-            var dataList = data.stateNum;
-            var total = data.totalNum + "个";
-            if (dataList) {
-                platform_option.title.text = total;
-                platform_option.series[0].data = dataList;
-                // 重写指定图表的配置项和数据
-                platform_myChart.setOption(platform_option);
+            if(result.success) {
+                platform_myChart.hideLoading();
+                var data = result.data;
+                var dataList = data.stateNum;
+                var total = data.totalNum + "个";
+                if (dataList) {
+                    platform_option.title.text = total;
+                    platform_option.series[0].data = dataList;
+                    // 重写指定图表的配置项和数据
+                    platform_myChart.setOption(platform_option);
+                }
+            }
+            else {
+                errorMsg_no_data("业务系统 Pie");
             }
         },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "业务系统 Pie",
-            });
+        error: function () {
+            errorMsg_no_connect("业务系统 Pie");
         }
     })
     platform_myChart.on('click', function (param) {
@@ -536,7 +523,7 @@
                     },
                 },
                 data: [],
-                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
+                color: Color
             }
         ]
     };
@@ -548,25 +535,23 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            host_myChart.hideLoading();
-            var data = result.data;
-            var dataList = data.stateNum;
-            var total = data.totalNum + "台";
-            if (dataList) {
-                host_option.title.text = total;
-                host_option.series[0].data = dataList;
-                host_myChart.setOption(host_option);
+            if(result.success) {
+                host_myChart.hideLoading();
+                var data = result.data;
+                var dataList = data.stateNum;
+                var total = data.totalNum + "台";
+                if (dataList) {
+                    host_option.title.text = total;
+                    host_option.series[0].data = dataList;
+                    host_myChart.setOption(host_option);
+                }
+            }
+            else {
+                errorMsg_no_data("设备 Pie");
             }
         },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "设备 Pie",
-            });
+        error: function () {
+            errorMsg_no_connect("设备 Pie");
         }
     })
     host_myChart.on('click', function (param) {
@@ -613,7 +598,7 @@
                     },
                 },
                 data: [],
-                color: ['#5FB878', '#FF5722', '#F7B824', '#d2d2d2', '#2F4056']
+                color: Color
             }
         ]
     }
@@ -625,25 +610,23 @@
         data: {},
         dataType: "json",
         success: function (result) {
-            point_myChart.hideLoading();
-            var data = result.data;
-            var dataList = data.stateNum;
-            var total = data.totalNum + "个";
-            if (dataList) {
-                point_option.title.text = total;
-                point_option.series[0].data = dataList;
-                point_myChart.setOption(point_option);
+            if(result.success) {
+                point_myChart.hideLoading();
+                var data = result.data;
+                var dataList = data.stateNum;
+                var total = data.totalNum + "个";
+                if (dataList) {
+                    point_option.title.text = total;
+                    point_option.series[0].data = dataList;
+                    point_myChart.setOption(point_option);
+                }
+            }
+            else {
+                errorMsg_no_data("监控点 Pie");
             }
         },
-        error: function (errorMsg) {
-            Lobibox.notify("error", {
-                size: "normal",
-                rounded: false,
-                delayIndicator: true,
-                msg: "连接服务器失败！",
-                icon: "warning icon",
-                title: "监控点 Pie",
-            });
+        error: function () {
+            errorMsg_no_connect("监控点 Pie");
         }
     })
     point_myChart.on('click', function (param) {
@@ -658,6 +641,7 @@
             } else {
                 $(row).addClass('negative');
             }
+            $('td:eq(2)', row).addClass('right aligned');
         },
         ajax: {
             url: '/platform/list',
@@ -672,14 +656,19 @@
             {
                 "data": "availability",
                 "width": "100px",
-                "title": "可能性"
+                "title": "健康度"
             },
             {
                 "data": null,
                 "width": "50px",
                 "title": "严重／警告/设备总数",
                 render: function(data, type, row, meta) {
-                    return  row.hightNum + '/' +row.warningNum + '/'+ row.allNum ;
+                    return  '<a class="ui red header">'
+                        +row.highNum + '</a>' +
+                        '<a class="ui yellow header">  /'
+                        +row.warningNum + '</a>' +
+                        '<a class="ui header ">  /'
+                        +row.allNum + '</a>'  ;
                 }
             },
             {
@@ -698,6 +687,7 @@
             } else {
                 $(row).addClass('negative');
             }
+            $('td:eq(3)', row).addClass('right aligned');
         },
         ajax: {
             url: '/host/list',
@@ -726,7 +716,12 @@
                 "width": "200px",
                 "title": "严重／警告/监控点总数",
                 render: function(data, type, row, meta) {
-                    return  row.hightNum + '/' +row.warningNum + '/'+ row.allNum ;
+                    return  '<a class="ui red header">'
+                        +row.highNum + '</a>' +
+                        '<a class="ui yellow header">  /'
+                        +row.warningNum + '</a>' +
+                        '<a class="ui header ">  /'
+                        +row.allNum + '</a>'  ;
                 }
             },
             {
@@ -781,14 +776,9 @@
                     var num;//点击次数
                     platform_copy_myChart.on('click', function (param) {
                         var index = param.dataIndex;
-                        if(index==0)
-                        {
-                            platform_table.search( "正常" ).draw();
-                        }
-                        else
-                        {
-                            platform_table.search( "问题" ).draw();
-                        }
+                        if(index==0) {platform_table.search( "正常" ).draw();}
+                        if(index==1) {platform_table.search( "警告" ).draw();}
+                        if(index==2) {platform_table.search( "严重" ).draw();}
                         if (last_param==index){
                             num++;
                             if(num%2 == 0){
@@ -808,14 +798,9 @@
                     var num;//点击次数
                     host_copy_myChart.on('click', function (param) {
                         var index = param.dataIndex;
-                        if(index==0)
-                        {
-                            host_table.search( "正常" ).draw();
-                        }
-                        else
-                        {
-                            host_table.search( "问题" ).draw();
-                        }
+                        if(index==0) {host_table.search( "正常" ).draw();}
+                        if(index==1) {host_table.search( "警告" ).draw();}
+                        if(index==2) {host_table.search( "严重" ).draw();}
                         if (last_param==index){
                             num++;
                             if(num%2 == 0){
@@ -835,14 +820,9 @@
                     var num;//点击次数
                     point_copy_myChart.on('click', function (param) {
                         var index = param.dataIndex;
-                        if(index==0)
-                        {
-                            point_table.search( "正常" ).draw();
-                        }
-                        else
-                        {
-                            point_table.search( "问题" ).draw();
-                        }
+                        if(index==0) {point_table.search( "正常" ).draw();}
+                        if(index==1) {point_table.search( "警告" ).draw();}
+                        if(index==2) {point_table.search( "严重" ).draw();}
                         if (last_param==index){
                             num++;
                             if(num%2 == 0){
@@ -857,28 +837,19 @@
             },
             'onVisible': function(path){
                 if(path === 'platform_datatab') {
-                    if (platform_index == 0) {
-                        platform_table.search("正常").draw();
-                    }
-                    if (platform_index == 1) {
-                        platform_table.search("问题").draw();
-                    }
+                    if(platform_index==0) {platform_table.search( "正常" ).draw();}
+                    if(platform_index==1) {platform_table.search( "警告" ).draw();}
+                    if(platform_index==2) {platform_table.search( "严重" ).draw();}
                 }
                 if(path === 'host_datatab') {
-                    if (host_index == 0) {
-                        host_table.search("正常").draw();
-                    }
-                    if (host_index == 1) {
-                        host_table.search("问题").draw();
-                    }
+                    if(host_index==0) {host_table.search( "正常" ).draw();}
+                    if(host_index==1) {host_table.search( "警告" ).draw();}
+                    if(host_index==2) {host_table.search( "严重" ).draw();}
                 }
                 if(path === 'point_datatab') {
-                    if (point_index == 0) {
-                        point_table.search("正常").draw();
-                    }
-                    if (point_index == 1) {
-                        point_table.search("问题").draw();
-                    }
+                    if(point_index==0) {point_table.search( "正常" ).draw();}
+                    if(point_index==1) {point_table.search( "警告" ).draw();}
+                    if(point_index==2) {point_table.search( "严重" ).draw();}
                 }
             }
         });

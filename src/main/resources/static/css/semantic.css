@@ -24335,7 +24335,10 @@ Floated Menu / Item
   background-color: #DB2828 !important;
   color: #FFFFFF !important;
 }
-
+ .red.tr {
+   background-color: #DB2828 !important;
+   color: #FFFFFF !important;
+ }
 /* Orange */
 
 .ui.orange.table {
@@ -24358,6 +24361,10 @@ Floated Menu / Item
   color: #FFFFFF !important;
 }
 
+ .yellow.tr {
+   background-color: #FBBD08 !important;
+   color: #FFFFFF !important;
+ }
 /* Olive */
 
 .ui.olive.table {
@@ -24380,6 +24387,10 @@ Floated Menu / Item
   color: #FFFFFF !important;
 }
 
+ .green.tr {
+   background-color: #21BA45 !important;
+   color: #FFFFFF !important;
+ }
 /* Teal */
 
 .ui.teal.table {

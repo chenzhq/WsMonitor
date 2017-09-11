@@ -2,6 +2,7 @@ package com.ws.bix4j.access.user;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.bix4j.access.GetRequestCommonParam;
+import com.ws.bix4j.access.SelectParamSerializer;
 import com.ws.bix4j.access.ZRequest;
 
 import java.util.List;
@@ -37,111 +38,84 @@ public class UserGetRequest extends ZRequest {
         private List<String> userIds;
         @JSONField(name = "usrgrpids")
         private List<String> userGrpIds;
-
         private String getAccess;
-        @JSONField(name = "selectMedias")
-        private String selectMedias;
-        @JSONField(name = "selectMedias")
-        private String[] listMedias;
 
-        @JSONField(name = "selectMediatypes")
-        private String stringMediaTypes;
-        @JSONField(name = "selectMediatypes")
-        private String[] listMediaTypes;
-
-        @JSONField(name = "selectUsrgrps")
-        private String selectUsrGrps;
-        @JSONField(name = "selectUsrgrps")
-        private String[] listUsrgrps;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectMedias;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectMediatypes;
+        @JSONField(serializeUsing = SelectParamSerializer.class)
+        private String[] selectUsrgrps;
 
         public List<String> getMediaIds() {
             return mediaIds;
         }
 
-        public void setMediaIds(List<String> mediaIds) {
+        public Params setMediaIds(List<String> mediaIds) {
             this.mediaIds = mediaIds;
+            return this;
         }
 
         public List<String> getMediaTypeIds() {
             return mediaTypeIds;
         }
 
-        public void setMediaTypeIds(List<String> mediaTypeIds) {
+        public Params setMediaTypeIds(List<String> mediaTypeIds) {
             this.mediaTypeIds = mediaTypeIds;
+            return this;
         }
 
         public List<String> getUserIds() {
             return userIds;
         }
 
-        public void setUserIds(List<String> userIds) {
+        public Params setUserIds(List<String> userIds) {
             this.userIds = userIds;
+            return this;
         }
 
         public List<String> getUserGrpIds() {
             return userGrpIds;
         }
 
-        public void setUserGrpIds(List<String> userGrpIds) {
+        public Params setUserGrpIds(List<String> userGrpIds) {
             this.userGrpIds = userGrpIds;
+            return this;
         }
 
         public String getGetAccess() {
             return getAccess;
         }
 
-        public void setGetAccess(String getAccess) {
+        public Params setGetAccess(String getAccess) {
             this.getAccess = getAccess;
+            return this;
         }
 
-        public String getSelectMedias() {
+        public String[] getSelectMedias() {
             return selectMedias;
         }
 
-        public void setSelectMedias(String selectMedias) {
+        public Params setSelectMedias(String[] selectMedias) {
             this.selectMedias = selectMedias;
-        }
-
-        public String getStringMediaTypes() {
-            return stringMediaTypes;
-        }
-
-        public void setStringMediaTypes(String stringMediaTypes) {
-            this.stringMediaTypes = stringMediaTypes;
-        }
-
-        public String getSelectUsrGrps() {
-            return selectUsrGrps;
-        }
-
-        public void setSelectUsrGrps(String selectUsrGrps) {
-            this.selectUsrGrps = selectUsrGrps;
-        }
-
-        public String[] getListMedias() {
-            return listMedias;
-        }
-
-        public Params setListMedias(String[] listMedias) {
-            this.listMedias = listMedias;
             return this;
         }
 
-        public String[] getListMediaTypes() {
-            return listMediaTypes;
+        public String[] getSelectMediatypes() {
+            return selectMediatypes;
         }
 
-        public Params setListMediaTypes(String[] listMediaTypes) {
-            this.listMediaTypes = listMediaTypes;
+        public Params setSelectMediatypes(String[] selectMediatypes) {
+            this.selectMediatypes = selectMediatypes;
             return this;
         }
 
-        public String[] getListUsrgrps() {
-            return listUsrgrps;
+        public String[] getSelectUsrgrps() {
+            return selectUsrgrps;
         }
 
-        public Params setListUsrgrps(String[] listUsrgrps) {
-            this.listUsrgrps = listUsrgrps;
+        public Params setSelectUsrgrps(String[] selectUsrgrps) {
+            this.selectUsrgrps = selectUsrgrps;
             return this;
         }
     }

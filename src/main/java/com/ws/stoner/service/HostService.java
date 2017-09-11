@@ -1,8 +1,10 @@
 package com.ws.stoner.service;
 
-import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.view.HostDetailInterfaceVO;
+import com.ws.stoner.model.view.HostDetailPointVO;
+import com.ws.stoner.model.view.HostDetailVO;
 
 import java.util.List;
 
@@ -12,25 +14,12 @@ import java.util.List;
 public interface HostService {
 
 /*
- *count host
+ *zabbix api方法
  */
 
-    /**
-     * 根据 request 获取主机总数量
-     * @return
-     * @throws ServiceException
+    /*
+     count 数据获取的方法
      */
-    int countHost(HostGetRequest request) throws ServiceException;
-
-
-
-    /**
-     * List host list.
-     *
-     * @return the list
-     * @throws ServiceException the auth expire exception
-     */
-    List<BriefHostDTO> listHost(HostGetRequest request) throws ServiceException;
 
     /**
      * 获取主机总数量，排除停用主机，filter： status:0
@@ -68,9 +57,9 @@ public interface HostService {
      */
     int countOkHost() throws ServiceException;
 
-/*
- *list host
- */
+    /*
+     *list 数据获取的方法
+     */
 
     /**
      *  获取简约所有主机list 剔除停用的
@@ -101,6 +90,46 @@ public interface HostService {
     List<BriefHostDTO> listOkHost() throws ServiceException;
 
 
+    /**
+     * 根据指定的 hostids 获取 List<BriefHostDTO> list
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefHostDTO> getHostsByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
+     * 根据指定的 platformIds 获取 List<BriefHostDTO> list  用于 分类菜单 显示设备
+     * @param platformIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefHostDTO> getHostByPlatformIds(List<String> platformIds) throws ServiceException;
+
+/*
+设备详情页面下的业务方法
+ */
+
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 基本信息的 HostDetailVO
+     * @return
+     * @throws ServiceException
+     */
+    HostDetailVO getHostDetailByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
+
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 设备接口信息的 InterfaceVO
+     * @return
+     * @throws ServiceException
+     */
+    HostDetailInterfaceVO getHostInterfaceByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
+
+    /**
+     * 根据 BriefHostDTO hostDTO 组装 设备下所有监控点状态信息 的 pointVO
+     * @return
+     * @throws ServiceException
+     */
+    List<HostDetailPointVO> getPointsByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
 
 
 

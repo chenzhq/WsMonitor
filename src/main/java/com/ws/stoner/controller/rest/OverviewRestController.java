@@ -1,7 +1,10 @@
 package com.ws.stoner.controller.rest;
 
+import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.*;
+import com.ws.stoner.model.dto.OverviewEditGroupDTO;
+import com.ws.stoner.model.dto.OverviewListGroupDTO;
+import com.ws.stoner.model.view.OverViewHostVO;
 import com.ws.stoner.service.OverviewService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +34,8 @@ public class OverviewRestController {
      */
     @RequestMapping(value = "host/overview", method = RequestMethod.GET)
     public String listOverviewGroup() throws ServiceException {
-        List<OverviewListGroupDTO> overviewListGroupDTO;
-        overviewListGroupDTO = overviewService.listOverviewGroup();
-        return RestResultGenerator.genResult(overviewListGroupDTO, REST_UPDATE_SUCCESS).toString();
+        List<OverviewListGroupDTO> olg = overviewService.listOverviewGroup();
+        return RestResultGenerator.genResult(olg, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
@@ -42,11 +44,27 @@ public class OverviewRestController {
      * @param supGroupId
      * @return
      */
-    @RequestMapping(value = "ov/group", method = RequestMethod.POST)
+    @RequestMapping(value = "ov/group/create", method = RequestMethod.POST)
     public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("sup_group") String supGroupId) throws ServiceException {
-        OverviewCreateGroupDTO ocg = null;
-        ocg =  overviewService.createOverviewGroup(newGroupName,supGroupId);
-        return RestResultGenerator.genResult(ocg, REST_CREATE_SUCCESS).toString();
+        boolean success =  overviewService.createOverviewGroup(newGroupName,supGroupId);
+        if(success) {
+            List<OverviewListGroupDTO> olg = overviewService.listOverviewGroup();
+            return RestResultGenerator.genResult(olg, REST_CREATE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+    }
+
+    /**
+     * 编辑组
+     * @param
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "ov/group/edit", method = RequestMethod.POST)
+    public String createOverviewGroup(@RequestParam("new_group_name") String newGroupName,@RequestParam("old_group_name") String oldGroupName,@RequestParam("sup_group_id") String supGroupVOId) throws ServiceException {
+        OverviewEditGroupDTO oeg =  overviewService.editOverviewGroup(oldGroupName,newGroupName,supGroupVOId);
+        return RestResultGenerator.genResult(oeg, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
@@ -54,11 +72,16 @@ public class OverviewRestController {
      * @param delGroupId
      * @return
      */
-    @RequestMapping(value = "ov/group", method = RequestMethod.DELETE)
+    @RequestMapping(value = "ov/group/delete", method = RequestMethod.DELETE)
     public String deleteOverviewGroup(@RequestParam("del_group") String delGroupId) throws ServiceException {
-        OverviewDelGroupDTO odg = null;
-        odg =  overviewService.deleteOverviewGroup(delGroupId);
-        return RestResultGenerator.genResult(odg, REST_DELETE_SUCCESS).toString();
+        boolean success = overviewService.deleteOverviewGroup(delGroupId);
+        if(success) {
+            List<OverviewListGroupDTO> olg = overviewService.listOverviewGroup();
+            return RestResultGenerator.genResult(olg, REST_DELETE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+
     }
 
     /**
@@ -69,10 +92,14 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "ov/group/move", method = RequestMethod.PUT)
-    public String moveOverviewGroup(@RequestParam("group") String groupId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
-        OverviewMoveGroupDTO omg = null;
-        omg =  overviewService.moveOverviewGroup(groupId,fromGroupId,toGroupId);
-        return RestResultGenerator.genResult(omg, REST_MOVE_SUCCESS).toString();
+    public String moveOverviewGroup(@RequestParam("target_id") String groupId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
+       boolean success = overviewService.moveOverviewGroup(groupId,fromGroupId,toGroupId);
+       if(success) {
+           List<OverviewListGroupDTO> olg = overviewService.listOverviewGroup();
+           return RestResultGenerator.genResult(olg, REST_MOVE_SUCCESS).toString();
+       }else {
+           return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+       }
     }
 
     /**
@@ -83,11 +110,36 @@ public class OverviewRestController {
      * @return
      */
     @RequestMapping(value = "ov/host/move", method = RequestMethod.PUT)
-    public String moveOverviewHost(@RequestParam("host") String hostId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
-        OverviewMoveHostDTO omh = null;
-        omh =  overviewService.moveOverviewHost(hostId,fromGroupId,toGroupId);
-        return RestResultGenerator.genResult(omh, REST_MOVE_SUCCESS).toString();
+    public String moveOverviewHost(@RequestParam("target_id") String hostId,@RequestParam("from_group") String fromGroupId,@RequestParam("to_group") String toGroupId) throws ServiceException {
+        boolean success = overviewService.moveOverviewHost(hostId,fromGroupId,toGroupId);
+        if(success) {
+            List<OverviewListGroupDTO> olg = overviewService.listOverviewGroup();
+            return RestResultGenerator.genResult(olg, REST_MOVE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
     }
 
+    /**
+     * 在移动分组的时候需要先获取分组树供用户选择
+     * @param groupName
+     * @return
+     */
+    @RequestMapping(value = "ov/group/get_tree", method = RequestMethod.GET)
+    public String getMoveGroupTree(@RequestParam("group_name") String groupName) throws ServiceException {
+        List<OverviewListGroupDTO> olg = overviewService.getMoveGroupTree(groupName);
+        return RestResultGenerator.genResult(olg, REST_RESPONSE_SUCCESS).toString();
+    }
+
+    /**
+     * 获取设备选择树 用于选择设备
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "ov/group/select_host", method = RequestMethod.GET)
+    public String getSelectHostTree() throws ServiceException {
+        List<OverViewHostVO> hostVOS = overviewService.getSelectHostVOS();
+        return RestResultGenerator.genResult(hostVOS, REST_RESPONSE_SUCCESS).toString();
+    }
 
 }

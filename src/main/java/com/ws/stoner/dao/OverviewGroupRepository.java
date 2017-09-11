@@ -12,5 +12,4 @@ public interface OverviewGroupRepository extends MongoRepository<Group,Long> {
 
     Group findByName(String name) ;
 
-
 }

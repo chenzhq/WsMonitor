@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
 	<meta charset="UTF-8">
-	<title>监控系统</title>
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<title>设备总览</title>
+	<script src="../static/js/jquery-3.2.1.min.js"></script>
 	<script src="../static/js/semantic.js"></script>
 	<link rel="stylesheet" href="../static/css/semantic.css"  />
 	<link rel="stylesheet" href="../static/css/icon.css"  />
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" />
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
-	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-	<link rel="stylesheet" href="../static/css/jquery.treegrid.css">
-	<!-- 引入 ajax异步请求，模拟服务器地址 -->
-	<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
-	<style type="text/css">
-	.ui.table.dataTable thead th {
-	border-left: 0px;
-	}
-	</style>
+	<th:block th:fragment="supplement">
+		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+		<link rel="stylesheet" href="../static/css/jquery.treegrid.css" th:href="@{css/jquery.treegrid.css}">
+		<link rel="stylesheet" href="../static/css/jstree-default/style.min.css" th:href="@{css/jstree-default/style.min.css}">
+		<script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+		<style type="text/css">
+			.ui.table.dataTable thead th {
+				border-left: 0px;
+			}
+		</style>
+	</th:block>
 </head>
 <body>
 <div id="contextWrap">
@@ -200,7 +203,6 @@
 					<a class="item labeled rightsidebar computer only">
 						<i class="ion-wrench large icon"></i>工具
 					</a>
-
 				</div>
 			</div>
 		</div>
@@ -209,111 +211,168 @@
 		<div class="mainWrap navslide">
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
-				<div class="sixteen wide tablet sixteen wide computer column">
-					<div class="ui segments">
-						<div class="ui segment no-padding">
-							<div class="ui secondary menu">
-								<a class="header item">
-									<h3><i class="bar large chart icon"></i>检测总数：</h3>
-								</a>
-								<a class="item">
-									<p>36个设备的222个监测点。
-										<i class="red circle icon"></i>  30
-										<i class="yellow circle icon"></i>  50
-										<i class="green circle icon"></i>  122
-										<i class="grey circle icon"></i>  20
-									</p>
-								</a>
-
-								<a class="right item">
-									类型：
-                                    <select id="ui_dropdown" class="ui dropdown">
-                                        <option value="">选择类型</option>
-                                        <option>组</option>
-                                        <option>服务器</option>
-                                        <option>数据库</option>
-                                        <option>网络设备</option>
-										<option>监控点</option>
-                                    </select>
-								</a>
-							</div>
+				<div class="sixteen wide column">
+					<div class="ui secondary menu" style="margin-top:-10px;margin-bottom: -10px">
+						<a class="header item">
+							<h3><i class="bar large chart icon"></i>检测总数：</h3>
+						</a>
+						<a class="item">
+							<p>36个设备的222个监测点。
+								<i class="red circle icon"></i>  30
+								<i class="yellow circle icon"></i>  50
+								<i class="green circle icon"></i>  122
+								<i class="grey circle icon"></i>  20
+							</p>
+						</a>
+						<a class="right item">
+							类型：
+							<select id="ui_dropdown" class="ui dropdown">
+								<option value="">选择类型</option>
+								<option>组</option>
+								<option>服务器</option>
+								<option>数据库</option>
+								<option>网络设备</option>
+								<option>监控点</option>
+							</select>
+						</a>
+					</div>
+					<div class="ui segment"  style=" min-height : 487px;">
+						<div id="host_table_dimmer" class="ui inverted dimmer">
+							<div class="ui text loader">加载</div>
 						</div>
-						<div class="ui segment">
-							<table  id="host_table" class="tree ui  compact very basic table center aligned ">
-							</table>
-						</div>
-					</div>
-				</div>
-
-				<!--modal-->
-				<div id="new_modal" class="ui small modal">
-					<i class="close icon"></i>
-					<div class="content">
-						<div class="ui form">
-							<h4 class="ui dividing header">新建组</h4>
-							<div id="new_content" class="field">
-							</div>
-						</div>
-					</div>
-					<div class="actions">
-						<div class="ui button deny">取消</div>
-						<div class="ui green button deny" id="new_submit">确认</div>
-					</div>
-				</div>
-
-				<div id="delete_modal" class="ui small modal">
-					<i class="close icon"></i>
-					<div class="header">
-						Update Your Settings
-					</div>
-					<div class="content">
-						<div class="ui form">
-							<h4 class="ui dividing header">Give us your feedback</h4>
-							<div class="field">
-								<label>Feedback</label>
-								<textarea></textarea>
-							</div>
-							<div class="field">
-								<div class="ui checkbox">
-									<input type="checkbox" checked="checked" name="contact-me">
-									<label>It's okay to contact me.</label>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="actions">
-						<div class="ui button deny">取消</div>
-						<div class="ui green button deny" id="delete_submit">确认</div>
+						<table  id="host_table" class="tree ui compact very basic table center aligned " width="100%">
+						</table>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-<script src="../static/js/js.cookie.js"></script>
-<script src="../static/js/jquery.nicescroll.min.js"></script>
-<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
-<script src="../static/js/main.js"></script>
-<script type="text/javascript" src="../static/js/jquery.treegrid.js"></script>
-<th:block th:fragment="specialScript">
-	<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
-	<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+<!--modal-->
+<div id="new_modal" class="ui small modal">
+	<i class="close icon"></i>
+	<div class="content">
+		<div class="ui form">
+			<h4 class="ui dividing header">新建组</h4>
+			<input type="text" id="new-group-input">
+			<div id="new_content" class="field">
+			</div>
+		</div>
+	</div>
+	<div id="new_actions" class="actions">
+		<div class="ui button deny">取消</div>
+		<div class="ui green button approve" id="new_submit">确认</div>
+	</div>
+</div>
+
+<div id="edit_modal" class="ui small modal">
+	<i class="close icon"></i>
+	<div class="content">
+		<div class="ui form">
+			<h4 class="ui dividing header">编辑组</h4>
+			<input type="text" id="edit-group-input">
+			<div id="edit_content" class="field">
+			</div>
+		</div>
+	</div>
+	<div id="edit_actions" class="actions">
+		<div class="ui button deny">取消</div>
+		<div class="ui green button approve" id="edit_submit">确认</div>
+	</div>
+</div>
+
+<div id="move_modal" class="ui small modal">
+	<i class="close icon"></i>
+	<div class="inline fields content">
+		<div id="group_tree"></div>
+	</div>
+	<div id="move_content" class="actions">
+		<div class="ui deny button ">取消</div>
+		<div class="ui green approve button" id="move_submit">确认</div>
+	</div>
+</div>
+
+
+<div id="del-pop" class="ui custom popup transition hidden">
+	<div class="description">是否删除该分组？</div>
+	<i class="mini checkmark negative icon "></i>
+
+</div>
+<th:block th:replace="layout::bottom_script(~{::specialScript})">
+	<script src="../static/js/js.cookie.js"></script>
+	<script src="../static/js/jquery.nicescroll.min.js"></script>
+	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js"></script>
+	<script src="../static/js/main.js"></script>
+	<th:block th:fragment="specialScript">
+		<script type="text/javascript" src="../static/js/jquery.treegrid.js" th:src="@{js/jquery.treegrid.js}"></script>
+		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+	</th:block>
 </th:block>
 <script type="text/javascript">
     $(document).ready(function() {
         var host_table = $("#host_table").DataTable({
             "paging": false,
             "ordering": false,
-            "initComplete": function () {//初始化后回调
-                $("#host_table").treegrid();
+            "initComplete": function () {
+                $('#host_table tr:eq(1)').treegrid('expand')
+            },
+            "drawCallback": function () {//初始化后回调
+                $("#host_table").treegrid({
+					'initialState': 'collapsed',
+//					'saveState': true
+//					'expanderTemplate': '<i class="caret right icon"></i>',
+//					'expanderExpandedClass': 'down',
+//					'expanderCollapsedClass': 'right'
+				});
+//				if(host_table !== undefined)
+//                console.log(host_table.isFirstInit)
+				if(host_table !== undefined && !host_table.isFirstInit)
+                	$('#host_table tr:eq(1)').treegrid('expand')
+                var selectIndex
+                $('a.delete').on('click',function (e) {
+                    selectIndex = host_table.row($(this).parents('tr')).index();
+                    $('#del-pop').on('click', 'i.checkmark', function () {
+                        var sourceData = $('#host_table').DataTable().data();
+                        $('#host_table_dimmer').dimmer('show')
+                        $('#del-pop').removeClass('visible').addClass('hidden')
+                        $.ajax({
+                            type: 'delete',
+                            url: '/ov/group/delete?del_group='+ sourceData[selectIndex].cid,
+                            data: {del_group: sourceData[selectIndex].cid},
+                            dataType: 'json',
+                            success: function(result) {
+                                if(result.success) {
+                                    host_table.rows().remove()
+                                    host_table.rows.add(result.data).draw()
+                                    $('#host_table_dimmer').dimmer('hide')
+                                } else {
+                                    console.error('服务器错误')
+                                }
+                            },
+                            error: function (e) {
+                                console.error(e)
+                            }
+                        })
+                    })
+                }).popup({
+                    popup: $('#del-pop'),
+                    position: 'top right',
+                    on: 'click'
+                })
+
+
             },
             "createdRow": function (row, data, dataIndex) {
                 if (data.pid== null) {
-                    var tmp=['treegrid-'+ data.cid].join('');
+                    var tmp='treegrid-'+ data.cid;
                 } else {
-                    var tmp=['treegrid-'+ data.cid +' treegrid-parent-'+ data.pid].join('');
+                    var tmp='treegrid-'+ data.cid +' treegrid-parent-'+ data.pid;
                 }
-                $(row).addClass(tmp);
+                if (data.cid.substr(0, 1) === 'h')
+                    $(row).attr('data-id', data.cid);
+                $(row).addClass(tmp)
                 $('td', row).eq(0).addClass('left aligned');
                 $('td', row).eq(2).addClass('no-padding');
             },
@@ -327,99 +386,302 @@
                     "width": "20%",
                     "title": "名称",
                     render: function(data, type, row, meta) {
-                        if(data.state=="正常"){
-                        return  '<i class="green circle icon"></i>' + row.name;
-                    }else {
-                            if(data.state=="问题"){
-                                return  '<i class="red circle icon"></i>' + row.name;
-							}else {
-                                return  row.name;
+                        if (data.state === "正常") {
+                            if (row.type === '组') {
+                                return '<i class="green folder icon"></i>' + row.name;
+                            } else if(row.type === '监控点') {
+                                return '<i class="green circle icon"></i>' + row.name;
+                            } else {
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+									'<i class="green desktop icon"></i>' + row.name + '</a>';
+                            }
+                        } else if (data.state === "严重") {
+                            if (row.type === '组') {
+                                return '<i class="red folder icon"></i>' + row.name;
+                            } else if(row.type === '监控点') {
+                                return '<i class="red circle icon"></i>' + row.name;
+                            } else {
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+									'<i class="red desktop icon"></i>' + row.name + '</a>';
 							}
+
+                        } else if (data.state === "警告") {
+                            if (row.type === '组') {
+                                return '<i class="yellow folder icon"></i>' + row.name;
+                            } else if(row.type === '监控点') {
+                                return '<i class="yellow circle icon"></i>' + row.name;
+                            } else {
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+                                    '<i class="yellow desktop icon"></i>' + row.name + '</a>';
+                            }
+
+                        } else {
+                            return '<i class="list green layout icon"></i>' + row.name;
                         }
                     }
+
                 },
                 {
                     "data": "type",
                     "width": "20%",
-                    "title": "类型"
+                    "title": "类型",
                 },
                 {
                     "data": null,
                     "width": "20%",
                     "title": "操作",
                     render: function(data, type, row, meta) {
-                        if(row.type=="组"){
-                            return '<div class="ui secondary menu"><a class="right item new" id="new_'+row.cid+'"> 新建</a><a class="item move" id="move_'+row.cid+'"> 移动</a><a class="item edit" id="edit_'+row.cid+'"> 编辑</a><a class="item delete" id="delete_'+row.cid+'"> 删除</a></div>';
+                        if (row.type === "组") {
+                            if(row.cid === 'g0') {
+                                return '<div class="ui secondary menu">' +
+                                '<a class="right item new" id="'+row.cid+'"> 新建</a></div>';
+                            }
+                            return '<div class="ui secondary menu">' +
+								'<a class="right item new" > 新建</a>' +
+								'<a class="item move" > 移动</a>' +
+								'<a class="item edit" > 编辑</a>' +
+								'<a class="item delete"> 删除</a></div>';
                         }else {
-                            return '<div class="ui secondary menu"><a class="right item move" id="move_'+row.cid+'"> 移动</a><a class="item edit" id="edit_'+row.cid+'"> 编辑</a></div>';
+                            return '<div class="ui secondary menu"><a class="right item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
                         }
                     }
                 },
             ],
         });
 
-        $('#delete_submit').click(function(){
-            $("#new_content input[type='text']").each(function(){
-                var id = $("#new_content input[type='text']").attr("id");
-                alert("id:"+id+"val"+$(this).val());
-            });
-        });
         //下拉框事件
         $("#ui_dropdown").change(function(){
-            //code...});
             var tmp=$("#ui_dropdown").val()
             host_table.search(tmp).draw();
         });
+
         //点击新建事件
         $('#host_table tbody').on('click', '.new', function(e) {
             e.preventDefault();
-            var index= host_table.row($(this).parents('tr')).index();
-            var arr = this.id.split("_");
-            if (arr[0]=="new"){
-                var sup_group=arr[1];
-                $("#new_content").empty();
-                $("#new_content").append("<input id='"+sup_group+"' type='text' placeholder='请输入新组名'>");
-                $("#new_modal").modal('show');
-                //提交新建事件
-                $('#new_submit').click(function(){
-                    var sup_group = $("#new_content input[type='text']").attr("id");
-                    var new_group_name = $("#new_content input[type='text']").val();
+
+            var sup_index = host_table.row($(this).parents('tr')).index();
+			var sourceData = host_table.data();
+
+
+			$('#new_modal').modal({
+                onApprove: function () {
+                    $('#new_submit').addClass('loading')
                     $.ajax({
                         type: "post",
-                        url: "/ov/group",
-                        data: {sup_group: sup_group, new_group_name: new_group_name},
+                        url: "/ov/group/create",
+                        data: {
+                            sup_group: sourceData[sup_index].cid,
+                            new_group_name: $('#new-group-input').val()
+                        },
                         dataType: "json",
                         success: function (result) {
-                            var data = result.data;
-                            var sup_group=data.sup_group;
-                            var new_group=data.new_group;
-                            var new_group_name=data.new_group_name;
-                            host_table.row.add( {
-                                "cid": new_group,
-                                "name": new_group_name,
-                                "pid": sup_group,
-                                "state": "",
-                                "type": "组"
-                            } ).draw();
-                            var data = host_table.data();
-                            host_table.clear();
-                            data.splice((index + 1), 0, data.splice(-1,1)[0]);
-                            host_table.rows.add(data).draw();
-                            $("#host_table").treegrid();
+                            if (result.success) {
+                                $('#new_submit').removeClass('loading')
+                                host_table.rows().remove()
+                                host_table.rows.add(result.data).draw()
+								$('#new_modal').modal('hide')
+								$('#new-group-input').val('')
+                            } else {
+                                $('#new_submit').removeClass('loading')
+                                $('#move_modal').modal('hide')
+                                console.error(result.message)
+                            }
+
                         },
-                        error: function () {
-                            alert("失败");
+                        error: function (e) {
+                            console.error(e)
                         }
                     })
-                });
-            }if (arr[0]=="edit"){
-                $('.ui.modal').modal('show')
-            }if (arr[0]=="delete"){
-                $("#delete_modal").modal('show')
-            }if (arr[0]=="move"){
-                $('.ui.modal').modal('show')
-            }
+					return false;
+                }
+			}).modal('show')
         });
+        //点击移动事件
+        $('#host_table tbody').on('click', '.move', function(e) {
+            e.preventDefault();
+
+            function genTreeGroup(group, allGroups) {
+                var _group = {};
+                allGroups.forEach(function (v, i, a) {
+					if(v.name === group) {
+					    _group = a.slice(i,i+1)[0];
+                    }
+                });
+                var res = {
+                    'text': group,
+					'state': {
+                        'disabled': !_group.enable,
+						'opened': true
+					},
+					'data': {
+                    	'cid': _group.cid,
+                    	'pid': _group.pid
+					},
+					'children': []
+                }
+                if(_group.group_children.length > 0) {
+                    _group.group_children.forEach(function (v, i, a) {
+						res.children.push(genTreeGroup(v, allGroups))
+                    })
+                    return res;
+				} else {
+                    return res;
+				}
+			}
+
+            function genTreeHost(groupName, allGroups) {
+                var _group = {}
+                allGroups.forEach(function (v, i, a) {
+                    if (v.name === groupName) {
+                        _group = a.slice(i, i + 1)[0]
+                    }
+                })
+                var res = {
+                    'text': group,
+                    'state': {
+                        'disabled': !_group.enable,
+                        'opened': true
+                    },
+                    'data': {
+                        'cid': _group.cid,
+                        'pid': _group.pid
+                    },
+                    'children': []
+                }
+                if (_group.group_children.length > 0) {
+                    _group.group_children.forEach(function (v, i, a) {
+                        res.children.push(genTreeGroup(v, allGroups))
+                    })
+                    return res;
+                }
+                if (_group.host_children.length > 0) {
+                    _group.host_children.forEach(function (v) {
+                        res.children.push()
+                    })
+                } else {
+                    return res;
+                }
+            }
+
+            var sourceArr = host_table.data().toArray();
+            var moved_index= host_table.row($(this).parents('tr')).index();
+            var to_index = moved_index;
+            var move_url, disable_group_name;
+
+            if(sourceArr[moved_index].type === '组') {
+				move_url = "/ov/group/move"
+				disable_group_name = sourceArr[moved_index].name
+			} else {
+                move_url = "/ov/host/move"
+				disable_group_name = ''
+			}
+
+			//发送请求 获取树形group结构
+            $.ajax({
+                type: "get",
+                url: "/ov/group/get_tree",
+                data: {group_name: disable_group_name},
+                dataType: "json",
+                success: function (result) {
+					if (result.success) {
+					    var $group_tree = $('#group_tree')
+						$group_tree.data('jstree', false).empty();
+                        $group_tree.jstree({
+							'core': {
+							    'data': genTreeGroup('root', result.data)
+							}
+						})
+						$('#move_modal').modal({
+							onApprove: function() {
+							    var $submit_btn = $('#move_submit')
+								$submit_btn.addClass('loading')
+                                var group_ins = $group_tree.jstree(true)
+                                var selected_data = group_ins.get_selected(true)[0].data;
+                                sourceArr.forEach(function (v,i) {
+                                    if(v.cid === selected_data.cid) {
+                                        to_index = i;
+                                        return
+                                    }
+                                })
+
+                                //发送请求 移动分组
+                                $.ajax({
+                                    type: "put",
+                                    url: move_url,
+                                    data: {
+                                        from_group: sourceArr[moved_index].pid,
+                                        target_id: sourceArr[moved_index].cid,
+                                        to_group: sourceArr[to_index].cid
+                                    },
+                                    dataType: "json",
+                                    success: function (result) {
+                                        if(result.success) {
+
+                                            host_table.rows().remove()
+                                            host_table.rows.add(result.data).draw()
+                                            $submit_btn.addClass('loading')
+											$('#move_modal').modal('hide')
+                                        } else {
+                                            //move action error
+                                            $submit_btn.addClass('loading')
+                                            $('#move_modal').modal('hide')
+                                            console.error('move action error')
+                                        }
+                                    }
+                                })
+								return false
+							}
+						}).modal('show')
+						
+
+                    } else {
+					    //get group tree error
+                        console.error('get group tree error')
+                    }
+                }
+            })
+        });
+
+        $('#host_table tbody').on('click', '.edit', function(e) {
+            e.preventDefault();
+            var select_row = $(this).parents('tr')
+            var select_index = host_table.row(select_row).index();
+            var sourceData = host_table.data();
+            $('#edit_modal').modal({
+                onApprove: function () {
+                    $('#edit_submit').addClass('loading')
+                    $.ajax({
+                        type: "post",
+                        url: "/ov/group/edit",
+                        data: {
+                            new_group_name: $('#edit-group-input').val(),
+                            old_group_name: sourceData[select_index].name,
+							sup_group_id: sourceData[select_index].pid
+                        },
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.success) {
+                                $('#edit_submit').removeClass('loading')
+                                sourceData[select_index].name = result.data.new_group_name;
+								host_table.row(select_row).data(sourceData[select_index]).draw();
+                                $('#edit_modal').modal('hide')
+                                $('#edit-group-input').val('')
+                            } else {
+                                $('#edit_submit').removeClass('loading')
+                                $('#move_modal').modal('hide')
+                                console.error(result.message)
+                            }
+
+                        },
+                        error: function (e) {
+                            console.error(e)
+                        }
+                    })
+                    return false;
+                }
+            }).modal('show')
+        });
+
     });
 
 </script>

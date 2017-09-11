@@ -13,6 +13,20 @@ public class ZApiParameter {
     }
 
 /**
+ * 主机组参数
+  */
+public static enum HOSTGROUP_INTERNAL {
+    NOT_INTERNAL(0),INTERNAL(1);
+
+    public int value = 0;
+
+    private HOSTGROUP_INTERNAL(int value) {
+        this.value = value;
+    }
+
+}
+
+/**
  *主机参数
  */
     /**
@@ -189,6 +203,89 @@ public class ZApiParameter {
 
     }
 
+    /**
+     *触发器 priority 值
+     */
+    public static enum TRIGGER_PRIORITY  {
+        NOT_CLASSIFIED(0),
+        INFORMATION(1),
+        WARNING(2),
+        AVERAGE(3),
+        HIGH(4),
+        DISASTER(5);
+        public int value;
+        private TRIGGER_PRIORITY(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
+     * 触发器问题是否可手动关闭
+     */
+    public static enum TRIGGER_MANUAL_CLOSE  {
+        NO(0),
+        YES(1);
+        public int value;
+        private TRIGGER_MANUAL_CLOSE(int value) {
+            this.value = value;
+        }
+
+    }
+
+    /**
+     * ACKNOWLEDGE 确认 action
+     */
+    public static enum ACKNOWLEDGE_ACTION  {
+        UNACKNOWLEDGED(0),
+        ACKNOWLEDGED(1);
+        public int value;
+        private ACKNOWLEDGE_ACTION(int value) {
+            this.value = value;
+        }
+
+    }
+
+
+    /**
+     * ALERT 告警状态类型
+     */
+
+    public static enum ALERT_MESSAGE_STATUS  {
+        MESSAGE_SENDING(0),
+        MESSAGE_SENT(1),
+        MESSAGE_FAILED(2);
+        public int value;
+        private ALERT_MESSAGE_STATUS(int value) {
+            this.value = value;
+        }
+
+    }
+
+    public static enum ALERT_COMMAND_STATUS  {
+        COMMAND_WORK(0),
+        COMMAND_UNWORK(1);
+        public int value;
+        private ALERT_COMMAND_STATUS(int value) {
+            this.value = value;
+        }
+
+    }
+
+/*
+ * 事件类型 event
+ */
+    public static enum EVENT_VALUE  {
+        OK(0),
+        PROBLEM(1);
+        public int value;
+        private EVENT_VALUE(int value) {
+            this.value = value;
+        }
+
+    }
+
+
 /**
  * 监控项类型
  */
@@ -238,8 +335,20 @@ public class ZApiParameter {
             this.value = value;
         }
     }
+    /**
+     * 权限
+     */
+    public static enum USERGROUP_PERMISSION {
+        ACCESS_DENIED(0),
+        READ_ONLY(2),
+        READ_WRITE(3);
 
+        public int value;
 
+        private USERGROUP_PERMISSION(int value) {
+            this.value = value;
+        }
+    }
 
 /**
  * 其他
@@ -313,4 +422,20 @@ public class ZApiParameter {
     }
 
 
+    /**
+     * mediatype 的告警方式类型
+     */
+    public static enum ALERT_MEDIATYPE {
+        EMAIL(0),
+        SCRIPT(1),
+        SMS(2),
+        JABBER(3),
+        EZ_TEXTING(100);
+
+        public int value;
+
+        private ALERT_MEDIATYPE(int value) {
+            this.value = value;
+        }
+    }
 }
