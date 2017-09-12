@@ -13,10 +13,16 @@
     <link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
     <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
     <th:block th:fragment="supplement">
-        <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+        <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+        <script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
         <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
         <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
               th:href="@{css/jstree-default/style.min.css}">
+        <style type="text/css">
+            .ui.table.dataTable thead th {
+                border-left: 0px;
+            }
+        </style>
     </th:block>
 </head>
 <body>
@@ -207,8 +213,46 @@
                     <div class="header item">
                         <h2><i class="bar large chart icon"></i>监控视图</h2>
                     </div>
-                    <div class="ui segment" style=" min-height : 487px;">
-                        <p>待添加</p>
+                    <div class="ui grid">
+                        <div class="eight wide column"  style="padding-bottom: 0px">
+                            <div id="host_select_dropdown" class="ui selection dropdown">
+                                <input type="hidden" name="hosts">
+                                <i class="dropdown icon"></i>
+                                <div class="default text">选择设备</div>
+                                <div class="menu">
+                                    <div id="select_host" class="item" data-value="host">设备</div>
+                                    <div class="disabled item" data-value="platform">业务平台</div>
+                                    <div id="select_all" class="item" data-value="all">所有</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eight wide column right aligned"  style="padding-bottom: 0px">
+                            <button value="currentProblems" class="ui blue button"><i class="add icon"></i>添加</button>
+                            <button value="recentProblems" class="ui blue button"><i class="edit icon"></i>编辑</button>
+                            <button value="historicalRecord" class="ui blue button"><i class="trash icon"></i>删除</button>
+                        </div>
+                    </div>
+                    <div class="ui grid">
+                        <div class="six wide column">
+                            <div class="ui segment" style=" min-height : 470px;">
+                                <h3>状态统计</h3>
+                                <div id="stateStatistics" data-type="statepie">
+                                    <div id="host_pie" style="height: 207px">
+                                    </div>
+                                    <div id="point_pie" style="height: 207px">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ten wide column" style="padding-left: 0">
+                            <div class="ui segment" style=" min-height : 470px;">
+                                <h3>问题视图</h3>
+                                <div id="problemView" data-type="problems">
+                                    <table  id="problemsTable" class="ui compact basic table center aligned " width="100%">
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!--Site Content-->
@@ -223,6 +267,225 @@
     <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
     <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
     <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
+    <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+    <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+    <script>
+        var Color = ['#5FB878', '#F7B824', '#f11111','#d2d2d2', '#2F4056'];
+        //设备pie
+        var host_myChart = echarts.init(document.getElementById('host_pie'));
+        var host_option={
+            title: {
+                text: '0',
+                subtext: '台设备',
+                x: 'center',
+                y: 'center',
+                itemGap: 1,
+                textStyle: {
+                    color: '#01AAED',
+                    fontFamily: '微软雅黑',
+                    fontSize: 24,
+                    fontWeight: 'bolder'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'right',
+                y: 'center',
+                data:['正常','警告'],
+            },
+            grid: {
+                left:'5%',
+                right:'5%',
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['40%', '65%'],
+                    selectedMode: '',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                formatter: function (param) {
+                                    return param.name + param.value + "台" + ':\n' + Math.round(param.percent) + '%';
+                                },
+                                textStyle: {
+                                    fontWeight: 'bolder'
+                                }
+                            }
+                        },
+                    },
+                    data:  [
+                        {
+                            "value": 2,
+                            "name": "正常"
+                        },
+                        {
+                            "value": 7,
+                            "name": "警告"
+                        }
+                    ],
+                    color: Color
+                }
+            ]
+        };
+        host_myChart.setOption(host_option);
+        //监控点pie
+        var point_myChart = echarts.init(document.getElementById('point_pie'));
+        var point_option = {
+            title: {
+                text: '0',
+                subtext: '个监控点',
+                x: 'center',
+                y: 'center',
+                itemGap: 1,
+                textStyle: {
+                    color: '#01AAED',
+                    fontFamily: '微软雅黑',
+                    fontSize: 24,
+                    fontWeight: 'bolder'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'right',
+                y: 'center',
+                data:['正常','警告'],
+            },
+            grid: {
+                left:'15%',
+                right:'15%',
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['40%', '65%'],
+                    selectedMode: '',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                formatter: function (param) {
+                                    return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
+                                },
+                                textStyle: {
+                                    fontWeight: 'bolder'
+                                }
+                            }
+                        },
+                    },
+                    data:  [
+                        {
+                            "value": 5,
+                            "name": "正常"
+                        },
+                        {
+                            "value": 5,
+                            "name": "警告"
+                        }
+                    ],
+                    color: Color
+                }
+            ]
+        }
+        point_myChart.setOption(point_option);
+
+        //页面加载完加载表格数据
+        $(function() {
+            //初始问题列表
+            var problems_Table = $("#problemsTable").DataTable({
+                "iDisplayLength": 5,
+                order: [0, 'desc'],
+                "createdRow": function (row, rowData) {
+                    $('td', row).eq(1).addClass('left aligned');
+                    $('td', row).eq(2).addClass('left aligned');
+                    if (rowData.problem_state === '问题') {
+                        if (rowData.priority_state === '警告') {
+                            row.classList.add("warning")
+                        } else if (rowData.priority_state === '严重') {
+                            row.classList.add("negative")
+                        } else {
+                        }
+                    }
+                },
+                ajax: {
+                    url: '/problems/get_current',
+                    dataSrc: 'data'
+                },
+                columns: [
+                    {
+                        "data": "problem_time",
+                        "width": "15%",
+                        "title": "发生时间",
+                        "orderable": false,
+                    },
+                    {
+                        "data": "host_name",
+                        "width": "10%",
+                        "title": "设备",
+                        "orderable": false,
+                    },
+                    {
+                        "data": "description",
+                        "width": "25%",
+                        "title": "问题",
+                        "orderable": false,
+
+                    },
+                    {
+                        "data": "priority_state",
+                        "width": "5%",
+                        "title": "严重性",
+                        "orderable": false
+
+                    },
+                    {
+                        "data": 'problem_state',
+                        "width": "15%",
+                        "title": "状态",
+                        "orderable": false,
+                        render: function (data, type, row, meta) {
+//                                console.log('render 状态', arguments)
+                            if (row.problem_state !== "问题") {
+                                return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
+                            } else {
+                                return '<div class="ui mini red label" style="margin-bottom: 0px">' + row.problem_state + '</div>';
+                            }
+                        }
+                    },
+                    {
+                        "data": "duration_string",
+                        "width": "10%",
+                        "title": "持续时间",
+                        "orderable": false
+                    },
+                    {
+                        "data": "alert_state",
+                        "width": "15%",
+                        "title": "告警状态",
+                        "orderable": false,
+                    },
+                    {
+                        "data": "acknowledged",
+                        "width": "5%",
+                        "title": "确认",
+                        "orderable": false,
+                    }
+                ],
+            });
+        })
+
+    </script>
 </th:block>
 
 </body>
