@@ -1,13 +1,12 @@
 package com.ws.stoner.service;
 
 
-import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.Item;
 import com.ws.stoner.model.dto.BriefItemDTO;
-import com.ws.stoner.model.view.HostDetailPointItemVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
+import com.ws.stoner.model.view.host.HostDetailPointItemVO;
+import com.ws.stoner.model.view.host.HostDetailPointVO;
 
 import java.util.List;
 

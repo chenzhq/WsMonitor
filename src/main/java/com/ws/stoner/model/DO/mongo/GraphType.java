@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Arrays;
 
 /**
- * Created by pc on 2017/7/18.
+ * Created by zkf on 2017/7/18.
  */
 @Document(collection = "graph_type")
 public class GraphType {

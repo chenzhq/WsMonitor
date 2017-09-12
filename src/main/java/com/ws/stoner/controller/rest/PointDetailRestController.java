@@ -1,9 +1,9 @@
 package com.ws.stoner.controller.rest;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.view.HostDetailItemVO;
-import com.ws.stoner.model.view.HostDetailPointItemVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
+import com.ws.stoner.model.view.host.HostDetailItemVO;
+import com.ws.stoner.model.view.host.HostDetailPointItemVO;
+import com.ws.stoner.model.view.host.HostDetailPointVO;
 import com.ws.stoner.service.GraphService;
 import com.ws.stoner.service.ItemService;
 import com.ws.stoner.utils.RestResultGenerator;

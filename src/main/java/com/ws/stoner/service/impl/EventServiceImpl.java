@@ -11,7 +11,7 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.query.CalendarFormQuery;
-import com.ws.stoner.model.view.*;
+import com.ws.stoner.model.view.problem.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.AlertStatusConverter;
 import com.ws.stoner.utils.BaseUtils;
@@ -331,7 +331,7 @@ public class EventServiceImpl implements EventService {
      * @throws ServiceException
      */
     @Override
-    public  List<ProblemDetailListVO> getDetailListByTriggerId(String triggerId, String beginTime,String endTime ) throws ServiceException {
+    public  List<ProblemDetailListVO> getDetailListByTriggerId(String triggerId, String beginTime, String endTime ) throws ServiceException {
         LocalDateTime localBeginTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(beginTime)), ZoneId.systemDefault());
         LocalDateTime localEndTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTime)), ZoneId.systemDefault());
         List<ProblemDetailListVO> problemDetailListVOS = new ArrayList<>();

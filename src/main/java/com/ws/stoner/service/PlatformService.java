@@ -2,7 +2,7 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPlatformDTO;
-import com.ws.stoner.model.view.*;
+import com.ws.stoner.model.view.platform.*;
 
 import java.util.List;
 import java.util.Map;

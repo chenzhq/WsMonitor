@@ -197,6 +197,60 @@ public class PointSerivceImpl implements PointSerivce {
 
     }
 
+    /**
+     * 根据hostIds 获取 point 所有数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countAllPointByHostIds(List<String> hostIds) throws ServiceException {
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        appRequest.getParams()
+                .setHostIds(hostIds)
+                .setCountOutput(true);
+        int appAllNum  = countPoint(appRequest);
+        return appAllNum;
+    }
+
+    /**
+     * 根据hostIds 获取 point 警告数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countWarningPointByHostIds(List<String> hostIds) throws ServiceException {
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        Map<String, Object> pointFilter = new HashMap<>();
+        pointFilter.put("custom_state", ZApiParameter.OBJECT_STATE.CUSTOM_STATE_WARNING.value);
+        appRequest.getParams()
+                .setHostIds(hostIds)
+                .setFilter(pointFilter)
+                .setCountOutput(true);
+        int appWarningNum  = countPoint(appRequest);
+        return appWarningNum;
+    }
+
+    /**
+     * 根据hostIds 获取 point 严重数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countHighPointByHostIds(List<String> hostIds) throws ServiceException {
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        Map<String, Object> pointFilter = new HashMap<>();
+        pointFilter.put("custom_state", ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT.value);
+        appRequest.getParams()
+                .setHostIds(hostIds)
+                .setFilter(pointFilter)
+                .setCountOutput(true);
+        int appHighNum  = countPoint(appRequest);
+        return appHighNum;
+    }
+
 
 /*
  *list point

@@ -20,6 +20,27 @@ public class GraphView {
     @Field("max_num")
     private Integer maxNum;
 
+    public GraphView() {
+    }
+
+    public GraphView(String name, String type) {
+        this.name = name;
+        this.type = type;
+    }
+
+    public GraphView(String name, String type, List<String> hostIds) {
+        this.name = name;
+        this.type = type;
+        this.hostIds = hostIds;
+    }
+
+    public GraphView(String name, String type, List<String> hostIds, Integer maxNum) {
+        this.name = name;
+        this.type = type;
+        this.hostIds = hostIds;
+        this.maxNum = maxNum;
+    }
+
     public String getId() {
         return id;
     }
@@ -63,5 +84,16 @@ public class GraphView {
     public GraphView setMaxNum(Integer maxNum) {
         this.maxNum = maxNum;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "GraphView{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", hostIds=" + hostIds +
+                ", maxNum=" + maxNum +
+                '}';
     }
 }

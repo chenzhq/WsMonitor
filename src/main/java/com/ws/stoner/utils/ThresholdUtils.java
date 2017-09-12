@@ -2,7 +2,7 @@ package com.ws.stoner.utils;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
-import com.ws.stoner.model.view.HostDetailItemVO;
+import com.ws.stoner.model.view.host.HostDetailItemVO;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

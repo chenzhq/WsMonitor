@@ -2,9 +2,9 @@ package com.ws.stoner.controller;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
-import com.ws.stoner.model.view.HostDetailInterfaceVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
-import com.ws.stoner.model.view.HostDetailVO;
+import com.ws.stoner.model.view.host.HostDetailInterfaceVO;
+import com.ws.stoner.model.view.host.HostDetailPointVO;
+import com.ws.stoner.model.view.host.HostDetailVO;
 import com.ws.stoner.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

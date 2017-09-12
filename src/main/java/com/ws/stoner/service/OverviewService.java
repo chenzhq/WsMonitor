@@ -1,8 +1,9 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.*;
-import com.ws.stoner.model.view.OverViewHostVO;
+import com.ws.stoner.model.view.overview.OverViewHostVO;
+import com.ws.stoner.model.view.overview.OverviewEditGroupVO;
+import com.ws.stoner.model.view.overview.OverviewListGroupVO;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface OverviewService {
      * @return
      * @throws ServiceException
      */
-    List<OverviewListGroupDTO> listOverviewGroup() throws ServiceException;
+    List<OverviewListGroupVO> listOverviewGroup() throws ServiceException;
 
     /**
      * 创建分组，overview group create
@@ -61,7 +62,7 @@ public interface OverviewService {
      * @return
      * @throws ServiceException
      */
-    OverviewEditGroupDTO editOverviewGroup(String oldGroupName,String newGroupName, String supGroupVOId) throws ServiceException;
+    OverviewEditGroupVO editOverviewGroup(String oldGroupName, String newGroupName, String supGroupVOId) throws ServiceException;
 
 
     /**
@@ -70,7 +71,7 @@ public interface OverviewService {
      * @return
      * @throws ServiceException
      */
-    List<OverviewListGroupDTO> getMoveGroupTree(String groupName) throws ServiceException;
+    List<OverviewListGroupVO> getMoveGroupTree(String groupName) throws ServiceException;
 
     /**
      * 获取主机选择树

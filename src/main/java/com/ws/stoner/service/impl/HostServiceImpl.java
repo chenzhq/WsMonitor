@@ -12,9 +12,9 @@ import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
-import com.ws.stoner.model.view.HostDetailInterfaceVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
-import com.ws.stoner.model.view.HostDetailVO;
+import com.ws.stoner.model.view.host.HostDetailInterfaceVO;
+import com.ws.stoner.model.view.host.HostDetailPointVO;
+import com.ws.stoner.model.view.host.HostDetailVO;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.utils.StatusConverter;
@@ -167,6 +167,51 @@ public class HostServiceImpl implements HostService {
                 .setCountOutput(true);
         int hostOkNum = countHost(hostGetRequest);
         return hostOkNum;
+    }
+
+    /**
+     * 根据指定的hostIds 统计 警告主机数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countWarningHostByHostIds(List<String> hostIds) throws ServiceException {
+        //step1:根据custom_state 和 custom_available_state字段联合判断是否是问题主机
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String,Object> hostFilter = new HashMap<>();
+        hostFilter.put("custom_state", ZApiParameter.OBJECT_STATE.CUSTOM_STATE_WARNING.value);
+        hostFilter.put("custom_available_state",ZApiParameter.HOST_AVAILABLE_STATE.CUSTOM_AVAILABLE_STATE_OK.value);
+        hostGetRequest.getParams()
+                .setMonitoredHosts(true)
+                .setHostIds(hostIds)
+                .setFilter(hostFilter)
+                .setCountOutput(true);
+        int hostWarningNum = countHost(hostGetRequest);
+        return hostWarningNum;
+    }
+
+    /**
+     * 根据指定的hostIds 统计 严重主机数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countHighHostByHostIds(List<String> hostIds) throws ServiceException {
+        //step1:根据custom_state 和 custom_available_state字段联合判断是否是严重主机
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String,Object> hostFilter = new HashMap<>();
+        hostFilter.put("custom_state", ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT.value);
+        hostFilter.put("custom_available_state",ZApiParameter.HOST_AVAILABLE_STATE.CUSTOM_AVAILABLE_STATE_PROBLEM.value);
+        hostGetRequest.getParams()
+                .setMonitoredHosts(true)
+                .setHostIds(hostIds)
+                .setFilter(hostFilter)
+                .setSearchByAny(true)
+                .setCountOutput(true);
+        int hostHighNum = countHost(hostGetRequest);
+        return hostHighNum;
     }
 
 /*

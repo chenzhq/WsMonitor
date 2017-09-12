@@ -4,9 +4,9 @@ package com.ws.stoner.service;
 import com.ws.bix4j.access.trigger.TriggerGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
-import com.ws.stoner.model.view.DashboardProblemVO;
-import com.ws.stoner.model.view.ProblemDetailVO;
-import com.ws.stoner.model.view.ProblemListVO;
+import com.ws.stoner.model.view.dashboard.DashboardProblemVO;
+import com.ws.stoner.model.view.problem.ProblemDetailVO;
+import com.ws.stoner.model.view.problem.ProblemListVO;
 
 import java.util.List;
 

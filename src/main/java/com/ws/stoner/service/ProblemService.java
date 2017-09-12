@@ -1,9 +1,8 @@
 package com.ws.stoner.service;
 
-import com.ws.bix4j.access.problem.ProblemGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefProblemDTO;
-import com.ws.stoner.model.view.ProblemListVO;
+import com.ws.stoner.model.view.problem.ProblemListVO;
 
 import java.util.List;
 

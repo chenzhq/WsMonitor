@@ -42,6 +42,30 @@ public interface PointSerivce {
      */
     int countOkPoint() throws  ServiceException;
 
+    /**
+     * 根据hostIds 获取 point 所有数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    int countAllPointByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
+     * 根据hostIds 获取 point 警告数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    int countWarningPointByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
+     * 根据hostIds 获取 point 严重数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    int countHighPointByHostIds(List<String> hostIds) throws ServiceException;
+
 
     /*
      * list point

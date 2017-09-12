@@ -9,7 +9,7 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefAlertDTO;
 import com.ws.stoner.model.dto.BriefMediatypeDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
-import com.ws.stoner.model.view.ProblemAlertVO;
+import com.ws.stoner.model.view.problem.ProblemAlertVO;
 import com.ws.stoner.service.AlertService;
 import com.ws.stoner.service.EventService;
 import com.ws.stoner.utils.AlertStatusConverter;

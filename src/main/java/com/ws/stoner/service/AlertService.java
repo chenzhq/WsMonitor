@@ -2,7 +2,7 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefAlertDTO;
-import com.ws.stoner.model.view.ProblemAlertVO;
+import com.ws.stoner.model.view.problem.ProblemAlertVO;
 
 
 import java.util.List;

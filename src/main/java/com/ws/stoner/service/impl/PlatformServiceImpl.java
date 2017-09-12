@@ -2,7 +2,6 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
-import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
@@ -10,7 +9,7 @@ import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
-import com.ws.stoner.model.view.*;
+import com.ws.stoner.model.view.platform.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.BaseUtils;
 import com.ws.stoner.utils.StatusConverter;

@@ -15,6 +15,14 @@ public class ViewType {
     private String name;
     private String type;
 
+    public ViewType() {
+    }
+
+    public ViewType(String name, String type) {
+        this.name = name;
+        this.type = type;
+    }
+
     public String getId() {
         return id;
     }
@@ -40,5 +48,14 @@ public class ViewType {
     public ViewType setType(String type) {
         this.type = type;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "ViewType{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                '}';
     }
 }
