@@ -257,33 +257,16 @@
                                             当前问题
                                         </h3>
                                     </div>
-                                    <div class="ui right floated buttons four wide column">
-                                        <button id="time_today" class="ui button">今天</button>
-                                        <button id="time_days" class="ui button">三天</button>
-                                        <button id="time_week" class="ui button">一周</button>
-                                        <button id="time_month" class="ui button">一月</button>
-                                    </div>
+                                    <!-- <div class="ui right floated buttons four wide column">
+                                         <button id="time_today" class="ui button">今天</button>
+                                         <button id="time_days" class="ui button">三天</button>
+                                         <button id="time_week" class="ui button">一周</button>
+                                         <button id="time_month" class="ui button">一月</button>
+                                     </div>-->
                                     <!--</a>-->
                                 </div>
                                 <table id="problem_table"
-                                       class="ui very basic collapsing celled table sixteen wide column">
-                                    <thead>
-                                    <tr>
-                                        <th class="one wide center aligned">主机</th>
-                                        <th class="six wide center aligned">问题</th>
-                                        <th class="four wide center aligned">发生时间</th>
-                                        <th class="three wide center aligned">历时</th>
-                                        <th class="two wide center aligned">确认</th>
-                                    </tr></thead>
-                                    <tbody>
-                                    <tr th:each="problem : ${problemList}">
-                                        <td th:text="${problem.hosts[0].name}">机1</td>
-                                        <td th:text="${problem.description}">主机1内存使用率超过90%</td>
-                                        <td th:text="${#temporals.format(problem.time, 'yyyy/MM/dd HH:mm:ss')}">2017-6-21 15:33:20</td>
-                                        <td th:text="${problem.durationString}">2天4小时50分</td>
-                                        <td>不</td>
-                                    </tr>
-                                    </tbody>
+                                       class="ui compact very basic table center aligned " width="100%">
                                 </table>
                             </div>
                         </div>
@@ -340,6 +323,13 @@
 		<!--maincontent-->
 	</div>
 </div>
+<div id="alert_popup"></div>
+<div id="ack_popup"></div>
+
+<!--事件详情modal框 -->
+<div th:replace="problemlist::problem_event_page"></div>
+<!--确认事件modal框 -->
+<div th:replace="problemlist::problem_acknowledge_page"></div>
 <th:block th:replace="layout::bottom_script(~{::specialScript})">
 
 	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
@@ -351,12 +341,15 @@
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+        <script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
+        <script src="../static/js/custom/problem-table.js" th:src="@{js/custom/problem-table.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
     //给搜索按钮绑定点击事件
     $(document).ready(function () {
-        var table = $('#problem_table').DataTable({
+        var problemTable = $('#problem_table').problemTable()
+        /*var table = $('#problem_table').DataTable({
             iDisplayLength: 10,
             order: [2, 'desc'],// 以升序排列此列
             columnDefs: [
@@ -398,8 +391,8 @@
                 return date >= min && date <= max;
 
             }
-        );
-    }
+         );*/
+    })
 </script>
 <script type="text/javascript">
 	//饼状图

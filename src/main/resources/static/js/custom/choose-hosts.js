@@ -2,6 +2,9 @@
  * Created by chenzheqi on 2017/9/1.
  */
 
+/**
+ * @Argument 树形菜单div,[初始化已选节点],渲染成功后的回调函数
+ */
 function genHostsTree() {
     var $tree = arguments[0]
     if (!$tree instanceof jQuery) {
