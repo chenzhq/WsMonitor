@@ -215,50 +215,112 @@
                     </div>
                     <div class="ui grid">
                         <div class="eight wide column"  style="padding-bottom: 0px">
-                            <div id="host_select_dropdown" class="ui selection dropdown">
-                                <input type="hidden" name="hosts">
+                            <div class="ui selection dropdown">
                                 <i class="dropdown icon"></i>
-                                <div class="default text">选择设备</div>
+                                <div class="text">状态统计</div>
                                 <div class="menu">
-                                    <div id="select_host" class="item" data-value="host">设备</div>
-                                    <div class="disabled item" data-value="platform">业务平台</div>
-                                    <div id="select_all" class="item" data-value="all">所有</div>
+                                    <div class="disabled item" data-value="host">状态统计</div>
+                                    <div class="item" data-value="all">问题视图</div>
+                                </div>
+                            </div>
+                            <div class="ui selection dropdown">
+                                <!--<input type="hidden" name="hosts">-->
+                                <i class="dropdown icon"></i>
+                                <div class="text">默认页面</div>
+                                <div class="menu">
+                                    <div class="disabled item" data-value="host">默认页面</div>
+                                    <div class="item" data-value="platform">默认页面1</div>
+                                    <div class="item" data-value="all">默认页面2</div>
                                 </div>
                             </div>
                         </div>
                         <div class="eight wide column right aligned"  style="padding-bottom: 0px">
-                            <button value="currentProblems" class="ui blue button"><i class="add icon"></i>添加</button>
-                            <button value="recentProblems" class="ui blue button"><i class="edit icon"></i>编辑</button>
-                            <button value="historicalRecord" class="ui blue button"><i class="trash icon"></i>删除</button>
+                            <button class="ui blue button addpage"><i class="add icon"></i>添加</button>
+                            <button class="ui blue button editpage"><i class="edit icon"></i>编辑</button>
+                            <button class="ui blue button deletepage"><i class="trash icon"></i>删除</button>
                         </div>
                     </div>
-                    <div class="ui grid">
-                        <div class="six wide column">
-                            <div class="ui segment" style=" min-height : 470px;">
-                                <h3>状态统计</h3>
-                                <div id="stateStatistics" data-type="statepie">
-                                    <div id="host_pie" style="height: 207px">
-                                    </div>
-                                    <div id="point_pie" style="height: 207px">
-                                    </div>
+
+                    <div class="ui segment" id="statepie" style=" min-height : 470px;"  data-type="statepie">
+                        <h3>状态统计</h3>
+                        <div class="ui grid">
+                            <div class="eight wide column">
+                                <div id="host_pie" style="height: 400px">
+                                </div>
+                            </div>
+                            <div class="eight wide column">
+                                <div id="point_pie" style="height: 400px">
                                 </div>
                             </div>
                         </div>
-                        <div class="ten wide column" style="padding-left: 0">
-                            <div class="ui segment" style=" min-height : 470px;">
-                                <h3>问题视图</h3>
-                                <div id="problemView" data-type="problems">
-                                    <table  id="problemsTable" class="ui compact basic table center aligned " width="100%">
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="ui segment" id="problems" style=" min-height : 470px;">
+                        <h3>问题视图</h3>
+                        <table  id="problemsTable" class="ui compact basic table center aligned " width="100%">
+                        </table>
+                    </div>
+                    <div class="ui segment" id="appletree" style=" min-height : 470px;">
+                        <h3>苹果书</h3>
                     </div>
                 </div>
                 <!--Site Content-->
             </div>
         </div>
         <!--maincontent-->
+        <!--添加页面弹出框 start-->
+        <div class="ui small modal page">
+            <i class="close icon"></i>
+            <div class="header">
+                添加页面
+            </div>
+            <div class="ui content center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field">
+                        <label>页面名称</label>
+                        <input type="text" placeholder="不能为空">
+                    </div>
+                    <div class="required inline field">
+                        <label>选择设备</label>
+                        <div class="ui selection dropdown">
+                            <i class="dropdown icon"></i>
+                            <div class="text">默认页面</div>
+                            <div class="menu">
+                                <div class="disabled item" data-value="host">默认页面</div>
+                                <div class="item" data-value="platform">默认页面1</div>
+                                <div class="item" data-value="all">默认页面2</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field" >
+                        <label>视图类型</label>
+                        <div class="ui selection dropdown">
+                            <i class="dropdown icon"></i>
+                            <div class="text">状态统计</div>
+                            <div class="menu">
+                                <div class="disabled item" data-value="host">状态统计</div>
+                                <div class="item" data-value="all">问题视图</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui approve submit button">确认</div>
+                <div class="ui cancel button">取消</div>
+            </div>
+        </div>
+         <!--删除页面弹出框 start-->
+        <div class="ui small modal delete">
+            <div class="ui icon header">
+                <i class="trash icon"></i>
+                确定删除本页面吗？
+            </div>
+            <div class="actions">
+
+                <div class="ui approve submit button" data-tooltip="提示：该操作无法恢复！" data-inverted="">确认</div>
+                <div class="ui cancel button">取消</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -270,6 +332,10 @@
     <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
     <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
     <script>
+        //
+        $("#statepie").show();//显示div
+        $("#problems").hide();
+        $("#appletree").hide();
         var Color = ['#5FB878', '#F7B824', '#f11111','#d2d2d2', '#2F4056'];
         //设备pie
         var host_myChart = echarts.init(document.getElementById('host_pie'));
@@ -323,7 +389,7 @@
                     data:  [
                         {
                             "value": 2,
-                            "name": "正常"
+                            "name": "正常,"
                         },
                         {
                             "value": 7,
@@ -484,7 +550,61 @@
                 ],
             });
         })
-
+        //添加页面弹出框
+        $("button.addpage").on("click",function(){
+            $(".ui.modal.page").modal("show");
+            //绑定点击确定提交事件
+            /*$("#submit_bnt").on("click",function(){
+                $('.ui.modal.addpage').modal({
+                    onApprove: function () {
+                        //验证是否为空
+                        if($("#acknowledge_message").val()=="")
+                        {
+                            $("#text_field").addClass("error");
+                            return false;
+                        }else {
+                            var action = "";
+                            if($("#acknowledge_checkbox").attr("checked")) {
+                                action = "1";
+                            }else {
+                                action = "0";
+                            }
+                            var dataInfo = {
+                                eventId: $("#acknowledge_eventid").val(),
+                                message:$("#acknowledge_message").val(),
+                                action:action
+                            };
+                            $.ajax({
+                                type: "post",
+                                url: "/acknowledge/acknowledge_event",
+                                data:JSON.stringify(dataInfo),
+                                dataType: "json",
+                                contentType:'application/json;charset=UTF-8',
+                                success: function (result) {
+                                    if (result.success) {
+                                        var data = result.data;
+                                        console.log("成功返回",data);
+                                    } else {
+                                        errorMsg_no_data("一次关闭问题的确认 modal");
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("一次关闭问题的确认 modal");
+                                }
+                            });
+                        }
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+            });*/
+        });
+        //编辑页面弹出框
+        $("button.editpage").on("click",function(){
+            $(".ui.modal.page").modal("show");
+        });
+        //删除页面弹出框
+        $("button.deletepage").on("click",function(){
+            $(".ui.modal.delete").modal("show");
+        });
     </script>
 </th:block>
 
