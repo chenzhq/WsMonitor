@@ -6,6 +6,7 @@ import com.ws.stoner.model.DO.mongo.view.ProblemsView;
 import com.ws.stoner.model.DO.mongo.view.StateView;
 import com.ws.stoner.model.DO.mongo.view.ViewType;
 import com.ws.stoner.model.view.carousel.PageVO;
+import com.ws.stoner.model.view.itemvalue.ItemTimeData;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
 
@@ -114,4 +115,12 @@ public interface ViewService {
      * @throws ServiceException
      */
     PageVO getPageVOByPageName(String pageName) throws ServiceException;
+
+    /**
+     * 根据itemid  获取item图形数据
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    ItemTimeData getItemTimeDataByItemId(String itemId) throws ServiceException;
 }

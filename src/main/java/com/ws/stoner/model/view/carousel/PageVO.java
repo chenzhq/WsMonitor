@@ -1,7 +1,11 @@
 package com.ws.stoner.model.view.carousel;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.ws.stoner.constant.CarouselTypeEnum;
+import com.ws.stoner.constant.ViewTypeEnum;
+import com.ws.stoner.model.DO.mongo.carousel.ConfigData;
 import com.ws.stoner.model.DO.mongo.carousel.LayoutData;
+import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
 
 import java.util.List;
 
@@ -15,11 +19,17 @@ public class PageVO {
     @JSONField(name = "layout_data")
     private List<LayoutData> layoutData;
     @JSONField(name = "config_data")
-    private List<LayoutData> configData;
+    private List<ConfigData> configData;
     @JSONField(name = "block_data")
     private List<BlockVO> blockData;
 
     public PageVO() {
+    }
+
+    public PageVO(String pageName, List<LayoutData> layoutData, List<ConfigData> configData) {
+        this.pageName = pageName;
+        this.layoutData = layoutData;
+        this.configData = configData;
     }
 
     @Override
@@ -50,11 +60,11 @@ public class PageVO {
         return this;
     }
 
-    public List<LayoutData> getConfigData() {
+    public List<ConfigData> getConfigData() {
         return configData;
     }
 
-    public PageVO setConfigData(List<LayoutData> configData) {
+    public PageVO setConfigData(List<ConfigData> configData) {
         this.configData = configData;
         return this;
     }
@@ -66,6 +76,10 @@ public class PageVO {
     public PageVO setBlockData(List<BlockVO> blockData) {
         this.blockData = blockData;
         return this;
+    }
+
+    public static PageVO transPageVOByViewPage(ViewPage viewPage) {
+        return null;
     }
 
 }

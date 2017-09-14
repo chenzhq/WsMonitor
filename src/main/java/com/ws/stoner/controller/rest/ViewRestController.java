@@ -7,6 +7,7 @@ import com.ws.stoner.model.DO.mongo.view.GraphView;
 import com.ws.stoner.model.DO.mongo.view.ProblemsView;
 import com.ws.stoner.model.DO.mongo.view.StateView;
 import com.ws.stoner.model.DO.mongo.view.ViewType;
+import com.ws.stoner.model.view.carousel.PageVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
 import com.ws.stoner.service.ViewService;
@@ -278,6 +279,17 @@ public class ViewRestController {
         List<String> names = viewService.getAllGroupNames();
         return RestResultGenerator.genResult(names, REST_UPDATE_SUCCESS).toString();
     }
+
+    /**
+     *   轮播配置  根据 pageName， 获取页面 布局 渲染 相关数据
+     * @return
+     */
+    @RequestMapping(value = "/carousel/get_data", method = RequestMethod.GET)
+    public String getPageData(@RequestParam("page_name") String pageName) throws ServiceException {
+        PageVO pageVO = viewService.getPageVOByPageName(pageName);
+        return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
+    }
+
 
 
     //获取视图数据

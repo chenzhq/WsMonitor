@@ -1,15 +1,22 @@
 package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApiParameter;
+import com.ws.stoner.constant.CarouselTypeEnum;
+import com.ws.stoner.constant.ChartTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
+import com.ws.stoner.constant.ViewTypeEnum;
 import com.ws.stoner.dao.ViewDAO;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.DO.mongo.carousel.ConfigData;
 import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
 import com.ws.stoner.model.DO.mongo.view.*;
 import com.ws.stoner.model.dto.BriefAlertDTO;
+import com.ws.stoner.model.dto.BriefHistoryDTO;
+import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
-import com.ws.stoner.model.view.carousel.PageVO;
+import com.ws.stoner.model.view.carousel.*;
+import com.ws.stoner.model.view.itemvalue.ItemTimeData;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateNumVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
@@ -24,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +54,11 @@ public class ViewServiceImpl implements ViewService {
 
     @Autowired
     private AlertService alertService;
+    @Autowired
+    private ItemService itemService;
+
+    @Autowired
+    private HistoryService historyService;
 
     @Autowired
     private ViewDAO viewDAO;
@@ -336,7 +349,86 @@ public class ViewServiceImpl implements ViewService {
      */
     @Override
     public PageVO getPageVOByPageName(String pageName) throws ServiceException {
-        return null;
+        ViewPage viewPage = null;
+        try {
+            viewPage = viewDAO.getPageByPageName(pageName);
+        } catch (DAOException e) {
+            logger.error("获取指定name的 viewPage 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        if(viewPage == null) {
+            return null;
+        }
+        PageVO pageVO = new PageVO(
+                viewPage.getPageName(),
+                viewPage.getLayoutDataList(),
+                viewPage.getConfigDataList()
+        );
+        List<ConfigData> configData = viewPage.getConfigDataList();
+        List<BlockVO> blockVOS = new ArrayList<>();
+        for(ConfigData config : configData) {
+            if(CarouselTypeEnum.VIEW.type.equals(config.getBlockType())) {
+                //view
+                if(ViewTypeEnum.STATEPIE.type.equals(config.getGraphType())) {
+                    //statepie
+                    StateViewVO stateViewVO = getStateViewByName(config.getContents(),config.getGraphType());
+                    blockVOS.add(stateViewVO);
+                }else if(ViewTypeEnum.PROBLEMS.type.equals(config.getGraphType())) {
+                    //problems
+                    List<ProblemListVO> problemListVO = getProblemViewByName(config.getContents(),config.getGraphType());
+                    ProblemsVO problemsVO = new ProblemsVO(problemListVO);
+                    blockVOS.add(problemsVO);
+                }else if(ViewTypeEnum.APPLETREE.type.equals(config.getGraphType())) {
+                    //appletree
+                    //待完成
+                }else {
+
+                }
+            }else if(CarouselTypeEnum.GRAPH.type.equals(config.getBlockType())) {
+                //graph
+                ItemTimeData timeData = getItemTimeDataByItemId(config.getContents());//contents为itemId
+                blockVOS.add(timeData);
+            }else if(CarouselTypeEnum.CHART.type.equals(config.getBlockType())) {
+                //chart
+                if(ChartTypeEnum.CLOCK.type.equals(config.getGraphType())) {
+                    //clock 待完成
+                    ClockVO clockVO = new ClockVO();
+                    blockVOS.add(clockVO);
+                }else if(ChartTypeEnum.TABLE.type.equals(config.getGraphType())) {
+                    //table 待完成
+                    TableVO tableVO = new TableVO();
+                    blockVOS.add(tableVO);
+                }else {
+
+                }
+            }else {
+
+            }
+        }
+        //给页面填充动态数据
+        pageVO.setBlockData(blockVOS);
+        return pageVO;
+
+    }
+
+    /**
+     * 根据itemid  获取item图形数据
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public ItemTimeData getItemTimeDataByItemId(String itemId) throws ServiceException {
+        //获取briefItemDTO
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(itemId);
+        BriefItemDTO itemDTO = itemService.getItemsByItemIds(itemIds).get(0);
+        List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemId,itemDTO.getValueType(),1);
+        //降序改升序
+        Collections.reverse(historyDTOS);
+        //获取对象
+        ItemTimeData timeData = ItemTimeData.transformByHistoryDTOS(historyDTOS,itemDTO.getUnits());
+        return timeData;
     }
 
 }
