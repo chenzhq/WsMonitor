@@ -215,19 +215,19 @@
                     </div>
                     <div class="ui grid">
                         <div class="eight wide column"  style="padding-bottom: 0px">
-                            <div class="ui selection dropdown">
+                            <div id="viewtype_select" class="ui selection dropdown">
                                 <i class="dropdown icon"></i>
                                 <div class="text">状态统计</div>
-                                <div class="menu">
+                                <div class="menu" id="viewtype_menu">
                                     <div class="disabled item" data-value="host">状态统计</div>
                                     <div class="item" data-value="all">问题视图</div>
                                 </div>
                             </div>
-                            <div class="ui selection dropdown">
+                            <div id="viewpage_select" class="ui selection dropdown">
                                 <!--<input type="hidden" name="hosts">-->
                                 <i class="dropdown icon"></i>
                                 <div class="text">默认页面</div>
-                                <div class="menu">
+                                <div class="menu"  id="viewpage_menu">
                                     <div class="disabled item" data-value="host">默认页面</div>
                                     <div class="item" data-value="platform">默认页面1</div>
                                     <div class="item" data-value="all">默认页面2</div>
@@ -268,16 +268,16 @@
         </div>
         <!--maincontent-->
         <!--添加页面弹出框 start-->
-        <div class="ui small modal page">
+        <div class="ui tiny modal page">
             <i class="close icon"></i>
-            <div class="header">
+            <div class="header" id="modal_name">
                 添加页面
             </div>
             <div class="ui content center aligned basic segment no-padding">
                 <form class="ui form">
                     <div class="required inline field">
                         <label>页面名称</label>
-                        <input type="text" placeholder="不能为空">
+                        <input type="text" placeholder="不能为空" style="width: 168px">
                     </div>
                     <div class="required inline field">
                         <label>选择设备</label>
@@ -291,17 +291,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="required inline field" >
-                        <label>视图类型</label>
-                        <div class="ui selection dropdown">
-                            <i class="dropdown icon"></i>
-                            <div class="text">状态统计</div>
-                            <div class="menu">
-                                <div class="disabled item" data-value="host">状态统计</div>
-                                <div class="item" data-value="all">问题视图</div>
-                            </div>
-                        </div>
-                    </div>
                 </form>
             </div>
             <div class="actions">
@@ -310,7 +299,7 @@
             </div>
         </div>
          <!--删除页面弹出框 start-->
-        <div class="ui small modal delete">
+        <div class="ui tiny modal delete">
             <div class="ui icon header">
                 <i class="trash icon"></i>
                 确定删除本页面吗？
@@ -331,141 +320,173 @@
     <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
     <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
     <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+    <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
     <script>
-        //
-        $("#statepie").show();//显示div
-        $("#problems").hide();
-        $("#appletree").hide();
-        var Color = ['#5FB878', '#F7B824', '#f11111','#d2d2d2', '#2F4056'];
-        //设备pie
-        var host_myChart = echarts.init(document.getElementById('host_pie'));
-        var host_option={
-            title: {
-                text: '0',
-                subtext: '台设备',
-                x: 'center',
-                y: 'center',
-                itemGap: 1,
-                textStyle: {
-                    color: '#01AAED',
-                    fontFamily: '微软雅黑',
-                    fontSize: 24,
-                    fontWeight: 'bolder'
+        $(function() {
+            //初始化视图类型下拉框
+            selectViewtype();
+            //初始化视图页面下拉框
+            var type="statepie";
+            selectViewpage(type);
+            //初始化状态视图
+            var name="默认页面";
+            viewstatepie(name,type);
+            $("#statepie").show();
+            $("#problems").hide();
+            $("#appletree").hide();
+        })
+        //获取视图类型下拉框
+        function selectViewtype() {
+            $.ajax({
+                type: "get",
+                url: "/viewtype/get_list",
+                dataType: "json",
+                success: function (result) {
+                    if(result.success) {
+                        var data=result.data;
+                        getselectViewtype(data);
+                              }
+                    else {
+                        errorMsg_no_data(result.message);
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("视图类型下拉框 Dropdown");
                 }
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-            },
-            legend: {
-                orient: 'vertical',
-                x: 'right',
-                y: 'center',
-                data:['正常','警告'],
-            },
-            grid: {
-                left:'5%',
-                right:'5%',
-            },
-            series: [
-                {
-                    name: '访问来源',
-                    type: 'pie',
-                    radius: ['40%', '65%'],
-                    selectedMode: '',
-                    itemStyle: {
-                        normal: {
-                            label: {
-                                show: true,
-                                formatter: function (param) {
-                                    return param.name + param.value + "台" + ':\n' + Math.round(param.percent) + '%';
-                                },
-                                textStyle: {
-                                    fontWeight: 'bolder'
-                                }
-                            }
-                        },
-                    },
-                    data:  [
-                        {
-                            "value": 2,
-                            "name": "正常,"
-                        },
-                        {
-                            "value": 7,
-                            "name": "警告"
-                        }
-                    ],
-                    color: Color
-                }
-            ]
-        };
-        host_myChart.setOption(host_option);
-        //监控点pie
-        var point_myChart = echarts.init(document.getElementById('point_pie'));
-        var point_option = {
-            title: {
-                text: '0',
-                subtext: '个监控点',
-                x: 'center',
-                y: 'center',
-                itemGap: 1,
-                textStyle: {
-                    color: '#01AAED',
-                    fontFamily: '微软雅黑',
-                    fontSize: 24,
-                    fontWeight: 'bolder'
-                }
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-            },
-            legend: {
-                orient: 'vertical',
-                x: 'right',
-                y: 'center',
-                data:['正常','警告'],
-            },
-            grid: {
-                left:'15%',
-                right:'15%',
-            },
-            series: [
-                {
-                    name: '访问来源',
-                    type: 'pie',
-                    radius: ['40%', '65%'],
-                    selectedMode: '',
-                    itemStyle: {
-                        normal: {
-                            label: {
-                                show: true,
-                                formatter: function (param) {
-                                    return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
-                                },
-                                textStyle: {
-                                    fontWeight: 'bolder'
-                                }
-                            }
-                        },
-                    },
-                    data:  [
-                        {
-                            "value": 5,
-                            "name": "正常"
-                        },
-                        {
-                            "value": 5,
-                            "name": "警告"
-                        }
-                    ],
-                    color: Color
-                }
-            ]
+            })
         }
-        point_myChart.setOption(point_option);
-
+        function getselectViewtype(data) {
+            var str = "";
+            for(var i=0;i<data.length;i++)
+            {
+                str +="<div class='item' data-value='"+data[i].type+"'  >"+data[i].name+"</div> ";
+            }
+            $("#viewtype_menu").html(str);
+        }
+        $('#viewtype_select').dropdown({
+            onChange: function (value) {
+                $('#viewtype_select').addClass('loading disabled');
+                var type=$("#viewtype_select").dropdown("get value");
+                if(type=="statepie"){
+                    selectViewpage(type);
+                    var name=$("#viewtype_select").dropdown("get text");
+                    viewstatepie(name,type);
+                    $("#statepie").show();
+                    $("#problems").hide();
+                    $("#appletree").hide();
+                }
+                else if (type=="problems"){
+                    selectViewpage(type);
+                    var name=$("#viewtype_select").dropdown("get text");
+                    //viewproblems(name,type);
+                    $("#statepie").hide();
+                    $("#problems").show();
+                    $("#appletree").hide();
+                }
+                else if (type=="appletree"){
+                    selectViewpage(type);
+                    var name=$("#viewtype_select").dropdown("get text");
+                    //viewsappletree(name,type);
+                    $("#statepie").hide();
+                    $("#problems").hide();
+                    $("#appletree").show();
+                }
+            }
+        })
+        //获取视图页面下拉框
+        function selectViewpage(type) {
+            $.ajax({
+                type: "get",
+                url: "/view/get_names?type="+type,
+                dataType: "json",
+                success: function (result) {
+                    if(result.success) {
+                        var data=result.data;
+                        getselectViewpage(data);
+                    }
+                    else {
+                        errorMsg_no_data(result.message);
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("视图页面下拉框 Dropdown");
+                }
+            })
+        }
+        function getselectViewpage(data) {
+            var str = "";
+            for(var i=0;i<data.length;i++)
+            {
+                str +="<div class='item' data-value='"+data[i].type+"'  >"+data[i].name+"</div> ";
+            }
+            $("#viewpage_menu").html(str);
+        }
+        $('#viewpage_select').dropdown({
+            onChange: function (value) {
+                $('#viewpage_select').addClass('loading disabled');
+                var type=$("#viewtype_select").dropdown("get value");
+                if(type=="statepie"){
+                    var name=$("#viewtype_select").dropdown("get text");
+                    viewstatepie(name,type);
+                    $("#statepie").show();
+                    $("#problems").hide();
+                    $("#appletree").hide();
+                }
+                else if (type=="problems"){
+                    selectViewpage(type);
+                    var name=$("#viewtype_select").dropdown("get text");
+                    //viewproblems(name,type);
+                    $("#statepie").hide();
+                    $("#problems").show();
+                    $("#appletree").hide();
+                }
+                else if (type=="appletree"){
+                    selectViewpage(type);
+                    var name=$("#viewtype_select").dropdown("get text");
+                    //viewsappletree(name,type);
+                    $("#statepie").hide();
+                    $("#problems").hide();
+                    $("#appletree").show();
+                }
+            }
+        })
+        //获取状态视图
+        function viewstatepie(name,type) {
+            $.ajax({
+                type: "get",
+                url: "/view/get_graph_state?name="+name+"&type"+type,
+                dataType: "json",
+                success: function (result) {
+                    if(result.success) {
+                        var data=result.data;
+                        getviewstatepie(data);
+                    }
+                    else {
+                        errorMsg_no_data(result.message);
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("状态视图 Dropdown");
+                }
+            }).done(function () {
+                $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
+            })
+        }
+        function getviewstatepie(data) {
+            var hostStateNum = data.hostStateNum;
+            if (hostStateNum.stateNum) {
+                host_option.title.text = hostStateNum.totalNum;
+                host_option.series[0].data = hostStateNum.stateNum;
+                // 重写指定图表的配置项和数据
+                host_myChart.setOption(host_option);
+            }
+            var pointStateNum = data.pointStateNum;
+            if (pointStateNum.stateNum) {
+                point_option.title.text = pointStateNum.totalNum;
+                point_option.series[0].data = pointStateNum.stateNum;
+                point_myChart.setOption(point_option);
+            }
+        }
         //页面加载完加载表格数据
         $(function() {
             //初始问题列表
@@ -552,6 +573,7 @@
         })
         //添加页面弹出框
         $("button.addpage").on("click",function(){
+            $("#modal_name").html("添加页面【"+$("#viewtype_select").dropdown("get text")+"】");
             $(".ui.modal.page").modal("show");
             //绑定点击确定提交事件
             /*$("#submit_bnt").on("click",function(){
@@ -599,12 +621,143 @@
         });
         //编辑页面弹出框
         $("button.editpage").on("click",function(){
+            $("#modal_name").html("编辑页面【"+$("#viewtype_select").dropdown("get text")+"】")
             $(".ui.modal.page").modal("show");
         });
         //删除页面弹出框
         $("button.deletepage").on("click",function(){
             $(".ui.modal.delete").modal("show");
         });
+        //定义echart图表
+        var Color = ['#5FB878', '#F7B824', '#f11111','#d2d2d2', '#2F4056'];
+        //设备pie
+        var host_myChart = echarts.init(document.getElementById('host_pie'));
+        var host_option={
+            title: {
+                text: '0',
+                subtext: '台设备',
+                x: 'center',
+                y: 'center',
+                itemGap: 1,
+                textStyle: {
+                    color: '#01AAED',
+                    fontFamily: '微软雅黑',
+                    fontSize: 24,
+                    fontWeight: 'bolder'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'right',
+                y: 'center',
+                data:['正常','警告','严重'],
+            },
+            grid: {
+                left:'5%',
+                right:'5%',
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['40%', '65%'],
+                    selectedMode: '',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                formatter: function (param) {
+                                    return param.name + param.value + "台" + ':\n' + Math.round(param.percent) + '%';
+                                },
+                                textStyle: {
+                                    fontWeight: 'bolder'
+                                }
+                            }
+                        },
+                    },
+                    data:  [
+                        {
+                            "value": 2,
+                            "name": "正常,"
+                        },
+                        {
+                            "value": 7,
+                            "name": "警告"
+                        }
+                    ],
+                    color: Color
+                }
+            ]
+        };
+        host_myChart.setOption(host_option);
+        //监控点pie
+        var point_myChart = echarts.init(document.getElementById('point_pie'));
+        var point_option = {
+            title: {
+                text: '0',
+                subtext: '个监控点',
+                x: 'center',
+                y: 'center',
+                itemGap: 1,
+                textStyle: {
+                    color: '#01AAED',
+                    fontFamily: '微软雅黑',
+                    fontSize: 24,
+                    fontWeight: 'bolder'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'right',
+                y: 'center',
+                data:['正常','警告','严重'],
+            },
+            grid: {
+                left:'15%',
+                right:'15%',
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: ['40%', '65%'],
+                    selectedMode: '',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                formatter: function (param) {
+                                    return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
+                                },
+                                textStyle: {
+                                    fontWeight: 'bolder'
+                                }
+                            }
+                        },
+                    },
+                    data:  [
+                        {
+                            "value": 5,
+                            "name": "正常"
+                        },
+                        {
+                            "value": 5,
+                            "name": "警告"
+                        }
+                    ],
+                    color: Color
+                }
+            ]
+        }
+        point_myChart.setOption(point_option);
     </script>
 </th:block>
 
