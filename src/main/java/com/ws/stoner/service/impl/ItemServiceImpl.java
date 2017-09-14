@@ -11,7 +11,7 @@ import com.ws.stoner.dao.MongoItemDAO;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.item.Item;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.host.HostDetailPointItemVO;
 import com.ws.stoner.model.view.host.HostDetailPointVO;

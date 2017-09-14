@@ -3,7 +3,7 @@ package com.ws.stoner.service;
 
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.item.Item;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.view.host.HostDetailPointItemVO;
 import com.ws.stoner.model.view.host.HostDetailPointVO;

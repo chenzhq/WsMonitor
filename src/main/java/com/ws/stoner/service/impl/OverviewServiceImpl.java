@@ -7,7 +7,7 @@ import com.ws.stoner.dao.MongoGroupDAO;
 import com.ws.stoner.dao.OverviewGroupRepository;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.Group;
+import com.ws.stoner.model.DO.mongo.overview.Group;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.overview.OverViewHostVO;
 import com.ws.stoner.model.view.overview.OverviewEditGroupVO;

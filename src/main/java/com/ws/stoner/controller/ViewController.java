@@ -12,6 +12,6 @@ public class ViewController {
 
     @RequestMapping(value = {"/view", ""})
     public String view() {
-        return "view";
+        return "monitorview";
     }
 }

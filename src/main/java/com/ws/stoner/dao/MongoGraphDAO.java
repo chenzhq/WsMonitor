@@ -1,7 +1,7 @@
 package com.ws.stoner.dao;
 
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.model.DO.mongo.GraphType;
+import com.ws.stoner.model.DO.mongo.item.GraphType;
 
 /**
  * Created by zkf on 2017/7/18.

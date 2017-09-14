@@ -5,10 +5,11 @@ import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.dao.ViewDAO;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.GraphView;
-import com.ws.stoner.model.DO.mongo.ViewType;
+import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
+import com.ws.stoner.model.DO.mongo.view.*;
 import com.ws.stoner.model.dto.BriefAlertDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
+import com.ws.stoner.model.view.carousel.PageVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateNumVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
@@ -84,22 +85,26 @@ public class ViewServiceImpl implements ViewService {
     }
 
     /**
-     * 根据视图名称 获取 状态统计 视图信息
+     * 根据 视图名称 获取 指定视图类型对象
      * @param name
+     * @param type
+     * @param clazz
+     * @param <T>
      * @return
      * @throws ServiceException
      */
     @Override
-    public GraphView getGraphViewByName(String name) throws ServiceException {
-        GraphView graphView = null;
+    public <T> T getGraphViewByName(String name, String type, Class<T> clazz) throws ServiceException {
+        T graphView = null;
         try {
-            graphView = viewDAO.findViewByName(name);
+            graphView = viewDAO.getViewByName(name,type,clazz);
         } catch (DAOException e) {
-            logger.error("根据名称 查询单个 graphview 错误！{}", e.getMessage());
+            logger.error("根据名称 查询单个 graphView 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
         }
         return graphView;
     }
+
 
     /**
      * 根据视图名称 获取 状态统计 视图信息
@@ -108,9 +113,12 @@ public class ViewServiceImpl implements ViewService {
      * @throws ServiceException
      */
     @Override
-    public StateViewVO getStateViewByName(String name) throws ServiceException {
-        GraphView graphView = getGraphViewByName(name);
-        List<String> hostIds = graphView.getHostIds();
+    public StateViewVO getStateViewByName(String name,String type) throws ServiceException {
+        StateView stateView = getGraphViewByName(name,type,StateView.class);
+        if(stateView == null) {
+            return null;
+        }
+        List<String> hostIds = stateView.getHostIds();
         //主机状态统计
         int allHostNum = hostIds.size();
         int warningHostNum = hostService.countWarningHostByHostIds(hostIds);
@@ -147,10 +155,10 @@ public class ViewServiceImpl implements ViewService {
      * @throws ServiceException
      */
     @Override
-    public List<ProblemListVO> getProblemViewByName(String name) throws ServiceException {
-        GraphView graphView = getGraphViewByName(name);
-        List<String> hostIds = graphView.getHostIds();
-        Integer limit = graphView.getMaxNum() == null ? 0 : graphView.getMaxNum();
+    public List<ProblemListVO> getProblemViewByName(String name,String type) throws ServiceException {
+        ProblemsView problemsView = getGraphViewByName(name,type,ProblemsView.class);
+        List<String> hostIds = problemsView.getHostIds();
+        Integer limit = problemsView.getMaxNum() == null ? 0 : problemsView.getMaxNum();
         //获取问题触发器
         List<BriefTriggerDTO> triggerDTOS = triggerService.listProblemTriggers();
         List<ProblemListVO> problemListVOS = new ArrayList<>();
@@ -196,13 +204,14 @@ public class ViewServiceImpl implements ViewService {
 
     /**
      * 保存 graphView
-     * @param graphView
+     * @param graphView 所有的视图类型对象
      * @return
      * @throws ServiceException
      */
     @Override
-    public boolean saveGraphView(GraphView graphView) throws ServiceException {
+    public <T> boolean saveGraphView(T graphView) throws ServiceException {
         try {
+
             viewDAO.save(graphView);
         } catch (DAOException e) {
             logger.error("保存 graphview 错误！{}", e.getMessage());
@@ -213,18 +222,37 @@ public class ViewServiceImpl implements ViewService {
     }
 
     /**
-     * 修改 graphview
-     * @param graphView
+     * 状态视图 修改 stateView
+     * @param stateView
      * @param oldName
      * @return
      * @throws ServiceException
      */
     @Override
-    public boolean updateGraphView(GraphView graphView, String oldName) throws ServiceException {
+    public boolean updateStateView(StateView stateView,String oldName) throws ServiceException {
         try {
-            viewDAO.updateGraphView(graphView,oldName);
+            viewDAO.updateStateView(stateView,oldName);
         } catch (DAOException e) {
-            logger.error("修改 graphview 错误！{}", e.getMessage());
+            logger.error("修改 stateView 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 问题视图 修改 problemsView
+     * @param problemsView
+     * @param oldName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean updateProblemsView(ProblemsView problemsView,String oldName) throws ServiceException {
+        try {
+            viewDAO.updateProblemsView(problemsView,oldName);
+        } catch (DAOException e) {
+            logger.error("修改 problemsView 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
             return false;
         }
@@ -233,37 +261,82 @@ public class ViewServiceImpl implements ViewService {
 
     /**
      * 删除 graphview
-     * @param name
+     * @param name,type
      * @return
      * @throws ServiceException
      */
     @Override
-    public boolean deleteGraphView(String name) throws ServiceException {
+    public <T> T deleteGraphView(String name,String type,Class<T> clazz) throws ServiceException {
+        T graphView = null;
         try {
-            viewDAO.deleteGraphView(name);
+            viewDAO.deleteGraphView(name,type);
+            graphView = viewDAO.getFirstGraphView(type,clazz);
         } catch (DAOException e) {
-            logger.error("删除 graphview 错误！{}", e.getMessage());
+            logger.error("ViewDAO 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
-            return false;
+            return null;
         }
-        return true;
+      return graphView;
     }
 
     /**
-     * 获取第一个graphview  返回值可以为空
+     * 获取所有 展示组名称 去重
      * @return
      * @throws ServiceException
      */
     @Override
-    public GraphView getFirstGraphView(String type) throws ServiceException {
-        GraphView graphView = null;
+    public List<String> getAllGroupNames() throws ServiceException {
+        List<ViewPage> viewPages = null;
+        List<String> groupNames = new ArrayList<>();
         try {
-            graphView = viewDAO.getFirstGraphView(type);
+            viewPages = viewDAO.findAllViewPage();
         } catch (DAOException e) {
-            logger.error("获取第一个 graphview 错误！{}", e.getMessage());
+            logger.error("获取所有 viewPage 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
         }
-        return graphView;
+        if(viewPages != null) {
+            for(ViewPage viewPage : viewPages) {
+                if(!groupNames.contains(viewPage.getGroupName())) {
+                    groupNames.add(viewPage.getGroupName());
+                }
+            }
+        }
+        return groupNames;
+    }
+
+    /**
+     * 根据 指定组名称 获取 所有的页面名称
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<String> getPageNamesByGroupNames(String groupName) throws ServiceException {
+        List<ViewPage> viewPages = null;
+        List<String> pageNames = new ArrayList<>();
+        try {
+            viewPages = viewDAO.getAllPageByGroupName(groupName);
+        } catch (DAOException e) {
+            logger.error("获取指定组的所有 viewPage 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        if(viewPages != null) {
+            for(ViewPage viewPage :viewPages) {
+                pageNames.add(viewPage.getPageName());
+            }
+        }
+        return pageNames;
+    }
+
+    /**
+     * 根据 指定页面名称 获取 展示页对象 pageVO
+     * @param pageName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public PageVO getPageVOByPageName(String pageName) throws ServiceException {
+        return null;
     }
 
 }

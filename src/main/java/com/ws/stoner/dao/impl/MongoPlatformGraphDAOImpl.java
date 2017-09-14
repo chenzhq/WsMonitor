@@ -2,7 +2,7 @@ package com.ws.stoner.dao.impl;
 
 import com.ws.stoner.dao.MongoPlatformGraphDAO;
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.model.DO.mongo.PlatformGraph;
+import com.ws.stoner.model.DO.mongo.platform.PlatformGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

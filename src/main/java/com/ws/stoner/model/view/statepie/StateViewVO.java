@@ -1,9 +1,11 @@
 package com.ws.stoner.model.view.statepie;
 
+import com.ws.stoner.model.view.carousel.BlockVO;
+
 /**
  * Created by zkf on 2017/9/12.
  */
-public class StateViewVO {
+public class StateViewVO extends BlockVO {
 
     private StateNumVO hostStateNum;
     private StateNumVO pointStateNum;

@@ -6,6 +6,7 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.stoner.model.dto.BriefAlertDTO;
 import com.ws.stoner.model.dto.BriefEventDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
+import com.ws.stoner.model.view.carousel.BlockVO;
 import com.ws.stoner.utils.AlertStatusConverter;
 import com.ws.stoner.utils.BaseUtils;
 import com.ws.stoner.utils.StatusConverter;
@@ -17,7 +18,7 @@ import java.util.*;
 /**
  * Created by zkf on 2017/8/22.
  */
-public class ProblemListVO {
+public class ProblemListVO extends BlockVO {
 
     @JSONField(name = "problem_eventid")
     private String problemEventid;

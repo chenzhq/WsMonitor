@@ -1,8 +1,11 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.GraphView;
-import com.ws.stoner.model.DO.mongo.ViewType;
+import com.ws.stoner.model.DO.mongo.view.GraphView;
+import com.ws.stoner.model.DO.mongo.view.ProblemsView;
+import com.ws.stoner.model.DO.mongo.view.StateView;
+import com.ws.stoner.model.DO.mongo.view.ViewType;
+import com.ws.stoner.model.view.carousel.PageVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
 
@@ -30,12 +33,15 @@ public interface ViewService {
     List<GraphView> listGraphViewsByType(String viewType) throws ServiceException;
 
     /**
-     * 根据 视图名称 获取指定 视图配置信息
+     * 根据 视图名称 获取 指定视图类型对象
      * @param name
+     * @param type
+     * @param clazz
+     * @param <T>
      * @return
      * @throws ServiceException
      */
-    GraphView getGraphViewByName(String name) throws ServiceException;
+    <T> T getGraphViewByName(String name,String type,Class<T> clazz) throws ServiceException;
 
     /**
      * 根据视图名称 获取 状态统计 视图信息
@@ -43,7 +49,7 @@ public interface ViewService {
      * @return
      * @throws ServiceException
      */
-    StateViewVO getStateViewByName(String name) throws ServiceException;
+    StateViewVO getStateViewByName(String name,String type) throws ServiceException;
 
     /**
      * 根据视图名称 获取 问题视图 信息
@@ -51,38 +57,61 @@ public interface ViewService {
      * @return
      * @throws ServiceException
      */
-    List<ProblemListVO> getProblemViewByName(String name) throws ServiceException;
+    List<ProblemListVO> getProblemViewByName(String name,String type) throws ServiceException;
 
     /**
-     * 保存 graphView
-     * @param graphView
+     *  视图保存 graphView  通用
+     * @param graphView 所有的视图类型对象
      * @return
      * @throws ServiceException
      */
-    boolean saveGraphView(GraphView graphView) throws ServiceException;
+    <T> boolean saveGraphView(T graphView) throws ServiceException;
 
     /**
-     * 修改 graphview
-     * @param graphView
+     * 状态视图 修改 stateView
+     * @param stateView
      * @param oldName
      * @return
      * @throws ServiceException
      */
-    boolean updateGraphView(GraphView graphView,String oldName) throws ServiceException;
+    boolean updateStateView(StateView stateView,String oldName) throws ServiceException;
 
     /**
-     * 删除 graphview
-     * @param name
+     * 问题视图 修改 problemsView
+     * @param problemsView
+     * @param oldName
      * @return
      * @throws ServiceException
      */
-    boolean deleteGraphView(String name) throws ServiceException;
-
+    boolean updateProblemsView(ProblemsView problemsView,String oldName) throws ServiceException;
     /**
-     * 获取第一个graphview  返回值可以为空
+     * 删除 graphview 返回的是同一类型的第一个视图对象
+     * @param name,type,clazz 指定返回的视图类型对象
      * @return
      * @throws ServiceException
      */
-    GraphView getFirstGraphView(String type) throws ServiceException;
+    <T> T deleteGraphView(String name,String type,Class<T> clazz) throws ServiceException;
 
+    /**
+     * 获取所有 展示组名称 去重
+     * @return
+     * @throws ServiceException
+     */
+    List<String> getAllGroupNames() throws ServiceException;
+
+    /**
+     * 根据 指定组名称 获取 所有的页面名称
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    List<String> getPageNamesByGroupNames(String groupName) throws ServiceException;
+
+    /**
+     * 根据 指定页面名称 获取 展示页对象 pageVO
+     * @param pageName
+     * @return
+     * @throws ServiceException
+     */
+    PageVO getPageVOByPageName(String pageName) throws ServiceException;
 }

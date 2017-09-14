@@ -17,5 +17,4 @@ public enum ViewTypeEnum {
         this.type = type;
     }
 
-
 }
