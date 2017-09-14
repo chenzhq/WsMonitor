@@ -2,7 +2,7 @@ package com.ws.stoner.dao.impl;
 
 import com.ws.stoner.dao.MongoItemDAO;
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.item.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

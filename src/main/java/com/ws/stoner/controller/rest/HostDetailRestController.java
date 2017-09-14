@@ -3,7 +3,7 @@ package com.ws.stoner.controller.rest;
 import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.item.Item;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.view.host.HostDetailGraphVO;

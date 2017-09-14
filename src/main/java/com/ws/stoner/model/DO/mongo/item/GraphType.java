@@ -1,4 +1,4 @@
-package com.ws.stoner.model.DO.mongo;
+package com.ws.stoner.model.DO.mongo.item;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

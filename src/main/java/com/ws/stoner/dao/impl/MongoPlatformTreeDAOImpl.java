@@ -2,13 +2,10 @@ package com.ws.stoner.dao.impl;
 
 import com.ws.stoner.dao.MongoPlatformTreeDAO;
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.model.DO.mongo.Item;
-import com.ws.stoner.model.DO.mongo.PlatformTree;
-import com.ws.stoner.model.DO.mongo.PlatformTreeManager;
+import com.ws.stoner.model.DO.mongo.platform.PlatformTree;
+import com.ws.stoner.model.DO.mongo.platform.PlatformTreeManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -2,7 +2,7 @@ package com.ws.stoner.dao.impl;
 
 import com.ws.stoner.dao.MongoGroupDAO;
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.model.DO.mongo.Group;
+import com.ws.stoner.model.DO.mongo.overview.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
