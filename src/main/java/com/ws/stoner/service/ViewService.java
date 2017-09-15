@@ -86,12 +86,12 @@ public interface ViewService {
      */
     boolean updateProblemsView(ProblemsView problemsView,String oldName) throws ServiceException;
     /**
-     * 删除 graphview 返回的是同一类型的第一个视图对象
-     * @param name,type,clazz 指定返回的视图类型对象
+     * 删除 graphview
+     * @param name,type
      * @return
      * @throws ServiceException
      */
-    <T> T deleteGraphView(String name,String type,Class<T> clazz) throws ServiceException;
+    boolean deleteGraphView(String name,String type) throws ServiceException;
 
     /**
      * 获取所有 展示组名称 去重

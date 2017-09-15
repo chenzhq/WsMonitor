@@ -230,32 +230,15 @@ public class ViewRestController {
     }
 
     /**
-     * 删除 状态统计 视图
-     * @return
-     */
-    @RequestMapping(value = "/view/delete_state", method = RequestMethod.DELETE)
-    public String deleteStateView(@RequestParam("name") String name,
-                                  @RequestParam("type") String type) throws ServiceException {
-        StateView stateView =  viewService.deleteGraphView(name,type,StateView.class);
-        if(stateView != null) {
-            return getViewList(stateView);
-        }else {
-            return RestResultGenerator.genResult(stateView, REST_UPDATE_SUCCESS).toString();
-        }
-    }
-    /**
      * 删除 问题视图
      * @return
      */
-    @RequestMapping(value = "/view/delete_problems", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/view/delete", method = RequestMethod.GET)
     public String deleteProblemsView(@RequestParam("name") String name,
                                   @RequestParam("type") String type) throws ServiceException {
-        ProblemsView problemsView =  viewService.deleteGraphView(name,type,ProblemsView.class);
-        if(problemsView != null) {
-            return getViewList(problemsView);
-        }else {
-            return RestResultGenerator.genResult(problemsView, REST_UPDATE_SUCCESS).toString();
-        }
+        boolean success =  viewService.deleteGraphView(name,type);
+        return RestResultGenerator.genResult(success, REST_UPDATE_SUCCESS).toString();
+
     }
 /*
  *轮播视图

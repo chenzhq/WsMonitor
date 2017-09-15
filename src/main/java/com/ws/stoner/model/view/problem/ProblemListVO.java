@@ -6,8 +6,6 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.stoner.model.dto.BriefAlertDTO;
 import com.ws.stoner.model.dto.BriefEventDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
-import com.ws.stoner.model.view.carousel.BlockVO;
-import com.ws.stoner.utils.AlertStatusConverter;
 import com.ws.stoner.utils.BaseUtils;
 import com.ws.stoner.utils.StatusConverter;
 
@@ -240,9 +238,9 @@ public class ProblemListVO {
             List<BriefAlertDTO> problemAlertDTOS = problemEventDTO.getAlerts();
             alertDTOS.addAll(problemAlertDTOS);
             //循环 问题和恢复的告警,告警数
-            Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
-            problemListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-            problemListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+            AlertBriefVO alertBriefVO = AlertBriefVO.transformByAlertDTOS(alertDTOS);
+            problemListVO.setAlertNum(alertBriefVO.getAlertNum());
+            problemListVO.setAlertState(alertBriefVO.getAlertState());
             //确认
             if(problemEventDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
                 problemListVO.setAcknowledged("是");

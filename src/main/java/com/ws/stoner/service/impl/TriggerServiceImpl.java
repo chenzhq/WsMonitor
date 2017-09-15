@@ -9,12 +9,12 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.dashboard.DashboardProblemVO;
+import com.ws.stoner.model.view.problem.AlertBriefVO;
 import com.ws.stoner.model.view.problem.ProblemDetailVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.service.AlertService;
 import com.ws.stoner.service.PointSerivce;
 import com.ws.stoner.service.TriggerService;
-import com.ws.stoner.utils.AlertStatusConverter;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
@@ -256,9 +256,9 @@ public class TriggerServiceImpl implements TriggerService {
                 eventIds.add(triggerDTO.getLastEvent().getEventId());
                 List<BriefAlertDTO> alertDTOS = alertService.getAlertDTOByEventIds(eventIds);
                 //问题和恢复的告警,告警数
-                Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
-                problemListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-                problemListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+                AlertBriefVO alertBriefVO = AlertBriefVO.transformByAlertDTOS(alertDTOS);
+                problemListVO.setAlertNum(alertBriefVO.getAlertNum());
+                problemListVO.setAlertState(alertBriefVO.getAlertState());
             }
             problemListVO.setProblemState("问题");
             problemListVO.setDescription(triggerDTO.getName());

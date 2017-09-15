@@ -17,11 +17,11 @@ import com.ws.stoner.model.dto.BriefItemDTO;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
 import com.ws.stoner.model.view.carousel.*;
 import com.ws.stoner.model.view.itemvalue.ItemTimeData;
+import com.ws.stoner.model.view.problem.AlertBriefVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateNumVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
 import com.ws.stoner.service.*;
-import com.ws.stoner.utils.AlertStatusConverter;
 import com.ws.stoner.utils.StatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,9 +196,9 @@ public class ViewServiceImpl implements ViewService {
                     eventIds.add(triggerDTO.getLastEvent().getEventId());
                     List<BriefAlertDTO> alertDTOS = alertService.getAlertDTOByEventIds(eventIds);
                     //问题和恢复的告警,告警数
-                    Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
-                    problemListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-                    problemListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+                    AlertBriefVO alertBriefVO = AlertBriefVO.transformByAlertDTOS(alertDTOS);
+                    problemListVO.setAlertNum(alertBriefVO.getAlertNum());
+                    problemListVO.setAlertState(alertBriefVO.getAlertState());
                 }
                 problemListVO.setProblemState("问题");
                 problemListVO.setDescription(triggerDTO.getName());
@@ -279,17 +279,15 @@ public class ViewServiceImpl implements ViewService {
      * @throws ServiceException
      */
     @Override
-    public <T> T deleteGraphView(String name,String type,Class<T> clazz) throws ServiceException {
-        T graphView = null;
+    public boolean deleteGraphView(String name,String type) throws ServiceException {
         try {
             viewDAO.deleteGraphView(name,type);
-            graphView = viewDAO.getFirstGraphView(type,clazz);
         } catch (DAOException e) {
             logger.error("ViewDAO 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
-            return null;
+            return false;
         }
-      return graphView;
+      return true;
     }
 
     /**

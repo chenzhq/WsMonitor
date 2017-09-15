@@ -4,7 +4,6 @@ package com.ws.stoner.model.view.problem;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ws.stoner.model.dto.BriefAlertDTO;
-import com.ws.stoner.utils.AlertStatusConverter;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -106,7 +105,7 @@ public class ProblemGraphVO {
                 graphVO.setEndTime(0L);
                 graphVO.setIsAlert(0);
                 graphVO.setColor(null);
-                graphVO.setTooltip(alertDTO.getClock().format(formatter) + "(" + AlertStatusConverter.getDiscriptionByStatus(alertDTO.getStatus()) + ")");
+                graphVO.setTooltip(alertDTO.getClock().format(formatter) + "(" + AlertBriefVO.transAlertState(alertDTO.getStatus()) + ")");
                 graphVOS.add(graphVO);
                 currStep = alertDTO.getEscStep();
             }

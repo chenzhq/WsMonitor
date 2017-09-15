@@ -1,5 +1,6 @@
 package com.ws.stoner.model.view.itemvalue;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.ws.stoner.model.dto.BriefHistoryDTO;
 import com.ws.stoner.model.view.carousel.BlockVO;
 import com.ws.stoner.utils.ThresholdUtils;
@@ -15,6 +16,7 @@ import java.util.Map;
 public class ItemTimeData extends BlockVO{
 
     private Float[] data;
+    @JSONField(name = "data_time")
     private String[] dataTime;
     private String units;
 

@@ -2,7 +2,23 @@
  * Created by zkf on 2017/9/7.
  */
 
-//获取确认记录提示框内容
+
+//事件详情弹出框
+function eventDetailModal(event_id) {
+    //事件详情细节部分
+    var eventDetailStr = getEventDetailContent(event_id);
+    $("#eventDetailModal").html(eventDetailStr);
+    //确认记录部分
+    var acknowledgeStr = getAcknowledgeContent(event_id);
+    $("#acknowledgeModal").html(acknowledgeStr);
+    //告警详情部分
+    var alertStr = getAlertDetailContent(event_id);
+    $("#alertDetailModal").html(alertStr);
+    //显示弹出框
+    $('.ui.modal.detail').modal('show');
+}
+
+//获取确认记录提示框内容 str
 function getAcknowledgeContent(event_id) {
     var str = "";
     $.ajax({
@@ -35,36 +51,6 @@ function getAcknowledgeContent(event_id) {
         },
         error: function () {
             errorMsg_no_connect("确认记录 Popup");
-        }
-    })
-    return str;
-}
-
-//获取已告警信息内容 str
-function getAlertContent(event_id){
-    var str = "";
-    $.ajax({
-        async: false,
-        type: "get",
-        url: "/alerts/get_alert?event_id=" + event_id,
-        dataType: "json",
-        success: function (result) {
-            if (result.success) {
-                var data = result.data;
-                for(var i=0;i<data.length;i++)
-                {
-                    str += "<tr><td>"
-                        +data[i].esc_step+"</td><td>"
-                        +data[i].last_time+"</td><td>"
-                        +data[i].status+"("+data[i].retries+")</td><td>"
-                        +data[i].sendto+"</td></tr>"
-                }
-            } else {
-                errorMsg_no_data("已告警 Popup");
-            }
-        },
-        error: function () {
-            errorMsg_no_connect("已告警 Popup");
         }
     })
     return str;
@@ -138,21 +124,6 @@ function getEventDetailContent(event_id) {
         }
     });
     return str;
-}
-
-//事件详情弹出框
-function eventDetailModal(event_id) {
-    //事件详情细节部分
-    var eventDetailStr = getEventDetailContent(event_id);
-    $("#eventDetailModal").html(eventDetailStr);
-    //确认记录部分
-    var acknowledgeStr = getAcknowledgeContent(event_id);
-    $("#acknowledgeModal").html(acknowledgeStr);
-    //告警详情部分
-    var alertStr = getAlertDetailContent(event_id);
-    $("#alertDetailModal").html(alertStr);
-    //显示弹出框
-    $('.ui.modal.detail').modal('show');
 }
 
 //获取确认操作modal框

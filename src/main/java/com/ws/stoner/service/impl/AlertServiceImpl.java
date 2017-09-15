@@ -9,10 +9,10 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefAlertDTO;
 import com.ws.stoner.model.dto.BriefMediatypeDTO;
 import com.ws.stoner.model.dto.UserInfoDTO;
+import com.ws.stoner.model.view.problem.AlertBriefVO;
 import com.ws.stoner.model.view.problem.ProblemAlertVO;
 import com.ws.stoner.service.AlertService;
 import com.ws.stoner.service.EventService;
-import com.ws.stoner.utils.AlertStatusConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +95,7 @@ public class AlertServiceImpl implements AlertService {
                     alertDTO.getAlertId(),
                     alertDTO.getEscStep(),
                     alertDTO.getClock().format(formatter),
-                    AlertStatusConverter.getDiscriptionByStatus(alertDTO.getStatus()),
+                    AlertBriefVO.transAlertState(alertDTO.getStatus()),
                     alertDTO.getRetries(),
                     alias,
                     alertDTO.getSendto(),
@@ -117,7 +117,7 @@ public class AlertServiceImpl implements AlertService {
                         recoveryAlertDTO.getAlertId(),
                         recoveryAlertDTO.getEscStep(),
                         recoveryAlertDTO.getClock().format(formatter),
-                        AlertStatusConverter.getDiscriptionByStatus(recoveryAlertDTO.getStatus()),
+                        AlertBriefVO.transAlertState(recoveryAlertDTO.getStatus()),
                         recoveryAlertDTO.getRetries(),
                         alias,
                         recoveryAlertDTO.getSendto(),
@@ -156,7 +156,7 @@ public class AlertServiceImpl implements AlertService {
                     alertDTO.getAlertId(),
                     alertDTO.getEscStep(),
                     alertDTO.getClock().format(formatter),
-                    AlertStatusConverter.getDiscriptionByStatus(alertDTO.getStatus()),
+                    AlertBriefVO.transAlertState(alertDTO.getStatus()),
                     alertDTO.getRetries(),
                     alias,
                     alertDTO.getSendto(),
@@ -182,7 +182,7 @@ public class AlertServiceImpl implements AlertService {
                         recoveryAlertDTO.getAlertId(),
                         recoveryAlertDTO.getEscStep(),
                         recoveryAlertDTO.getClock().format(formatter),
-                        AlertStatusConverter.getDiscriptionByStatus(recoveryAlertDTO.getStatus()),
+                        AlertBriefVO.transAlertState(recoveryAlertDTO.getStatus()),
                         recoveryAlertDTO.getRetries(),
                         alias,
                         recoveryAlertDTO.getSendto(),
