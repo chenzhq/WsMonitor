@@ -1,16 +1,16 @@
 package com.ws.stoner.model.DO.mongo.carousel;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * Created by zkf on 2017/9/14.
  */
 public class ConfigData {
-    @Field("block_name")
+    @JSONField(name = "block_name")
     private String blockName;
-    @Field("block_type")
+    @JSONField(name = "block_type")
     private String blockType;
-    @Field("graph_type")
+    @JSONField(name = "graph_type")
     private String graphType;
     private String contents;
 

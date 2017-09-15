@@ -1,14 +1,14 @@
 package com.ws.stoner.model.DO.mongo.carousel;
 
-import org.springframework.data.mongodb.core.mapping.Field;
+import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * Created by zkf on 2017/9/14.
  */
 public class LayoutData {
-    @Field("x_size")
+    @JSONField(name = "x_size")
     private Integer xSize;
-    @Field("y_size")
+    @JSONField(name = "y_size")
     private Integer ySize;
     private Integer row;
     private Integer col;

@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Created by zkf on 2017/8/22.
  */
-public class ProblemListVO extends BlockVO {
+public class ProblemListVO {
 
     @JSONField(name = "problem_eventid")
     private String problemEventid;

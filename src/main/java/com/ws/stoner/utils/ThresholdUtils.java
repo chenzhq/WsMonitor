@@ -160,7 +160,7 @@ public class ThresholdUtils {
         return valueUnits;
     }
 
-
+    //获取转换的图形数据
     public static Map<String, String> transformGraphValue(String valueInfo,String units) {
         String upUnits = units.toUpperCase();
         Map<String,String> valueUnits;
