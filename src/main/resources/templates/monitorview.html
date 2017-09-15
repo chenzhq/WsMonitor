@@ -215,20 +215,20 @@
                     </div>
                     <div class="ui grid">
                         <div class="eight wide column"  style="padding-bottom: 0px">
-                            <div class="ui selection dropdown">
+                            <div id="viewtype_select" class="ui selection dropdown">
                                 <i class="dropdown icon"></i>
                                 <div class="text">状态统计</div>
-                                <div class="menu">
+                                <div class="menu" id="viewtype_menu">
                                     <div class="disabled item" data-value="host">状态统计</div>
                                     <div class="item" data-value="all">问题视图</div>
                                 </div>
                             </div>
-                            <div class="ui selection dropdown">
+                            <div id="viewpage_select" class="ui selection dropdown">
                                 <!--<input type="hidden" name="hosts">-->
                                 <i class="dropdown icon"></i>
                                 <div class="text">默认页面</div>
-                                <div class="menu">
-                                    <div class="disabled item" data-value="host">默认页面</div>
+                                <div class="menu"  id="viewpage_menu">
+                                    <div class="selected item" data-value="host">默认页面</div>
                                     <div class="item" data-value="platform">默认页面1</div>
                                     <div class="item" data-value="all">默认页面2</div>
                                 </div>
@@ -268,40 +268,31 @@
         </div>
         <!--maincontent-->
         <!--添加页面弹出框 start-->
-        <div class="ui small modal page">
+        <div class="ui tiny modal page">
             <i class="close icon"></i>
-            <div class="header">
+            <div class="header" id="modal_name">
                 添加页面
             </div>
             <div class="ui content center aligned basic segment no-padding">
                 <form class="ui form">
-                    <div class="required inline field">
+                    <div class="required inline field" id="name_field">
                         <label>页面名称</label>
-                        <input type="text" placeholder="不能为空">
+                        <input type="text" id="page_name" placeholder="不能为空">
                     </div>
-                    <div class="required inline field">
-                        <label>选择设备</label>
-                        <div class="ui selection dropdown">
-                            <i class="dropdown icon"></i>
-                            <div class="text">默认页面</div>
-                            <div class="menu">
-                                <div class="disabled item" data-value="host">默认页面</div>
-                                <div class="item" data-value="platform">默认页面1</div>
-                                <div class="item" data-value="all">默认页面2</div>
+                    <div class="ui horizontal basic segments">
+                        <div class="ui basic segment" >
+                            <div class="required inline field" >
+                                <label>选择设备</label>
+                            </div>
+                        </div>
+                        <div class="ui basic segment">
+                            <div class="ui segment left aligned" >
+                                <div id="host_tree"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="required inline field" >
-                        <label>视图类型</label>
-                        <div class="ui selection dropdown">
-                            <i class="dropdown icon"></i>
-                            <div class="text">状态统计</div>
-                            <div class="menu">
-                                <div class="disabled item" data-value="host">状态统计</div>
-                                <div class="item" data-value="all">问题视图</div>
-                            </div>
-                        </div>
-                    </div>
+
+
                 </form>
             </div>
             <div class="actions">
@@ -310,7 +301,7 @@
             </div>
         </div>
          <!--删除页面弹出框 start-->
-        <div class="ui small modal delete">
+        <div class="ui tiny modal delete">
             <div class="ui icon header">
                 <i class="trash icon"></i>
                 确定删除本页面吗？
@@ -331,11 +322,402 @@
     <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
     <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
     <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+    <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+    <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
     <script>
-        //
-        $("#statepie").show();//显示div
-        $("#problems").hide();
-        $("#appletree").hide();
+        $(function() {
+            //初始化视图类型下拉框
+            selectViewtype();
+            //初始化视图页面下拉框
+            var type="statepie";
+            selectViewpage(type);
+            //初始化状态视图
+            var name="默认页面";
+            viewstatepie(name,type);
+            $("#statepie").show();
+            $("#problems").hide();
+            $("#appletree").hide();
+        })
+        //获取视图类型下拉框
+        function selectViewtype() {
+            $.ajax({
+                type: "get",
+                url: "/viewtype/get_list",
+                dataType: "json",
+                success: function (result) {
+                    if(result.success) {
+                        var data=result.data;
+                        getselectViewtype(data);
+                              }
+                    else {
+                        errorMsg_no_data(result.message);
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("视图类型下拉框 Dropdown");
+                }
+            })
+        }
+        function getselectViewtype(data) {
+            var str = "";
+            for(var i=0;i<data.length;i++)
+            {
+                if (i==0){
+                    str +="<div class='selected item' data-value='"+data[i].type+"'  >"+data[i].name+"</div> ";
+                }else {
+                    str +="<div class='item' data-value='"+data[i].type+"'  >"+data[i].name+"</div> ";
+                }
+            }
+            $("#viewtype_menu").html(str);
+            $("#viewtype_select").dropdown("set selected","statepie");
+        }
+        $('#viewtype_select').dropdown({
+            onChange: function (value) {
+                $('#viewtype_select').addClass('loading disabled');
+                var type=$("#viewtype_select").dropdown("get value");
+                $("#viewpage_select").dropdown('set text', "默认页面")
+                if(type=="statepie"){
+                    selectViewpage(type);
+                    var name=$("#viewpage_select").dropdown("get text");
+                    viewstatepie(name,type);
+                    $("#statepie").show();
+                    $("#problems").hide();
+                    $("#appletree").hide();
+                }
+                else if (type=="problems"){
+                    selectViewpage(type);
+                    var name=$("#viewpage_select").dropdown("get text");
+                    problems_Table.ajax.url('/problems/get_current?name='+name+'&type='+type).load();
+                    $('#viewtype_select, #viewpage_select').removeClass('loading disabled');
+                    $("#statepie").hide();
+                    $("#problems").show();
+                    $("#appletree").hide();
+                }
+                else if (type=="appletree"){
+                    selectViewpage(type);
+                    var name=$("#viewpage_select").dropdown("get text");
+                    //viewsappletree(name,type);
+                    $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
+                    $("#statepie").hide();
+                    $("#problems").hide();
+                    $("#appletree").show();
+                }
+            }
+        })
+        //获取视图页面下拉框
+        function selectViewpage(type) {
+            $.ajax({
+                type: "get",
+                url: "/view/get_names?type="+type,
+                dataType: "json",
+                success: function (result) {
+                    if(result.success) {
+                        var data=result.data;
+                        getselectViewpage(data);
+                    }
+                    else {
+                        errorMsg_no_data(result.message);
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("视图页面下拉框 Dropdown");
+                }
+            })
+        }
+        function getselectViewpage(data) {
+            var str = "";
+            for(var i=0;i<data.length;i++)
+            {
+                str +="<div class='item' data-value='"+data[i].type+"'  >"+data[i].name+"</div> ";
+            }
+            $("#viewpage_menu").html(str);
+        }
+        $('#viewpage_select').dropdown({
+            onChange: function (value) {
+                $('#viewpage_select').addClass('loading disabled');
+                var type=$("#viewtype_select").dropdown("get value");
+                if(type=="statepie"){
+                    var name=$("#viewpage_select").dropdown("get text");
+                    viewstatepie(name,type);
+                    $("#statepie").show();
+                    $("#problems").hide();
+                    $("#appletree").hide();
+                }
+                else if (type=="problems"){
+                    selectViewpage(type);
+                    var name=$("#viewpage_select").dropdown("get text");
+                    problems_Table.ajax.url('/problems/get_current?name='+name+'&type='+type).load();
+                    $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
+                    $("#statepie").hide();
+                    $("#problems").show();
+                    $("#appletree").hide();
+                }
+                else if (type=="appletree"){
+                    selectViewpage(type);
+                    var name=$("#viewpage_select").dropdown("get text");
+                    //viewsappletree(name,type);
+                    $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
+                    $("#statepie").hide();
+                    $("#problems").hide();
+                    $("#appletree").show();
+                }
+            }
+        })
+        //获取状态视图
+        function viewstatepie(name,type) {
+            $.ajax({
+                type: "get",
+                url: "/view/get_graph_state?name="+name+"&type="+type,
+                dataType: "json",
+                success: function (result) {
+                    if(result.success) {
+                        var data=result.data;
+                        getviewstatepie(data);
+                    }
+                    else {
+                        errorMsg_no_data(result.message);
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("状态视图 Dropdown");
+                }
+            }).done(function () {
+                $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
+            })
+        }
+        function getviewstatepie(data) {
+            var hostStateNum = data.hostStateNum;
+            if (hostStateNum.stateNum) {
+                host_option.title.text = hostStateNum.totalNum;
+                host_option.series[0].data = hostStateNum.stateNum;
+                // 重写指定图表的配置项和数据
+                host_myChart.setOption(host_option);
+            }
+            var pointStateNum = data.pointStateNum;
+            if (pointStateNum.stateNum) {
+                point_option.title.text = pointStateNum.totalNum;
+                point_option.series[0].data = pointStateNum.stateNum;
+                point_myChart.setOption(point_option);
+            }
+        }
+        //添加页面弹出框
+        $("button.addpage").on("click",function(){
+            $("#name_field").removeClass("error");
+            $("#page_name").val("");
+            $("#modal_name").html("添加页面【"+$("#viewtype_select").dropdown("get text")+"】");
+            addpage();
+        });
+        function addpage() {
+            var send_data = {
+                hostIds: []
+            }
+            var $host_tree = $('#host_tree')
+            genHostsTree($host_tree, send_data.hostIds, function () {
+                $(".ui.modal.page").modal({
+                    onApprove: function () {
+                        send_data.hostIds = $host_tree.jstree(true).get_bottom_checked()
+                        //选择设备后，执行的操作
+                        //验证是否为空
+                        if($("#page_name").val()=="")
+                        {
+                            $("#name_field").addClass("error");
+                            return false;
+                        }else {
+                            if(send_data.hostIds.length==0) {
+                                alert("所选设备不能为空");
+                                return false;
+                            }else {
+                                var hostIds = send_data.hostIds;
+                                var maxNum = 50;
+                                var name = $("#page_name").val();
+                                var type = $("#viewtype_select").dropdown("get value");
+                                if(type==''){type="statepie"}
+                                if(type=="statepie"){
+                                    $.ajax({
+                                        type: "post",
+                                        url: "/view/add_state",
+                                        data:{hostIds:hostIds,maxNum:maxNum,name:name,type:type},
+                                        dataType: "json",
+                                        contentType:'application/json;charset=UTF-8',
+                                        success: function (result) {
+                                            if (result.success) {
+                                                var data = result.data;
+                                                getviewstatepie(data);
+                                                selectViewpage(type);
+                                                $("#viewpage_select").dropdown('set text', name);
+                                            } else {
+                                                errorMsg_no_data(result.message);
+                                            }
+                                        },
+                                        error: function () {
+                                            errorMsg_no_connect("添加状态视图 add");
+                                        }
+                                    });
+                                }
+                                else if(type=="problems"){
+                                    selectViewpage(type);
+                                    $("#viewpage_select").dropdown('set text', name);
+                                    problems_Table.ajax.url('/view/add_problems?hostIds='+hostIds+'&maxNum'+maxNum+'&name='+name+'&type='+type).load();
+                                }
+                            }
+                        }
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+            })
+        }
+        //编辑页面弹出框
+        $("button.editpage").on("click",function(){
+            var type=$("#viewtype_select").dropdown("get value");
+            var name=$("#viewpage_select").dropdown("get text");
+            $("#name_field").removeClass("error");
+            $("#modal_name").html("编辑页面【"+$("#viewtype_select").dropdown("get text")+"】")
+            $("#page_name").val(name);
+            if(name=="默认页面"){$("#name_field").addClass("disabled");}
+            editpage(name,type);
+        });
+        function editpage(name,type) {
+            //获取问题视图的所选设备ids
+            if(type==''){type="statepie"}
+            if(type=="statepie") {
+                $.ajax({
+                    type: "get",
+                    url: "/stateview/get_hostids?name=" + name + "&type=" + type,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.success) {
+                            var data = result.data;
+                            getedittree(data);
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("编辑状态视图 Dropdown");
+                    }
+                })
+            }else if(type=="problems"){
+                $.ajax({
+                    type: "get",
+                    url: "/problemsview/get_hostids?name=" + name + "&type=" + type,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.success) {
+                            var data = result.data;
+                            getedittree(data);
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("编辑问题视图 Dropdown");
+                    }
+                })
+            }
+        }
+        function getedittree(data) {
+            var send_data = {
+                hostIds: []
+            }
+            send_data.hostIds=data;
+            var $host_tree = $('#host_tree')
+            genHostsTree($host_tree, send_data.hostIds, function () {
+                $(".ui.modal.page").modal({
+                    onApprove: function () {
+                        send_data.hostIds = $host_tree.jstree(true).get_bottom_checked()
+                        //选择设备后，执行的操作
+                        //验证是否为空
+                        if($("#page_name").val()=="")
+                        {
+                            $("#name_field").addClass("error");
+                            return false;
+                        }else {
+                            if(send_data.hostIds.length==0) {
+                                alert("所选设备不能为空");
+                                return false;
+                            }else {
+                                var hostIds = send_data.hostIds;
+                                var maxNum = 50;
+                                var name = $("#page_name").val();
+                                var type = $("#viewtype_select").dropdown("get value");
+                                if(type=="statepie"){
+                                    $.ajax({
+                                        type: "post",
+                                        url: "/view/add_state",
+                                        data:{hostIds:hostIds,maxNum:maxNum,name:name,type:type},
+                                        dataType: "json",
+                                        contentType:'application/json;charset=UTF-8',
+                                        success: function (result) {
+                                            if (result.success) {
+                                                var data = result.data;
+                                                getviewstatepie(data);
+                                                selectViewpage(type);
+                                                $("#viewpage_select").dropdown('set text', name);
+                                            } else {
+                                                errorMsg_no_data(result.message);
+                                            }
+                                        },
+                                        error: function () {
+                                            errorMsg_no_connect("添加状态视图 add");
+                                        }
+                                    });
+                                }
+                                else if(type=="problems"){
+                                    selectViewpage(type);
+                                    $("#viewpage_select").dropdown('set text', name);
+                                    problems_Table.ajax.url('/view/add_problems?hostIds='+hostIds+'&maxNum'+maxNum+'&name='+name+'&type='+type).load();
+                                }
+                            }
+                        }
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+            })
+        }
+        //删除页面弹出框
+        $("button.deletepage").on("click",function(){
+            var type=$("#viewtype_select").dropdown("get value");
+            var name=$("#viewpage_select").dropdown("get text");
+            $(".ui.modal.delete").modal({
+                onApprove: function () {
+                    if (name == "默认页面") {
+                        alert("默认页面不能删除！")
+                    } else {
+                        deletepage(name, type);
+                    }
+                }
+            }).modal('setting', 'closable', false).modal('show');
+        });
+        function deletepage(name,type) {
+            console.log("11");
+            $.ajax({
+                type: "get",
+                url: "/view/delete?name=" + name + "&type=" + type,
+                dataType: "json",
+                success: function (result) {
+                    if (result.success) {
+                        var name="默认页面";
+                        if(type=="statepie"){
+                            selectViewpage(type);
+                            $("#viewpage_select").dropdown('set text', name);
+                            viewstatepie(name,type);
+                        }
+                        else if(type=="problems"){
+                            selectViewpage(type);
+                            $("#viewpage_select").dropdown('set text', name);
+                            problems_Table.ajax.url('/view/get_graph_problems?name=默认页面&type='+type)
+                        }
+                    }
+                    else {
+                        errorMsg_no_data(result.message);
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("删除视图 Dropdown");
+                }
+            })
+        }
+        //定义echart图表
         var Color = ['#5FB878', '#F7B824', '#f11111','#d2d2d2', '#2F4056'];
         //设备pie
         var host_myChart = echarts.init(document.getElementById('host_pie'));
@@ -361,7 +743,7 @@
                 orient: 'vertical',
                 x: 'right',
                 y: 'center',
-                data:['正常','警告'],
+                data:['正常','警告','严重'],
             },
             grid: {
                 left:'5%',
@@ -425,7 +807,7 @@
                 orient: 'vertical',
                 x: 'right',
                 y: 'center',
-                data:['正常','警告'],
+                data:['正常','警告','严重'],
             },
             grid: {
                 left:'15%',
@@ -465,145 +847,86 @@
             ]
         }
         point_myChart.setOption(point_option);
-
-        //页面加载完加载表格数据
-        $(function() {
-            //初始问题列表
-            var problems_Table = $("#problemsTable").DataTable({
-                "iDisplayLength": 5,
-                order: [0, 'desc'],
-                "createdRow": function (row, rowData) {
-                    $('td', row).eq(1).addClass('left aligned');
-                    $('td', row).eq(2).addClass('left aligned');
-                    if (rowData.problem_state === '问题') {
-                        if (rowData.priority_state === '警告') {
-                            row.classList.add("warning")
-                        } else if (rowData.priority_state === '严重') {
-                            row.classList.add("negative")
-                        } else {
-                        }
+        //定义问题列表
+        var problems_Table = $("#problemsTable").DataTable({
+            "iDisplayLength": 5,
+            order: [0, 'desc'],
+            "createdRow": function (row, rowData) {
+                $('td', row).eq(1).addClass('left aligned');
+                $('td', row).eq(2).addClass('left aligned');
+                if (rowData.problem_state === '问题') {
+                    if (rowData.priority_state === '警告') {
+                        row.classList.add("warning")
+                    } else if (rowData.priority_state === '严重') {
+                        row.classList.add("negative")
+                    } else {
                     }
+                }
+            },
+            ajax: {
+                url: '/view/get_graph_problems?name=默认页面&type=problems',
+                dataSrc: 'data'
+            },
+            columns: [
+                {
+                    "data": "problem_time",
+                    "width": "15%",
+                    "title": "发生时间",
+                    "orderable": false,
                 },
-                ajax: {
-                    url: '/problems/get_current',
-                    dataSrc: 'data'
+                {
+                    "data": "host_name",
+                    "width": "10%",
+                    "title": "设备",
+                    "orderable": false,
                 },
-                columns: [
-                    {
-                        "data": "problem_time",
-                        "width": "15%",
-                        "title": "发生时间",
-                        "orderable": false,
-                    },
-                    {
-                        "data": "host_name",
-                        "width": "10%",
-                        "title": "设备",
-                        "orderable": false,
-                    },
-                    {
-                        "data": "description",
-                        "width": "25%",
-                        "title": "问题",
-                        "orderable": false,
+                {
+                    "data": "description",
+                    "width": "25%",
+                    "title": "问题",
+                    "orderable": false,
 
-                    },
-                    {
-                        "data": "priority_state",
-                        "width": "5%",
-                        "title": "严重性",
-                        "orderable": false
+                },
+                {
+                    "data": "priority_state",
+                    "width": "5%",
+                    "title": "严重性",
+                    "orderable": false
 
-                    },
-                    {
-                        "data": 'problem_state',
-                        "width": "15%",
-                        "title": "状态",
-                        "orderable": false,
-                        render: function (data, type, row, meta) {
+                },
+                {
+                    "data": 'problem_state',
+                    "width": "15%",
+                    "title": "状态",
+                    "orderable": false,
+                    render: function (data, type, row, meta) {
 //                                console.log('render 状态', arguments)
-                            if (row.problem_state !== "问题") {
-                                return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
-                            } else {
-                                return '<div class="ui mini red label" style="margin-bottom: 0px">' + row.problem_state + '</div>';
-                            }
-                        }
-                    },
-                    {
-                        "data": "duration_string",
-                        "width": "10%",
-                        "title": "持续时间",
-                        "orderable": false
-                    },
-                    {
-                        "data": "alert_state",
-                        "width": "15%",
-                        "title": "告警状态",
-                        "orderable": false,
-                    },
-                    {
-                        "data": "acknowledged",
-                        "width": "5%",
-                        "title": "确认",
-                        "orderable": false,
-                    }
-                ],
-            });
-        })
-        //添加页面弹出框
-        $("button.addpage").on("click",function(){
-            $(".ui.modal.page").modal("show");
-            //绑定点击确定提交事件
-            /*$("#submit_bnt").on("click",function(){
-                $('.ui.modal.addpage').modal({
-                    onApprove: function () {
-                        //验证是否为空
-                        if($("#acknowledge_message").val()=="")
-                        {
-                            $("#text_field").addClass("error");
-                            return false;
-                        }else {
-                            var action = "";
-                            if($("#acknowledge_checkbox").attr("checked")) {
-                                action = "1";
-                            }else {
-                                action = "0";
-                            }
-                            var dataInfo = {
-                                eventId: $("#acknowledge_eventid").val(),
-                                message:$("#acknowledge_message").val(),
-                                action:action
-                            };
-                            $.ajax({
-                                type: "post",
-                                url: "/acknowledge/acknowledge_event",
-                                data:JSON.stringify(dataInfo),
-                                dataType: "json",
-                                contentType:'application/json;charset=UTF-8',
-                                success: function (result) {
-                                    if (result.success) {
-                                        var data = result.data;
-                                        console.log("成功返回",data);
-                                    } else {
-                                        errorMsg_no_data("一次关闭问题的确认 modal");
-                                    }
-                                },
-                                error: function () {
-                                    errorMsg_no_connect("一次关闭问题的确认 modal");
-                                }
-                            });
+                        if (row.problem_state !== "问题") {
+                            return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
+                        } else {
+                            return '<div class="ui mini red label" style="margin-bottom: 0px">' + row.problem_state + '</div>';
                         }
                     }
-                }).modal('setting', 'closable', false).modal('show');
-            });*/
-        });
-        //编辑页面弹出框
-        $("button.editpage").on("click",function(){
-            $(".ui.modal.page").modal("show");
-        });
-        //删除页面弹出框
-        $("button.deletepage").on("click",function(){
-            $(".ui.modal.delete").modal("show");
+                },
+                {
+                    "data": "duration_string",
+                    "width": "10%",
+                    "title": "持续时间",
+                    "orderable": false
+                },
+                {
+                    "data": "alert_state",
+                    "width": "15%",
+                    "title": "告警状态",
+                    "orderable": false,
+                },
+                {
+                    "data": "acknowledged",
+                    "width": "5%",
+                    "title": "确认",
+                    "orderable": false,
+                }
+            ],
         });
     </script>
 </th:block>
