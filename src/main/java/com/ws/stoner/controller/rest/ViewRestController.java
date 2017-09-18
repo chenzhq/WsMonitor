@@ -3,6 +3,7 @@ package com.ws.stoner.controller.rest;
 import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.constant.ViewTypeEnum;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.DO.mongo.carousel.*;
 import com.ws.stoner.model.DO.mongo.view.GraphView;
 import com.ws.stoner.model.DO.mongo.view.ProblemsView;
 import com.ws.stoner.model.DO.mongo.view.StateView;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.ws.stoner.constant.MessageConsts.REST_UPDATE_SUCCESS;
@@ -37,6 +39,52 @@ public class ViewRestController {
     public String getViewTyes() throws ServiceException {
         List<ViewType> viewTypes = viewService.listViewType();
         return RestResultGenerator.genResult(viewTypes, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 获取 轮播配置列表
+     * @param
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "/carouseltype/get_list", method = RequestMethod.GET)
+    public String getCarouselType() throws ServiceException {
+        List<CarouselType> carouselTypes = viewService.listCarouselType();
+        List<CarouselType> carouselTypeVOS = new ArrayList<>();
+        if(carouselTypes == null) {
+            return RestResultGenerator.genResult(null, REST_UPDATE_SUCCESS).toString();
+        }
+        for(CarouselType carouselType : carouselTypes) {
+            CarouselType carouselTypeVO = new CarouselType(
+                    carouselType.getName(),
+                    carouselType.getType()
+            );
+            carouselTypeVOS.add(carouselTypeVO);
+        }
+        return RestResultGenerator.genResult(carouselTypeVOS, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     * 获取 控件配置项 列表
+     * @param
+     * @return
+     * @throws ServiceException
+     */
+    @RequestMapping(value = "/charttype/get_list", method = RequestMethod.GET)
+    public String getChartTypes() throws ServiceException {
+        List<ChartType> chartTypes = viewService.listChartType();
+        List<ChartType> chartTypeVOS = new ArrayList<>();
+        if(chartTypes == null) {
+            return RestResultGenerator.genResult(null, REST_UPDATE_SUCCESS).toString();
+        }
+        for(ChartType chartType : chartTypes) {
+            ChartType chartTypeVO = new ChartType(
+                    chartType.getName(),
+                    chartType.getType()
+            );
+            chartTypeVOS.add(chartTypeVO);
+        }
+        return RestResultGenerator.genResult(chartTypeVOS, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
@@ -264,6 +312,52 @@ public class ViewRestController {
     }
 
     /**
+     * 保存一个 viewpage 配置  添加页面 功能
+     * @return
+     */
+    @RequestMapping(value = "/carousel/add_page", method = RequestMethod.POST)
+    public String createViewPage(@RequestParam("page_name") String pageName,
+                                 @RequestParam("group_name") String groupName) throws ServiceException {
+        ViewPage viewPage = new ViewPage(
+                pageName,
+                groupName,
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
+        boolean success = viewService.saveViewPage(viewPage);
+        if(success) {
+            PageVO pageVO = viewService.getPageVOByPageName(pageName);
+            return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+    }
+
+    /**
+     * 保存一个 viewpage 配置 修改保存 功能
+     * @return
+     */
+    @RequestMapping(value = "/carousel/save_page", method = RequestMethod.POST)
+    public String UpdateViewPage(@RequestParam("page_name") String pageName,
+                                 @RequestParam("group_name") String groupName,
+                                 @RequestParam("config_data") ConfigData[] configData,
+                                 @RequestParam("layout_data") LayoutData[] layoutData) throws ServiceException {
+        ViewPage viewPage = new ViewPage(
+                pageName,
+                groupName,
+                Arrays.asList(layoutData),
+                Arrays.asList(configData)
+        );
+        boolean success = viewService.saveViewPage(viewPage);
+        if(success) {
+            PageVO pageVO = viewService.getPageVOByPageName(pageName);
+            return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+    }
+
+    /**
      *   轮播配置  根据 pageName， 获取页面 布局 渲染 相关数据
      * @return
      */
@@ -273,7 +367,28 @@ public class ViewRestController {
         return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
     }
 
+    /**
+     *   轮播配置  根据 pageName， 删除展示页
+     * @return
+     */
+    @RequestMapping(value = "/carousel/delete_page", method = RequestMethod.GET)
+    public String deleteViewPageByPageName(@RequestParam("page_name") String pageName) throws ServiceException {
+        boolean success = viewService.deleteViewPageByPageName(pageName);
+        return RestResultGenerator.genResult(success, REST_UPDATE_SUCCESS).toString();
+    }
 
+    /**
+     *   轮播配置  根据 pageName， 获取 布局 & 配置 页面对象
+     * @return
+     */
+    @RequestMapping(value = "/carousel/get_edit", method = RequestMethod.GET)
+    public String getViewPageByPageName(@RequestParam("page_name") String pageName) throws ServiceException {
+        ViewPage viewPage = viewService.getViewPageByPageName(pageName);
+        if(viewPage != null) {
+            return RestResultGenerator.genResult(viewPage, REST_UPDATE_SUCCESS).toString();
+        }
+        return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+    }
 
     //获取视图数据
     private String getViewList(GraphView graphView) throws ServiceException{

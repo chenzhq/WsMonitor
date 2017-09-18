@@ -8,6 +8,8 @@ import com.ws.stoner.constant.ViewTypeEnum;
 import com.ws.stoner.dao.ViewDAO;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.DO.mongo.carousel.CarouselType;
+import com.ws.stoner.model.DO.mongo.carousel.ChartType;
 import com.ws.stoner.model.DO.mongo.carousel.ConfigData;
 import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
 import com.ws.stoner.model.DO.mongo.view.*;
@@ -33,7 +35,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zkf on 2017/9/12.
@@ -77,6 +78,40 @@ public class ViewServiceImpl implements ViewService {
             new ServiceException(e.getMessage());
         }
         return viewTypes;
+    }
+
+    /**
+     * 获取所有 轮播配置类型 列表
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<CarouselType> listCarouselType() throws ServiceException {
+        List<CarouselType> carouselTypes = null;
+        try {
+            carouselTypes = viewDAO.findAllCarouselType();
+        } catch (DAOException e) {
+            logger.error("查询所有 carouselTypes 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        return carouselTypes;
+    }
+
+    /**
+     * 获取所有的 控件配置项
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<ChartType> listChartType() throws ServiceException {
+        List<ChartType> chartTypes = null;
+        try {
+            chartTypes = viewDAO.findAllChartType();
+        } catch (DAOException e) {
+            logger.error("查询所有 chartTypes 错误！{}", e.getMessage());
+            new ServiceException(e.getMessage());
+        }
+        return chartTypes;
     }
 
     /**
@@ -340,13 +375,30 @@ public class ViewServiceImpl implements ViewService {
     }
 
     /**
-     * 根据 指定页面名称 获取 展示页对象 pageVO
+     * 保存一个 viewpage 配置
+     * @param viewPage
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean saveViewPage(ViewPage viewPage) throws ServiceException {
+        try {
+            viewDAO.saveViewPage(viewPage);
+        } catch (DAOException e) {
+            logger.error("获取指定name的 viewPage 错误！{}", e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 根据 指定页面名称 获取 展示页对象 viewpage
      * @param pageName
      * @return
      * @throws ServiceException
      */
     @Override
-    public PageVO getPageVOByPageName(String pageName) throws ServiceException {
+    public ViewPage getViewPageByPageName(String pageName) throws ServiceException {
         ViewPage viewPage = null;
         try {
             viewPage = viewDAO.getPageByPageName(pageName);
@@ -354,6 +406,18 @@ public class ViewServiceImpl implements ViewService {
             logger.error("获取指定name的 viewPage 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
         }
+        return viewPage;
+    }
+
+    /**
+     * 根据 指定页面名称 获取 展示页对象 pageVO
+     * @param pageName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public PageVO getPageVOByPageName(String pageName) throws ServiceException {
+        ViewPage viewPage = getViewPageByPageName(pageName);
         if(viewPage == null) {
             return null;
         }
@@ -427,6 +491,23 @@ public class ViewServiceImpl implements ViewService {
         //获取对象
         ItemTimeData timeData = ItemTimeData.transformByHistoryDTOS(historyDTOS,itemDTO.getUnits());
         return timeData;
+    }
+
+    /**
+     *  删除 展示页
+     * @param pageName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean deleteViewPageByPageName(String pageName) throws ServiceException {
+        try {
+            viewDAO.deletePageView(pageName);
+        } catch (DAOException e) {
+            logger.error("删除 viewPage 错误！{}", e.getMessage());
+            return false;
+        }
+        return true;
     }
 
 }

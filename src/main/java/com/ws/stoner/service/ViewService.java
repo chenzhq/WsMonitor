@@ -1,6 +1,9 @@
 package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.DO.mongo.carousel.CarouselType;
+import com.ws.stoner.model.DO.mongo.carousel.ChartType;
+import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
 import com.ws.stoner.model.DO.mongo.view.GraphView;
 import com.ws.stoner.model.DO.mongo.view.ProblemsView;
 import com.ws.stoner.model.DO.mongo.view.StateView;
@@ -24,6 +27,20 @@ public interface ViewService {
      * @throws ServiceException
      */
     List<ViewType> listViewType() throws ServiceException;
+
+    /**
+     * 获取所有 轮播配置类型 列表
+     * @return
+     * @throws ServiceException
+     */
+    List<CarouselType> listCarouselType() throws ServiceException;
+
+    /**
+     * 获取所有的 控件配置项
+     * @return
+     * @throws ServiceException
+     */
+    List<ChartType> listChartType() throws ServiceException;
 
     /**
      * 根据 视图类型 获取指定所有的 视图配置信息
@@ -109,6 +126,22 @@ public interface ViewService {
     List<String> getPageNamesByGroupNames(String groupName) throws ServiceException;
 
     /**
+     * 保存一个 viewpage 配置
+     * @param viewPage
+     * @return
+     * @throws ServiceException
+     */
+    boolean saveViewPage(ViewPage viewPage) throws ServiceException;
+
+    /**
+     * 根据 指定页面名称 获取 展示页对象 viewpage
+     * @param pageName
+     * @return
+     * @throws ServiceException
+     */
+    ViewPage getViewPageByPageName(String pageName) throws ServiceException;
+
+    /**
      * 根据 指定页面名称 获取 展示页对象 pageVO
      * @param pageName
      * @return
@@ -123,4 +156,12 @@ public interface ViewService {
      * @throws ServiceException
      */
     ItemTimeData getItemTimeDataByItemId(String itemId) throws ServiceException;
+
+    /**
+     *  删除 展示页
+     * @param pageName
+     * @return
+     * @throws ServiceException
+     */
+    boolean deleteViewPageByPageName(String pageName) throws ServiceException;
 }

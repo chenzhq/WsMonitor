@@ -1,5 +1,6 @@
 package com.ws.stoner.model.DO.mongo.carousel;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -14,19 +15,22 @@ public class ViewPage {
     @Id
     private String id;
     @Field("page_name")
+    @JSONField(name = "page_name")
     private String pageName;
     @Field("group_name")
+    @JSONField(name = "group_name")
     private String groupName;
     @Field("layout_data")
+    @JSONField(name = "layout_data")
     private List<LayoutData> layoutDataList;
     @Field("config_data")
+    @JSONField(name = "config_data")
     private List<ConfigData> configDataList;
 
     public ViewPage() {
     }
 
-    public ViewPage(String id, String pageName, String groupName, List<LayoutData> layoutDataList, List<ConfigData> configDataList) {
-        this.id = id;
+    public ViewPage( String pageName, String groupName, List<LayoutData> layoutDataList, List<ConfigData> configDataList) {
         this.pageName = pageName;
         this.groupName = groupName;
         this.layoutDataList = layoutDataList;

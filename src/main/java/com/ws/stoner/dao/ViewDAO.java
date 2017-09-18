@@ -1,6 +1,8 @@
 package com.ws.stoner.dao;
 
 import com.ws.stoner.exception.DAOException;
+import com.ws.stoner.model.DO.mongo.carousel.CarouselType;
+import com.ws.stoner.model.DO.mongo.carousel.ChartType;
 import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
 import com.ws.stoner.model.DO.mongo.view.*;
 
@@ -19,6 +21,20 @@ public interface ViewDAO {
     List<ViewType> findAllType() throws DAOException;
 
     /**
+     * 查询所有的轮播视图对象
+     * @return
+     * @throws DAOException
+     */
+    List<CarouselType> findAllCarouselType() throws DAOException;
+
+    /**
+     * 查询所有的 控件类型
+     * @return
+     * @throws DAOException
+     */
+    List<ChartType> findAllChartType() throws DAOException;
+
+    /**
      * 保存一个视图类型
      * @param viewType
      * @throws DAOException
@@ -31,6 +47,20 @@ public interface ViewDAO {
      * @throws DAOException
      */
     <T> void save(T graphView) throws DAOException;
+
+    /**
+     * 保存 CarouselType
+     * @param carouselType
+     * @throws DAOException
+     */
+    void saveCarourselType(CarouselType carouselType) throws DAOException;
+
+    /**
+     * 保存 ChartType
+     * @param chartType
+     * @throws DAOException
+     */
+    void saveChartType(ChartType chartType) throws DAOException;
 
     /**
      * 根据视图类型 查询所有的视图配置 用父类就满足了，主要用于下拉框列表
@@ -108,5 +138,12 @@ public interface ViewDAO {
      * @throws DAOException
      */
     ViewPage getPageByPageName(String pageName) throws DAOException;
+
+    /**
+     * 删除 viewpage
+     * @param pageName
+     * @throws DAOException
+     */
+    void deletePageView(String pageName) throws DAOException;
 
 }

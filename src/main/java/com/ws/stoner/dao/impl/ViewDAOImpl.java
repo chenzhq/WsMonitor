@@ -2,6 +2,8 @@ package com.ws.stoner.dao.impl;
 
 import com.ws.stoner.dao.ViewDAO;
 import com.ws.stoner.exception.DAOException;
+import com.ws.stoner.model.DO.mongo.carousel.CarouselType;
+import com.ws.stoner.model.DO.mongo.carousel.ChartType;
 import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
 import com.ws.stoner.model.DO.mongo.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,26 @@ public class ViewDAOImpl implements ViewDAO {
     }
 
     /**
+     * 查询所有的轮播视图对象
+     * @return
+     * @throws DAOException
+     */
+    @Override
+    public List<CarouselType> findAllCarouselType() throws DAOException {
+        return mongoTemplate.findAll(CarouselType.class);
+    }
+
+    /**
+     * 查询所有的 控件类型
+     * @return
+     * @throws DAOException
+     */
+    @Override
+    public List<ChartType> findAllChartType() throws DAOException {
+        return mongoTemplate.findAll(ChartType.class);
+    }
+
+    /**
      * 保存一个视图类型
      * @param viewType
      * @throws DAOException
@@ -40,6 +62,26 @@ public class ViewDAOImpl implements ViewDAO {
     @Override
     public void save(ViewType viewType) throws DAOException {
         mongoTemplate.save(viewType);
+    }
+
+    /**
+     * 保存 CarouselType
+     * @param carouselType
+     * @throws DAOException
+     */
+    @Override
+    public void saveCarourselType(CarouselType carouselType) throws DAOException {
+        mongoTemplate.save(carouselType);
+    }
+
+    /**
+     * 保存 ChartType
+     * @param chartType
+     * @throws DAOException
+     */
+    @Override
+    public void saveChartType(ChartType chartType) throws DAOException {
+        mongoTemplate.save(chartType);
     }
 
     /**
@@ -180,6 +222,18 @@ public class ViewDAOImpl implements ViewDAO {
     public ViewPage getPageByPageName(String pageName) throws DAOException {
         Query query=new Query(Criteria.where("page_name").is(pageName));
         return mongoTemplate.findOne(query,ViewPage.class);
+    }
+
+    /**
+     * 删除 viewpage
+     * @param pageName
+     * @throws DAOException
+     */
+    @Override
+    public void deletePageView(String pageName) throws DAOException {
+        Query query=new Query(Criteria
+                .where("page_name").is(pageName));
+        mongoTemplate.remove(query,ViewPage.class);
     }
 
 

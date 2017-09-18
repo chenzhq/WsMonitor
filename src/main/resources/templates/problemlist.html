@@ -256,17 +256,17 @@
 
 					<div class="ui segment"  style=" min-height : 500px;">
 						<div class="sixteen wide column">
-								<table  id="problemsTable" class="ui compact basic table center aligned " width="100%">
+								<table  id="problems_table" class="ui compact basic table center aligned " width="100%">
 								</table>
+								<!-- 查询读条 -->
+								<div id="table-dimmer" class="ui inverted dimmer">
+									<div class="ui text loader">正在查询</div>
+								</div>
 						</div>
 					</div>
 				</div>
-				<!--已告警提示框 start-->
-				<div id="alert_pop">
-				</div>
-
-				<!--确认记录提示框 start-->
-				<div id="acknowledge_pop">
+				<div id="alert_popup"></div>
+				<div id="ack_popup"></div>
 
 				</div>
 				<div th:fragment="problem_acknowledge_page">
@@ -408,151 +408,61 @@
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
 		<script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
+		<script src="../static/js/custom/problem-table.js" th:src="@{js/custom/problem-table.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
+    var problemTable = $('#problems_table').problemTable();
     //页面加载完加载表格数据
     $(function() {
-        //初始问题列表
-        var problems_Table = $("#problemsTable").DataTable({
-            "iDisplayLength" : 10,
-            order: [0, 'desc'],
-            "createdRow": function (row, rowData) {
-                $('td', row).eq(1).addClass('left aligned');
-                $('td', row).eq(2).addClass('left aligned');
-                if (rowData.problem_state === '问题') {
-                    if (rowData.priority_state === '警告') {
-                        row.classList.add("warning")
-                    } else if (rowData.priority_state === '严重') {
-                        row.classList.add("negative")
-                    } else {
-                    }
-                }
-            },
-            "drawCallback": function () {//初始化后回调
-				//事件详情 modal 框
-				$("a.problem_time").on("click",function(){
-				   var event_id = $(this).attr("data-id");
-                    eventDetailModal(event_id);
-				});
-
-				//确认事件 modal 框
-                $("a.AcknowledgeCol").on("click",function(){
-                    var event_id = $(this).attr("data-id");
-                    getAcknowledgeModal(event_id);
-				})
-				//告警pop
-                popAlert($("a.alertCol"), $("#alert_pop"));
-
-                //确认记录pop
-                popAck($("a.AcknowledgeCol"), $("#acknowledge_pop"));
-
-            },
-            ajax: {
-                url: '/problems/get_current',
-                dataSrc: 'data'
-            },
-            columns: [
-                {
-                    "data": "problem_time",
-                    "width": "15%",
-                    "title": "发生时间",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        return '<a  href="javascript:void(0)" class="problem_time" data-id="'+ row.problem_eventid +'">' + row.problem_time + '</a>';
-                    }
-                },
-                {
-                    "data": "host_name",
-                    "width": "10%",
-                    "title": "设备",
-                    "orderable": false,
-                },
-                {
-                    "data": null,
-                    "width": "25%",
-                    "title": "问题",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        return '<a href="problemdetail?trigger_id=' + row.trigger_id + '">' + row.description + '</a>';
-                    }
-                },
-                {
-                    "data": "priority_state",
-                    "width": "5%",
-                    "title": "严重性",
-                    "orderable": false
-
-                },
-                {
-                    "data": 'problem_state',
-                    "width": "15%",
-                    "title": "状态",
-                    "orderable": false,
-                    render: function (data, type, row, meta) {
-//                                console.log('render 状态', arguments)
-                        if (row.problem_state !== "问题") {
-                            return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
-                        } else {
-                            return '<div class="ui mini red label" style="margin-bottom: 0px">' + row.problem_state + '</div>';
-                        }
-                    }
-
-                },
-//                {
-//                    "data": "recover_time",
-//                    "width": "10%",
-//                    "title": "恢复时间",
-//                    "orderable": false,
-//                    render: function(data, type, row, meta) {
-//                        return '<a  href="javascript:void(0)" class="problem_time" data-id="'+ row.problem_eventid +'">' + row.recover_time + '</a>';
-//                    }
-//                },
-                {
-                    "data": "duration_string",
-                    "width": "10%",
-                    "title": "持续时间",
-                    "orderable": false
-                },
-                {
-                    "data": null,
-                    "width": "15%",
-                    "title": "告警状态",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        if(row.alert_state == "未告警") {
-                            //无悬浮事件
-                            return row.alert_state ;
-                        }else {
-                            //有悬浮事件
-                            return '<a href="javascript:void(0)" data-id="'+ row.problem_eventid +'" class="alertCol" >' + row.alert_state + '(' + row.alert_num + ')</a>';
-                        }
-                    }
-                },
-                {
-                    "data": null,
-                    "width": "5%",
-                    "title": "确认",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        return '<a href="javascript:void(0)" data-id="'+ row.problem_eventid +'" class="AcknowledgeCol">' + row.acknowledged + '</a>';
-                    }
-                }
-            ],
-        });
-
         //点击问题 teb 切换
         $('#problemsMenu button').on('click',function () {
             $('#problemsMenu button').removeClass('active');
             $(this).addClass('active');
             if(this.value == "currentProblems"){
                 $('#filter_content').css('display','none');
-                problems_Table.ajax.url('/problems/get_current').load();
+                $('#table-dimmer').addClass('active');
+                //获取当前问题
+                $.ajax({
+                    type: "get",
+                    url: '/problems/get_current',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            problemTable.clear().rows.add(result.data).draw();
+                            $('#table-dimmer').removeClass('active');
+                        } else {
+
+                        }
+                    },
+                    error: function (e) {
+
+                    }
+                });
             }else if(this.value == "recentProblems"){
                 $('#filter_content').css('display','none');
-                problems_Table.ajax.url('/problems/get_last').load();
+                $('#table-dimmer').addClass('active');
+                //获取最近问题
+                $.ajax({
+                    type: "get",
+                    url: '/problems/get_last',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            problemTable.clear().rows.add(result.data).draw();
+                            $('#table-dimmer').removeClass('active');
+                        } else {
+
+                        }
+                    },
+                    error: function (e) {
+
+                    }
+                });
             }else if(this.value == "historicalRecord"){
-                showTimeCons(problems_Table);
+
+                showTimeCons(problemTable);
+
             }
         });
 
@@ -560,7 +470,7 @@
     })
 
     //显示时间控件
-	function showTimeCons(problems_Table) {
+	function showTimeCons(problemTable) {
         var now = new Date();
         var end_time = new Date(now);
         end_time.setMinutes(0);
@@ -591,8 +501,8 @@
 		}
 		time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
         vo_arr.push(now.Format("MM-dd hh:mm"));
-		console.log("time_arr",time_arr);
-        console.log("vo_arr",vo_arr);
+//		console.log("time_arr",time_arr);
+//        console.log("vo_arr",vo_arr);
         $('#filter_content').css('display','block');
         $('#time_filter').ionRangeSlider({
             type: "double",
@@ -604,7 +514,24 @@
             onStart: function (data) {
                 var begin_time = time_arr[data.from];
                 var end_time = time_arr[data.to];
-                problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
+                $('#table-dimmer').addClass('active');
+                //获取历史问题记录
+                $.ajax({
+                    type: "get",
+                    url: '/problems/get_history?begin_time='+begin_time+'&end_time='+end_time,
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            problemTable.clear().rows.add(result.data).draw();
+                            $('#table-dimmer').removeClass('active');
+                        } else {
+
+                        }
+                    },
+                    error: function (e) {
+
+                    }
+                });
             },
             onChange: function (data) {
 //                        console.log(data);
@@ -614,7 +541,24 @@
 //                console.log("end",time_arr[data.to]);
                 var begin_time = time_arr[data.from];
                 var end_time = time_arr[data.to];
-                problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
+                $('#table-dimmer').addClass('active');
+                //获取历史问题记录
+                $.ajax({
+                    type: "get",
+                    url: '/problems/get_history?begin_time='+begin_time+'&end_time='+end_time,
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            problemTable.clear().rows.add(result.data).draw();
+                            $('#table-dimmer').removeClass('active');
+                        } else {
+
+                        }
+                    },
+                    error: function (e) {
+
+                    }
+                });
             },
             onUpdate: function (data) {
 //                        console.log(data);
