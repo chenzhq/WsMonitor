@@ -22,7 +22,7 @@
 	<div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
 		 th:fragment="left_menu">
 		<a class="item logo" href="#">
-			<img src="../static/images/logo.png" th:src="@{images/logo.png}" alt="whstone"/><img
+			<img src="../static/images/logo-1.png" th:src="@{images/logo-1.png}" alt="whstone"/><img
 				src="../static/images/thumblogo.png" th:src="@{images/thumblogo.png}" alt="whstone"
 				class="displaynone"/>
 		</a>
@@ -46,16 +46,18 @@
                 <!--<a class="item" href="#">设备详情</a>-->
 			</div>
 			<div class="title item" href="#">
-				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+				<i class="ion-arrow-graph-up-right titleIcon icon"></i >视图展示<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
+				<a class="item" href="#" th:href="@{/view}">监控视图</a>
+				<a class="item" href="#" >轮播视图</a>
 			</div>
 			<div class="title item">
 				<i class="ion-paintbrush titleIcon icon"></i>问题管理<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
-				<a class="item" href="#" th:href="@{/problemlist}">问题详情</a>
+				<!--<a class="item" href="#" th:href="@{/problemlist}">问题详情</a>-->
 				<a class="item" href="#" th:href="@{/calendar}">告警日历</a>
 			</div>
 			<div class="title item" href="#">
@@ -104,8 +106,11 @@
 			<i class="ion-arrow-graph-up-right icon"></i>
 			<div class="menu">
 				<div class="header">
-					视图展示
+
 				</div>
+				<div class="ui divider"></div>
+				<a class="item" href="#" th:href="@{/view}">监控视图</a>
+				<a class="item" href="#" >轮播视图</a>
 			</div>
 		</div>
 
@@ -118,7 +123,7 @@
 				</div>
 				<div class="ui divider"></div>
                 <a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
-                <a class="item" href="#" th:href="@{/problemlist}">问题详情</a>
+                <!--<a class="item" href="#" th:href="@{/problemlist}">问题详情</a>-->
                 <a class="item" href="#" th:href="@{/calendar}">告警日历</a>
 			</div>
 		</div>
