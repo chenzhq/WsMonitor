@@ -8,6 +8,8 @@ import com.ws.stoner.model.DO.mongo.view.GraphView;
 import com.ws.stoner.model.DO.mongo.view.ProblemsView;
 import com.ws.stoner.model.DO.mongo.view.StateView;
 import com.ws.stoner.model.DO.mongo.view.ViewType;
+import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
+import com.ws.stoner.model.query.EditViewForm;
 import com.ws.stoner.model.view.carousel.PageVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
@@ -215,31 +217,19 @@ public class ViewRestController {
      * @return
      */
     @RequestMapping(value = "/view/update_state", method = RequestMethod.POST)
-    public String updateStateView(@RequestParam("old_name") String oldName,
-                                  @RequestParam("new_name") String newName,
-                                  @RequestParam("type") String type,
-                                  @RequestParam("hostids[]") List<String> hostIds) throws ServiceException {
+    public String updateStateView(@RequestBody EditViewForm editViewForm) throws ServiceException {
 
-        StateView stateView = new StateView(newName,type,hostIds);
-        //校验是否存在重名
-        List<GraphView> graphViews = viewService.listGraphViewsByType(stateView.getType());
-        boolean same = false;
-        for(GraphView graphView : graphViews) {
-            if(graphView.getName().equals(stateView.getName())) {
-                same = true;
-                break;
-            }
-        }
-        if(same) {
-            return RestResultGenerator.genResult("状态统计中已存在该名称", REST_UPDATE_SUCCESS).toString();
+        StateView stateView = new StateView(
+                editViewForm.getNewName(),
+                editViewForm.getType(),
+                editViewForm.getHostIds());
+        boolean success =  viewService.updateStateView(stateView,editViewForm.getOldName());
+        if(success) {
+            return getViewList(stateView);
         }else {
-            boolean success =  viewService.updateStateView(stateView,oldName);
-            if(success) {
-                return getViewList(stateView);
-            }else {
-                return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-            }
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
+
 
 
     }
@@ -249,32 +239,18 @@ public class ViewRestController {
      * @return
      */
     @RequestMapping(value = "/view/update_problems", method = RequestMethod.POST)
-    public String updateStateView(@RequestParam("old_name") String oldName,
-                                  @RequestParam("new_name") String newName,
-                                  @RequestParam("type") String type,
-                                  @RequestParam("hostids[]") List<String> hostIds,
-                                  @RequestParam("max_num") Integer maxNum) throws ServiceException {
-        ProblemsView problemsView = new ProblemsView(newName,type,hostIds,maxNum);
-        //校验是否存在重名
-        List<GraphView> graphViews = viewService.listGraphViewsByType(problemsView.getType());
-        boolean same = false;
-        for(GraphView graphView : graphViews) {
-            if(graphView.getName().equals(problemsView.getName())) {
-                same = true;
-                break;
-            }
-        }
-        if(same) {
-            return RestResultGenerator.genResult("问题统计中已存在该名称", REST_UPDATE_SUCCESS).toString();
+    public String updateProblemsView( @RequestBody EditViewForm editViewForm ) throws ServiceException {
+        ProblemsView problemsView = new ProblemsView(
+                editViewForm.getNewName(),
+                editViewForm.getType(),
+                editViewForm.getHostIds(),
+                editViewForm.getMaxNum());
+        boolean success =  viewService.updateProblemsView(problemsView,editViewForm.getOldName());
+        if(success) {
+            return getViewList(problemsView);
         }else {
-            boolean success =  viewService.updateProblemsView(problemsView,oldName);
-            if(success) {
-                return getViewList(problemsView);
-            }else {
-                return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
-            }
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
-
     }
 
     /**
