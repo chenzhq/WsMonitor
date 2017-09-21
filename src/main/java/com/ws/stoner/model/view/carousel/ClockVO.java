@@ -9,6 +9,12 @@ public class ClockVO extends BlockVO {
     //格式：yyyy-MM-dd HH:mm:ss
     private String time;
 
+    public ClockVO() {
+    }
+
+    public ClockVO(String time) {
+        this.time = time;
+    }
 
     public String getTime() {
         return time;

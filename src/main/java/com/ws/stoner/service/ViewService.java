@@ -3,11 +3,13 @@ package com.ws.stoner.service;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.DO.mongo.carousel.CarouselType;
 import com.ws.stoner.model.DO.mongo.carousel.ChartType;
+import com.ws.stoner.model.DO.mongo.carousel.ConfigData;
 import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
 import com.ws.stoner.model.DO.mongo.view.GraphView;
 import com.ws.stoner.model.DO.mongo.view.ProblemsView;
 import com.ws.stoner.model.DO.mongo.view.StateView;
 import com.ws.stoner.model.DO.mongo.view.ViewType;
+import com.ws.stoner.model.view.carousel.BlockVO;
 import com.ws.stoner.model.view.carousel.PageVO;
 import com.ws.stoner.model.view.itemvalue.ItemTimeData;
 import com.ws.stoner.model.view.problem.ProblemListVO;
@@ -148,6 +150,14 @@ public interface ViewService {
      * @throws ServiceException
      */
     PageVO getPageVOByPageName(String pageName) throws ServiceException;
+
+    /**
+     * 根据 配置数据展示项 configData 组装 展示数据展示项 BlockVO
+     * @param config
+     * @return
+     * @throws ServiceException
+     */
+    BlockVO getBlockVOByConfigData(ConfigData config) throws ServiceException;
 
     /**
      * 根据itemid  获取item图形数据

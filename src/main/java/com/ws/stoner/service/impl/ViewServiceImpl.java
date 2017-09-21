@@ -1,10 +1,7 @@
 package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApiParameter;
-import com.ws.stoner.constant.CarouselTypeEnum;
-import com.ws.stoner.constant.ChartTypeEnum;
-import com.ws.stoner.constant.StatusEnum;
-import com.ws.stoner.constant.ViewTypeEnum;
+import com.ws.stoner.constant.*;
 import com.ws.stoner.dao.ViewDAO;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
@@ -429,43 +426,8 @@ public class ViewServiceImpl implements ViewService {
         List<ConfigData> configData = viewPage.getConfigDataList();
         List<BlockVO> blockVOS = new ArrayList<>();
         for(ConfigData config : configData) {
-            if(CarouselTypeEnum.VIEW.type.equals(config.getBlockType())) {
-                //view
-                if(ViewTypeEnum.STATEPIE.type.equals(config.getGraphType())) {
-                    //statepie
-                    StateViewVO stateViewVO = getStateViewByName(config.getContents(),config.getGraphType());
-                    blockVOS.add(stateViewVO);
-                }else if(ViewTypeEnum.PROBLEMS.type.equals(config.getGraphType())) {
-                    //problems
-                    List<ProblemListVO> problemListVO = getProblemViewByName(config.getContents(),config.getGraphType());
-                    ProblemsVO problemsVO = new ProblemsVO(problemListVO);
-                    blockVOS.add(problemsVO);
-                }else if(ViewTypeEnum.APPLETREE.type.equals(config.getGraphType())) {
-                    //appletree
-                    //待完成
-                }else {
-
-                }
-            }else if(CarouselTypeEnum.GRAPH.type.equals(config.getBlockType())) {
-                //graph
-                ItemTimeData timeData = getItemTimeDataByItemId(config.getContents());//contents为itemId
-                blockVOS.add(timeData);
-            }else if(CarouselTypeEnum.CHART.type.equals(config.getBlockType())) {
-                //chart
-                if(ChartTypeEnum.CLOCK.type.equals(config.getGraphType())) {
-                    //clock 待完成
-                    ClockVO clockVO = new ClockVO();
-                    blockVOS.add(clockVO);
-                }else if(ChartTypeEnum.TABLE.type.equals(config.getGraphType())) {
-                    //table 待完成
-                    TableVO tableVO = new TableVO();
-                    blockVOS.add(tableVO);
-                }else {
-
-                }
-            }else {
-
-            }
+            //装配 展示项数据 blockVO
+            blockVOS.add(getBlockVOByConfigData(config));
         }
         //给页面填充动态数据
         pageVO.setBlockData(blockVOS);
@@ -509,5 +471,54 @@ public class ViewServiceImpl implements ViewService {
         }
         return true;
     }
+    /**
+     * 根据 配置数据展示项 configData 组装 展示数据展示项 BlockVO
+     * @param config
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public BlockVO getBlockVOByConfigData(ConfigData config) throws ServiceException{
+        BlockVO blockVO = null;
+        if(CarouselTypeEnum.VIEW.type.equals(config.getBlockType())) {
+            //view
+            if(ViewTypeEnum.STATEPIE.type.equals(config.getGraphType())) {
+                //statepie
+                StateViewVO stateViewVO = getStateViewByName(config.getContents(),config.getGraphType());
+                blockVO = stateViewVO.setBlockName(config.getBlockName());
+            }else if(ViewTypeEnum.PROBLEMS.type.equals(config.getGraphType())) {
+                //problems
+                List<ProblemListVO> problemListVO = getProblemViewByName(config.getContents(),config.getGraphType());
+                ProblemsVO problemsVO = new ProblemsVO(problemListVO);
+                blockVO = problemsVO.setBlockName(config.getBlockName());
+            }else if(ViewTypeEnum.APPLETREE.type.equals(config.getGraphType())) {
+                //appletree
+                //待完成
+            }else {
+
+            }
+        }else if(CarouselTypeEnum.GRAPH.type.equals(config.getBlockType())) {
+            //timeData
+            ItemTimeData timeData = getItemTimeDataByItemId(config.getContents());//contents为itemId
+            blockVO = timeData.setBlockName(config.getBlockName());
+        }else if(CarouselTypeEnum.CHART.type.equals(config.getBlockType())) {
+            //chart
+            if(ChartTypeEnum.CLOCK.type.equals(config.getGraphType())) {
+                //clock 待完成
+                ClockVO clockVO = new ClockVO(LocalDateTime.now().format(BaseConsts.TIME_FORMATTER));
+                blockVO = clockVO.setBlockName(config.getBlockName());
+            }else if(ChartTypeEnum.TABLE.type.equals(config.getGraphType())) {
+                //table 待完成   config.getContents() 为html文本内容
+                TableVO tableVO = new TableVO(config.getContents());
+                blockVO = tableVO.setBlockName(config.getBlockName());
+            }else {
+
+            }
+        }else {
+
+        }
+        return blockVO;
+    }
+
 
 }

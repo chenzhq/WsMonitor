@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * Created by zkf on 2017/9/14.
  */
 public class LayoutData {
+    private String html;
     @JSONField(name = "x_size")
     @Field("x_size")
     private Integer xSize;
@@ -18,12 +19,28 @@ public class LayoutData {
 
     public LayoutData() {
     }
-
     public LayoutData(Integer xSize, Integer ySize, Integer row, Integer col) {
         this.xSize = xSize;
         this.ySize = ySize;
         this.row = row;
         this.col = col;
+    }
+
+    public LayoutData(String html, Integer xSize, Integer ySize, Integer row, Integer col) {
+        this.html = html;
+        this.xSize = xSize;
+        this.ySize = ySize;
+        this.row = row;
+        this.col = col;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public LayoutData setHtml(String html) {
+        this.html = html;
+        return this;
     }
 
     public Integer getxSize() {
@@ -65,7 +82,8 @@ public class LayoutData {
     @Override
     public String toString() {
         return "LayoutData{" +
-                "xSize=" + xSize +
+                "html='" + html + '\'' +
+                ", xSize=" + xSize +
                 ", ySize=" + ySize +
                 ", row=" + row +
                 ", col=" + col +

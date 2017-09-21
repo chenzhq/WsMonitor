@@ -10,6 +10,7 @@ import com.ws.stoner.model.DO.mongo.view.StateView;
 import com.ws.stoner.model.DO.mongo.view.ViewType;
 import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
 import com.ws.stoner.model.query.EditViewForm;
+import com.ws.stoner.model.view.carousel.BlockVO;
 import com.ws.stoner.model.view.carousel.PageVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
@@ -341,6 +342,20 @@ public class ViewRestController {
     public String getPageData(@RequestParam("page_name") String pageName) throws ServiceException {
         PageVO pageVO = viewService.getPageVOByPageName(pageName);
         return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
+     *   轮播配置  根据 configData， 获取展示项 渲染 相关数据 BlockVO
+     * @return
+     */
+    @RequestMapping(value = "/carousel/get_block", method = RequestMethod.GET)
+    public String getBlockVO(@RequestParam("block_name") String blockName,
+                             @RequestParam("block_type") String blockType,
+                             @RequestParam("graph_type") String graphType,
+                             @RequestParam("contents") String contents) throws ServiceException {
+        ConfigData config = new ConfigData(blockName,blockType,graphType,contents);
+        BlockVO blockVO = viewService.getBlockVOByConfigData(config);
+        return RestResultGenerator.genResult(blockVO, REST_UPDATE_SUCCESS).toString();
     }
 
     /**
