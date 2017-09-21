@@ -13,13 +13,16 @@
     <link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
     <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
     <th:block th:fragment="supplement">
-        <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
+        <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>-->
         <script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
         <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
         <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
               th:href="@{css/jstree-default/style.min.css}">
+        <link rel="stylesheet" type="text/css" href="../static/css/jquery.gridster.css"
+              th:href="@{css/jquery.gridster.css}">
+        <script src="../static/js/jquery.gridster.js" th:src="@{js/jquery.gridster.js}" type="text/javascript" charset="utf-8"></script>
         <style type="text/css">
-
+            li {background:yellow;}
         </style>
     </th:block>
 </head>
@@ -30,9 +33,6 @@
     <div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
          th:replace="layout::left_menu">
         <a class="item logo" href="#">
-            <img src="../static/images/logo.png" th:src="@{images/logo.png}" alt="whstone"/><img
-                src="../static/images/thumblogo.png" th:src="@{images/thumblogo.png}" alt="whstone"
-                class="displaynone"/>
         </a>
         <div class="ui accordion inverted">
             <div class="title item">
@@ -213,29 +213,11 @@
                     </div>
                     <div class="ui grid">
                         <div class="eight wide column"  style="padding-bottom: 0px">
-                            <div id="viewtype_select" class="ui selection dropdown">
+                            <div id="viewgroup_select" class="ui selection dropdown">
                                 <i class="dropdown icon"></i>
                                 <div class="text">展示组</div>
-                                <div class="menu" id="viewtype_menu">
-                                    <div class="disabled item" data-value="host">组1</div>
-                                    <div class="item" data-value="all">组2</div>
-                                </div>
-                            </div>
-                            <div class="ui left pointing dropdown icon big button">
-                                <i class="settings icon"></i>
-                                <div class="menu">
-                                    <div class="item">
-                                        <div class="ui red empty circular label"></div>
-                                        添加
-                                    </div>
-                                    <div class="item">
-                                        <div class="ui blue empty circular label"></div>
-                                        编辑
-                                    </div>
-                                    <div class="item">
-                                        <div class="ui black empty circular label"></div>
-                                        删除
-                                    </div>
+                                <div class="menu" id="viewgroup_menu">
+                                    <div class="disabled item">展示组</div>
                                 </div>
                             </div>
                             <div id="viewpage_select" class="ui selection dropdown">
@@ -243,73 +225,216 @@
                                 <i class="dropdown icon"></i>
                                 <div class="text">展示页</div>
                                 <div class="menu"  id="viewpage_menu">
-                                    <div class="selected item" data-value="host">默认页面</div>
-                                    <div class="item" data-value="platform">默认页面1</div>
-                                    <div class="item" data-value="all">默认页面2</div>
-                                </div>
-                            </div>
-                            <div class="ui left pointing dropdown icon big button">
-                                <i class="settings icon"></i>
-                                <div class="menu">
-                                    <div class="item">
-                                        <div class="ui red empty circular label"></div>
-                                        添加
-                                    </div>
-                                    <div class="item">
-                                        <div class="ui blue empty circular label"></div>
-                                        编辑
-                                    </div>
-                                    <div class="item">
-                                        <div class="ui black empty circular label"></div>
-                                        删除
-                                    </div>
+                                    <div class="selected item">默认页面</div>
+                                    <div class="item">默认页面1</div>
+                                    <div class="item">默认页面2</div>
                                 </div>
                             </div>
                         </div>
                         <div class="eight wide column right aligned"  style="padding-bottom: 0px">
-                            <button class="ui blue button addpage"><i class="add icon"></i>添加</button>
-                            <button class="ui blue button editpage"><i class="edit icon"></i>编辑</button>
-                            <button class="ui blue button deletepage"><i class="trash icon"></i>删除</button>
-                            <button class="ui blue button savepage"><i class="trash icon"></i>保存</button>
+                            <button class="ui basic button addpage"><i class="add icon"></i> 添加</button>
+                            <button class="ui basic button writepage"><i class="write icon"></i> 修改</button>
+                            <button class="ui basic button deletepage"><i class="delete icon"></i> 删除</button>
+                            <button class="ui blue button editpage"><i class="edit icon"></i> 编辑</button>
+                            <button class="ui blue button refreshpage"><i class="refresh icon"></i> 刷新</button>
+                            <button class="ui blue button savepage"><i class="save  icon"></i> 保存</button>
                         </div>
                     </div>
 
-                    <div class="ui segment"style=" min-height : 470px;" >
+                    <div class="ui segment"style=" min-height : 470px;background-color: #0d71bb" >
                         <h3>待添加</h3>
-
+                        <div class="gridster" style="height:400px ">
+                            <ul>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <!--Site Content-->
             </div>
         </div>
         <!--maincontent-->
-        <!--添加页面弹出框 start-->
-        <div class="ui tiny modal page">
+        <!--添加展示组弹出框 start-->
+        <div class="ui tiny modal page" id="group_modal">
             <i class="close icon"></i>
-            <div class="header" id="modal_name">
-                添加页面
+            <div class="header">
+                添加展示组
             </div>
             <div class="ui content  center aligned basic segment no-padding">
                 <form class="ui form">
                     <div class="required inline field ">
-                        <label>页面名称</label>
-                        <input type="text" placeholder="不能为空" style="width: 260px;">
+                        <label>名称</label>
+z                    </div>
+                    <div class="required inline field">
+                        <label>刷新</label>
+                        <input type="text" placeholder="刷新频率（分钟）">
                     </div>
-                    <div class="required inline field >
-                        <label>选择设备</label>
-                        <input type="text" placeholder="不能为空" style="width: 260px;">
+                    <div class="required inline field">
+                        <label>描述</label>
+                        <input type="text" placeholder="不能为空">
                     </div>
                 </form>
-                <div class="ui info message">
-                    <i class="close icon"></i>
-                    <div class="header">
-                        不是你想要操作的？下面有更多选择：
+            </div>
+            <div class="actions">
+                <div class="ui approve submit button">确认</div>
+                <div class="ui cancel button">取消</div>
+            </div>
+        </div>
+        <!--添加展现页弹出框 start-->
+        <div class="ui tiny modal page" id="page_modal">
+            <i class="close icon"></i>
+            <div class="header">所属【展示组】的页面</div>
+            <div class="ui content  center aligned basic segment">
+                <form class="ui form">
+                    <div class="required inline field " id="page_name_field">
+                        <label>名称</label>
+                        <input type="text" placeholder="不能为空" id="page_name">
                     </div>
-                    <ul class="list">
-                        <li><a href="message.php#">这里添加展示组</a></li>
-                        <li><a href="message.php#">这里添加展示页</a></li>
-                    </ul>
+                    <!--<div class="inline field">
+                        <label>描述</label>
+                        <textarea></textarea>
+                    </div>-->
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui approve submit button">确认</div>
+                <div class="ui cancel button">取消</div>
+            </div>
+        </div>
+        <!--添加展示点类型弹出框 start-->
+        <div class="ui tiny modal page" id="point_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                选择视图类型
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <div class="ui vertical buttons">
+                    <button class="ui view button">添加视图</button>
+                    <button class="ui group button">添加图表</button>
+                    <button class="ui chart button">添加数值</button>
                 </div>
+            </div>
+        </div>
+        <!--添加展示项添加视图弹出框 start-->
+        <div class="ui tiny modal page" id="point_view_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加视图
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field ">
+                        <label>视图类型</label>
+                        <div class="ui selection dropdown">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text">状态统计</div>
+                            <div class="menu" >
+                                <div class="selected item">状态统计</div>
+                                <div class="item">问题视图</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field ">
+                        <label>选择页面</label>
+                        <div class="ui selection dropdown">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text">默认页面</div>
+                            <div class="menu" >
+                                <div class="selected item">默认页面</div>
+                                <div class="item">默认页面1</div>
+                                <div class="item">默认页面2</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inline field">
+                        <div class="ui checkbox" style="margin-left: -20px">
+                            <input type="checkbox" tabindex="0" class="hidden">
+                            <label  id="label_checkbox"><i class="hide icon"></i>显示标题</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui approve submit button">确认</div>
+                <div class="ui cancel button">取消</div>
+            </div>
+        </div>
+        <!--添加展示项添加图表弹出框 start-->
+        <div class="ui tiny modal page" id="point_group_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加图表
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field ">
+                        <label>监测点</label>
+                        <input type="text" placeholder="不能为空"  style="width: 168px;">
+                    </div>
+                    <div class="required inline field">
+                        <label>描&nbsp&nbsp&nbsp&nbsp述</label>
+                        <div class="ui selection dropdown">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text">曲线图</div>
+                            <div class="menu" >
+                                <div class="selected item">曲线图</div>
+                                <div class="item">柱状图</div>
+                                <div class="item">仪表盘</div>
+                                <div class="item">时钟</div>
+                                <div class="item">表格</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field">
+                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
+                        <input type="text" placeholder="不能为空" style="width: 168px;">
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui approve submit button">确认</div>
+                <div class="ui cancel button">取消</div>
+            </div>
+        </div>
+        <!--添加展示项添加静态数据弹出框 start-->
+        <div class="ui tiny modal page" id="point_chart_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加静态数据
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field">
+                        <label>图&nbsp&nbsp&nbsp&nbsp形</label>
+                        <div class="ui selection dropdown">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text">时钟</div>
+                            <div class="menu" >
+                                <div class="selected item">时钟</div>
+                                <div class="item">表格</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field">
+                        <label>类&nbsp&nbsp&nbsp&nbsp型</label>
+                        <div class="ui selection dropdown">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text">数值</div>
+                            <div class="menu" >
+                                <div class="selected item">数值</div>
+                                <div class="item">钟表</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field">
+                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
+                        <input type="text" placeholder="不能为空" style="width: 168px;">
+                    </div>
+                </form>
             </div>
             <div class="actions">
                 <div class="ui approve submit button">确认</div>
@@ -317,13 +442,12 @@
             </div>
         </div>
          <!--删除页面弹出框 start-->
-        <div class="ui tiny modal delete">
+        <div class="ui tiny modal delete" id="delete_modal">
             <div class="ui icon header">
                 <i class="trash icon"></i>
                 确定删除本页面吗？
             </div>
             <div class="actions">
-
                 <div class="ui approve submit button" data-tooltip="提示：该操作无法恢复！" data-inverted="">确认</div>
                 <div class="ui cancel button">取消</div>
             </div>
@@ -340,37 +464,109 @@
     <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
     <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
     <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
-    <script>
+
+    <script  type="text/javascript">
+        var gridster;
+        var serialization = [
+            { col: 1, row: 1, size_x: 2, size_y: 2 },
+            { col: 3, row: 1, size_x: 1, size_y: 2 },
+            { col: 4, row: 1, size_x: 1, size_y: 1 },
+            { col: 2, row: 3, size_x: 3, size_y: 1 },
+            { col: 1, row: 4, size_x: 1, size_y: 1 },
+            { col: 1, row: 3, size_x: 1, size_y: 1 },
+            { col: 2, row: 4, size_x: 1, size_y: 1 },
+            { col: 2, row: 5, size_x: 1, size_y: 1 }
+        ];
+        // sort serialization
+        serialization = Gridster.sort_by_row_and_col_asc(serialization);
+
         $(function() {
-            //初始化视图类型下拉框
+            gridster = $(".gridster ul").gridster({
+                widget_base_dimensions: [100, 55],
+                widget_margins: [5, 5]
+            }).data('gridster');
+            //初始化两下拉框
+            //初始化默认图表
 
         })
-        //添加页面弹出框
+        //添加弹出框
         $("button.addpage").on("click",function(){
-            $(".ui.modal.page").modal('setting', 'closable', false).modal('show');
-        });
-        //编辑页面弹出框
-        $("button.editpage").on("click",function(){
-            $(".ui.modal.page").modal('setting', 'closable', false).modal('show');
-        });
-        //删除页面弹出框
-        $("button.deletepage").on("click",function(){
-            var type=$("#viewtype_select").dropdown("get value");
-            var name=$("#viewpage_select").dropdown("get text");
-            $(".ui.modal.delete").modal({
+            $("#page_name").val("");
+            $("#page_name_field").removeClass("error");
+            $('#page_modal').modal({
                 onApprove: function () {
-                    if (name == "默认页面") {
-                        alert("默认页面不能删除！")
+                    if ($("#page_name").val()=="") {
+                        $("#page_name_field").addClass("error");
+                        return false;
                     } else {
-                        deletepage(name, type);
+                        //ajax,添加此页面绘制展示区，刷新展示页下拉框，注意判断重名
                     }
                 }
             }).modal('setting', 'closable', false).modal('show');
+        });
+        //修改弹出框
+        $("button.writepage").on("click",function(){
+            var page_name=$("#viewpage_select").dropdown("get text");
+            $("#page_name").val(page_name);
+            $("#page_name_field").removeClass("error");
+            $('#page_modal').modal({
+                onApprove: function () {
+                    if ($("#page_name").val()=="") {
+                        $("#page_name_field").addClass("error");
+                        return false;
+                    } else {
+                        //ajax,修改此页面绘制展示区，刷新展示页下拉框，注意判断重名
+                    }
+                }
+            }).modal('setting', 'closable', false).modal('show');
+        });
+        //删除弹出框
+        $("button.deletepage").on("click",function(){
+            var group_name=$("#viewgroup_select").dropdown("get text");
+            var page_name=$("#viewpage_select").dropdown("get text");
+            $("#delete_modal").modal({
+                onApprove: function () {
+                    if (page_name == $("#viewpage_menu div:first").text()) {
+                        alert("默认页面不能删除！")
+                    } else {
+                        //ajax,根据page_name删除此页面绘制展示区，刷新展示页下拉框，注意添加删除的刷新效果
+                    }
+                }
+            }).modal('setting', 'closable', false).modal('show');
+        });
+        //编辑弹出框
+        $("button.editpage").on("click",function(){
+            //展示区域，添加一个带“+”可拖动的块，点击块后展示下面modal
+            gridster.remove_all_widgets();
+            $.each(serialization, function () {
+                gridster.add_widget('<li />', this.size_x, this.size_y, this.col, this.row);
+            });
+            //ajax，覆盖point_modal中的数据
+            $('#point_modal').modal('setting', 'closable', false).modal('show');
+            //ajax，覆盖视图类型中的数据
+            $('#point_view_modal').modal('attach events', '#point_modal .view.button');
+            //ajax，覆盖图表类型中的数据
+            $('#point_group_modal').modal('attach events', '#point_modal .group.button');
+            //ajax，覆盖静态表格或时钟的数据
+            $('#point_chart_modal').modal('attach events', '#point_modal .chart.button');
+        });
+        //刷新弹出框
+        $("button.refreshpage").on("click",function(){
+            alert("刷新成功！");
         });
         //保存页面弹出框
         $("button.savepage").on("click",function(){
             alert("保存成功！");
         });
+        //改变下拉框
+        $('#viewpage_select').dropdown({
+            onChange: function (value) {
+                //$('#viewpage_select').addClass('loading disabled');
+                var group_name=$("#viewgroup_select").dropdown("get text");
+                var page_name=$("#viewpage_select").dropdown("get text");
+                //根据group_name、page_name绘制展示区域，注意绘制完后取消刷新动画效果
+            }
+        })
     </script>
 </th:block>
 
