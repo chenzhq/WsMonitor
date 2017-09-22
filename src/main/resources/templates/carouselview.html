@@ -241,11 +241,20 @@
                         </div>
                     </div>
 
-                    <div class="ui segment"style=" min-height : 470px;background-color: #0d71bb" >
-                        <h3>待添加</h3>
-                        <div class="gridster" style="height:400px ">
-                            <ul>
-                            </ul>
+                    <div class="ui segment" style=" min-height : 470px;" >
+                        <div class="ui grid">
+                            <div class="one wide column">
+                                <div style="height: 10px"></div>
+                                <button class="ui icon basic massive button addblock " style="box-shadow:0px 0px;border:3px dashed darkgray;width: 70px"><!--// -->
+                                    <i class="add icon" style="font-size:200%;padding-top: 10px;padding-right:30px "></i>
+                                </button>
+                            </div>
+                            <div class="fifteen wide column" style="padding-top: 0px">
+                                <div class="gridster">
+                                    <ul>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -363,35 +372,29 @@ z                    </div>
         <!--添加展示项添加图表弹出框 start-->
         <div class="ui tiny modal page" id="point_group_modal">
             <i class="close icon"></i>
-            <div class="header">
-                添加图表
-            </div>
-            <div class="ui content  center aligned basic segment no-padding">
-                <form class="ui form">
-                    <div class="required inline field ">
-                        <label>监测点</label>
-                        <input type="text" placeholder="不能为空"  style="width: 168px;">
+            <div class="ui horizontal segments">
+                <div class="ui segment">
+                    <p>选择设备</p>
+                </div>
+                <div class="ui segment no-padding">
+                    <div class="ui middle aligned divided list">
+                        <div class="item">选择监控点</div>
+                        <div class="item">选择监控点</div>
+                        <div class="item">选择监控点</div>
+                        <div class="item">选择监控点</div>
                     </div>
-                    <div class="required inline field">
-                        <label>描&nbsp&nbsp&nbsp&nbsp述</label>
-                        <div class="ui selection dropdown">
-                            <!--<input type="hidden" name="hosts">-->
-                            <i class="dropdown icon"></i>
-                            <div class="text">曲线图</div>
-                            <div class="menu" >
-                                <div class="selected item">曲线图</div>
-                                <div class="item">柱状图</div>
-                                <div class="item">仪表盘</div>
-                                <div class="item">时钟</div>
-                                <div class="item">表格</div>
-                            </div>
-                        </div>
+                </div>
+                <div class="ui segment no-padding">
+                    <div class="ui middle aligned divided list">
+                        <div class="item">选择监控项</div>
+                        <div class="item">选择监控项</div>
+                        <div class="item">选择监控项</div>
+                        <div class="item">选择监控项</div>
                     </div>
-                    <div class="required inline field">
-                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
-                        <input type="text" placeholder="不能为空" style="width: 168px;">
-                    </div>
-                </form>
+                </div>
+                <div class="ui segment">
+                    <p>选择图形</p>
+                </div>
             </div>
             <div class="actions">
                 <div class="ui approve submit button">确认</div>
@@ -441,7 +444,7 @@ z                    </div>
                 <div class="ui cancel button">取消</div>
             </div>
         </div>
-         <!--删除页面弹出框 start-->
+        <!--删除页面弹出框 start-->
         <div class="ui tiny modal delete" id="delete_modal">
             <div class="ui icon header">
                 <i class="trash icon"></i>
@@ -467,7 +470,7 @@ z                    </div>
 
     <script  type="text/javascript">
         var gridster;
-        var serialization = [
+        /*var serialization = [
             { col: 1, row: 1, size_x: 2, size_y: 2 },
             { col: 3, row: 1, size_x: 1, size_y: 2 },
             { col: 4, row: 1, size_x: 1, size_y: 1 },
@@ -478,16 +481,23 @@ z                    </div>
             { col: 2, row: 5, size_x: 1, size_y: 1 }
         ];
         // sort serialization
-        serialization = Gridster.sort_by_row_and_col_asc(serialization);
+        serialization = Gridster.sort_by_row_and_col_asc(serialization);*/
 
         $(function() {
             gridster = $(".gridster ul").gridster({
-                widget_base_dimensions: [100, 55],
-                widget_margins: [5, 5]
+                widget_base_dimensions: [100, 100],
+                min_cols: 1,
+                max_cols: 6,
+                resize: {
+                    enabled: true,
+                    max_size: [4, 4],
+                    min_size: [1, 1]
+                }
             }).data('gridster');
             //初始化两下拉框
             //初始化默认图表
-
+            //
+            $("button.addblock").hide();
         })
         //添加弹出框
         $("button.addpage").on("click",function(){
@@ -536,19 +546,7 @@ z                    </div>
         });
         //编辑弹出框
         $("button.editpage").on("click",function(){
-            //展示区域，添加一个带“+”可拖动的块，点击块后展示下面modal
-            gridster.remove_all_widgets();
-            $.each(serialization, function () {
-                gridster.add_widget('<li />', this.size_x, this.size_y, this.col, this.row);
-            });
-            //ajax，覆盖point_modal中的数据
-            $('#point_modal').modal('setting', 'closable', false).modal('show');
-            //ajax，覆盖视图类型中的数据
-            $('#point_view_modal').modal('attach events', '#point_modal .view.button');
-            //ajax，覆盖图表类型中的数据
-            $('#point_group_modal').modal('attach events', '#point_modal .group.button');
-            //ajax，覆盖静态表格或时钟的数据
-            $('#point_chart_modal').modal('attach events', '#point_modal .chart.button');
+            $("button.addblock").show();
         });
         //刷新弹出框
         $("button.refreshpage").on("click",function(){
@@ -567,6 +565,26 @@ z                    </div>
                 //根据group_name、page_name绘制展示区域，注意绘制完后取消刷新动画效果
             }
         })
+        //添加块
+        $("button.addblock").on("click",function(){
+            //ajax，覆盖point_modal中的数据
+            $('#point_modal').modal('setting', 'closable', false).modal('show');
+            //ajax，覆盖视图类型中的数据
+            $('#point_view_modal').modal('attach events', '#point_modal .view.button');
+            //ajax，覆盖图表类型中的数据
+            $('#point_group_modal').modal({
+                onApprove: function () {
+                   //ajax选择菜单事件
+                }
+            }).modal('attach events', '#point_modal .group.button');
+            //ajax，覆盖静态表格或时钟的数据
+            $('#point_chart_modal').modal('attach events', '#point_modal .chart.button');
+            ////绘制每一个块的位置
+            //gridster.remove_all_widgets();
+            $.each(serialization, function () {
+                gridster.add_widget('<li />', this.size_x, this.size_y, this.col, this.row);
+            });
+        });
     </script>
 </th:block>
 
