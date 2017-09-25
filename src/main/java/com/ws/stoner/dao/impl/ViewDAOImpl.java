@@ -5,6 +5,7 @@ import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.model.DO.mongo.carousel.CarouselType;
 import com.ws.stoner.model.DO.mongo.carousel.ChartType;
 import com.ws.stoner.model.DO.mongo.carousel.ViewPage;
+import com.ws.stoner.model.DO.mongo.platform.PlatformGraph;
 import com.ws.stoner.model.DO.mongo.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -219,21 +220,41 @@ public class ViewDAOImpl implements ViewDAO {
      * @throws DAOException
      */
     @Override
-    public ViewPage getPageByPageName(String pageName) throws DAOException {
-        Query query=new Query(Criteria.where("page_name").is(pageName));
+    public ViewPage getPageByPageName(String pageName,String groupName) throws DAOException {
+        Query query=new Query(Criteria
+                .where("page_name").is(pageName)
+                .and("group_name").is(groupName));
         return mongoTemplate.findOne(query,ViewPage.class);
     }
 
     /**
      * 删除 viewpage
-     * @param pageName
+     * @param pageName groupName
      * @throws DAOException
      */
     @Override
-    public void deletePageView(String pageName) throws DAOException {
+    public void deletePageView(String pageName,String groupName) throws DAOException {
         Query query=new Query(Criteria
-                .where("page_name").is(pageName));
+                .where("page_name").is(pageName)
+                .and("group_name").is(groupName));
         mongoTemplate.remove(query,ViewPage.class);
+    }
+
+    /**
+     *  修改页面名称
+     * @param oldName
+     * @param newName
+     * @param groupName
+     * @throws DAOException
+     */
+    @Override
+    public void updateViewPageByName(String oldName, String newName, String groupName) throws DAOException {
+        Query query = Query.query(Criteria
+                .where("page_name").is(oldName)
+                .and("group_name").is(groupName));
+        Update update = Update
+                .update("page_name",newName);
+        mongoTemplate.updateFirst(query, update, ViewPage.class);
     }
 
 

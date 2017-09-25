@@ -1,10 +1,13 @@
 package com.ws.stoner.model.view.carousel;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * Created by zkf on 2017/9/14.
  */
 public class TableVO extends BlockVO {
 
+    @JSONField(name = "html_contents")
     private String htmlContents;
 
     public TableVO() {

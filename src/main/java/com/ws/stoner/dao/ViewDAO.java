@@ -133,17 +133,27 @@ public interface ViewDAO {
 
     /**
      * 查询 指定的 pagename 的 viewpage
-     * @param pageName
+     * @param pageName groupName
      * @return
      * @throws DAOException
      */
-    ViewPage getPageByPageName(String pageName) throws DAOException;
+    ViewPage getPageByPageName(String pageName,String groupName) throws DAOException;
 
     /**
-     * 删除 viewpage
+     * 删除 viewpage groupName
      * @param pageName
      * @throws DAOException
      */
-    void deletePageView(String pageName) throws DAOException;
+    void deletePageView(String pageName,String groupName) throws DAOException;
+
+    /**
+     *  修改页面名称
+     * @param oldName
+     * @param newName
+     * @param groupName
+     * @throws DAOException
+     */
+    void updateViewPageByName(String oldName,String newName,String groupName) throws DAOException;
+
 
 }

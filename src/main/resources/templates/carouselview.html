@@ -22,7 +22,7 @@
               th:href="@{css/jquery.gridster.css}">
         <script src="../static/js/jquery.gridster.js" th:src="@{js/jquery.gridster.js}" type="text/javascript" charset="utf-8"></script>
         <style type="text/css">
-            li {background:yellow;}
+            /*li {background:yellow;}*/
         </style>
     </th:block>
 </head>
@@ -215,19 +215,17 @@
                         <div class="eight wide column"  style="padding-bottom: 0px">
                             <div id="viewgroup_select" class="ui selection dropdown">
                                 <i class="dropdown icon"></i>
-                                <div class="text">展示组</div>
+                                <div class="text"></div>
                                 <div class="menu" id="viewgroup_menu">
-                                    <div class="disabled item">展示组</div>
+
                                 </div>
                             </div>
                             <div id="viewpage_select" class="ui selection dropdown">
                                 <!--<input type="hidden" name="hosts">-->
                                 <i class="dropdown icon"></i>
-                                <div class="text">展示页</div>
+                                <div class="text"></div>
                                 <div class="menu"  id="viewpage_menu">
-                                    <div class="selected item">默认页面</div>
-                                    <div class="item">默认页面1</div>
-                                    <div class="item">默认页面2</div>
+
                                 </div>
                             </div>
                         </div>
@@ -251,8 +249,7 @@
                             </div>
                             <div class="fifteen wide column" style="padding-top: 0px">
                                 <div class="gridster">
-                                    <ul>
-                                    </ul>
+
                                 </div>
                             </div>
                         </div>
@@ -463,129 +460,668 @@ z                    </div>
     <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
     <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
     <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
-    <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
-    <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
-    <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
-    <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
+    <th:block th:fragment="specialScript">
+        <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+        <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+        <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+        <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
+        <script src="../static/js/custom/carousel-common.js" th:src="@{js/custom/carousel-common.js}"></script>
+        <script  type="text/javascript">
+            var _gridster;
 
-    <script  type="text/javascript">
-        var gridster;
-        /*var serialization = [
-            { col: 1, row: 1, size_x: 2, size_y: 2 },
-            { col: 3, row: 1, size_x: 1, size_y: 2 },
-            { col: 4, row: 1, size_x: 1, size_y: 1 },
-            { col: 2, row: 3, size_x: 3, size_y: 1 },
-            { col: 1, row: 4, size_x: 1, size_y: 1 },
-            { col: 1, row: 3, size_x: 1, size_y: 1 },
-            { col: 2, row: 4, size_x: 1, size_y: 1 },
-            { col: 2, row: 5, size_x: 1, size_y: 1 }
-        ];
-        // sort serialization
-        serialization = Gridster.sort_by_row_and_col_asc(serialization);*/
-
-        $(function() {
-            gridster = $(".gridster ul").gridster({
-                widget_base_dimensions: [100, 100],
-                min_cols: 1,
-                max_cols: 6,
-                resize: {
-                    enabled: true,
-                    max_size: [4, 4],
-                    min_size: [1, 1]
-                }
-            }).data('gridster');
-            //初始化两下拉框
-            //初始化默认图表
-            //
-            $("button.addblock").hide();
-        })
-        //添加弹出框
-        $("button.addpage").on("click",function(){
-            $("#page_name").val("");
-            $("#page_name_field").removeClass("error");
-            $('#page_modal').modal({
-                onApprove: function () {
-                    if ($("#page_name").val()=="") {
-                        $("#page_name_field").addClass("error");
-                        return false;
-                    } else {
-                        //ajax,添加此页面绘制展示区，刷新展示页下拉框，注意判断重名
+            var page_vos; //同一个展示组的所有页面数据
+            var page_vo ;//单个展示页面数据
+            
+            //定义echart图表
+            var Color = ['#5FB878', '#F7B824', '#f11111','#d2d2d2', '#2F4056'];
+            var host_option={
+                title: {
+                    text: '0',
+                    subtext: '台设备',
+                    x: 'center',
+                    y: 'center',
+                    itemGap: 1,
+                    textStyle: {
+                        color: '#01AAED',
+                        fontFamily: '微软雅黑',
+                        fontSize: 24,
+                        fontWeight: 'bolder'
                     }
-                }
-            }).modal('setting', 'closable', false).modal('show');
-        });
-        //修改弹出框
-        $("button.writepage").on("click",function(){
-            var page_name=$("#viewpage_select").dropdown("get text");
-            $("#page_name").val(page_name);
-            $("#page_name_field").removeClass("error");
-            $('#page_modal').modal({
-                onApprove: function () {
-                    if ($("#page_name").val()=="") {
-                        $("#page_name_field").addClass("error");
-                        return false;
-                    } else {
-                        //ajax,修改此页面绘制展示区，刷新展示页下拉框，注意判断重名
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    y: 'center',
+                    data:['正常','警告','严重'],
+                },
+                grid: {
+                    left:'5%',
+                    right:'5%',
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: ['40%', '65%'],
+                        selectedMode: '',
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true,
+                                    formatter: function (param) {
+                                        return param.name + param.value + "台" + ':\n' + Math.round(param.percent) + '%';
+                                    },
+                                    textStyle: {
+                                        fontWeight: 'bolder'
+                                    }
+                                }
+                            },
+                        },
+                        data:  [
+                            {
+                                "value": 2,
+                                "name": "正常,"
+                            },
+                            {
+                                "value": 7,
+                                "name": "警告"
+                            }
+                        ],
+                        color: Color
                     }
-                }
-            }).modal('setting', 'closable', false).modal('show');
-        });
-        //删除弹出框
-        $("button.deletepage").on("click",function(){
-            var group_name=$("#viewgroup_select").dropdown("get text");
-            var page_name=$("#viewpage_select").dropdown("get text");
-            $("#delete_modal").modal({
-                onApprove: function () {
-                    if (page_name == $("#viewpage_menu div:first").text()) {
-                        alert("默认页面不能删除！")
-                    } else {
-                        //ajax,根据page_name删除此页面绘制展示区，刷新展示页下拉框，注意添加删除的刷新效果
+                ]
+            };
+            var point_option = {
+                title: {
+                    text: '0',
+                    subtext: '个监控点',
+                    x: 'center',
+                    y: 'center',
+                    itemGap: 1,
+                    textStyle: {
+                        color: '#01AAED',
+                        fontFamily: '微软雅黑',
+                        fontSize: 24,
+                        fontWeight: 'bolder'
                     }
-                }
-            }).modal('setting', 'closable', false).modal('show');
-        });
-        //编辑弹出框
-        $("button.editpage").on("click",function(){
-            $("button.addblock").show();
-        });
-        //刷新弹出框
-        $("button.refreshpage").on("click",function(){
-            alert("刷新成功！");
-        });
-        //保存页面弹出框
-        $("button.savepage").on("click",function(){
-            alert("保存成功！");
-        });
-        //改变下拉框
-        $('#viewpage_select').dropdown({
-            onChange: function (value) {
-                //$('#viewpage_select').addClass('loading disabled');
-                var group_name=$("#viewgroup_select").dropdown("get text");
-                var page_name=$("#viewpage_select").dropdown("get text");
-                //根据group_name、page_name绘制展示区域，注意绘制完后取消刷新动画效果
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    y: 'center',
+                    data:['正常','警告','严重'],
+                },
+                grid: {
+                    left:'15%',
+                    right:'15%',
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: ['40%', '65%'],
+                        selectedMode: '',
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true,
+                                    formatter: function (param) {
+                                        return param.name + param.value + "个" + ':\n' + Math.round(param.percent) + '%';
+                                    },
+                                    textStyle: {
+                                        fontWeight: 'bolder'
+                                    }
+                                }
+                            },
+                        },
+                        data:  [
+                            {
+                                "value": 5,
+                                "name": "正常"
+                            },
+                            {
+                                "value": 5,
+                                "name": "警告"
+                            }
+                        ],
+                        color: Color
+                    }
+                ]
             }
-        })
-        //添加块
-        $("button.addblock").on("click",function(){
-            //ajax，覆盖point_modal中的数据
-            $('#point_modal').modal('setting', 'closable', false).modal('show');
-            //ajax，覆盖视图类型中的数据
-            $('#point_view_modal').modal('attach events', '#point_modal .view.button');
-            //ajax，覆盖图表类型中的数据
-            $('#point_group_modal').modal({
-                onApprove: function () {
-                   //ajax选择菜单事件
+
+            $(function() {
+                //初始化组下拉框
+                getSelectGroup();
+                var group_name = $('#viewgroup_select').dropdown('get value');
+                getSelectPage(group_name);
+                drawAllPageByGroupName(group_name);
+
+            })
+
+            //默认隐藏编辑展示项框
+            $("button.addblock").hide();
+
+            $('#viewpage_select').dropdown({
+                onChange: function(value) {
+                    //$('viewpage_select').addClass('loading disable');
+                    var page_name = value;
+                    console.log('page_vos',page_vos);
+                    for(var i=0;i<page_vos.length;i++) {
+                        if(page_vos[i].page_name === page_name) {
+                            $('.section').eq(i).show();
+                        }else {
+                            $('.section').eq(i).hide();
+                        }
+                        console.log('css',$('.section').eq(i).attr('class'));
+                    }
                 }
-            }).modal('attach events', '#point_modal .group.button');
-            //ajax，覆盖静态表格或时钟的数据
-            $('#point_chart_modal').modal('attach events', '#point_modal .chart.button');
-            ////绘制每一个块的位置
-            //gridster.remove_all_widgets();
-            $.each(serialization, function () {
-                gridster.add_widget('<li />', this.size_x, this.size_y, this.col, this.row);
+            })
+
+            function drawAllPageByGroupName(groupName) {
+                console.log('groupName',groupName);
+                $.ajax({
+                    async: false,
+                    type: 'get',
+                    url: '/carousel/get_alldata?group_name=' + groupName,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            page_vos = result.data;
+                            $('.gridster').html('');
+                            //gridster.remove_all_widgets();
+                            for(var i=0;i < page_vos.length;i++) {
+                                $('.gridster').append('<div class="section" ><ul></ul></div>');
+                                _gridster = $('.section:eq(' + i + ') ul').gridster({
+                                    widget_selector: 'li',
+                                    widget_margins: [50, 50],                       //margin大小
+                                    widget_base_dimensions: [100, 100],             //网格粒度
+                                    avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+                                    max_cols: 15,                             //最多创建多少列，null表示没有限制
+                                    max_rows: 10,                             //最多创建多少横，null表示没有限制
+                                    min_cols: 1,                                //至少创建多少列
+                                    min_rows: 1,                               //至少创建多少横
+                                    resize: {
+                                        enabled: true,
+                                        max_size: [4, 4],
+                                        min_size: [1, 1]
+                                    }
+                                }).data('gridster');
+                                drawPage(_gridster,page_vos[i],i);
+                            }
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("获取展示组下所有展示页失败 ajax");
+                    }
+                })
+            }
+
+            //初始化组下拉框
+            function getSelectGroup() {
+                $.ajax({
+                    async: false,
+                    type: 'get',
+                    url: '/carousel/get_groups',
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            var data=result.data;
+                            getSelectByString($('#viewgroup_menu'),$('#viewgroup_select'),data);
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("展示组下拉框 Dropdown");
+                    }
+                })
+            }
+
+            //初始化展示页下拉框
+            function getSelectPage(group_name) {
+                $.ajax({
+                    type: 'get',
+                    url: '/carousel/get_pages?group_name=' + group_name,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            var data=result.data;
+                            getSelectByString($('#viewpage_menu'),$('#viewpage_select'),data);
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("展示页下拉框 Dropdown");
+                    }
+                })
+            }
+
+//            $('#viewgroup_select').dropdown({
+//                   onChange: function (value) {
+//                       //$('#viewgroup_select').addClass('loading disabled');
+//                       getSelectPage(value);
+//                   }
+//            })
+
+            //绘制状态统计视图
+            function getViewStatepie(host_chart,point_chart,data) {
+                //console.log("state-data",data);
+                var hostStateNum = data.hostStateNum;
+                if (hostStateNum.stateNum) {
+                    host_option.title.text = hostStateNum.totalNum;
+                    host_option.series[0].data = hostStateNum.stateNum;
+                    // 重写指定图表的配置项和数据
+                    host_chart.setOption(host_option);
+                }
+                var pointStateNum = data.pointStateNum;
+                if (pointStateNum.stateNum) {
+                    point_option.title.text = pointStateNum.totalNum;
+                    point_option.series[0].data = pointStateNum.stateNum;
+                    point_chart.setOption(point_option);
+                }
+            }
+
+            //一个页面一个页面的绘制  index表示第几个页面
+            function drawPage(gridster,page_vo,index) {
+
+                //console.log('index',index);
+
+                $.each(page_vo.layout_data, function () {
+                    gridster.add_widget('<li>', this.size_x, this.size_y, this.col, this.row);
+                });
+                //画图
+                var layout_arr = page_vo.layout_data;
+                var config_arr = page_vo.config_data;
+                var block_arr = page_vo.block_data;
+//                console.log("layout_data",layout_arr);
+//                console.log('config_data',config_arr);
+//                console.log('block_data',block_arr);
+                for(var i = 0 ;i < layout_arr.length; i++) {
+                    //根据配置画图
+                    if(config_arr[i].block_type === 'view') {
+                        //视图
+                        if(config_arr[i].graph_type === 'statepie') {
+                            //状态视图
+                            $('.section:eq(' + index + ') li').eq(i).html('');
+
+                            $('.section:eq(' + index + ') li').eq(i).append(
+                                '<div style="width: 430px;height: 150px;" >' +
+                                    '<div style="width: 100%;height: 10%;"></div>' +
+                                    '<div style="float:left;width: 45%;height: 80%;" id="host_pie'+ index + i +'"></div >' +
+                                    '<div style="float:left;width: 45%;height: 80%;" id="point_pie'+ index + i +'"></div>' +
+                                '</div>');
+
+                            var host_chart = echarts.init(document.getElementById('host_pie'+ index +i));
+
+                            var point_chart = echarts.init(document.getElementById('point_pie'+ index +i));
+
+                            getViewStatepie(host_chart,point_chart,block_arr[i]);
+
+                        }else if(config_arr[i].graph_type === 'problems') {
+                            //问题视图
+                            $('.section:eq(' + index + ') li').eq(i).append('<table id="problems_'+ index + i +'"></table>');
+                            //var problemTable = $('#problems_'+i).problemTable();
+
+                            var problemTable = $('#problems_'+ index +i).DataTable({
+                                "info": false,
+                                "searching": false,
+                                "lengthChange": false,
+                                "paging":false,
+                                createdRow: function (row, rowData) {
+                                    $('td', row).eq(1).addClass('left aligned');
+                                    $('td', row).eq(2).addClass('left aligned');
+                                    if (rowData.problem_state === '问题') {
+                                        if (rowData.priority_state === '警告') {
+                                            row.classList.add("warning")
+                                        } else if (rowData.priority_state === '严重') {
+                                            row.classList.add("negative")
+                                        } else {
+                                        }
+                                    }
+                                },
+                                data: [],
+                                columns: [
+                                    {
+                                        "data": "problem_time",
+                                        "width": "25%",
+                                        "title": "发生时间",
+                                        "orderable": false,
+
+                                    },
+                                    {
+                                        "data": "host_name",
+                                        "width": "10%",
+                                        "title": "设备",
+                                        "orderable": false,
+                                    },
+                                    {
+                                        "data": "description",
+                                        "width": "20%",
+                                        "title": "问题",
+                                        "orderable": false
+                                    },
+                                    {
+                                        "data": "priority_state",
+                                        "width": "10%",
+                                        "title": "级别",
+                                        "orderable": false,
+                                    },
+                                    {
+                                        "data": "problem_state",
+                                        "width": "10%",
+                                        "title": "状态",
+                                        "orderable": false,
+                                    },
+                                    {
+                                        "data": "duration_string",
+                                        "width": "15%",
+                                        "title": "持续时间",
+                                        "orderable": false,
+                                    },
+                                    {
+                                        "data": "alert_state",
+                                        "width": "10%",
+                                        "title": "告警状态",
+                                        "orderable": false,
+                                    },
+                                    {
+                                        "data": "acknowledged",
+                                        "width": "10%",
+                                        "title": "确认",
+                                        "orderable": false,
+                                    }
+                                ]
+                            });
+
+                            //console.log('block_arr[i].problems',block_arr[i].problems);
+
+                            problemTable.rows.add(block_arr[i].problems).draw();
+
+                            //待完成
+                        }else if(config_arr[i].graph_type === 'appletree') {
+                            //苹果树
+                        }else {
+
+                        }
+                    }else if(config_arr[i].block_type === 'graph') {
+                        //图表
+                        graph_vo = block_arr[i];
+                        //渲染图形
+                        $('.section:eq(' + index + ') li').eq(i).append(
+                            '<div style="height: 100%;width: 100%" id="graph_'+ index + i +'">图表数据</div>');
+
+                        //console.log('select',$('.section:eq(' + index + ') li').eq(i).html());
+
+                        var graph_chart = echarts.init(document.getElementById('graph_'+ index +i));//待补充
+
+                        var option = getGraphOption(config_arr[i].graph_type,graph_vo);
+
+                        graph_chart.setOption(option);
+
+                    }else if(config_arr[i].block_type === 'chart') {
+                        //控件
+                        if(config_arr[i].graph_type === 'clock') {
+                            //钟表
+                            $('.seciton:eq(' + index + ') li').eq(i).append('<div>时钟数据</div>');
+
+                            //$('').html(block_arr[i].time);//待完成
+                        }else if (config_arr[i].graph_type === 'table') {
+                            //表格
+                            $('.seciton:eq(' + index + ') li').eq(i).append('<div id="table_'+ index + i +'">表格数据</div>');
+
+                            //console.log('table',block_arr[i].html_contents);
+
+                            $('#table_'+ index +i).append(block_arr[i].html_contents);// 待完成
+
+                        }
+                    }else {
+
+                    }
+
+                }
+            }
+            
+            //添加弹出框
+            $('button.addpage').on('click',function(){
+                $('#page_name').val('');
+                $('#page_name_field').removeClass('error');
+                $('#page_modal').modal({
+                    onApprove: function () {
+                        if ($('#page_name').val()=='') {
+                            $('#page_name_field').addClass('error');
+                            return false;
+                        } else {
+                            //ajax,添加此页面绘制展示区，刷新展示页下拉框，注意判断重名
+                            var send_data = {
+                                groupName:$('#viewgroup_select').dropdown('get value'),
+                                pageName:$('#page_name').val()
+                            };
+                            console.log('send_data_add',send_data);
+                            $.ajax({
+                                type: 'post',
+                                url: '/carousel/add_page',
+                                data: JSON.stringify(send_data),
+                                dataType: 'json',
+                                contentType:'application/json;charset=UTF-8',
+                                success: function (result) {
+                                    if(result.success) {
+                                        var data=result.data;
+                                        console.log('page_vo',data);
+                                        page_vos.push(data);
+                                        $('.gridster').html('');
+                                        //gridster.remove_all_widgets();
+                                        for(var i=0;i < page_vos.length;i++) {
+                                            $('.gridster').append('<div class="section" ><ul></ul></div>');
+                                            _gridster = $('.section:eq(' + i + ') ul').gridster({
+                                                widget_selector: 'li',
+                                                widget_margins: [50, 50],                       //margin大小
+                                                widget_base_dimensions: [100, 100],             //网格粒度
+                                                avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+                                                max_cols: 15,                             //最多创建多少列，null表示没有限制
+                                                max_rows: 10,                             //最多创建多少横，null表示没有限制
+                                                min_cols: 1,                                //至少创建多少列
+                                                min_rows: 1,                               //至少创建多少横
+                                                resize: {
+                                                    enabled: true,
+                                                    max_size: [4, 4],
+                                                    min_size: [1, 1]
+                                                }
+                                            }).data('gridster');
+                                            drawPage(_gridster,page_vos[i],i);
+                                        }
+                                        getSelectPage($('#viewgroup_select').dropdown('get value'));
+                                    }
+                                    else {
+                                        alert(result.message);
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("添加展示页错误 Dropdown");
+                                }
+                            })
+                        }
+                    }
+                }).modal('setting', 'closable', false).modal('show');
             });
-        });
-    </script>
+            //修改弹出框
+            $('button.writepage').on('click',function(){
+                var old_page_name = $('#viewpage_select').dropdown('get value');
+                $('#page_name').val(old_page_name);
+                $('#page_name_field').removeClass('error');
+                $('#page_modal').modal({
+                    onApprove: function () {
+                        if ($('#page_name').val()=='') {
+                            $('#page_name_field').addClass('error');
+                            return false;
+                        } else {
+                            //ajax,修改此页面绘制展示区，刷新展示页下拉框
+                            var send_data = {
+                                groupName:$('#viewgroup_select').dropdown('get value'),
+                                newPageName:$('#page_name').val(),
+                                oldPageName:old_page_name
+                            };
+                            $.ajax({
+                                type: 'post',
+                                url: '/carousel/update_page',
+                                data:JSON.stringify(send_data),
+                                dataType: 'json',
+                                contentType:'application/json;charset=UTF-8',
+                                success: function (result) {
+                                    if(result.success) {
+                                        var data=result.data;
+                                        console.log('page_vo',data);
+                                        for(var i=0;i<page_vos.length;i++) {
+                                            if(page_vos[i].page_name === old_page_name) {
+                                                page_vos.splice(i,1);
+                                                page_vos.splice(i,0,data);
+                                            }
+                                        }
+                                        console.log('new page_vos',page_vos);
+                                        $('.gridster').html('');
+                                        //gridster.remove_all_widgets();
+                                        for(var i=0;i < page_vos.length;i++) {
+                                            $('.gridster').append('<div class="section" ><ul></ul></div>');
+                                            _gridster = $('.section:eq(' + i + ') ul').gridster({
+                                                widget_selector: 'li',
+                                                widget_margins: [50, 50],                       //margin大小
+                                                widget_base_dimensions: [100, 100],             //网格粒度
+                                                avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+                                                max_cols: 15,                             //最多创建多少列，null表示没有限制
+                                                max_rows: 10,                             //最多创建多少横，null表示没有限制
+                                                min_cols: 1,                                //至少创建多少列
+                                                min_rows: 1,                               //至少创建多少横
+                                                resize: {
+                                                    enabled: true,
+                                                    max_size: [4, 4],
+                                                    min_size: [1, 1]
+                                                }
+                                            }).data('gridster');
+                                            drawPage(_gridster,page_vos[i],i);
+                                        }
+                                        getSelectPage($('#viewgroup_select').dropdown('get value'));
+                                    }
+                                    else {
+                                        errorMsg_no_connect("修改展示页 Dropdown");
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("修改展示页 Dropdown");
+                                }
+                            })
+                        }
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+            });
+            //删除弹出框
+            $('button.deletepage').on('click',function(){
+                var group_name = $('#viewgroup_select').dropdown('get text');
+                var page_name = $('#viewpage_select').dropdown('get text');
+                $('#delete_modal').modal({
+                    onApprove: function () {
+                        //ajax,根据page_name删除此页面绘制展示区，刷新展示页下拉框，注意添加删除的刷新效果
+                        $.ajax({
+                            type: 'get',
+                            url: '/carousel/delete_page?group_name=' + group_name + '&page_name=' + page_name,
+                            dataType: 'json',
+                            success: function (result) {
+                                if(result.success) {
+                                    for(var i=0;i<page_vos.length;i++) {
+                                        if(page_vos[i].page_name === page_name) {
+                                            page_vos.splice(i,1);
+                                        }
+                                    }
+                                    $('.gridster').html('');
+                                    //gridster.remove_all_widgets();
+                                    for(var i=0;i < page_vos.length;i++) {
+                                        $('.gridster').append('<div class="section" ><ul></ul></div>');
+                                        _gridster = $('.section:eq(' + i + ') ul').gridster({
+                                            widget_selector: 'li',
+                                            widget_margins: [50, 50],                       //margin大小
+                                            widget_base_dimensions: [100, 100],             //网格粒度
+                                            avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+                                            max_cols: 15,                             //最多创建多少列，null表示没有限制
+                                            max_rows: 10,                             //最多创建多少横，null表示没有限制
+                                            min_cols: 1,                                //至少创建多少列
+                                            min_rows: 1,                               //至少创建多少横
+                                            resize: {
+                                                enabled: true,
+                                                max_size: [4, 4],
+                                                min_size: [1, 1]
+                                            }
+                                        }).data('gridster');
+                                        drawPage(_gridster,page_vos[i],i);
+                                    }
+                                    getSelectPage($('#viewgroup_select').dropdown('get value'));
+                                }
+                                else {
+                                    errorMsg_no_data(result.message);
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("展示页下拉框 Dropdown");
+                            }
+                        })
+
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+            });
+            //编辑弹出框
+            $("button.editpage").on("click",function(){
+                $("button.addblock").show();
+            });
+            //刷新弹出框
+            $("button.refreshpage").on("click",function(){
+                alert("刷新成功！");
+            });
+            //保存页面弹出框
+            $("button.savepage").on("click",function(){
+                alert("保存成功！");
+            });
+//            //改变下拉框
+//            $('#viewpage_select').dropdown({
+//                onChange: function (value) {
+//                    //$('#viewpage_select').addClass('loading disabled');
+//                    var group_name=$("#viewgroup_select").dropdown("get text");
+//                    var page_name=$("#viewpage_select").dropdown("get text");
+//                    //根据group_name、page_name绘制展示区域，注意绘制完后取消刷新动画效果
+//                }
+//            })
+            //添加块
+            $("button.addblock").on("click",function(){
+                //ajax，覆盖point_modal中的数据
+                $('#point_modal').modal('setting', 'closable', false).modal('show');
+                //ajax，覆盖视图类型中的数据
+                $('#point_view_modal').modal('attach events', '#point_modal .view.button');
+                //ajax，覆盖图表类型中的数据
+                $('#point_group_modal').modal({
+                    onApprove: function () {
+                       //ajax选择菜单事件
+                    }
+                }).modal('attach events', '#point_modal .group.button');
+                //ajax，覆盖静态表格或时钟的数据
+                $('#point_chart_modal').modal('attach events', '#point_modal .chart.button');
+                ////绘制每一个块的位置
+                //gridster.remove_all_widgets();
+//                $.each(serialization, function () {
+//                    gridster.add_widget('<li />', this.size_x, this.size_y, this.col, this.row);
+//                });
+            });
+        </script>
+    </th:block>
 </th:block>
 
 </body>

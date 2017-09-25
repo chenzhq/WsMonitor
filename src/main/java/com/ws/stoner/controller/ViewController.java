@@ -14,4 +14,9 @@ public class ViewController {
     public String view() {
         return "monitorview";
     }
+
+    @RequestMapping(value = {"/carousel", ""})
+    public String carousel() {
+        return "carouselview";
+    }
 }

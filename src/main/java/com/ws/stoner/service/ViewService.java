@@ -141,7 +141,7 @@ public interface ViewService {
      * @return
      * @throws ServiceException
      */
-    ViewPage getViewPageByPageName(String pageName) throws ServiceException;
+    ViewPage getViewPageByPageName(String pageName,String groupName) throws ServiceException;
 
     /**
      * 根据 指定页面名称 获取 展示页对象 pageVO
@@ -149,7 +149,15 @@ public interface ViewService {
      * @return
      * @throws ServiceException
      */
-    PageVO getPageVOByPageName(String pageName) throws ServiceException;
+    PageVO getPageVOByPageName(String pageName,String groupName) throws ServiceException;
+
+    /**
+     * 获取指定组的所有展示页 pageVO 数据
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    List<PageVO> getPageVOSByGroupName(String groupName) throws ServiceException;
 
     /**
      * 根据 配置数据展示项 configData 组装 展示数据展示项 BlockVO
@@ -169,9 +177,19 @@ public interface ViewService {
 
     /**
      *  删除 展示页
-     * @param pageName
+     * @param pageName groupName
      * @return
      * @throws ServiceException
      */
-    boolean deleteViewPageByPageName(String pageName) throws ServiceException;
+    boolean deleteViewPageByPageName(String pageName,String groupName) throws ServiceException;
+
+    /**
+     * 修改 展示页名称
+     * @param oldPageName
+     * @param newPageName
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    boolean updateViewPageByPageName(String oldPageName,String newPageName,String groupName) throws ServiceException;
 }

@@ -395,10 +395,10 @@ public class ViewServiceImpl implements ViewService {
      * @throws ServiceException
      */
     @Override
-    public ViewPage getViewPageByPageName(String pageName) throws ServiceException {
+    public ViewPage getViewPageByPageName(String pageName,String groupName) throws ServiceException {
         ViewPage viewPage = null;
         try {
-            viewPage = viewDAO.getPageByPageName(pageName);
+            viewPage = viewDAO.getPageByPageName(pageName,groupName);
         } catch (DAOException e) {
             logger.error("获取指定name的 viewPage 错误！{}", e.getMessage());
             new ServiceException(e.getMessage());
@@ -413,8 +413,8 @@ public class ViewServiceImpl implements ViewService {
      * @throws ServiceException
      */
     @Override
-    public PageVO getPageVOByPageName(String pageName) throws ServiceException {
-        ViewPage viewPage = getViewPageByPageName(pageName);
+    public PageVO getPageVOByPageName(String pageName,String groupName) throws ServiceException {
+        ViewPage viewPage = getViewPageByPageName(pageName,groupName);
         if(viewPage == null) {
             return null;
         }
@@ -433,6 +433,43 @@ public class ViewServiceImpl implements ViewService {
         pageVO.setBlockData(blockVOS);
         return pageVO;
 
+    }
+
+    /**
+     * 获取指定组的所有展示页 pageVO 数据
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<PageVO> getPageVOSByGroupName(String groupName) throws ServiceException {
+        List<ViewPage> viewPages = null;
+        try {
+            viewPages = viewDAO.getAllPageByGroupName(groupName);
+        } catch (DAOException e) {
+            logger.error("获取指定组的展示页 viewPage 错误！{}", e.getMessage());
+        }
+        if(viewPages == null || viewPages.size() == 0) {
+            return null;
+        }
+        List<PageVO> pageVOS = new ArrayList<>();
+        for(ViewPage viewPage : viewPages) {
+            PageVO pageVO = new PageVO(
+                    viewPage.getPageName(),
+                    viewPage.getLayoutDataList(),
+                    viewPage.getConfigDataList()
+            );
+            List<ConfigData> configData = viewPage.getConfigDataList();
+            List<BlockVO> blockVOS = new ArrayList<>();
+            for(ConfigData config : configData) {
+                //装配 展示项数据 blockVO
+                blockVOS.add(getBlockVOByConfigData(config));
+            }
+            //给页面填充动态数据
+            pageVO.setBlockData(blockVOS);
+            pageVOS.add(pageVO);
+        }
+        return pageVOS;
     }
 
     /**
@@ -457,20 +494,40 @@ public class ViewServiceImpl implements ViewService {
 
     /**
      *  删除 展示页
-     * @param pageName
+     * @param pageName groupName
      * @return
      * @throws ServiceException
      */
     @Override
-    public boolean deleteViewPageByPageName(String pageName) throws ServiceException {
+    public boolean deleteViewPageByPageName(String pageName,String goupName) throws ServiceException {
         try {
-            viewDAO.deletePageView(pageName);
+            viewDAO.deletePageView(pageName,goupName);
         } catch (DAOException e) {
             logger.error("删除 viewPage 错误！{}", e.getMessage());
             return false;
         }
         return true;
     }
+
+    /**
+     * 修改 展示页名称
+     * @param oldPageName
+     * @param newPageName
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean updateViewPageByPageName(String oldPageName, String newPageName, String groupName) throws ServiceException {
+        try {
+            viewDAO.updateViewPageByName(oldPageName,newPageName,groupName);
+        } catch (DAOException e) {
+            logger.error("修改页面名称错误 viewPage 错误！{}", e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
     /**
      * 根据 配置数据展示项 configData 组装 展示数据展示项 BlockVO
      * @param config

@@ -12,6 +12,7 @@ import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
 import com.ws.stoner.model.query.EditViewForm;
 import com.ws.stoner.model.view.carousel.BlockVO;
 import com.ws.stoner.model.view.carousel.PageVO;
+import com.ws.stoner.model.view.carousel.UpdatePageVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
 import com.ws.stoner.service.ViewService;
@@ -143,7 +144,7 @@ public class ViewRestController {
             }
         }
         if(same) {
-            return RestResultGenerator.genResult("状态统计中已存在该名称", REST_UPDATE_SUCCESS).toString();
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.ALREADY_EXISTS_ERROR).toString();
         }else {
             boolean success =  viewService.saveGraphView(stateView);
             if(success) {
@@ -171,11 +172,12 @@ public class ViewRestController {
             }
         }
         if(same) {
-            return RestResultGenerator.genResult("问题统计中已存在该名称", REST_UPDATE_SUCCESS).toString();
+            return RestResultGenerator.genErrorResult( ResponseErrorEnum.ALREADY_EXISTS_ERROR).toString();
         }else {
             boolean success =  viewService.saveGraphView(problemsView);
             if(success) {
-                return getViewList(problemsView);
+                String result =  getViewList(problemsView);
+                return result;
             }else {
                 return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
             }
@@ -293,17 +295,39 @@ public class ViewRestController {
      * @return
      */
     @RequestMapping(value = "/carousel/add_page", method = RequestMethod.POST)
-    public String createViewPage(@RequestParam("page_name") String pageName,
-                                 @RequestParam("group_name") String groupName) throws ServiceException {
-        ViewPage viewPage = new ViewPage(
-                pageName,
-                groupName,
-                new ArrayList<>(),
-                new ArrayList<>()
-        );
+    public String createViewPage(@RequestBody ViewPage viewPage) throws ServiceException {
+        //判断重名
+        ViewPage viewPageOld = viewService.getViewPageByPageName(viewPage.getPageName(),viewPage.getGroupName());
+        if(viewPageOld != null) {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.ALREADY_EXISTS_ERROR).toString();
+        }
+        viewPage.setLayoutDataList(new ArrayList<>());
+        viewPage.setConfigDataList(new ArrayList<>());
         boolean success = viewService.saveViewPage(viewPage);
         if(success) {
-            PageVO pageVO = viewService.getPageVOByPageName(pageName);
+            PageVO pageVO = viewService.getPageVOByPageName(viewPage.getPageName(),viewPage.getGroupName());
+            return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
+        }else {
+            return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
+        }
+    }
+
+    /**
+     * 保存一个 viewpage 配置  修改页面 功能 主要修改页面名称
+     * @return
+     */
+    @RequestMapping(value = "/carousel/update_page", method = RequestMethod.POST)
+    public String updateViewPage(@RequestBody UpdatePageVO updatePageVO) throws ServiceException {
+
+        //保存修改
+        boolean success = viewService.updateViewPageByPageName(
+                updatePageVO.getOldPageName(),
+                updatePageVO.getNewPageName(),
+                updatePageVO.getGroupName());
+        if(success) {
+            PageVO pageVO = viewService.getPageVOByPageName(
+                    updatePageVO.getNewPageName(),
+                    updatePageVO.getGroupName());
             return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
         }else {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
@@ -327,7 +351,7 @@ public class ViewRestController {
         );
         boolean success = viewService.saveViewPage(viewPage);
         if(success) {
-            PageVO pageVO = viewService.getPageVOByPageName(pageName);
+            PageVO pageVO = viewService.getPageVOByPageName(pageName,groupName);
             return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
         }else {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
@@ -335,12 +359,23 @@ public class ViewRestController {
     }
 
     /**
+     *   轮播配置  根据 groupName， 获取所有指定页面 布局 渲染 相关数据  All
+     * @return
+     */
+    @RequestMapping(value = "/carousel/get_alldata", method = RequestMethod.GET)
+    public String getPagesData(@RequestParam("group_name") String groupName) throws ServiceException {
+        List<PageVO> pageVOS = viewService.getPageVOSByGroupName(groupName);
+        return RestResultGenerator.genResult(pageVOS, REST_UPDATE_SUCCESS).toString();
+    }
+
+    /**
      *   轮播配置  根据 pageName， 获取页面 布局 渲染 相关数据
      * @return
      */
     @RequestMapping(value = "/carousel/get_data", method = RequestMethod.GET)
-    public String getPageData(@RequestParam("page_name") String pageName) throws ServiceException {
-        PageVO pageVO = viewService.getPageVOByPageName(pageName);
+    public String getPageData(@RequestParam("page_name") String pageName,
+                              @RequestParam("group_name") String groupName) throws ServiceException {
+        PageVO pageVO = viewService.getPageVOByPageName(pageName,groupName);
         return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
     }
 
@@ -363,8 +398,9 @@ public class ViewRestController {
      * @return
      */
     @RequestMapping(value = "/carousel/delete_page", method = RequestMethod.GET)
-    public String deleteViewPageByPageName(@RequestParam("page_name") String pageName) throws ServiceException {
-        boolean success = viewService.deleteViewPageByPageName(pageName);
+    public String deleteViewPageByPageName(@RequestParam("page_name") String pageName,
+                                           @RequestParam("group_name") String groupName) throws ServiceException {
+        boolean success = viewService.deleteViewPageByPageName(pageName,groupName);
         return RestResultGenerator.genResult(success, REST_UPDATE_SUCCESS).toString();
     }
 
@@ -373,8 +409,9 @@ public class ViewRestController {
      * @return
      */
     @RequestMapping(value = "/carousel/get_edit", method = RequestMethod.GET)
-    public String getViewPageByPageName(@RequestParam("page_name") String pageName) throws ServiceException {
-        ViewPage viewPage = viewService.getViewPageByPageName(pageName);
+    public String getViewPageByPageName(@RequestParam("page_name") String pageName,
+                                        @RequestParam("group_name") String groupName) throws ServiceException {
+        ViewPage viewPage = viewService.getViewPageByPageName(pageName,groupName);
         if(viewPage != null) {
             return RestResultGenerator.genResult(viewPage, REST_UPDATE_SUCCESS).toString();
         }
