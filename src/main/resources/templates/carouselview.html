@@ -13,7 +13,7 @@
     <link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
     <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
     <th:block th:fragment="supplement">
-        <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>-->
+        <script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>
         <script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
         <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
         <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
@@ -353,12 +353,6 @@ z                    </div>
                             </div>
                         </div>
                     </div>
-                    <div class="inline field">
-                        <div class="ui checkbox" style="margin-left: -20px">
-                            <input type="checkbox" tabindex="0" class="hidden">
-                            <label  id="label_checkbox"><i class="hide icon"></i>显示标题</label>
-                        </div>
-                    </div>
                 </form>
             </div>
             <div class="actions">
@@ -367,30 +361,84 @@ z                    </div>
             </div>
         </div>
         <!--添加展示项添加图表弹出框 start-->
-        <div class="ui tiny modal page" id="point_group_modal">
+        <div class="ui small modal page" id="point_group_modal">
             <i class="close icon"></i>
-            <div class="ui horizontal segments">
+            <div class="ui horizontal segments" style="border: none;box-shadow:0px 0px;">
                 <div class="ui segment">
-                    <p>选择设备</p>
+                    <div id="host_tree"></div>
+                    <button class="ui blue button" id="host_tree_button">单选确认</button>
                 </div>
                 <div class="ui segment no-padding">
-                    <div class="ui middle aligned divided list">
-                        <div class="item">选择监控点</div>
-                        <div class="item">选择监控点</div>
-                        <div class="item">选择监控点</div>
-                        <div class="item">选择监控点</div>
+                    <div class="ui middle aligned selection list" id="pointsMenu">
+                        <div class="item">
+                            <i class="green circle icon"></i>
+                            <div class="content">
+                                <div class="header">选择监控点</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <i class="yellow circle icon"></i>
+                            <div class="content">
+                                <div class="header">选择监控点</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <i class="red circle icon"></i>
+                            <div class="content">
+                                <div class="header">选择监控点</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <i class="yellow circle icon"></i>
+                            <div class="content">
+                                <div class="header">选择监控点</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="ui segment no-padding">
-                    <div class="ui middle aligned divided list">
-                        <div class="item">选择监控项</div>
-                        <div class="item">选择监控项</div>
-                        <div class="item">选择监控项</div>
-                        <div class="item">选择监控项</div>
+                    <div class="ui middle aligned selection list" id="itemsMenu">
+                        <div class="item">
+                            <i class="yellow square icon"></i>
+                            <div class="content">
+                                <div class="header">选择监控项</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <i class="yellow square icon"></i>
+                            <div class="content">
+                                <div class="header">选择监控项</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <i class="red square icon"></i>
+                            <div class="content">
+                                <div class="header">选择监控项</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="ui segment">
-                    <p>选择图形</p>
+                <div class="ui segment no-padding">
+                    <div class="ui middle aligned selection list" id="typeMenu">
+                        <div class="item">
+                            <i class="line icon"></i>
+                            <div class="content">
+                                <div class="header">选择图形</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <i class="bar icon"></i>
+                            <div class="content">
+                                <div class="header">选择图形</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <i class="area icon"></i>
+                            <div class="content">
+                                <div class="header">选择图形</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="actions">
@@ -1102,16 +1150,42 @@ z                    </div>
 //            })
             //添加块
             $("button.addblock").on("click",function(){
+                $('#pointsMenu').html('');
+                $('#itemsMenu').html('');
+                $("#typeMenu").html('');
                 //ajax，覆盖point_modal中的数据
                 $('#point_modal').modal('setting', 'closable', false).modal('show');
                 //ajax，覆盖视图类型中的数据
                 $('#point_view_modal').modal('attach events', '#point_modal .view.button');
                 //ajax，覆盖图表类型中的数据
-                $('#point_group_modal').modal({
-                    onApprove: function () {
-                       //ajax选择菜单事件
-                    }
-                }).modal('attach events', '#point_modal .group.button');
+                //获取设备选择树
+                var hostIds = [];
+                var $host_tree = $('#host_tree')
+                genHostsTree($host_tree, hostIds, function () {
+                    //选择设备后，执行的操作
+                    $("#host_tree_button").on("click",function() {
+                        hostIds = $host_tree.jstree(true).get_bottom_checked();
+                        if (hostIds.length != 1) {
+                            alert("所选设备不能为空或者不能多选");
+                            return false;
+                        } else {
+                            //ajax,获取自定义选择监控点列表
+                            pointsMenu(hostIds[0]);
+                            //加载监控项列表
+                            var point_id = $("#pointsMenu").children(".item.textOverflow.active").attr("id");
+                            //console.log("point_id:::" + point_id);
+                            itemsMenu(point_id);
+                        }
+                    })
+                    $('#point_group_modal').modal({
+                        onApprove: function () {
+                            //判断所选非空
+
+
+                        }
+                    }).modal('attach events', '#point_modal .group.button');
+                })
+
                 //ajax，覆盖静态表格或时钟的数据
                 $('#point_chart_modal').modal('attach events', '#point_modal .chart.button');
                 ////绘制每一个块的位置
@@ -1120,6 +1194,118 @@ z                    </div>
 //                    gridster.add_widget('<li />', this.size_x, this.size_y, this.col, this.row);
 //                });
             });
+            //加载监控点列表
+            function pointsMenu(host_id) {
+                $.ajax({
+                    async: false,
+                    type: "get",
+                    url: "/platformdetail/get_points?host_id="+host_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            getpointsMenu(data);
+                            itemsMenu(data[0].point_id);
+                            $('#pointsMenu div').on('click',function () {
+                                $('#pointsMenu div').removeClass('active');
+                                $(this).addClass('active');
+                                itemsMenu(this.id);
+                            })
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控点列表 Menu");
+                    }
+                })
+            }
+            function getpointsMenu(data) {
+                var str = '';
+                for(var i=0;i<data.length;i++)
+                {
+                    var state = '<i class="green circle icon"></i>';
+                    if (i==0){
+                        str +="<div class='item textOverflow active' id='"+data[i].point_id+"' >"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                    }else {
+                        str +="<div class='item textOverflow' id='"+data[i].point_id+"' >"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                    }
+                }
+                $("#pointsMenu").html(str);
+            }
+            //加载监控项列表
+            function itemsMenu(point_id) {
+                $.ajax({
+                    type: "get",
+                    url: "/platformdetail/get_items?point_id="+point_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            getitemsMenu(data);
+                            typeMenu(data[0].value_type);
+                            $('#itemsMenu div').on('click',function () {
+                                $('#itemsMenu div').removeClass('active');
+                                $(this).addClass('active');
+                                typeMenu(this.data-type);
+                            })
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控项列表 Menu");
+                    }
+                })
+            }
+            function getitemsMenu(data) {
+                var str = '';
+                for(var i=0;i<data.length;i++)
+                {
+                    var state = '<i class="green square icon"></i>';
+                    if (i==0){
+                        str +="<div class='item textOverflow active' id='"+data[i].item_id+"' data-type='"+data[i].value_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].item_name+"</div></div></div>";
+                    }else {
+                        str +="<div class='item textOverflow' id='"+data[i].item_id+"' data-type='"+data[i].value_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].item_name+"</div></div></div>";
+                    }
+                }
+                $("#itemsMenu").html(str);
+            }
+            //加载图形类型列表
+            function typeMenu(value_type) {
+                $.ajax({
+                    type: "get",
+                    url: "/hostgraphs/get_graphs?value_type="+value_type,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            gettypeMenu(data);
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("图形类型列表 Menu");
+                    }
+                })
+            }
+            function gettypeMenu(data) {
+                var str = '';
+                for(var i=0;i<data.length;i++)
+                {
+                    var state = '<i class="green square icon"></i>';
+                    if (i==0){
+                        str +="<div class='item textOverflow active' id='"+data[i].item_id+"' data-type='"+data[i].value_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].item_name+"</div></div></div>";
+                    }else {
+                        str +="<div class='item textOverflow' id='"+data[i].item_id+"' data-type='"+data[i].value_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].item_name+"</div></div></div>";
+                    }
+                }
+                $("#typeMenu").html(str);
+            }
         </script>
     </th:block>
 </th:block>
