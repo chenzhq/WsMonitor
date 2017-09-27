@@ -15,7 +15,7 @@
 	<th:block th:fragment="supplement">
         <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
-		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=1"></script>-->
 		<style type="text/css">
 			.pie{height: 200px}
 			.pie_copy{height: 200px;margin-top: 100px}
@@ -349,49 +349,6 @@
     //给搜索按钮绑定点击事件
     $(document).ready(function () {
         var problemTable = $('#problem_table').problemTable()
-        /*var table = $('#problem_table').DataTable({
-            iDisplayLength: 10,
-            order: [2, 'desc'],// 以升序排列此列
-            columnDefs: [
-                {target: '_all', orderable: false}
-            ]
-		});
-        $('#time_today').click(function(){
-            drawsearch(1);
-            table.draw();
-            $.fn.dataTable.ext.search.pop();
-        } );
-        $('#time_days').click(function(){
-            drawsearch(3);
-            table.draw();
-            $.fn.dataTable.ext.search.pop();
-        } );
-        $('#time_week').click(function(){
-            drawsearch(7);
-            table.draw();
-            $.fn.dataTable.ext.search.pop();
-        } );
-        $('#time_month').click(function(){
-            drawsearch(30);
-            table.draw();
-            $.fn.dataTable.ext.search.pop();
-        } );
-    });
-    function drawsearch(days) {
-        $.fn.dataTable.ext.search.push(
-            function (settings, data, dataIndex) {
-                var today = new Date();
-                var max = new Date();
-                if (days==30){
-                    var min = today.setMonth(today.getMonth()-1);
-                }else {
-                    var min = new Date(today-days*24*3600*1000);
-				}
-                var date = new Date(data[2]);
-                return date >= min && date <= max;
-
-            }
-         );*/
     })
 </script>
 <script type="text/javascript">
