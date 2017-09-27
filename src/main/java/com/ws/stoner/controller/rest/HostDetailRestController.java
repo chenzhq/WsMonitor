@@ -93,7 +93,7 @@ public class HostDetailRestController {
             HostDetailItemVO itemVO = new HostDetailItemVO();
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setItemName(itemDTO.getName());
-            // 如何单位是 % ，采用value_type = % 的图形列表
+            // 如果单位是 % ，采用value_type = % 的图形列表
             if("%".equals(itemDTO.getUnits())) {
                 itemVO.setValueType(itemDTO.getUnits());
             }else {

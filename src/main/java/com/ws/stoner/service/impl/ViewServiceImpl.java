@@ -379,8 +379,14 @@ public class ViewServiceImpl implements ViewService {
      */
     @Override
     public boolean saveViewPage(ViewPage viewPage) throws ServiceException {
+        ViewPage viewPageInfo ;
         try {
-            viewDAO.saveViewPage(viewPage);
+            viewPageInfo = viewDAO.getPageByPageName(viewPage.getPageName(),viewPage.getGroupName());
+            if(viewPageInfo == null) {
+                viewDAO.saveViewPage(viewPage);
+            }else {
+                viewDAO.updatePageDataByViewPage(viewPage);
+            }
         } catch (DAOException e) {
             logger.error("获取指定name的 viewPage 错误！{}", e.getMessage());
             return false;

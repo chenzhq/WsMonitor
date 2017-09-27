@@ -534,8 +534,12 @@
                     }
                 ],
             });
+            //初始化选择树
+            $('#host_tree').genHostTree({
+                multi: true,
+                initHosts: []
 
-            genHostsTree($('#host_tree'));
+            })
 
             //初始化视图类型下拉框
             selectViewtype();
@@ -781,85 +785,89 @@
             function addpage() {
                 var hostIds = [];
                 var $host_tree = $('#host_tree')
-                genHostsTree($host_tree, hostIds, function () {
-                    $(".ui.modal.page").modal({
-                        onApprove: function () {
-                            hostIds = $host_tree.jstree(true).get_bottom_checked();
-                            //选择设备后，执行的操作
-                            //验证是否为空
-                            if($("#page_name").val()=="")
-                            {
-                                $("#name_field").addClass("error");
-                                return false;
-                            }else {
-                                if(hostIds.length==0) {
-                                    alert("所选设备不能为空");
+                $host_tree.genHostTree({
+                    multi: true,
+                    initHosts: [],
+                    finish: function () {
+                        $(".ui.modal.page").modal({
+                            onApprove: function () {
+                                hostIds = $host_tree.jstree(true).get_bottom_checked();
+                                //选择设备后，执行的操作
+                                //验证是否为空
+                                if($("#page_name").val()=="")
+                                {
+                                    $("#name_field").addClass("error");
                                     return false;
                                 }else {
-                                    var maxNum = 10;
-                                    var name = $("#page_name").val();
-                                    var type = $("#viewtype_select").dropdown("get value");
-                                    var send_data = {
-                                        hostIds:hostIds,
-                                        name:name,
-                                        type:type};
-                                    if(type==''){type="statepie"}
-                                    if(type=="statepie"){
-                                        $.ajax({
-                                            type: "post",
-                                            url: "/view/add_state",
-                                            data:JSON.stringify(send_data),
-                                            dataType: "json",
-                                            contentType:'application/json;charset=UTF-8',
-                                            success: function (result) {
-                                                if (result.success) {
-                                                    var data = result.data;
-                                                    getviewstatepie(data);
-                                                    selectViewpage(type);
-                                                    $("#viewpage_select").dropdown('set text', name);
-                                                } else {
-                                                    errorMsg_no_data(result.message);
-                                                }
-                                            },
-                                            error: function () {
-                                                errorMsg_no_connect("添加状态视图 add");
-                                            }
-                                        });
-                                    }
-                                    else if(type=="problems"){
-//                                        //$("#viewpage_select").dropdown('set text', name);
-//                                        problems_Table.ajax.url('/view/add_problems?hostIds='+hostIds+'&maxNum'+maxNum+'&name='+name+'&type='+type).load();
+                                    if(hostIds.length==0) {
+                                        alert("所选设备不能为空");
+                                        return false;
+                                    }else {
+                                        var maxNum = 10;
+                                        var name = $("#page_name").val();
+                                        var type = $("#viewtype_select").dropdown("get value");
                                         var send_data = {
                                             hostIds:hostIds,
                                             name:name,
-                                            type:type,
-                                            maxNum:maxNum};
-                                        $.ajax({
-                                            type: "post",
-                                            url: '/view/add_problems',
-                                            data:JSON.stringify(send_data),
-                                            dataType: "json",
-                                            contentType:'application/json;charset=UTF-8',
-                                            success: function (result) {
-                                                if(result.success) {
-                                                    var data=result.data;
-                                                    problems_Table.clear().rows.add(data).draw();
+                                            type:type};
+                                        if(type==''){type="statepie"}
+                                        if(type=="statepie"){
+                                            $.ajax({
+                                                type: "post",
+                                                url: "/view/add_state",
+                                                data:JSON.stringify(send_data),
+                                                dataType: "json",
+                                                contentType:'application/json;charset=UTF-8',
+                                                success: function (result) {
+                                                    if (result.success) {
+                                                        var data = result.data;
+                                                        getviewstatepie(data);
+                                                        selectViewpage(type);
+                                                        $("#viewpage_select").dropdown('set text', name);
+                                                    } else {
+                                                        errorMsg_no_data(result.message);
+                                                    }
+                                                },
+                                                error: function () {
+                                                    errorMsg_no_connect("添加状态视图 add");
                                                 }
-                                                else {
-                                                    errorMsg_no_data(result.message);
+                                            });
+                                        }
+                                        else if(type=="problems"){
+//                                        //$("#viewpage_select").dropdown('set text', name);
+//                                        problems_Table.ajax.url('/view/add_problems?hostIds='+hostIds+'&maxNum'+maxNum+'&name='+name+'&type='+type).load();
+                                            var send_data = {
+                                                hostIds:hostIds,
+                                                name:name,
+                                                type:type,
+                                                maxNum:maxNum};
+                                            $.ajax({
+                                                type: "post",
+                                                url: '/view/add_problems',
+                                                data:JSON.stringify(send_data),
+                                                dataType: "json",
+                                                contentType:'application/json;charset=UTF-8',
+                                                success: function (result) {
+                                                    if(result.success) {
+                                                        var data=result.data;
+                                                        problems_Table.clear().rows.add(data).draw();
+                                                    }
+                                                    else {
+                                                        errorMsg_no_data(result.message);
+                                                    }
+                                                },
+                                                error: function () {
+                                                    errorMsg_no_connect('');
                                                 }
-                                            },
-                                            error: function () {
-                                                errorMsg_no_connect('');
-                                            }
-                                        })
-                                        selectViewpage(type);
-                                        $("#viewpage_select").dropdown('set text', name);
+                                            })
+                                            selectViewpage(type);
+                                            $("#viewpage_select").dropdown('set text', name);
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }).modal('setting', 'closable', false).modal('show');
+                        }).modal('setting', 'closable', false).modal('show');
+                    }
                 })
             }
 
@@ -909,85 +917,89 @@
             function getedittree(data,name) {
                 var hostIds = data;
                 var $host_tree = $('#host_tree');
-                genHostsTree($host_tree, hostIds, function () {
-                    $(".ui.modal.page").modal({
-                        onApprove: function () {
-                            hostIds = $host_tree.jstree(true).get_bottom_checked()
-                            //选择设备后，执行的操作
-                            //验证是否为空
-                            if($("#page_name").val()=="")
-                            {
-                                $("#name_field").addClass("error");
-                                return false;
-                            }else {
-                                if(hostIds.length==0) {
-                                    alert("所选设备不能为空");
+                $host_tree.genHostTree({
+                    multi: true,
+                    initHosts: hostIds,
+                    finish: function () {
+                        $(".ui.modal.page").modal({
+                            onApprove: function () {
+                                hostIds = $host_tree.jstree(true).get_bottom_checked()
+                                //选择设备后，执行的操作
+                                //验证是否为空
+                                if($("#page_name").val()=="")
+                                {
+                                    $("#name_field").addClass("error");
                                     return false;
                                 }else {
-                                    var maxNum = 10;
-                                    var newName = $("#page_name").val();
-                                    var type = $("#viewtype_select").dropdown("get value");
-                                    if(type=="statepie"){
-                                        var send_data = {
-                                            hostIds:hostIds,
-                                            newName:newName,
-                                            oldName:name,
-                                            type:type};
-                                        $.ajax({
-                                            type: "post",
-                                            url: "/view/update_state",
-                                            data:JSON.stringify(send_data),
-                                            dataType: "json",
-                                            contentType:'application/json;charset=UTF-8',
-                                            success: function (result) {
-                                                if (result.success) {
-                                                    var data = result.data;
-                                                    getviewstatepie(data);
-                                                    selectViewpage(type);
-                                                    $("#viewpage_select").dropdown('set text', newName);
-                                                } else {
-                                                    errorMsg_no_data(result.message);
+                                    if(hostIds.length==0) {
+                                        alert("所选设备不能为空");
+                                        return false;
+                                    }else {
+                                        var maxNum = 10;
+                                        var newName = $("#page_name").val();
+                                        var type = $("#viewtype_select").dropdown("get value");
+                                        if(type=="statepie"){
+                                            var send_data = {
+                                                hostIds:hostIds,
+                                                newName:newName,
+                                                oldName:name,
+                                                type:type};
+                                            $.ajax({
+                                                type: "post",
+                                                url: "/view/update_state",
+                                                data:JSON.stringify(send_data),
+                                                dataType: "json",
+                                                contentType:'application/json;charset=UTF-8',
+                                                success: function (result) {
+                                                    if (result.success) {
+                                                        var data = result.data;
+                                                        getviewstatepie(data);
+                                                        selectViewpage(type);
+                                                        $("#viewpage_select").dropdown('set text', newName);
+                                                    } else {
+                                                        errorMsg_no_data(result.message);
+                                                    }
+                                                },
+                                                error: function () {
+                                                    errorMsg_no_connect("添加状态视图 add");
                                                 }
-                                            },
-                                            error: function () {
-                                                errorMsg_no_connect("添加状态视图 add");
-                                            }
-                                        });
-                                    }
-                                    else if(type=="problems"){
-                                        var send_data = {
-                                            hostIds:hostIds,
-                                            newName:newName,
-                                            oldName:name,
-                                            type:type,
-                                            maxNum:maxNum};
-                                        console.log("send_data",send_data);
-                                        $.ajax({
-                                            type: "post",
-                                            url: '/view/update_problems',
-                                            data:JSON.stringify(send_data),
-                                            dataType: "json",
-                                            contentType:'application/json;charset=UTF-8',
-                                            success: function (result) {
-                                                if(result.success) {
-                                                    var data=result.data;
-                                                    problems_Table.clear().rows.add(data).draw();
+                                            });
+                                        }
+                                        else if(type=="problems"){
+                                            var send_data = {
+                                                hostIds:hostIds,
+                                                newName:newName,
+                                                oldName:name,
+                                                type:type,
+                                                maxNum:maxNum};
+                                            console.log("send_data",send_data);
+                                            $.ajax({
+                                                type: "post",
+                                                url: '/view/update_problems',
+                                                data:JSON.stringify(send_data),
+                                                dataType: "json",
+                                                contentType:'application/json;charset=UTF-8',
+                                                success: function (result) {
+                                                    if(result.success) {
+                                                        var data=result.data;
+                                                        problems_Table.clear().rows.add(data).draw();
+                                                    }
+                                                    else {
+                                                        errorMsg_no_data(result.message);
+                                                    }
+                                                },
+                                                error: function () {
+                                                    errorMsg_no_connect('');
                                                 }
-                                                else {
-                                                    errorMsg_no_data(result.message);
-                                                }
-                                            },
-                                            error: function () {
-                                                errorMsg_no_connect('');
-                                            }
-                                        })
-                                        selectViewpage(type);
-                                        $("#viewpage_select").dropdown('set text', newName);
+                                            })
+                                            selectViewpage(type);
+                                            $("#viewpage_select").dropdown('set text', newName);
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }).modal('setting', 'closable', false).modal('show');
+                        }).modal('setting', 'closable', false).modal('show');
+                    }
                 })
             }
 

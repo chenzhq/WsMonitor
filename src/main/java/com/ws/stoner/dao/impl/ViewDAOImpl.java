@@ -188,6 +188,7 @@ public class ViewDAOImpl implements ViewDAO {
      */
     @Override
     public void saveViewPage(ViewPage viewPage) throws DAOException {
+
         mongoTemplate.save(viewPage);
     }
 
@@ -254,6 +255,22 @@ public class ViewDAOImpl implements ViewDAO {
                 .and("group_name").is(groupName));
         Update update = Update
                 .update("page_name",newName);
+        mongoTemplate.updateFirst(query, update, ViewPage.class);
+    }
+
+    /**
+     * 更新 viewpage 的layout 和 config
+     * @param viewPage
+     * @throws DAOException
+     */
+    @Override
+    public void updatePageDataByViewPage(ViewPage viewPage) throws DAOException {
+        Query query = Query.query(Criteria
+                .where("page_name").is(viewPage.getPageName())
+                .and("group_name").is(viewPage.getGroupName()));
+        Update update = Update
+                .update("layout_data",viewPage.getConfigDataList())
+                .set("config_data",viewPage.getConfigDataList());
         mongoTemplate.updateFirst(query, update, ViewPage.class);
     }
 

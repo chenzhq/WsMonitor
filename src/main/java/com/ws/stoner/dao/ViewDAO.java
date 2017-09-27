@@ -155,5 +155,12 @@ public interface ViewDAO {
      */
     void updateViewPageByName(String oldName,String newName,String groupName) throws DAOException;
 
+    /**
+     * 更新 viewpage 的layout 和 config
+     * @param viewPage
+     * @throws DAOException
+     */
+    void updatePageDataByViewPage(ViewPage viewPage) throws DAOException;
+
 
 }
