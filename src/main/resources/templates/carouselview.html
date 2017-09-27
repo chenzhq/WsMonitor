@@ -23,6 +23,7 @@
         <script src="../static/js/jquery.gridster.js" th:src="@{js/jquery.gridster.js}" type="text/javascript" charset="utf-8"></script>
         <style type="text/css">
             /*li {background:yellow;}*/
+            .detail { padding-top: 10px;padding-right: 5px;margin-left: 5px }
         </style>
     </th:block>
 </head>
@@ -456,17 +457,21 @@ z                    </div>
                 <form class="ui form">
                     <div class="required inline field">
                         <label>图&nbsp&nbsp&nbsp&nbsp形</label>
-                        <div class="ui selection dropdown">
+                        <div class="ui selection dropdown" id="static_select">
                             <!--<input type="hidden" name="hosts">-->
                             <i class="dropdown icon"></i>
                             <div class="text">时钟</div>
                             <div class="menu" >
-                                <div class="selected item">时钟</div>
-                                <div class="item">表格</div>
+                                <div class="selected item" data-value="clock">时钟</div>
+                                <div class="item" data-value="table">表格</div>
                             </div>
                         </div>
                     </div>
                     <div class="required inline field">
+                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
+                        <input type="text" placeholder="不能为空" style="width: 168px;">
+                    </div>
+                    <div class="required inline field"  id="clock_type">
                         <label>类&nbsp&nbsp&nbsp&nbsp型</label>
                         <div class="ui selection dropdown">
                             <!--<input type="hidden" name="hosts">-->
@@ -478,11 +483,78 @@ z                    </div>
                             </div>
                         </div>
                     </div>
-                    <div class="required inline field">
-                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
-                        <input type="text" placeholder="不能为空" style="width: 168px;">
+                    <div class="required inline field" id="table_type" style="display:none;">
+                        <div class="ui label no-padding">
+                            <input type="text" placeholder="1" style="width: 80px;">
+                            <div class="detail">行</div>
+                        </div>
+                        <div class="ui label no-padding">
+                            <input type="text" placeholder="1" style="width: 80px;">
+                            <div class="detail">列</div>
+                        </div>
                     </div>
                 </form>
+            </div>
+            <div class="actions">
+                <div class="ui approve submit button">确认</div>
+                <div class="ui cancel button">取消</div>
+            </div>
+        </div>
+        <!--添加表头详情，展示项添加静态数据弹出框 start-->
+        <div class="ui tiny modal page" id="table_thead_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加表头
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="ui label no-padding">
+                        <div class="detail">第1列</div>
+                        <input type="text" style="width: 180px;">
+                    </div>
+                    <div class="ui label no-padding">
+                        <input type="text" placeholder="180" style="width: 80px;">
+                        <div class="detail">PX</div></div>
+                    <div class="ui label no-padding">
+                        <div class="detail">第1列</div>
+                        <input type="text" style="width: 180px;">
+                    </div>
+                    <div class="ui label no-padding">
+                        <input type="text" placeholder="180" style="width: 80px;">
+                        <div class="detail">PX</div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui approve submit button">继续</div>
+            </div>
+        </div>
+        <!--添加表内容详情，展示项添加静态数据弹出框 start-->
+        <div class="ui tiny modal page" id="table_tbody_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加表详情
+            </div>
+            <div class="ui content  center aligned basic segment">
+                <!--<div id="jsGrid"></div>-->
+                <table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="actions">
                 <div class="ui approve submit button">确认</div>
@@ -669,6 +741,18 @@ z                    </div>
                             $('.section').eq(i).hide();
                         }
                         console.log('css',$('.section').eq(i).attr('class'));
+                    }
+                }
+            })
+
+            $('#static_select').dropdown({
+                onChange: function (value) {
+                    if (value=="clock"){
+                        $("#table_type").hide();
+                        $("#clock_type").show();
+                    }else if (value=="table"){
+                        $("#table_type").show();
+                        $("#clock_type").hide();
                     }
                 }
             })
@@ -1182,6 +1266,8 @@ z                    </div>
 
                 //ajax，覆盖静态表格或时钟的数据
                 $('#point_chart_modal').modal('attach events', '#point_modal .chart.button');
+                $('#table_thead_modal').modal('attach events', '#point_chart_modal .button');
+                $('#table_tbody_modal').modal('attach events', '#table_thead_modal .button');
                 ////绘制每一个块的位置
                 //gridster.remove_all_widgets();
 //                $.each(serialization, function () {
