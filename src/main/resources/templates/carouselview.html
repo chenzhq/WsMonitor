@@ -1171,17 +1171,11 @@ z                    </div>
                         } else {
                             //ajax,获取自定义选择监控点列表
                             pointsMenu(hostIds[0]);
-                            //加载监控项列表
-                            var point_id = $("#pointsMenu").children(".item.textOverflow.active").attr("id");
-                            //console.log("point_id:::" + point_id);
-                            itemsMenu(point_id);
                         }
                     })
                     $('#point_group_modal').modal({
                         onApprove: function () {
                             //判断所选非空
-
-
                         }
                     }).modal('attach events', '#point_modal .group.button');
                 })
@@ -1199,7 +1193,7 @@ z                    </div>
                 $.ajax({
                     async: false,
                     type: "get",
-                    url: "/platformdetail/get_points?host_id="+host_id,
+                    url: "/hostgraphs/get_points?host_id="+host_id,
                     dataType: "json",
                     success: function (result) {
                         if(result.success) {
@@ -1238,17 +1232,17 @@ z                    </div>
             function itemsMenu(point_id) {
                 $.ajax({
                     type: "get",
-                    url: "/platformdetail/get_items?point_id="+point_id,
+                    url: "/hostgraphs/get_items?point_id="+point_id,
                     dataType: "json",
                     success: function (result) {
                         if(result.success) {
                             var data = result.data;
                             getitemsMenu(data);
                             typeMenu(data[0].value_type);
-                            $('#itemsMenu div').on('click',function () {
-                                $('#itemsMenu div').removeClass('active');
+                            $('#itemsMenu div.item').on('click',function () {
+                                $('#itemsMenu div.item').removeClass('active');
                                 $(this).addClass('active');
-                                typeMenu(this.data-type);
+                                typeMenu($(this).attr('data-type'));
                             })
                         }
                         else {
@@ -1283,6 +1277,10 @@ z                    </div>
                         if(result.success) {
                             var data = result.data;
                             gettypeMenu(data);
+                            $('#typeMenu div.item').on('click',function () {
+                                $('#typeMenu div.item').removeClass('active');
+                                $(this).addClass('active');
+                            })
                         }
                         else {
                             errorMsg_no_data(result.message);
@@ -1299,9 +1297,9 @@ z                    </div>
                 {
                     var state = '<i class="green square icon"></i>';
                     if (i==0){
-                        str +="<div class='item textOverflow active' id='"+data[i].item_id+"' data-type='"+data[i].value_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].item_name+"</div></div></div>";
+                        str +="<div class='item textOverflow active' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
                     }else {
-                        str +="<div class='item textOverflow' id='"+data[i].item_id+"' data-type='"+data[i].value_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].item_name+"</div></div></div>";
+                        str +="<div class='item textOverflow' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
                     }
                 }
                 $("#typeMenu").html(str);
