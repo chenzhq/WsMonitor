@@ -556,18 +556,35 @@
                     $host_dropdown.addClass('loading disabled')
                     if (value === 'host') {
                         var $host_tree = $('#host_tree')
-                        genHostsTree($host_tree, send_data.hostIds, function () {
-                            $('#select_host_modal').modal({
-                                onApprove: function () {
-                                    send_data.hostIds = $host_tree.jstree(true).get_bottom_checked()
-                                    //选择设备后，执行的操作
-                                    filter_post();
-                                },
-                                onHidden: function () {
-                                    $('#host_select_dropdown').removeClass('loading disabled').dropdown('set text', "已选择" + send_data.hostIds.length + "个设备")
-                                }
-                            }).modal('show')
+                        $host_tree.genHostTree({
+                            multi: true,
+                            initHosts: send_data.hostIds,
+                            finish: function () {
+                                $('#select_host_modal').modal({
+                                    onApprove: function () {
+                                        send_data.hostIds = $host_tree.jstree(true).get_bottom_checked()
+                                        //选择设备后，执行的操作
+                                        filter_post();
+                                    },
+                                    onHidden: function () {
+                                        $('#host_select_dropdown').removeClass('loading disabled').dropdown('set text', "已选择" + send_data.hostIds.length + "个设备")
+                                    }
+                                }).modal('show')
+                            }
                         })
+                        // 下面的使用方法以废弃
+                        /*genHostsTree($host_tree, send_data.hostIds, function () {
+                         $('#select_host_modal').modal({
+                         onApprove: function () {
+                         send_data.hostIds = $host_tree.jstree(true).get_bottom_checked()
+                         //选择设备后，执行的操作
+                         filter_post();
+                         },
+                         onHidden: function () {
+                         $('#host_select_dropdown').removeClass('loading disabled').dropdown('set text', "已选择" + send_data.hostIds.length + "个设备")
+                         }
+                         }).modal('show')
+                         })*/
                         $('#host_select_dropdown').dropdown('set text', "正在选择设备")
                     } else if (value === 'all') {
                         send_data.hostIds = []
