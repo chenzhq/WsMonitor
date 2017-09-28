@@ -559,23 +559,33 @@ z                    </div>
                 size_x:4,
                 size_y:2
             }
-            var config_info = {
-                block_name: '',
-                block_type: '',
-                graph_type: '',
-                contents: ''
-            }
 
-            var block_info;
-
-            $(function() {
+            //加载展示项编辑框
+            $.ajax({
+                async: false,
+                type: 'get',
+                url: '/carouseltype/get_list',
+                dataType: 'json',
+                success: function (result) {
+                    if(result.success) {
+                        //console.log('type',result.data);
+                        getButtonByObject($('#block_button'),result.data);
+                    } else {
+                        errorMsg_no_connect("轮播类型 Dropdown");
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("轮播类型 Dropdown");
+                }
+            })
+            //禁止保存按钮
+            $("button.savepage").attr('disabled',true);
+            $(function(){
                 //初始化组下拉框
                 getSelectGroup();
                 var group_name = $('#viewgroup_select').dropdown('get value');
                 getSelectPage(group_name);
-
             })
-            //$('.modal').modal({allowMultiple: true}) ;
 
             //默认隐藏编辑展示项框
             $("button.addblock").hide();
@@ -652,9 +662,8 @@ z                    </div>
                                 groupName:$('#viewgroup_select').dropdown('get value'),
                                 pageName:$('#page_name').val()
                             };
-                            console.log('send_data_add',send_data);
+                            //console.log('send_data_add',send_data);
                             $.ajax({
-                                async: false,
                                 type: 'post',
                                 url: '/carousel/add_page',
                                 data: JSON.stringify(send_data),
@@ -663,7 +672,7 @@ z                    </div>
                                 success: function (result) {
                                     if(result.success) {
                                         var data=result.data;
-                                        console.log('page_vo',data);
+                                        //console.log('page_vo',data);
                                         getSelectPage($('#viewgroup_select').dropdown('get value'));
                                     }
                                     else {
@@ -709,7 +718,7 @@ z                    </div>
                                 success: function (result) {
                                     if(result.success) {
                                         var data=result.data;
-                                        console.log('page_vo',data);
+                                        //console.log('page_vo',data);
                                         getSelectPage($('#viewgroup_select').dropdown('get value'));
                                         $('#viewpage_select').dropdown('set value',$('#page_name').val());
                                         $('#viewpage_select').dropdown('set text',$('#page_name').val());
@@ -756,14 +765,30 @@ z                    </div>
             });
             //编辑弹出框
             $("button.editpage").on("click",function(){
-                console.log('edit page_vo',page_vo);
-                gridster.enable();
+                if($('button.editpage').text().trim() === '取消') {
+                    $('button.editpage').text('编辑');
+                    drawPage($('.gridster > ul'),page_vo);
 //                $('#viewgroup_select').dropdown('remove visible');
 //                $('#viewpage_select').dropdown('remove visible');
-                $('button.addpage').attr('disabled',true);
-                $('button.writepage').attr('disabled',true);
-                $('button.deletepage').attr('disabled',true);
-                $("button.addblock").show();
+                    $("button.savepage").attr('disabled',true);
+                    $('button.addpage').attr('disabled',false);
+                    $('button.writepage').attr('disabled',false);
+                    $('button.deletepage').attr('disabled',false);
+                    gridster.disable();
+                    $("button.addblock").hide();
+                }else if($("button.editpage").text().trim() === '编辑') {
+                    $('button.editpage').text('取消');
+                    drawPage($('.gridster > ul'),page_vo)
+                    gridster.enable();
+//                $('#viewgroup_select').dropdown('remove visible');
+//                $('#viewpage_select').dropdown('remove visible');
+                    $("button.savepage").attr('disabled',false);
+                    $('button.addpage').attr('disabled',true);
+                    $('button.writepage').attr('disabled',true);
+                    $('button.deletepage').attr('disabled',true);
+                    $("button.addblock").show();
+                }
+
             });
             //刷新弹出框
             $("button.refreshpage").on("click",function(){
@@ -772,6 +797,7 @@ z                    </div>
             });
             //保存页面弹出框
             $("button.savepage").on("click",function(){
+
                 var layoutDataList = [];
                 var configDataList = [];
                 var layout_json = gridster.serialize();
@@ -809,7 +835,7 @@ z                    </div>
                     success: function (result) {
                         if (result.success) {
                             page_vo = result.data;
-                            console.log('page_vo',page_vo);
+                            //console.log('page_vo',page_vo);
                             drawPage($('.gridster > ul'),page_vo);
                             $('#table-dimmer').removeClass('active');
 
@@ -826,204 +852,200 @@ z                    </div>
                 $('button.writepage').attr('disabled',false);
                 $('button.deletepage').attr('disabled',false);
                 $("button.addblock").hide();
+                $('button.editpage').text('编辑');
 
             });
+
             //添加块
             $("button.addblock").on("click",function(){
-
-                $.ajax({
-                    async: false,
-                    type: 'get',
-                    url: '/carouseltype/get_list',
-                    dataType: 'json',
-                    success: function (result) {
-                        if(result.success) {
-                            //console.log('type',result.data);
-                            getButtonByObject($('#block_button'),result.data);
-                        } else {
-                            errorMsg_no_connect("轮播类型 Dropdown");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("轮播类型 Dropdown");
-                    }
-                })
-
-                //视图弹出框
-                $('#point_view_modal').modal({
-                    onShow:function(){
-                        $.ajax({
-                            type: "get",
-                            url: "/viewtype/get_list",
-                            dataType: "json",
-                            success: function (result) {
-                                if(result.success) {
-                                    var data=result.data;
-                                    getSelectByObject($('#viewtype_menu'),$('#viewtype_select'),data);
-                                }
-                                else {
-                                    errorMsg_no_data(result.message);
-                                }
-                            },
-                            error: function () {
-                                errorMsg_no_connect("视图类型下拉框 Dropdown");
-                            }
-                        })
-                    },
-                    onApprove : function() {
-                        var block_name  = $('#view_name').val();
-                        if('' === block_name) {
-                            alert('展示项名称不能为空');
-                            return false;
-                        }
-                        config_info = {
-                            block_name: block_name,
-                            block_type: 'view',
-                            graph_type: $('#viewtype_select').dropdown('get value'),
-                            contents: $('#viewname_select').dropdown('get text')
-                        }
-                        $.ajax({
-                            async: false,
-                            type: "get",
-                            url: "/carousel/get_block",
-                            data:config_info,
-                            dataType: "json",
-                            contentType:'application/json;charset=UTF-8',
-                            success: function (result) {
-                                if (result.success) {
-                                    block_info = result.data;
-                                    console.log('block_info',block_info);
-                                    console.log('config_info',config_info);
-                                    //添加config_info 保存至 page_vo.config_data
-                                    page_vo.config_data.push(config_info);
-                                    console.log('view page_vo',page_vo);
-                                    drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
-                                } else {
-                                    errorMsg_no_connect("获取展示项数据失败");
-                                }
-                            },
-                            error: function () {
-                                errorMsg_no_connect("获取展示项数据失败");
-                            }
-                        });
-                    }
-                }).modal('attach events', '#point_modal .view.button');
-
-                //图形弹出框
-                $('#point_graph_modal').modal({
-                    onShow:function(){
-                        //获取设备选择树
-                        var host_id ;
-                        var $host_tree = $('#host_tree');
-                        //console.log('$host_tree',$host_tree);
-                        $host_tree.genHostTree({
-                            multi: false,
-                            onChange:function(e,data){
-                                //console.log('data',data.selected[0]);
-                                host_id = data.selected[0];
-                                pointsMenu(host_id);
-                            }
-                        })
-                    },
-                    onApprove : function() {
-                        var block_name  = $('#graph_name').val();
-                        if('' === block_name) {
-                            alert('展示项名称不能为空');
-                            return false;
-                        }
-                        config_info.block_name = block_name;
-                        config_info.block_type = 'graph';
-                        $.ajax({
-                            async: false,
-                            type: "get",
-                            url: "/carousel/get_block",
-                            data:config_info,
-                            dataType: "json",
-                            contentType:'application/json;charset=UTF-8',
-                            success: function (result) {
-                                if (result.success) {
-                                    block_info = result.data;
-                                    console.log('block_info',block_info);
-                                    console.log('config_info',config_info);
-                                    //添加config_info 保存至 page_vo.config_data
-                                    page_vo.config_data.push(config_info);
-                                    console.log('graph page_vo',page_vo);
-                                    drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
-                                } else {
-                                    errorMsg_no_connect("获取展示项数据失败");
-                                }
-                            },
-                            error: function () {
-                                errorMsg_no_connect("获取展示项数据失败");
-                            }
-                        });
-                    }
-                }).modal('attach events', '#point_modal .graph.button');
-
-                //控件弹出框
-                $('#point_chart_modal').modal({
-                    onShow:function(){
-                        $.ajax({
-                            type: "get",
-                            url: "/charttype/get_list",
-                            dataType: "json",
-                            success: function (result) {
-                                if(result.success) {
-                                    var data=result.data;
-                                    getSelectByObject($('#charttype_menu'),$('#charttype_select'),data);
-                                }
-                                else {
-                                    errorMsg_no_data(result.message);
-                                }
-                            },
-                            error: function () {
-                                errorMsg_no_connect("chart类型下拉框 Dropdown");
-                            }
-                        })
-                    },
-                    onApprove : function() {
-                        var block_name  = $('#chart_name').val();
-                        if('' === block_name) {
-                            alert('展示项名称不能为空');
-                            return false;
-                        }
-                        config_info.block_name = block_name;
-                        config_info.block_type = 'chart';
-                        $.ajax({
-                            async: false,
-                            type: "get",
-                            url: "/carousel/get_block",
-                            data:config_info,
-                            dataType: "json",
-                            contentType:'application/json;charset=UTF-8',
-                            success: function (result) {
-                                if (result.success) {
-                                    block_info = result.data;
-                                    console.log('block_info',block_info);
-                                    console.log('config_info',config_info);
-                                    //添加config_info 保存至 page_vo.config_data
-                                    var config_data = page_vo.config_data;
-                                    page_vo.config_data.push(config_info);
-                                    console.log('chart page_vo',page_vo);
-                                    drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
-                                } else {
-                                    errorMsg_no_connect("获取展示项数据失败");
-                                }
-                            },
-                            error: function () {
-                                errorMsg_no_connect("获取展示项数据失败");
-                            }
-                        });
-                    }
-                }).modal('attach events', '#point_modal .chart.button');
-
-                //静态表格
-                $('#table_thead_modal').modal('attach events', '#table_type .button');
-                $('#table_tbody_modal').modal('attach events', '#table_thead_modal .button');
-
                 $('#point_modal').modal('setting', 'closable', false).modal('show');
 
             });
+            //视图弹出框
+            $('#point_view_modal').modal({
+                onShow:function(){
+                    $.ajax({
+                        type: "get",
+                        url: "/viewtype/get_list",
+                        dataType: "json",
+                        success: function (result) {
+                            if(result.success) {
+                                var data=result.data;
+                                getSelectByObject($('#viewtype_menu'),$('#viewtype_select'),data);
+                            }
+                            else {
+                                errorMsg_no_data(result.message);
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("视图类型下拉框 Dropdown");
+                        }
+                    })
+                },
+                onApprove : function() {
+                    var block_name  = $('#view_name').val();
+                    if('' === block_name) {
+                        alert('展示项名称不能为空');
+                        return false;
+                    }
+                    var config_info = {
+                        block_name: block_name,
+                        block_type: 'view',
+                        graph_type: $('#viewtype_select').dropdown('get value'),
+                        contents: $('#viewname_select').dropdown('get text')
+                    }
+                    $.ajax({
+                        type: "get",
+                        url: "/carousel/get_block",
+                        data:config_info,
+                        dataType: "json",
+                        contentType:'application/json;charset=UTF-8',
+                        success: function (result) {
+                            if (result.success) {
+                                var block_info = result.data;
+                                //添加config_info 保存至 page_vo.config_data
+                                page_vo.config_data.push(config_info);
+                                //console.log('view page_vo',page_vo);
+                                drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
+                            } else {
+                                errorMsg_no_connect("获取展示项数据失败");
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("获取展示项数据失败");
+                        }
+                    });
+                }
+            })
+            //图形弹出框
+            $('#point_graph_modal').modal({
+                onShow:function(){
+                    //获取设备选择树
+                    var host_id ;
+                    var $host_tree = $('#host_tree');
+                    //console.log('$host_tree',$host_tree);
+                    $host_tree.genHostTree({
+                        multi: false,
+                        onChange:function(e,data){
+                            //console.log('data',data.selected[0]);
+                            host_id = data.selected[0];
+                            pointsMenu(host_id);
+                        }
+                    })
+                },
+                onApprove : function() {
+                    var block_name  = $('#graph_name').val();
+                    if('' === block_name) {
+                        alert('展示项名称不能为空');
+                        return false;
+                    }
+                    var config_info = {
+                        block_name: block_name,
+                        block_type: 'graph',
+                        graph_type: $('#typeMenu .active').attr('data-type'),
+                        contents: $('#itemsMenu .active').attr('id')
+                    }
+                    $.ajax({
+                        type: "get",
+                        url: "/carousel/get_block",
+                        data:config_info,
+                        dataType: "json",
+                        contentType:'application/json;charset=UTF-8',
+                        success: function (result) {
+                            if (result.success) {
+                                var block_info = result.data;
+                                //添加config_info 保存至 page_vo.config_data
+                                //console.log('graph config_info',config_info);
+                                page_vo.config_data.push(config_info);
+                                //console.log('graph page_vo',page_vo);
+                                drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
+                            } else {
+                                errorMsg_no_connect("获取展示项数据失败");
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("获取展示项数据失败");
+                        }
+                    });
+                }
+            })
+            //控件弹出框
+            $('#point_chart_modal').modal({
+                onShow:function(){
+                    $.ajax({
+                        type: "get",
+                        url: "/charttype/get_list",
+                        dataType: "json",
+                        success: function (result) {
+                            if(result.success) {
+                                var data=result.data;
+                                getSelectByObject($('#charttype_menu'),$('#charttype_select'),data);
+                            }
+                            else {
+                                errorMsg_no_data(result.message);
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("chart类型下拉框 Dropdown");
+                        }
+                    })
+                },
+                onApprove : function() {
+                    var block_name  = $('#chart_name').val();
+                    if('' === block_name) {
+                        alert('展示项名称不能为空');
+                        return false;
+                    }
+                    var config_info = {
+                        block_name: block_name,
+                        block_type: 'chart',
+                        graph_type: $('#charttype_select').dropdown('get value'),
+                        contents: $('#chartname_select').dropdown('get value')
+                    }
+                    $.ajax({
+                        type: "get",
+                        url: "/carousel/get_block",
+                        data:config_info,
+                        dataType: "json",
+                        contentType:'application/json;charset=UTF-8',
+                        success: function (result) {
+                            if (result.success) {
+                                var block_info = result.data;
+                                //添加config_info 保存至 page_vo.config_data
+                                //console.log('chart config_info',config_info);
+                                page_vo.config_data.push(config_info);
+                                //console.log('chart page_vo',page_vo);
+                                drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
+                            } else {
+                                errorMsg_no_connect("获取展示项数据失败");
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("获取展示项数据失败");
+                        }
+                    });
+                }
+            })
+            //显示 视图配置框
+            $('#view').on('click',function(){
+                $('#point_view_modal').modal('show')
+            })
+            //显示 图形配置框
+            $('#graph').on('click',function(){
+                $('#point_graph_modal').modal('show')
+            })
+            //显示 控件配置框
+            $('#chart').on('click',function(){
+                $('#point_chart_modal').modal('show')
+            })
+
+            //静态表格
+            $('#table_type .button').on('click',function(){
+                $('#table_thead_modal').modal('show')
+            })
+            $('#table_thead_modal .button').on('click',function(){
+                $('#table_tbody_modal').model('show')
+            })
 
             $('#viewtype_select').dropdown({
                 onChange:function(value){
@@ -1034,7 +1056,7 @@ z                    </div>
 
             $('#charttype_select').dropdown({
                 onChange:function(value){
-                    console.log('type',value);
+                    //console.log('type',value);
                     if(value === 'clock') {
                         $('#clock_type').css('display','block');
                         $('#table_type').css('display','none');
@@ -1101,14 +1123,14 @@ z                    </div>
                 //默认值
                 $('#chartname_select').dropdown('set value','clock-clock');
                 $('#chartname_select').dropdown('set text','时钟样式');
-                config_info.graph_type = 'clock';
-                config_info.contents = $('#chartname_select').dropdown('get value');
+//                config_info.graph_type = 'clock';
+//                config_info.contents = $('#chartname_select').dropdown('get value');
 
             }
 
             $('#chartname_select').dropdown({
                 onChange:function(value){
-                    config_info.contents = value;
+//                    config_info.contents = value;
                 }
             })
 
@@ -1165,22 +1187,20 @@ z                    </div>
                             getitemsMenu(data);
                             var value_type = data[0].value_type;
                             if(value_type == '0' || value_type == '3' || value_type == '%') {
-                                config_info.contents = data[0].item_id;
-                                $('#itemsMenu div.item').removeClass('active');
-                                $(this).addClass('active');
+//                                config_info.contents = data[0].item_id;
                                 if(value_type == '%') {
                                     value_type = '%25';
                                 }
                                 typeMenu(value_type);
                             }else {
-                                config_info.contents = '';
+//                                config_info.contents = '';
                                 alert('该监控项不适合图形展示');
                             }
                             $('#itemsMenu > div.item').on('click',function () {
                                 var value_type = $(this).attr('data-type');
                                 var item_id = $(this).attr('id');
                                 if(value_type == '0' || value_type == '3' || value_type == '%') {
-                                    config_info.contents = item_id;
+//                                    config_info.contents = item_id;
                                     $('#itemsMenu div.item').removeClass('active');
                                     $(this).addClass('active');
                                     if(value_type == '%') {
@@ -1188,7 +1208,7 @@ z                    </div>
                                     }
                                     typeMenu(value_type);
                                 }else {
-                                    config_info.contents = '';
+//                                    config_info.contents = '';
                                     alert('该监控项不适合图形展示');
                                 }
 
@@ -1228,9 +1248,9 @@ z                    </div>
                         if(result.success) {
                             var data = result.data;
                             gettypeMenu(data);
-                            config_info.graph_type = data[0].graph_type;
+//                            config_info.graph_type = data[0].graph_type;
                             $('#typeMenu > div.item').on('click',function () {
-                                config_info.graph_type = $(this).attr('data-type');
+//                                config_info.graph_type = $(this).attr('data-type');
                                 $('#typeMenu div.item').removeClass('active');
                                 $(this).addClass('active');
                             })

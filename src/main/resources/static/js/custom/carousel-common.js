@@ -523,7 +523,7 @@ function getButtonByObject($_target, data) {
     var str = '';
     for(var i=0;i<data.length;i++)
     {
-        str +="<button class='ui "+ data[i].type +" button' >"+data[i].name+"</button> ";
+        str +="<button id='"+ data[i].type +"' class='ui "+ data[i].type +" button' >"+data[i].name+"</button> ";
     }
     $_target.html(str);
 }
