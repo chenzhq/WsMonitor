@@ -261,6 +261,10 @@
                                     </ul>
                                 </div>
                             </div>
+                            <!-- 查询读条 -->
+                            <div id="table-dimmer" class="ui inverted dimmer">
+                                <div class="ui text loader" style="text-align:center">正在刷新</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -423,18 +427,18 @@ z                    </div>
                             </div>
                         </div>
                     </div>
-                    <div class="required inline field">
+                    <div class="required inline field" id="clock_type" display="block">
                         <label>类&nbsp&nbsp&nbsp&nbsp型</label>
                         <div class="ui selection dropdown" id="chartname_select">
                             <!--<input type="hidden" name="hosts">-->
                             <i class="dropdown icon"></i>
-                            <div class="text">数值</div>
+                            <div class="text"></div>
                             <div class="menu" id="chartname_nemu">
 
                             </div>
                         </div>
                     </div>
-                    <div class="required inline field" id="table_type" style="display:none;">
+                    <div class="required inline field" id="table_type" display="block">
                         <div class="ui label no-padding">
                             <input type="text" placeholder="1" style="width: 80px;">
                             <div class="detail">行</div>
@@ -443,6 +447,7 @@ z                    </div>
                             <input type="text" placeholder="1" style="width: 80px;">
                             <div class="detail">列</div>
                         </div>
+                        <div class="ui approve submit button">编辑</div>
                     </div>
                 </form>
             </div>
@@ -538,20 +543,30 @@ z                    </div>
         <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
         <script src="../static/js/custom/carousel-common.js" th:src="@{js/custom/carousel-common.js}"></script>
         <script  type="text/javascript">
-            var page_vo ;//单个展示页面对象
-            var view_page;//配置页对象
+            //单个展示页面对象
+            var page_vo = {
+                group_name:'',
+                page_name:'',
+                layout_data:[],
+                config_data:[],
+                block_data:[]
+            };
+            //配置页对象
+            var viewPage ;
             var layout_info = {
-                size_x:1,
-                size_y:1,
                 col:1,
-                row:1
+                row:1,
+                size_x:4,
+                size_y:2
             }
             var config_info = {
-                block_name: "",
-                block_type: "",
-                graph_type: "",
-                contents: ""
+                block_name: '',
+                block_type: '',
+                graph_type: '',
+                contents: ''
             }
+
+            var block_info;
 
             $(function() {
                 //初始化组下拉框
@@ -560,36 +575,14 @@ z                    </div>
                 getSelectPage(group_name);
 
             })
-            $('.modal').modal({allowMultiple: true}) ;
+            //$('.modal').modal({allowMultiple: true}) ;
 
             //默认隐藏编辑展示项框
             $("button.addblock").hide();
 
             $('#viewpage_select').dropdown({
-                onChange: function(value) {
-                    //$('viewpage_select').addClass('loading disable');
-                    var page_name = value;
-                    var group_name = $('#viewgroup_select').dropdown('get value');
-                    console.log('page and group name',page_name + ',' + group_name);
-                    //单个页面刷新
-                    $.ajax({
-                        async: false,
-                        type: 'get',
-                        url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,
-                        dataType: 'json',
-                        success: function (result) {
-                            if(result.success) {
-                                page_vo = result.data;
-                                drawPage($('.gridster > ul'),page_vo);
-                            }
-                            else {
-                                errorMsg_no_connect("展示组下拉框 Dropdown");
-                            }
-                        },
-                        error: function () {
-                            errorMsg_no_connect("展示组下拉框 Dropdown");
-                        }
-                    })
+                onChange: function() {
+                    freshPage()
                 }
             })
 
@@ -661,6 +654,7 @@ z                    </div>
                             };
                             console.log('send_data_add',send_data);
                             $.ajax({
+                                async: false,
                                 type: 'post',
                                 url: '/carousel/add_page',
                                 data: JSON.stringify(send_data),
@@ -695,7 +689,11 @@ z                    </div>
                         if ($('#page_name').val()=='') {
                             $('#page_name_field').addClass('error');
                             return false;
-                        } else {
+                        } else if($('#page_name').val() === old_page_name) {
+                            alert('名称没有被修改');
+                            $('#page_name_field').addClass('error');
+                            return false;
+                        }else {
                             //ajax,修改此页面绘制展示区，刷新展示页下拉框
                             var send_data = {
                                 groupName:$('#viewgroup_select').dropdown('get value'),
@@ -712,7 +710,6 @@ z                    </div>
                                     if(result.success) {
                                         var data=result.data;
                                         console.log('page_vo',data);
-
                                         getSelectPage($('#viewgroup_select').dropdown('get value'));
                                         $('#viewpage_select').dropdown('set value',$('#page_name').val());
                                         $('#viewpage_select').dropdown('set text',$('#page_name').val());
@@ -759,6 +756,8 @@ z                    </div>
             });
             //编辑弹出框
             $("button.editpage").on("click",function(){
+                console.log('edit page_vo',page_vo);
+                gridster.enable();
 //                $('#viewgroup_select').dropdown('remove visible');
 //                $('#viewpage_select').dropdown('remove visible');
                 $('button.addpage').attr('disabled',true);
@@ -768,11 +767,66 @@ z                    </div>
             });
             //刷新弹出框
             $("button.refreshpage").on("click",function(){
-                alert("刷新成功！");
+                freshPage();
+
             });
             //保存页面弹出框
             $("button.savepage").on("click",function(){
-                alert("保存成功！");
+                var layoutDataList = [];
+                var configDataList = [];
+                var layout_json = gridster.serialize();
+                console.log('layout_json',layout_json);
+                console.log('page_vo.config_data',page_vo.config_data);
+                $.each(layout_json,function(i,value){
+                    layoutDataList.push({
+                        xSize: value.size_x,
+                        ySize: value.size_y,
+                        col: value.col,
+                        row: value.row
+                    })
+                    configDataList.push({
+                        blockName: page_vo.config_data[i].block_name,
+                        blockType: page_vo.config_data[i].block_type,
+                        graphType: page_vo.config_data[i].graph_type,
+                        contents: page_vo.config_data[i].contents
+                    })
+                })
+
+                viewPage = {
+                    groupName :$('#viewgroup_select').dropdown('get value'),
+                    pageName :$('#viewpage_select').dropdown('get value'),
+                    layoutDataList :layoutDataList,
+                    configDataList :configDataList
+                }
+                console.log('view_page',viewPage);
+                $('#table-dimmer').addClass('active');
+                $.ajax({
+                    type: "post",
+                    url: "/carousel/save_page",
+                    data:JSON.stringify(viewPage),
+                    dataType: "json",
+                    contentType:'application/json;charset=UTF-8',
+                    success: function (result) {
+                        if (result.success) {
+                            page_vo = result.data;
+                            console.log('page_vo',page_vo);
+                            drawPage($('.gridster > ul'),page_vo);
+                            $('#table-dimmer').removeClass('active');
+
+                        } else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("添加状态视图 add");
+                    }
+                });
+                gridster.disable();
+                $('button.addpage').attr('disabled',false);
+                $('button.writepage').attr('disabled',false);
+                $('button.deletepage').attr('disabled',false);
+                $("button.addblock").hide();
+
             });
             //添加块
             $("button.addblock").on("click",function(){
@@ -784,7 +838,7 @@ z                    </div>
                     dataType: 'json',
                     success: function (result) {
                         if(result.success) {
-                            console.log('type',result.data);
+                            //console.log('type',result.data);
                             getButtonByObject($('#block_button'),result.data);
                         } else {
                             errorMsg_no_connect("轮播类型 Dropdown");
@@ -828,8 +882,8 @@ z                    </div>
                             graph_type: $('#viewtype_select').dropdown('get value'),
                             contents: $('#viewname_select').dropdown('get text')
                         }
-                        console.log('config_info',config_info);
                         $.ajax({
+                            async: false,
                             type: "get",
                             url: "/carousel/get_block",
                             data:config_info,
@@ -837,19 +891,13 @@ z                    </div>
                             contentType:'application/json;charset=UTF-8',
                             success: function (result) {
                                 if (result.success) {
-                                    var block_info = result.data;
+                                    block_info = result.data;
                                     console.log('block_info',block_info);
-                                    var layout_data = page_vo.layout_data;
-                                    var config_data = page_vo.config_data;
-                                    var block_data = page_vo.block_data;
-                                    layout_data.push(layout_info);
-                                    config_data.push(config_info);
-                                    block_data.push(block_info);
-                                    page_vo.layout_data = layout_data;
-                                    page_vo.config_data = config_data;
-                                    page_vo.block_data = block_data;
-                                    console.log('page_vo',page_vo);
-                                    drawBlock(gridster,layout_info,config_info,block_info,layout_data.length-1);
+                                    console.log('config_info',config_info);
+                                    //添加config_info 保存至 page_vo.config_data
+                                    page_vo.config_data.push(config_info);
+                                    console.log('view page_vo',page_vo);
+                                    drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
                                 } else {
                                     errorMsg_no_connect("获取展示项数据失败");
                                 }
@@ -867,16 +915,48 @@ z                    </div>
                         //获取设备选择树
                         var host_id ;
                         var $host_tree = $('#host_tree');
-                        console.log('$host_tree',$host_tree);
+                        //console.log('$host_tree',$host_tree);
                         $host_tree.genHostTree({
                             multi: false,
                             onChange:function(e,data){
-                                console.log('data',data.selected[0]);
+                                //console.log('data',data.selected[0]);
                                 host_id = data.selected[0];
                                 pointsMenu(host_id);
                             }
                         })
-
+                    },
+                    onApprove : function() {
+                        var block_name  = $('#graph_name').val();
+                        if('' === block_name) {
+                            alert('展示项名称不能为空');
+                            return false;
+                        }
+                        config_info.block_name = block_name;
+                        config_info.block_type = 'graph';
+                        $.ajax({
+                            async: false,
+                            type: "get",
+                            url: "/carousel/get_block",
+                            data:config_info,
+                            dataType: "json",
+                            contentType:'application/json;charset=UTF-8',
+                            success: function (result) {
+                                if (result.success) {
+                                    block_info = result.data;
+                                    console.log('block_info',block_info);
+                                    console.log('config_info',config_info);
+                                    //添加config_info 保存至 page_vo.config_data
+                                    page_vo.config_data.push(config_info);
+                                    console.log('graph page_vo',page_vo);
+                                    drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
+                                } else {
+                                    errorMsg_no_connect("获取展示项数据失败");
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("获取展示项数据失败");
+                            }
+                        });
                     }
                 }).modal('attach events', '#point_modal .graph.button');
 
@@ -900,12 +980,45 @@ z                    </div>
                                 errorMsg_no_connect("chart类型下拉框 Dropdown");
                             }
                         })
+                    },
+                    onApprove : function() {
+                        var block_name  = $('#chart_name').val();
+                        if('' === block_name) {
+                            alert('展示项名称不能为空');
+                            return false;
+                        }
+                        config_info.block_name = block_name;
+                        config_info.block_type = 'chart';
+                        $.ajax({
+                            async: false,
+                            type: "get",
+                            url: "/carousel/get_block",
+                            data:config_info,
+                            dataType: "json",
+                            contentType:'application/json;charset=UTF-8',
+                            success: function (result) {
+                                if (result.success) {
+                                    block_info = result.data;
+                                    console.log('block_info',block_info);
+                                    console.log('config_info',config_info);
+                                    //添加config_info 保存至 page_vo.config_data
+                                    var config_data = page_vo.config_data;
+                                    page_vo.config_data.push(config_info);
+                                    console.log('chart page_vo',page_vo);
+                                    drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
+                                } else {
+                                    errorMsg_no_connect("获取展示项数据失败");
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("获取展示项数据失败");
+                            }
+                        });
                     }
                 }).modal('attach events', '#point_modal .chart.button');
 
-                //ajax，覆盖静态表格或时钟的数据
-                $('#point_chart_modal').modal('attach events', '#point_modal .chart.button');
-                $('#table_thead_modal').modal('attach events', '#point_chart_modal .button');
+                //静态表格
+                $('#table_thead_modal').modal('attach events', '#table_type .button');
                 $('#table_tbody_modal').modal('attach events', '#table_thead_modal .button');
 
                 $('#point_modal').modal('setting', 'closable', false).modal('show');
@@ -914,7 +1027,7 @@ z                    </div>
 
             $('#viewtype_select').dropdown({
                 onChange:function(value){
-                    console.log('type',value);
+                    //console.log('type',value);
                     getSelectViewName(value);
                 }
             })
@@ -922,9 +1035,41 @@ z                    </div>
             $('#charttype_select').dropdown({
                 onChange:function(value){
                     console.log('type',value);
-                    getSelectChartName(value);
+                    if(value === 'clock') {
+                        $('#clock_type').css('display','block');
+                        $('#table_type').css('display','none');
+                        getSelectClock();
+                    }else if(value === 'table') {
+                        $('#clock_type').css('display','none');
+                        $('#table_type').css('display','block');
+                    }
+
                 }
             })
+
+            function freshPage() {
+                $('#table-dimmer').addClass('active');
+                var page_name = $('#viewpage_select').dropdown('get value');
+                var group_name = $('#viewgroup_select').dropdown('get value');
+                $.ajax({
+                    type: 'get',
+                    url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            page_vo = result.data;
+                            drawPage($('.gridster > ul'),page_vo);
+                            $('#table-dimmer').removeClass('active');
+                        }
+                        else {
+                            errorMsg_no_connect("页面刷新失败");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("页面刷新失败");
+                    }
+                })
+            }
 
             function getSelectViewName(type) {
                 $.ajax({
@@ -948,24 +1093,24 @@ z                    </div>
                 })
             }
 
-            function getSelectChartName(type) {
-                if('clock' === type) {
-                    var str = '';
-                    str += "<div class='item' data-value='clock-clock'  >时钟样式</div> " +
-                           "<div class='item' data-value='number-clock'  >数字样式</div>";
-                    $('#chartname_nemu').html(str);
-                    //默认值
-                    $('#chartname_select').dropdown('set value','clock-clock');
-                    $('#chartname_select').dropdown('set text','时钟样式');
-                }else if('table' === type) {
-                    var str = '';
-                    str += "<button class='item' data-value='table'  >编辑表格</button> ";
-                    $('#chartname_nemu').html(str);
-                    //默认值
-                    $('#chartname_select').dropdown('set value','table');
-                    $('#chartname_select').dropdown('set text','编辑表格');
-                }
+            function getSelectClock() {
+                var str = '';
+                str += "<div class='item' data-value='clock-clock'  >时钟样式</div> " +
+                    "<div class='item' data-value='number-clock'  >数字样式</div>";
+                $('#chartname_nemu').html(str);
+                //默认值
+                $('#chartname_select').dropdown('set value','clock-clock');
+                $('#chartname_select').dropdown('set text','时钟样式');
+                config_info.graph_type = 'clock';
+                config_info.contents = $('#chartname_select').dropdown('get value');
+
             }
+
+            $('#chartname_select').dropdown({
+                onChange:function(value){
+                    config_info.contents = value;
+                }
+            })
 
             //加载监控点列表
             function pointsMenu(host_id) {
@@ -1020,6 +1165,7 @@ z                    </div>
                             getitemsMenu(data);
                             var value_type = data[0].value_type;
                             if(value_type == '0' || value_type == '3' || value_type == '%') {
+                                config_info.contents = data[0].item_id;
                                 $('#itemsMenu div.item').removeClass('active');
                                 $(this).addClass('active');
                                 if(value_type == '%') {
@@ -1027,11 +1173,14 @@ z                    </div>
                                 }
                                 typeMenu(value_type);
                             }else {
+                                config_info.contents = '';
                                 alert('该监控项不适合图形展示');
                             }
                             $('#itemsMenu > div.item').on('click',function () {
                                 var value_type = $(this).attr('data-type');
+                                var item_id = $(this).attr('id');
                                 if(value_type == '0' || value_type == '3' || value_type == '%') {
+                                    config_info.contents = item_id;
                                     $('#itemsMenu div.item').removeClass('active');
                                     $(this).addClass('active');
                                     if(value_type == '%') {
@@ -1039,13 +1188,14 @@ z                    </div>
                                     }
                                     typeMenu(value_type);
                                 }else {
+                                    config_info.contents = '';
                                     alert('该监控项不适合图形展示');
                                 }
 
                             })
                         }
                         else {
-                            errorMsg_no_data(result.message);
+                            alert('该监控点无监控项');
                         }
                     },
                     error: function () {
@@ -1069,7 +1219,7 @@ z                    </div>
             }
             //加载图形类型列表
             function typeMenu(value_type) {
-                console.log('value_type',value_type);
+                //console.log('value_type',value_type);
                 $.ajax({
                     type: "get",
                     url: "/hostgraphs/get_graphs?value_type="+value_type,
@@ -1078,7 +1228,9 @@ z                    </div>
                         if(result.success) {
                             var data = result.data;
                             gettypeMenu(data);
+                            config_info.graph_type = data[0].graph_type;
                             $('#typeMenu > div.item').on('click',function () {
+                                config_info.graph_type = $(this).attr('data-type');
                                 $('#typeMenu div.item').removeClass('active');
                                 $(this).addClass('active');
                             })

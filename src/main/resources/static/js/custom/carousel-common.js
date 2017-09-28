@@ -227,7 +227,7 @@ function drawPage($_gridster,page_vo) {
             min_size: [1, 1]
         }
     }).data('gridster');
-
+    gridster.disable();
     var layout_arr = page_vo.layout_data;
     var config_arr = page_vo.config_data;
     var block_arr = page_vo.block_data;

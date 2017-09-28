@@ -269,7 +269,7 @@ public class ViewDAOImpl implements ViewDAO {
                 .where("page_name").is(viewPage.getPageName())
                 .and("group_name").is(viewPage.getGroupName()));
         Update update = Update
-                .update("layout_data",viewPage.getConfigDataList())
+                .update("layout_data",viewPage.getLayoutDataList())
                 .set("config_data",viewPage.getConfigDataList());
         mongoTemplate.updateFirst(query, update, ViewPage.class);
     }
