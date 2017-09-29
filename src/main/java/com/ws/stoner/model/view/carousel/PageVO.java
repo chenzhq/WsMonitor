@@ -1,8 +1,6 @@
 package com.ws.stoner.model.view.carousel;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.ws.stoner.constant.CarouselTypeEnum;
-import com.ws.stoner.constant.ViewTypeEnum;
 import com.ws.stoner.model.DO.mongo.carousel.ConfigData;
 import com.ws.stoner.model.DO.mongo.carousel.LayoutData;
 import com.ws.stoner.model.DO.mongo.carousel.ViewPage;

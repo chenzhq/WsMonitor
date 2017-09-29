@@ -339,19 +339,10 @@ public class ViewRestController {
      * @return
      */
     @RequestMapping(value = "/carousel/save_page", method = RequestMethod.POST)
-    public String UpdateViewPage(@RequestParam("page_name") String pageName,
-                                 @RequestParam("group_name") String groupName,
-                                 @RequestParam("config_data") ConfigData[] configData,
-                                 @RequestParam("layout_data") LayoutData[] layoutData) throws ServiceException {
-        ViewPage viewPage = new ViewPage(
-                pageName,
-                groupName,
-                Arrays.asList(layoutData),
-                Arrays.asList(configData)
-        );
+    public String UpdateViewPage(@RequestBody ViewPage viewPage) throws ServiceException {
         boolean success = viewService.saveViewPage(viewPage);
         if(success) {
-            PageVO pageVO = viewService.getPageVOByPageName(pageName,groupName);
+            PageVO pageVO = viewService.getPageVOByPageName(viewPage.getPageName(),viewPage.getGroupName());
             return RestResultGenerator.genResult(pageVO, REST_UPDATE_SUCCESS).toString();
         }else {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();

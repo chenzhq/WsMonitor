@@ -1,13 +1,22 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>全屏轮播</title>
-    <script src="../static/js/jquery-3.2.1.min.js" data-th-src="@{js/jquery-3.2.1.min.js}"></script>
-    <script src="../static/js/jquery.fullpage.min.js" data-th-src="@{js/jquery.fullpage.min.js}"></script>
-    <link rel="stylesheet" href="../static/css/jquery.fullpage.min.css" data-th-href="@{css/jquery.fullpage.min.css}">
-    <script src="../static/js/jquery.gridster.js" data-th-src="@{js/jquery.gridster.js}"></script>
-    <link rel="stylesheet" href="../static/css/jquery.gridster.css" data-th-href="@{css/jquery.gridster.css}">
+    <script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
+    <script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+    <link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+    <link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+    <script src="../static/js/jquery.fullpage.min.js" th:src="@{js/jquery.fullpage.min.js}"></script>
+    <link rel="stylesheet" href="../static/css/jquery.fullpage.min.css" th:href="@{css/jquery.fullpage.min.css}">
+    <script src="../static/js/jquery.gridster.js" th:src="@{js/jquery.gridster.js}"></script>
+    <link rel="stylesheet" href="../static/css/jquery.gridster.css" th:href="@{css/jquery.gridster.css}">
+    <script src="../static/js/analogClock.js" th:src="@{js/analogClock.js}"></script>
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" th:href="@{css/normalize.css}" />
+    <script src="../static/js/custom/carousel-common.js" th:src="@{js/custom/carousel-common.js}"></script>
+    <script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+    <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
     <style>
         header {
             height: 200px;
@@ -17,7 +26,7 @@
 <body>
 <header>
     <div>
-        <h2>组标题</h2>
+        <h2 id="group_title" th:text="${groupName}">组标题</h2>
         <h3 id="page_title">页面标题</h3>
     </div>
     <div>
@@ -26,39 +35,68 @@
         <button id="exit">退出</button>
     </div>
 </header>
-<section id="carousel">
+<section id="carousel" >
     <!-- data-th- 即 th: -->
-    <div class="page" data-th-data-name="${page.pageName}" data-th-each="page:${pages}">
+    <div class="page" th:data-name="${page.pageName}" th:each="page:${pages}">
         <ul>
-            <li data-th-each="block:${page.layout}"
-                data-th-data-row="${block.row}"
-                data-th-data-col="${block.col}"
-                data-th-data-sizex="${block.xSize}"
-                data-th-data-sizey="${block.ySize}"></li>
+            <li th:each="block:${page.layoutDataList}"
+                th:data-row="${block.row}"
+                th:data-col="${block.col}"
+                th:data-sizex="${block.xSize}"
+                th:data-sizey="${block.ySize}"
+                class="gs-w"></li>
         </ul>
     </div>
 </section>
+<!-- 刷新读条 -->
+<div id="table-dimmer" class="ui inverted dimmer">
+    <div class="ui text loader" style="text-align:center">正在刷新</div>
+</div>
 <script>
     $(function () {
         // 根据情况选择是否在进入此页面时调用全屏方法
         fullScreen();
-        var w = document.documentElement.clientWidth
-            || document.body.clientWidth;
-        var h = document.documentElement.clientHeight
-            || document.body.clientHeight;
-
-        var grids = [];
-        var grid_length = $('.page').length;
-        for (var i = 0; i < grid_length; ++i) {
-            grids[i] = $('.page').eq(i).gridster({
-                widget_margins: [10, 10],
-                // 留出200px给header
-                widget_base_dimensions: [w, h - 200]
-                // TODO: 补充其它配置
-            })
-        }
+//        var w = document.documentElement.clientWidth
+//            || document.body.clientWidth;
+//        var h = document.documentElement.clientHeight
+//            || document.body.clientHeight;
+//
+//        var grids = [];
+//        var grid_length = $('.page').length;
+//        for (var i = 0; i < grid_length; ++i) {
+//            grids[i] = $('.page').eq(i).gridster({
+//                widget_margins: [10, 10],
+//                // 留出200px给header
+//                widget_base_dimensions: [w, h - 200]
+//                // TODO: 补充其它配置
+//            })
+//        }
 
         // TODO: 首次加载 刷新整个组下的所有页面
+        $('#table-dimmer').addClass('active');
+        $.ajax({
+            type: 'get',
+            url: '/carousel/get_alldata?group_name=' + $('#group_title').text().trim(),
+            dataType: 'json',
+            success: function (result) {
+                if(result.success) {
+                    var page_vos = result.data;
+                    //绘制每个页面
+                    $.each(page_vos,function(i,value){
+                        var page_vo = value;
+                        drawDataPage($('.page:eq('+ i +') > div > ul'),page_vo,i)
+                        $('#table-dimmer').removeClass('active');
+                    });
+
+                }
+                else {
+                    errorMsg_no_connect("页面刷新失败");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("页面刷新失败");
+            }
+        })
 
         // 标记是否正在刷新
         var refreshing = false;
@@ -73,6 +111,13 @@
                 if (refreshing) {
                     refreshing = false;
                     // TODO: 刷新上一个页面 index-1
+                    var pages = $('#carousel').find('.page').length;
+                    //获取参数值
+                    var pre_index = index==0 ? pages-1 : index-1;
+                    var pre_group_name = $('#group_title').text();
+                    var pre_page_name = $('#carousel').find('.page').eq(pre_index).attr('data-name');
+                    console.log('group and page',pre_group_name + '  ' + pre_index + '  ' + pre_page_name) ;
+                    refreshPage(pre_group_name,pre_page_name,pre_index);
                 }
             }
         });
@@ -86,13 +131,18 @@
         }, 6000);
 
         function refresh() {
+            var group_name = $('#group_title').text();
             var pages = $('#carousel').find('.page').length;
             var current_index = $('.active').index();
             for (var i = current_index + 1; i < pages; ++i) {
                 // TODO: 从下一个页面 依次调用刷新API 参数为第i个页面的data-name
+                var page_name = $('#carousel').find('.page').eq(i).attr('data-name');
+                refreshPage(group_name,page_name,i);
             }
             for (var j = 0; j < current_index; ++j) {
                 // TODO: 从第0个页面 依次调用刷新API 参数为第j个页面的data-name
+                var page_name = $('#carousel').find('.page').eq(j).attr('data-name');
+                refreshPage(group_name,page_name,j);
             }
         }
 
@@ -101,6 +151,29 @@
             window.location.href = '/carousel';
         })
     })
+
+    //刷新页面 index 表示当前是第几个页面
+    function refreshPage(group_name,page_name,index) {
+        //$('#table-dimmer').addClass('active');
+        $.ajax({
+            type: 'get',
+            url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,
+            dataType: 'json',
+            success: function (result) {
+                if(result.success) {
+                    var page_vo = result.data;
+                    drawDataPage($('.page:eq('+ index +') > div > ul'),page_vo,index)
+                    //$('#table-dimmer').removeClass('active');
+                }
+                else {
+                    errorMsg_no_connect("页面刷新失败");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("页面刷新失败");
+            }
+        })
+    }
 
     // 全屏
     function fullScreen() {

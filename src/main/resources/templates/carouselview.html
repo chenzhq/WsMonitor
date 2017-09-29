@@ -243,6 +243,8 @@
                             <button class="ui blue button editpage"><i class="edit icon"></i> 编辑</button>
                             <button class="ui blue button refreshpage"><i class="refresh icon"></i> 刷新</button>
                             <button class="ui blue button savepage"><i class="save  icon"></i> 保存</button>
+
+                            <button class="ui blue button carouselpage"><i class="add icon"></i> 轮播</button>
                         </div>
                     </div>
 
@@ -568,7 +570,6 @@ z                    </div>
                 dataType: 'json',
                 success: function (result) {
                     if(result.success) {
-                        //console.log('type',result.data);
                         getButtonByObject($('#block_button'),result.data);
                     } else {
                         errorMsg_no_connect("轮播类型 Dropdown");
@@ -592,7 +593,11 @@ z                    </div>
 
             $('#viewpage_select').dropdown({
                 onChange: function() {
-                    freshPage()
+                    var page_name = $('#viewpage_select').dropdown('get value');
+                    var group_name = $('#viewgroup_select').dropdown('get value');
+                    if('' != page_name){
+                        freshPage(group_name,page_name);
+                    }
                 }
             })
 
@@ -621,7 +626,6 @@ z                    </div>
             //初始化展示页下拉框
             function getSelectPage(group_name) {
                 $.ajax({
-                    async: false,
                     type: 'get',
                     url: '/carousel/get_pages?group_name=' + group_name,
                     dataType: 'json',
@@ -646,6 +650,10 @@ z                    </div>
 //                       getSelectPage(value);
 //                   }
 //            })
+            //轮播 按钮
+            $('button.carouselpage').on('click',function(){
+                window.location.href = '/carouselfull?group_name=' + $('#viewgroup_select').dropdown('get value');
+            });
 
             //添加弹出框
             $('button.addpage').on('click',function(){
@@ -792,7 +800,12 @@ z                    </div>
             });
             //刷新弹出框
             $("button.refreshpage").on("click",function(){
-                freshPage();
+                var page_name = $('#viewpage_select').dropdown('get value');
+                var group_name = $('#viewgroup_select').dropdown('get value');
+                if('' != page_name){
+                    freshPage(group_name,page_name);
+                }
+
 
             });
             //保存页面弹出框
@@ -1069,10 +1082,8 @@ z                    </div>
                 }
             })
 
-            function freshPage() {
+            function freshPage(group_name,page_name) {
                 $('#table-dimmer').addClass('active');
-                var page_name = $('#viewpage_select').dropdown('get value');
-                var group_name = $('#viewgroup_select').dropdown('get value');
                 $.ajax({
                     type: 'get',
                     url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,

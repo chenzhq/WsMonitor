@@ -535,6 +535,23 @@ public class ViewServiceImpl implements ViewService {
     }
 
     /**
+     * 获取所有的指定组的 viewpages list
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<ViewPage> getAllViewPagesByGroupName(String groupName) throws ServiceException {
+        List<ViewPage> viewpages = null;
+        try {
+            viewpages = viewDAO.getAllPageByGroupName(groupName);
+        } catch (DAOException e) {
+            logger.error("获取所有指定组的 viewPages 错误！{}", e.getMessage());
+        }
+        return viewpages;
+    }
+
+    /**
      * 根据 配置数据展示项 configData 组装 展示数据展示项 BlockVO
      * @param config
      * @return

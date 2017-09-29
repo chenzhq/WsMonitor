@@ -192,4 +192,12 @@ public interface ViewService {
      * @throws ServiceException
      */
     boolean updateViewPageByPageName(String oldPageName,String newPageName,String groupName) throws ServiceException;
+
+    /**
+     * 获取所有的指定组的 viewpages list
+     * @param groupName
+     * @return
+     * @throws ServiceException
+     */
+    List<ViewPage> getAllViewPagesByGroupName(String groupName) throws ServiceException;
 }

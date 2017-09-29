@@ -211,7 +211,6 @@ var gridster;
 
 //绘制页面
 function drawPage($_gridster,page_vo) {
-    //console.log('$_gridster',$_gridster);
     gridster = $_gridster.gridster({
         //widget_selector: 'li',
         widget_margins: [50, 50],                       //margin大小
@@ -235,7 +234,7 @@ function drawPage($_gridster,page_vo) {
     //清空
     gridster.remove_all_widgets();
     $_gridster.html('');
-    //console.log('gridster',gridster);
+
     //画 页 page
     $.each(layout_arr, function (i,value) {
         // 画 项 block
@@ -245,13 +244,13 @@ function drawPage($_gridster,page_vo) {
 }
 
 /*
-* gridster 初始化对象
-* layout_info 单个布局对象
-* config_info 单个配置对象
-* block_info 单个渲染数据对象
-* i 表示页面中第几个展示项
-*
-* */
+ * gridster 初始化对象
+ * layout_info 单个布局展示项
+ * config_info 单个配置展示项
+ * block_info 单个渲染数据展示项
+ * i 表示页面中第几个展示项
+ *
+ * */
 function drawBlock(gridster,layout_info,config_info,block_info,i) {
     gridster.add_widget('<li>', layout_info.size_x, layout_info.size_y, layout_info.col, layout_info.row);
     //根据配置画图
@@ -261,9 +260,9 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
             //状态视图
             $('.gridster > ul > li').eq(i).append(
                 '<div style="width: 430px;height: 150px;" >' +
-                    '<div style="width: 100%;height: 10%;"></div>' +
-                    '<div style="float:left;width: 45%;height: 80%;" id="host_pie'+ i +'"></div >' +
-                    '<div style="float:left;width: 45%;height: 80%;" id="point_pie'+ i +'"></div>' +
+                '<div style="width: 100%;height: 10%;"></div>' +
+                '<div style="float:left;width: 45%;height: 80%;" id="host_pie'+ i +'"></div >' +
+                '<div style="float:left;width: 45%;height: 80%;" id="point_pie'+ i +'"></div>' +
                 '</div>');
 
             var host_chart = echarts.init(document.getElementById('host_pie'+ i));
@@ -280,9 +279,8 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
 
             problemTable.rows.add(block_info.problems).draw();
 
-            //待完成
         }else if(config_info.graph_type === 'appletree') {
-            //苹果树
+            //苹果树 待完成
         }else {
 
         }
@@ -324,6 +322,122 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
 
     }
 }
+
+/**
+ * $_gridster ul对象
+ * page_vo
+ * index 第几个页面
+ */
+
+function drawDataPage($_gridster,page_vo,index) {
+    gridster = $_gridster.gridster({
+        widget_selector: 'li',
+        widget_margins: [50, 50],                       //margin大小
+        widget_base_dimensions: [100, 100],             //网格粒度
+        avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+        max_cols: 15,                             //最多创建多少列，null表示没有限制
+        max_rows: 10,                             //最多创建多少横，null表示没有限制
+        min_cols: 1,                                //至少创建多少列
+        min_rows: 1,                               //至少创建多少横
+        resize: {
+            enabled: true,
+            max_size: [4, 4],
+            min_size: [1, 1]
+        }
+    }).data('gridster');
+    //console.log('gridster',gridster);
+    gridster.disable();
+    var config_arr = page_vo.config_data;
+    var block_arr = page_vo.block_data;
+
+    //画 页 page
+    $.each(config_arr, function (i,value) {
+        // 画 项 block
+
+        drawDataBlock($_gridster.children('li').eq(i),config_arr[i],block_arr[i],index,i);
+    });
+}
+
+/**
+ *
+ * @param $_block 块对象
+ * @param config_info
+ * @param block_info
+ * @param index  表示那一页
+ * @param i  表示那一块
+ */
+function drawDataBlock($_block,config_info,block_info,index,i) {
+    $_block.html('');
+    //根据配置画图
+    if(config_info.block_type === 'view') {
+        //视图
+        if(config_info.graph_type === 'statepie') {
+            //状态视图
+            $_block.append(
+                '<div style="width: 430px;height: 150px;" >' +
+                '<div style="width: 100%;height: 10%;"></div>' +
+                '<div style="float:left;width: 45%;height: 80%;" id="host_pie'+ index + '_' + i +'"></div >' +
+                '<div style="float:left;width: 45%;height: 80%;" id="point_pie'+ index + '_' + i +'"></div>' +
+                '</div>');
+
+            var host_chart = echarts.init(document.getElementById('host_pie'+ index + '_' + i));
+
+            var point_chart = echarts.init(document.getElementById('point_pie'+ index + '_' + i));
+
+            getViewStatepie(host_chart,point_chart,block_info);
+
+        }else if(config_info.graph_type === 'problems') {
+            //问题视图
+            $_block.append('<table id="problems_'+ index + '_' + i +'"></table>');
+
+            var problemTable = $('#problems_' + index + '_' + i).carProTable();
+
+            problemTable.rows.add(block_info.problems).draw();
+
+        }else if(config_info.graph_type === 'appletree') {
+            //苹果树 待完成
+        }else {
+
+        }
+    }else if(config_info.block_type === 'graph') {
+        //图表
+        var graph_vo = block_info;
+        //渲染图形
+        $_block.append(
+            '<div style="height: 100%;width: 100%" id="graph_'+ index + '_' + i +'">图表数据</div>');
+
+        var graph_chart = echarts.init(document.getElementById('graph_' + index + '_' + i));//待补充
+
+        var option = getGraphOption(config_info.graph_type,graph_vo);
+
+        graph_chart.setOption(option);
+
+    }else if(config_info.block_type === 'chart') {
+        //控件
+        if(config_info.graph_type === 'clock') {
+            //钟表
+            if(config_info.contents === 'clock-clock') {
+
+                $_block.append('<div id="clock_' + index + '_' + i +'">时钟数据</div>');
+                //时钟显示
+                AnalogClock('clock_' + index + '_' + i, new AnalogClockOption(200, "black", "white"));
+
+            }else if(config_info.contents === 'number-clock') {
+                //待完成
+            }
+
+        }else if (config_info.graph_type === 'table') {
+            //表格
+            $_block.append('<div id="table_' + index + '_' + i +'">表格数据</div>');
+
+            $('#table_' + index + '_' + i).append(block_info.html_contents);// 待完成
+
+        }
+    }else {
+
+    }
+}
+
 
 //后期整理还可以继续优化，将图表单独拿出来先初始化，后面根据赋值修改图形数据
 function getGraphOption(graph_type,graph_vo) {
