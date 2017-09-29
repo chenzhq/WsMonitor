@@ -250,16 +250,15 @@
                             <button class="ui blue button carouselpage"><i class="add icon"></i> 轮播</button>
                         </div>
                     </div>
-
                     <div class="ui segment" style=" min-height : 520px;" id="content">
                         <div class="ui grid">
-                            <div class="one wide column">
-                                <div style="height: 10px"></div>
-                                <button class="ui icon basic massive button " id="addblock_button" style="box-shadow:0px 0px;border:3px dashed darkgray;width: 70px"><!--// -->
-                                    <i class="add icon" style="font-size:200%;padding-top: 10px;padding-right:30px "></i>
-                                </button>
-                            </div>
                             <div class="fifteen wide column" style="padding-top: 0px">
+                                <!-- add zoom -->
+                                <div id="add_zoom" display="block" style="height: 100px;height: 100px" >
+                                    <button class="ui icon basic massive button " id="addblock_button" style="box-shadow:0px 0px;border:3px dashed darkgray;width: 70px">
+                                        <i class="add icon" style="font-size:200%;padding-top: 10px;padding-right:30px "></i>
+                                    </button>
+                                </div>
                                 <div class="gridster">
                                     <ul>
 
@@ -533,6 +532,14 @@ z                    </div>
         <script src="../static/js/mindmup-editabletable.js" th:src="@{js/mindmup-editabletable.js}"></script>
         <script src="../static/js/custom-editable.js" th:src="@{js/custom-editable.js}"></script>
         <script  type="text/javascript">
+
+            $(function(){
+                //初始化组下拉框
+                getSelectGroup();
+                var group_name = $('#viewgroup_select').dropdown('get value');
+                getSelectPage(group_name);
+            })
+
             //单个展示页面对象
             var page_vo = {
                 group_name:'',
@@ -567,14 +574,9 @@ z                    </div>
                     errorMsg_no_connect("轮播类型 Dropdown");
                 }
             })
+
             //禁止保存按钮
             $("#savepage_button").attr('disabled',true);
-            $(function(){
-                //初始化组下拉框
-                getSelectGroup();
-                var group_name = $('#viewgroup_select').dropdown('get value');
-                getSelectPage(group_name);
-            })
 
             //默认隐藏编辑展示项框
             $("#addblock_button").hide();
@@ -638,6 +640,7 @@ z                    </div>
 //                       getSelectPage(value);
 //                   }
 //            })
+
             //轮播 按钮
             $('button.carouselpage').on('click',function(){
                 window.location.href = '/carouselfull?group_name=' + $('#viewgroup_select').dropdown('get value');
@@ -731,6 +734,7 @@ z                    </div>
                     }
                 }).modal('setting', 'closable', false).modal('show');
             });
+
             //删除弹出框
             $('#deletepage_button').on('click',function(){
                 var group_name = $('#viewgroup_select').dropdown('get value');
@@ -759,35 +763,59 @@ z                    </div>
                     }
                 }).modal('setting', 'closable', false).modal('show');
             });
+
             //编辑弹出框
             $("#editpage_button").on("click",function(){
+
                 if($('#editpage_button').text().trim() === '取消') {
+
                     $('#editpage_button').text('编辑');
+
                     drawPage($('.gridster > ul'),page_vo);
+
 //                $('#viewgroup_select').dropdown('remove visible');
 //                $('#viewpage_select').dropdown('remove visible');
+
                     $("#savepage_button").attr('disabled',true);
+
                     $('#addpage_button').attr('disabled',false);
+
                     $('#writepage_button').attr('disabled',false);
+
                     $('#deletepage_button').attr('disabled',false);
+
                     gridster.disable();
+
                     $("#addblock_button").hide();
-                    $("#content li").css("background-color","#FFF");
+
+                    $(".gridster > ul > li").css("background-color","#FFF");
+
                 }else if($("#editpage_button").text().trim() === '编辑') {
+
                     $('#editpage_button').text('取消');
-                    drawPage($('.gridster > ul'),page_vo)
+
+                    drawPage($('.gridster > ul'),page_vo);
+
                     gridster.enable();
+
 //                $('#viewgroup_select').dropdown('remove visible');
 //                $('#viewpage_select').dropdown('remove visible');
+
                     $("#savepage_button").attr('disabled',false);
+
                     $('#addpage_button').attr('disabled',true);
+
                     $('#writepage_button').attr('disabled',true);
+
                     $('#deletepage_button').attr('disabled',true);
+
                     $("#addblock_button").show();
-                    $("#content li").css("background-color","#EFF6EC");
+
+                    $(".gridster > ul > li").css("background-color","#EFF6EC");
                 }
 
             });
+
             //刷新弹出框
             $("#refreshpage_button").on("click",function(){
                 var page_name = $('#viewpage_select').dropdown('get value');
@@ -798,6 +826,7 @@ z                    </div>
 
 
             });
+
             //保存页面弹出框
             $("#savepage_button").on("click",function(){
 
@@ -864,6 +893,7 @@ z                    </div>
                 $('#point_modal').modal('setting', 'closable', false).modal('show');
 
             });
+
             //视图弹出框
             $('#point_view_modal').modal({
                 onShow:function(){
@@ -920,6 +950,7 @@ z                    </div>
                     });
                 }
             })
+
             //图形弹出框
             $('#point_graph_modal').modal({
                 onShow:function(){
@@ -972,6 +1003,7 @@ z                    </div>
                     });
                 }
             })
+
             //控件弹出框
             $('#point_chart_modal').modal({
                 onShow:function(){
@@ -1034,6 +1066,7 @@ z                    </div>
                     }
                 }
             })
+
             //表格弹出框，添加表头
             $('#table_thead_modal').modal({
                 onShow: function () {
@@ -1052,6 +1085,7 @@ z                    </div>
                     $('#table_thead_content').html(str);
                 }
             })
+
             //表格弹出框，添加表内容
             $('#table_tbody_modal').modal({
                 onShow: function () {
@@ -1124,22 +1158,27 @@ z                    </div>
                     alert("存储表格数据");
                 }
             })
+
             //显示 视图配置框
             $('#view').on('click',function(){
                 $('#point_view_modal').modal('show')
             })
+
             //显示 图形配置框
             $('#graph').on('click',function(){
                 $('#point_graph_modal').modal('show')
             })
+
             //显示 控件配置框
             $('#chart').on('click',function(){
                 $('#point_chart_modal').modal('show')
             })
+
             //静态表格
             $('#table_type .button').on('click',function(){
                 $('#table_thead_modal').modal('show')
             })
+
             $('#table_thead_modal .button').on('click',function(){
                 $('#table_tbody_modal').modal('show')
             })
@@ -1270,6 +1309,7 @@ z                    </div>
                 $('#pointsMenu').html('');
                 $("#pointsMenu").html(str);
             }
+
             //加载监控项列表
             function itemsMenu(point_id) {
                 $.ajax({
@@ -1332,6 +1372,7 @@ z                    </div>
                     $("#itemsMenu").html(str);
                 }
             }
+
             //加载图形类型列表
             function typeMenu(value_type) {
                 //console.log('value_type',value_type);

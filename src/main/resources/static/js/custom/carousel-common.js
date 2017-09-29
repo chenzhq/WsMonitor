@@ -214,15 +214,15 @@ function drawPage($_gridster,page_vo) {
     gridster = $_gridster.gridster({
         //widget_selector: 'li',
         widget_margins: [50, 50],                       //margin大小
-        widget_base_dimensions: [100, 100],             //网格粒度
+        widget_base_dimensions: [50, 50],             //网格粒度
         avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
-        max_cols: 15,                             //最多创建多少列，null表示没有限制
-        max_rows: 10,                             //最多创建多少横，null表示没有限制
+        max_cols: 100,                             //最多创建多少列，null表示没有限制
+        max_rows: 100,                             //最多创建多少横，null表示没有限制
         min_cols: 1,                                //至少创建多少列
         min_rows: 1,                               //至少创建多少横
         resize: {
             enabled: true,
-            max_size: [4, 4],
+            max_size: [10, 10],
             min_size: [1, 1]
         }
     }).data('gridster');
@@ -252,14 +252,14 @@ function drawPage($_gridster,page_vo) {
  *
  * */
 function drawBlock(gridster,layout_info,config_info,block_info,i) {
-    gridster.add_widget('<li>', layout_info.size_x, layout_info.size_y, layout_info.col, layout_info.row);
+    gridster.add_widget('<li >', layout_info.size_x, layout_info.size_y, layout_info.col, layout_info.row);
     //根据配置画图
     if(config_info.block_type === 'view') {
         //视图
         if(config_info.graph_type === 'statepie') {
             //状态视图
             $('.gridster > ul > li').eq(i).append(
-                '<div style="width: 430px;height: 150px;" >' +
+                '<div style="width: 430px;height: 150px;overflow: auto" >' +
                 '<div style="width: 100%;height: 10%;"></div>' +
                 '<div style="float:left;width: 45%;height: 80%;" id="host_pie'+ i +'"></div >' +
                 '<div style="float:left;width: 45%;height: 80%;" id="point_pie'+ i +'"></div>' +
@@ -321,41 +321,6 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
     }else {
 
     }
-}
-
-/**
- * $_gridster ul对象
- * page_vo
- * index 第几个页面
- */
-
-function drawDataPage($_gridster,page_vo,index) {
-    gridster = $_gridster.gridster({
-        widget_selector: 'li',
-        widget_margins: [50, 50],                       //margin大小
-        widget_base_dimensions: [100, 100],             //网格粒度
-        avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
-        max_cols: 15,                             //最多创建多少列，null表示没有限制
-        max_rows: 10,                             //最多创建多少横，null表示没有限制
-        min_cols: 1,                                //至少创建多少列
-        min_rows: 1,                               //至少创建多少横
-        resize: {
-            enabled: true,
-            max_size: [4, 4],
-            min_size: [1, 1]
-        }
-    }).data('gridster');
-    //console.log('gridster',gridster);
-    gridster.disable();
-    var config_arr = page_vo.config_data;
-    var block_arr = page_vo.block_data;
-
-    //画 页 page
-    $.each(config_arr, function (i,value) {
-        // 画 项 block
-
-        drawDataBlock($_gridster.children('li').eq(i),config_arr[i],block_arr[i],index,i);
-    });
 }
 
 /**
