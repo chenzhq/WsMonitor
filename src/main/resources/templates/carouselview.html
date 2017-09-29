@@ -23,6 +23,10 @@
         <link rel="stylesheet" type="text/css" href="../static/css/jquery.gridster.css"
               th:href="@{css/jquery.gridster.css}">
         <script src="../static/js/jquery.gridster.js" th:src="@{js/jquery.gridster.js}" type="text/javascript" charset="utf-8"></script>
+        <link href="../static/css/jsgrid.css" rel="stylesheet" th:href="@{css/jsgrid.css}"/>
+        <link href="../static/css/jsgrid-theme.css" rel="stylesheet" th:href="@{css/jsgrid-theme.css}"/>
+        <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
+        <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
         <style type="text/css">
             /*li {background:yellow;}*/
             .clock{
@@ -435,21 +439,20 @@ z                    </div>
                             <!--<input type="hidden" name="hosts">-->
                             <i class="dropdown icon"></i>
                             <div class="text"></div>
-                            <div class="menu" id="chartname_nemu">
+                            <div class="menu" id="chartname_menu">
 
                             </div>
                         </div>
                     </div>
                     <div class="required inline field" id="table_type" display="block">
                         <div class="ui label no-padding">
-                            <input type="text" placeholder="1" style="width: 80px;">
+                            <input type="text" id="row_table" placeholder="1" value ="1" style="width: 80px;">
                             <div class="detail">行</div>
                         </div>
                         <div class="ui label no-padding">
-                            <input type="text" placeholder="1" style="width: 80px;">
+                            <input type="text" id="column_table" placeholder="1" value ="1" style="width: 80px;">
                             <div class="detail">列</div>
                         </div>
-                        <div class="ui approve submit button">编辑</div>
                     </div>
                 </form>
             </div>
@@ -465,7 +468,7 @@ z                    </div>
                 添加表头
             </div>
             <div class="ui content  center aligned basic segment no-padding">
-                <form class="ui form">
+                <form class="ui form" id="table_thead_content">
                     <div class="ui label no-padding">
                         <div class="detail">第1列</div>
                         <input type="text" style="width: 180px;">
@@ -488,31 +491,13 @@ z                    </div>
             </div>
         </div>
         <!--添加表内容详情，展示项添加静态数据弹出框 start-->
-        <div class="ui tiny modal page" id="table_tbody_modal">
+        <div class="ui big modal page" id="table_tbody_modal">
             <i class="close icon"></i>
             <div class="header">
                 添加表详情
             </div>
             <div class="ui content  center aligned basic segment">
-                <!--<div id="jsGrid"></div>-->
-                <table id="data_table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Name</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div id="jsGrid"></div>
             </div>
             <div class="actions">
                 <div class="ui approve submit button">确认</div>
@@ -544,6 +529,10 @@ z                    </div>
         <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
         <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
         <script src="../static/js/custom/carousel-common.js" th:src="@{js/custom/carousel-common.js}"></script>
+
+        <script src="../static/js/db.js" th:src="@{js/db.js}"></script>
+        <script src="../static/js/mindmup-editabletable.js" th:src="@{js/mindmup-editabletable.js}"></script>
+        <script src="../static/js/custom-editable.js" th:src="@{js/custom-editable.js}"></script>
         <script  type="text/javascript">
             //单个展示页面对象
             var page_vo = {
@@ -1009,34 +998,129 @@ z                    </div>
                         alert('展示项名称不能为空');
                         return false;
                     }
-                    var config_info = {
-                        block_name: block_name,
-                        block_type: 'chart',
-                        graph_type: $('#charttype_select').dropdown('get value'),
-                        contents: $('#chartname_select').dropdown('get value')
-                    }
-                    $.ajax({
-                        type: "get",
-                        url: "/carousel/get_block",
-                        data:config_info,
-                        dataType: "json",
-                        contentType:'application/json;charset=UTF-8',
-                        success: function (result) {
-                            if (result.success) {
-                                var block_info = result.data;
-                                //添加config_info 保存至 page_vo.config_data
-                                //console.log('chart config_info',config_info);
-                                page_vo.config_data.push(config_info);
-                                //console.log('chart page_vo',page_vo);
-                                drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
-                            } else {
+                    if($('#charttype_select').dropdown('get value')=='table')
+                    {
+                        $('#table_thead_modal').modal('show');
+                    }else if($('#charttype_select').dropdown('get value')=='clock') {
+                        var config_info = {
+                            block_name: block_name,
+                            block_type: 'chart',
+                            graph_type: $('#charttype_select').dropdown('get value'),
+                            contents: $('#chartname_select').dropdown('get value')
+                        }
+                        $.ajax({
+                            type: "get",
+                            url: "/carousel/get_block",
+                            data: config_info,
+                            dataType: "json",
+                            contentType: 'application/json;charset=UTF-8',
+                            success: function (result) {
+                                if (result.success) {
+                                    var block_info = result.data;
+                                    //添加config_info 保存至 page_vo.config_data
+                                    //console.log('chart config_info',config_info);
+                                    page_vo.config_data.push(config_info);
+                                    //console.log('chart page_vo',page_vo);
+                                    drawBlock(gridster, layout_info, config_info, block_info, page_vo.config_data.length - 1);
+                                } else {
+                                    errorMsg_no_connect("获取展示项数据失败");
+                                }
+                            },
+                            error: function () {
                                 errorMsg_no_connect("获取展示项数据失败");
                             }
-                        },
-                        error: function () {
-                            errorMsg_no_connect("获取展示项数据失败");
+                        });
+                    }
+                }
+            })
+            //表格弹出框，添加表头
+            $('#table_thead_modal').modal({
+                onShow: function () {
+                    var row=$('#row_table').val();
+                    var columnd=$('#column_table').val();
+                    var str = '';
+                    for(var i=0;i<columnd;i++) {
+                        var j=i+1;
+                        str += "<div class='ui label no-padding'> " +
+                            "<div class='detail'>第"+j+"列</div> " +
+                            "<input type='text' class='th_name' style='width: 180px'></div> " +
+                            "<div class='ui label no-padding'> " +
+                            "<input type='text' value ='180' class='th_width' style='width: 80px;'>"+
+                            "<div class='detail'>PX</div></div>";
+                    }
+                    $('#table_thead_content').html(str);
+                }
+            })
+            //表格弹出框，添加表内容
+            $('#table_tbody_modal').modal({
+                onShow: function () {
+                    var str = 0;
+                    var name = [];
+                    var width = [];
+                    var fields = [];//thead详情
+                    var clientsdata=[];//tbody详情
+                    var row=$('#row_table').val();
+                    var columnd=$('#column_table').val();
+                    $("#table_thead_content input.th_name").each(function () {
+                        name.push($(this).val());
+                    })
+                    $("#table_thead_content input.th_width").each(function () {
+                        var reg = /^[1-9]\d*$/;
+                        var v=$(this).val();
+                        if(!reg.test(v)){
+                            str += 180;
+                            width.push(180);
                         }
+                        else {
+                            str += parseInt(v);
+                            width.push(parseInt(v));
+                        }
+                    })
+                    for(var i=0;i<columnd;i++)
+                    {
+                        fields.push({
+                            name: name[i],
+                            type: 'text',
+                            width: width[i],
+                        });
+                    }
+                    fields.push({
+                        type: 'control'
                     });
+                    custom_edittable(fields,str);
+                    for(var j=0;j<row;j++)
+                    {
+                        var jsonStr='{';
+                        for(var i=0;i<columnd;i++) {
+                            jsonStr+='"'+name[i]+'":"'+""+'",';
+                        }
+                        jsonStr+='},'
+                        clientsdata.push(jsonStr);
+                    }
+                   //定义edittable功能和数据
+                    var db = {
+
+                        loadData: function(filter) {
+                        },
+
+                        insertItem: function(insertingClient) {
+                            this.clients.push(insertingClient);
+                        },
+
+                        updateItem: function(updatingClient) { },
+
+                        deleteItem: function(deletingClient) {
+                            var clientIndex = $.inArray(deletingClient, this.clients);
+                            this.clients.splice(clientIndex, 1);
+                        }
+
+                    };
+                    window.db = db;
+                    db.clients =clientsdata;
+                },
+                onApprove : function() {
+                   //ajax，存储表格数据，并在页面展示只读表格
+                    alert("存储表格数据");
                 }
             })
             //显示 视图配置框
@@ -1051,7 +1135,6 @@ z                    </div>
             $('#chart').on('click',function(){
                 $('#point_chart_modal').modal('show')
             })
-
             //静态表格
             $('#table_type .button').on('click',function(){
                 $('#table_thead_modal').modal('show')
@@ -1130,7 +1213,7 @@ z                    </div>
                 var str = '';
                 str += "<div class='item' data-value='clock-clock'  >时钟样式</div> " +
                     "<div class='item' data-value='number-clock'  >数字样式</div>";
-                $('#chartname_nemu').html(str);
+                $('#chartname_menu').html(str);
                 //默认值
                 $('#chartname_select').dropdown('set value','clock-clock');
                 $('#chartname_select').dropdown('set text','时钟样式');
