@@ -28,7 +28,6 @@
         <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
         <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
         <style type="text/css">
-            /*li {background:yellow;}*/
             .clock{
                 width: 400px;
                 margin: 30px auto;
@@ -241,22 +240,22 @@
                             </div>
                         </div>
                         <div class="eight wide column right aligned"  style="padding-bottom: 0px">
-                            <button class="ui basic button addpage"><i class="add icon"></i> 添加</button>
-                            <button class="ui basic button writepage"><i class="write icon"></i> 修改</button>
-                            <button class="ui basic button deletepage"><i class="delete icon"></i> 删除</button>
-                            <button class="ui blue button editpage"><i class="edit icon"></i> 编辑</button>
-                            <button class="ui blue button refreshpage"><i class="refresh icon"></i> 刷新</button>
-                            <button class="ui blue button savepage"><i class="save  icon"></i> 保存</button>
+                            <button class="ui basic button" id="addpage_button"><i class="add icon"></i> 添加</button>
+                            <button class="ui basic button" id="writepage_button"><i class="write icon"></i> 修改</button>
+                            <button class="ui basic button" id="deletepage_button"><i class="delete icon"></i> 删除</button>
+                            <button class="ui blue button" id="editpage_button"><i class="edit icon"></i> 编辑</button>
+                            <button class="ui blue button" id="refreshpage_button"><i class="refresh icon"></i> 刷新</button>
+                            <button class="ui blue button" id="savepage_button"><i class="save  icon"></i> 保存</button>
 
                             <button class="ui blue button carouselpage"><i class="add icon"></i> 轮播</button>
                         </div>
                     </div>
 
-                    <div class="ui segment" style=" min-height : 470px;" >
+                    <div class="ui segment" style=" min-height : 520px;" id="content">
                         <div class="ui grid">
                             <div class="one wide column">
                                 <div style="height: 10px"></div>
-                                <button class="ui icon basic massive button addblock " style="box-shadow:0px 0px;border:3px dashed darkgray;width: 70px"><!--// -->
+                                <button class="ui icon basic massive button " id="addblock_button" style="box-shadow:0px 0px;border:3px dashed darkgray;width: 70px"><!--// -->
                                     <i class="add icon" style="font-size:200%;padding-top: 10px;padding-right:30px "></i>
                                 </button>
                             </div>
@@ -569,7 +568,7 @@ z                    </div>
                 }
             })
             //禁止保存按钮
-            $("button.savepage").attr('disabled',true);
+            $("#savepage_button").attr('disabled',true);
             $(function(){
                 //初始化组下拉框
                 getSelectGroup();
@@ -578,7 +577,7 @@ z                    </div>
             })
 
             //默认隐藏编辑展示项框
-            $("button.addblock").hide();
+            $("#addblock_button").hide();
 
             $('#viewpage_select').dropdown({
                 onChange: function() {
@@ -645,7 +644,7 @@ z                    </div>
             });
 
             //添加弹出框
-            $('button.addpage').on('click',function(){
+            $('#addpage_button').on('click',function(){
                 $('#page_name').val('');
                 $('#page_name_field').removeClass('error');
                 $('#page_modal').modal({
@@ -686,7 +685,7 @@ z                    </div>
             });
 
             //修改弹出框
-            $('button.writepage').on('click',function(){
+            $('#writepage_button').on('click',function(){
                 var old_page_name = $('#viewpage_select').dropdown('get value');
                 $('#page_name').val(old_page_name);
                 $('#page_name_field').removeClass('error');
@@ -733,7 +732,7 @@ z                    </div>
                 }).modal('setting', 'closable', false).modal('show');
             });
             //删除弹出框
-            $('button.deletepage').on('click',function(){
+            $('#deletepage_button').on('click',function(){
                 var group_name = $('#viewgroup_select').dropdown('get value');
                 var page_name = $('#viewpage_select').dropdown('get value');
                 $('#delete_modal').modal({
@@ -761,34 +760,36 @@ z                    </div>
                 }).modal('setting', 'closable', false).modal('show');
             });
             //编辑弹出框
-            $("button.editpage").on("click",function(){
-                if($('button.editpage').text().trim() === '取消') {
-                    $('button.editpage').text('编辑');
+            $("#editpage_button").on("click",function(){
+                if($('#editpage_button').text().trim() === '取消') {
+                    $('#editpage_button').text('编辑');
                     drawPage($('.gridster > ul'),page_vo);
 //                $('#viewgroup_select').dropdown('remove visible');
 //                $('#viewpage_select').dropdown('remove visible');
-                    $("button.savepage").attr('disabled',true);
-                    $('button.addpage').attr('disabled',false);
-                    $('button.writepage').attr('disabled',false);
-                    $('button.deletepage').attr('disabled',false);
+                    $("#savepage_button").attr('disabled',true);
+                    $('#addpage_button').attr('disabled',false);
+                    $('#writepage_button').attr('disabled',false);
+                    $('#deletepage_button').attr('disabled',false);
                     gridster.disable();
-                    $("button.addblock").hide();
-                }else if($("button.editpage").text().trim() === '编辑') {
-                    $('button.editpage').text('取消');
+                    $("#addblock_button").hide();
+                    $("#content li").css("background-color","#FFF");
+                }else if($("#editpage_button").text().trim() === '编辑') {
+                    $('#editpage_button').text('取消');
                     drawPage($('.gridster > ul'),page_vo)
                     gridster.enable();
 //                $('#viewgroup_select').dropdown('remove visible');
 //                $('#viewpage_select').dropdown('remove visible');
-                    $("button.savepage").attr('disabled',false);
-                    $('button.addpage').attr('disabled',true);
-                    $('button.writepage').attr('disabled',true);
-                    $('button.deletepage').attr('disabled',true);
-                    $("button.addblock").show();
+                    $("#savepage_button").attr('disabled',false);
+                    $('#addpage_button').attr('disabled',true);
+                    $('#writepage_button').attr('disabled',true);
+                    $('#deletepage_button').attr('disabled',true);
+                    $("#addblock_button").show();
+                    $("#content li").css("background-color","#EFF6EC");
                 }
 
             });
             //刷新弹出框
-            $("button.refreshpage").on("click",function(){
+            $("#refreshpage_button").on("click",function(){
                 var page_name = $('#viewpage_select').dropdown('get value');
                 var group_name = $('#viewgroup_select').dropdown('get value');
                 if('' != page_name){
@@ -798,7 +799,7 @@ z                    </div>
 
             });
             //保存页面弹出框
-            $("button.savepage").on("click",function(){
+            $("#savepage_button").on("click",function(){
 
                 var layoutDataList = [];
                 var configDataList = [];
@@ -850,16 +851,16 @@ z                    </div>
                     }
                 });
                 gridster.disable();
-                $('button.addpage').attr('disabled',false);
-                $('button.writepage').attr('disabled',false);
-                $('button.deletepage').attr('disabled',false);
-                $("button.addblock").hide();
-                $('button.editpage').text('编辑');
+                $('#addpage_button').attr('disabled',false);
+                $('#writepage_button').attr('disabled',false);
+                $('#deletepage_button').attr('disabled',false);
+                $("#addblock_button").hide();
+                $('#editpage_button').text('编辑');
 
             });
 
             //添加块
-            $("button.addblock").on("click",function(){
+            $("#addblock_button").on("click",function(){
                 $('#point_modal').modal('setting', 'closable', false).modal('show');
 
             });
@@ -1140,7 +1141,7 @@ z                    </div>
                 $('#table_thead_modal').modal('show')
             })
             $('#table_thead_modal .button').on('click',function(){
-                $('#table_tbody_modal').model('show')
+                $('#table_tbody_modal').modal('show')
             })
 
             $('#viewtype_select').dropdown({
