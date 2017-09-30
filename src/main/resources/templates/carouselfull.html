@@ -19,7 +19,11 @@
     <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
     <style>
         header {
-            height: 200px;
+            /*height: 100px;*/
+        }
+
+        .gridster li {
+            background-color: #0e8c8c;
         }
     </style>
 </head>
@@ -37,7 +41,8 @@
 </header>
 <section id="carousel" >
     <!-- data-th- 即 th: -->
-    <div class="page" th:data-name="${page.pageName}" th:each="page:${pages}">
+    <div class="gridster" th:data-name="${page.pageName}" th:each="page:${pages}" id="page-"
+         th:attrappend="id=${pageStat.index}">
         <ul>
             <li th:each="block:${page.layoutDataList}"
                 th:data-row="${block.row}"
@@ -59,15 +64,15 @@
         || document.body.clientHeight;
 
     var grids = [];
-    var grid_length = $('.page').length;
+    var grid_length = $('.gridster').length;
     for (var i = 0; i < grid_length; ++i) {
-        console.log($('.page').eq(i).find('ul').eq(0))
-        grids[i] = $('.page').eq(i).find('ul').eq(0).gridster({
+        console.log($('.gridster').eq(i).find('ul').eq(0))
+        grids[i] = $('.gridster').eq(i).find('ul').eq(0).gridster({
 //                widget_margins: [10, 10],
 //                // 留出200px给header
 //                widget_base_dimensions: [w, h - 200],
             // TODO: 补充其它配置
-            namespace:'page'+i,
+            namespace: '#page-' + i,
             widget_selector: 'li',
             widget_margins: [20, 20],                       //margin大小
             widget_base_dimensions: [100, 100],             //网格
@@ -97,7 +102,7 @@
                     var page_vo = value;
                     var config_data = page_vo.config_data;
                     var block_data = page_vo.block_data;
-                    var $_gridster = $('.page').eq(index).find('ul').eq(0);
+                    var $_gridster = $('.gridster').eq(index).find('ul').eq(0);
 
                     //画 页 page
                     $.each(config_data, function (i,value) {// i 表示第几项
@@ -120,27 +125,27 @@
 
     // 标记是否正在刷新
     var refreshing = false;
-    /*$('#carousel').fullpage({
-        sectionSelector: '.page',
+    $('#carousel').fullpage({
+        sectionSelector: '.gridster',
         // 滚动频率，30s
         scrollingSpeed: 3000,
         autoScrolling: true,
         afterLoad: function (anchorLink, index) {
-            var current_name = $('#carousel').find('.page').eq(index).attr('data-name');
+            var current_name = $('#carousel').find('.gridster').eq(index).attr('data-name');
             $('#page_title').html(current_name);
             if (refreshing) {
                 refreshing = false;
                 // TODO: 刷新上一个页面 index-1
-                var pages = $('#carousel').find('.page').length;
+                var pages = $('#carousel').find('.gridster').length;
                 //获取参数值
                 var pre_index = index==0 ? pages-1 : index-1;
                 var pre_group_name = $('#group_title').text();
-                var pre_page_name = $('#carousel').find('.page').eq(pre_index).attr('data-name');
+                var pre_page_name = $('#carousel').find('.gridster').eq(pre_index).attr('data-name');
                 console.log('group and page',pre_group_name + '  ' + pre_index + '  ' + pre_page_name) ;
                 refreshPage(pre_group_name,pre_page_name,pre_index);
             }
         }
-    });*/
+    });
 
     // 设置刷新频率，暂时定为60s
     setInterval(function () {
@@ -148,20 +153,20 @@
         // 刷新页面
         refresh();
 
-    }, 6000);
+    }, 60000);
 
     function refresh() {
         var group_name = $('#group_title').text();
-        var pages = $('#carousel').find('.page').length;
+        var pages = $('#carousel').find('.gridster').length;
         var current_index = $('.active').index();
         for (var i = current_index + 1; i < pages; ++i) {
             // TODO: 从下一个页面 依次调用刷新API 参数为第i个页面的data-name
-            var page_name = $('#carousel').find('.page').eq(i).attr('data-name');
+            var page_name = $('#carousel').find('.gridster').eq(i).attr('data-name');
             refreshPage(group_name,page_name,i);
         }
         for (var j = 0; j < current_index; ++j) {
             // TODO: 从第0个页面 依次调用刷新API 参数为第j个页面的data-name
-            var page_name = $('#carousel').find('.page').eq(j).attr('data-name');
+            var page_name = $('#carousel').find('.gridster').eq(j).attr('data-name');
             refreshPage(group_name,page_name,j);
         }
     }
@@ -184,7 +189,7 @@
                     //绘制每一个展示项
                     var config_data = page_vo.config_data;
                     var block_data = page_vo.block_data;
-                    var $_gridster = $('.page').eq(index).find('ul').eq(0);
+                    var $_gridster = $('.gridster').eq(index).find('ul').eq(0);
                     //画 页 page
                     $.each(config_data, function (i,value) {
                         // 画 项 block
