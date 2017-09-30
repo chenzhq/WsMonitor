@@ -28,6 +28,10 @@
         <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
         <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
         <style type="text/css">
+            .gridster > ul > li {
+                overflow: hidden;
+                border:1px dashed #613030
+            }
             .clock{
                 width: 400px;
                 margin: 30px auto;
@@ -252,13 +256,7 @@
                     </div>
                     <div class="ui segment" style=" min-height : 520px;" id="content">
                         <div class="ui grid">
-                            <div class="fifteen wide column" style="padding-top: 0px">
-                                <!-- add zoom -->
-                                <div id="add_zoom" display="block" style="height: 100px;height: 100px" >
-                                    <button class="ui icon basic massive button " id="addblock_button" style="box-shadow:0px 0px;border:3px dashed darkgray;width: 70px">
-                                        <i class="add icon" style="font-size:200%;padding-top: 10px;padding-right:30px "></i>
-                                    </button>
-                                </div>
+                            <div class="sixteen wide column" style="padding-top: 0px">
                                 <div class="gridster">
                                     <ul>
 
@@ -269,7 +267,24 @@
                             <div id="table-dimmer" class="ui inverted dimmer">
                                 <div class="ui text loader" style="text-align:center">正在刷新</div>
                             </div>
+
                         </div>
+                    </div>
+                </div>
+                <!-- 展示项模板 -->
+                <div th:fragment="carousel_block" class="ui grid" display="none" id="block_temp">
+                    <div
+                            class="eight wide column no-padding"
+                            style="float: left;width: 50%;height:20px">
+                        <h3 class="block_title"></h3>
+                    </div>
+                    <div
+                            class="eight wide column right aligned no-padding block_edit"
+                            style="float: right;width: 50%;height:20px">
+
+                    </div>
+                    <div class="sixteen wide column no-padding block_content" style="margin-top: 20px;margin-left: 20px" >
+                        <!-- 块内容 -->
                     </div>
                 </div>
                 <!--Site Content-->
@@ -557,6 +572,15 @@ z                    </div>
                 size_y:2
             }
 
+            //各个图形的默认 block 大小 从左至右依次为：  问题视图 图表控件 钟表控件 静态表格
+            var block_default_size = [
+                {size_x:4,size_y:3},  //状态视图
+                {size_x:15,size_y:3},  //问题视图
+                {size_x:5,size_y:3},  //图表控件
+                {size_x:4,size_y:4},  //钟表控件
+                {size_x:5,size_y:3},  //静态表格
+                ];
+
             //加载展示项编辑框
             $.ajax({
                 async: false,
@@ -578,15 +602,12 @@ z                    </div>
             //禁止保存按钮
             $("#savepage_button").attr('disabled',true);
 
-            //默认隐藏编辑展示项框
-            $("#addblock_button").hide();
-
             $('#viewpage_select').dropdown({
                 onChange: function() {
                     var page_name = $('#viewpage_select').dropdown('get value');
                     var group_name = $('#viewgroup_select').dropdown('get value');
                     if('' != page_name){
-                        freshPage(group_name,page_name);
+                        getPage(group_name,page_name);
                     }
                 }
             })
@@ -769,7 +790,7 @@ z                    </div>
 
                 if($('#editpage_button').text().trim() === '取消') {
 
-                    $('#editpage_button').text('编辑');
+                    $('#editpage_button').html('<i class="edit icon"></i>编辑');
 
                     drawPage($('.gridster > ul'),page_vo);
 
@@ -784,19 +805,21 @@ z                    </div>
 
                     $('#deletepage_button').attr('disabled',false);
 
-                    gridster.disable();
-
-                    $("#addblock_button").hide();
-
                     $(".gridster > ul > li").css("background-color","#FFF");
 
                 }else if($("#editpage_button").text().trim() === '编辑') {
 
-                    $('#editpage_button').text('取消');
+                    $('#editpage_button').html('<i class="delete icon"></i>取消');
 
                     drawPage($('.gridster > ul'),page_vo);
 
+                    // 给所有块 添加 编辑按钮
+                    addBlockiCons($('.gridster > ul').children('li'));
+
                     gridster.enable();
+
+                    //添加 编辑 li
+                    addBlockButton(gridster);
 
 //                $('#viewgroup_select').dropdown('remove visible');
 //                $('#viewpage_select').dropdown('remove visible');
@@ -809,8 +832,6 @@ z                    </div>
 
                     $('#deletepage_button').attr('disabled',true);
 
-                    $("#addblock_button").show();
-
                     $(".gridster > ul > li").css("background-color","#EFF6EC");
                 }
 
@@ -818,23 +839,31 @@ z                    </div>
 
             //刷新弹出框
             $("#refreshpage_button").on("click",function(){
+
                 var page_name = $('#viewpage_select').dropdown('get value');
                 var group_name = $('#viewgroup_select').dropdown('get value');
                 if('' != page_name){
-                    freshPage(group_name,page_name);
+                    getPage(group_name,page_name);
+                    //refreshPage(group_name,page_name);
                 }
-
 
             });
 
             //保存页面弹出框
             $("#savepage_button").on("click",function(){
 
+                //去除掉add li
+                var layout_json_old = gridster.serialize();
+                //console.log('layout_json_old',layout_json_old);
+                gridster.remove_widget( $('#add_widget'));
+
                 var layoutDataList = [];
                 var configDataList = [];
                 var layout_json = gridster.serialize();
-                console.log('layout_json',layout_json);
+
+                //console.log('layout_json',layout_json);
                 console.log('page_vo.config_data',page_vo.config_data);
+
                 $.each(layout_json,function(i,value){
                     layoutDataList.push({
                         xSize: value.size_x,
@@ -857,6 +886,7 @@ z                    </div>
                     configDataList :configDataList
                 }
                 console.log('view_page',viewPage);
+
                 $('#table-dimmer').addClass('active');
                 $.ajax({
                     type: "post",
@@ -879,18 +909,13 @@ z                    </div>
                         errorMsg_no_connect("添加状态视图 add");
                     }
                 });
-                gridster.disable();
                 $('#addpage_button').attr('disabled',false);
+
                 $('#writepage_button').attr('disabled',false);
+
                 $('#deletepage_button').attr('disabled',false);
-                $("#addblock_button").hide();
-                $('#editpage_button').text('编辑');
 
-            });
-
-            //添加块
-            $("#addblock_button").on("click",function(){
-                $('#point_modal').modal('setting', 'closable', false).modal('show');
+                $('#editpage_button').html('<i class="edit icon"></i>编辑');
 
             });
 
@@ -936,10 +961,22 @@ z                    </div>
                         success: function (result) {
                             if (result.success) {
                                 var block_info = result.data;
-                                //添加config_info 保存至 page_vo.config_data
+                                //添加 config_info 和 block_info 到page_vo 对象中
                                 page_vo.config_data.push(config_info);
-                                //console.log('view page_vo',page_vo);
-                                drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
+
+                                page_vo.block_data.push(block_info);
+                                if(config_info.graph_type === 'statepie') {
+
+                                    //默认  状态视图 block大小
+                                    addBlockWidget(block_default_size[0].size_x,block_default_size[0].size_y);
+
+                                }else if(config_info.graph_type === 'problems') {
+
+                                    //默认  问题列表 block大小
+                                    addBlockWidget(block_default_size[1].size_x,block_default_size[1].size_y);
+
+                                }
+
                             } else {
                                 errorMsg_no_connect("获取展示项数据失败");
                             }
@@ -988,11 +1025,13 @@ z                    </div>
                         success: function (result) {
                             if (result.success) {
                                 var block_info = result.data;
-                                //添加config_info 保存至 page_vo.config_data
-                                //console.log('graph config_info',config_info);
+                                //添加 config_info 和 block_info 到page_vo 对象中
                                 page_vo.config_data.push(config_info);
-                                //console.log('graph page_vo',page_vo);
-                                drawBlock(gridster,layout_info,config_info,block_info,page_vo.config_data.length-1);
+
+                                page_vo.block_data.push(block_info);
+
+                                //默认  图表控件 block大小
+                                addBlockWidget(block_default_size[2].size_x,block_default_size[2].size_y);
                             } else {
                                 errorMsg_no_connect("获取展示项数据失败");
                             }
@@ -1050,11 +1089,22 @@ z                    </div>
                             success: function (result) {
                                 if (result.success) {
                                     var block_info = result.data;
-                                    //添加config_info 保存至 page_vo.config_data
-                                    //console.log('chart config_info',config_info);
+                                    //添加 config_info 和 block_info 到page_vo 对象中
                                     page_vo.config_data.push(config_info);
-                                    //console.log('chart page_vo',page_vo);
-                                    drawBlock(gridster, layout_info, config_info, block_info, page_vo.config_data.length - 1);
+
+                                    page_vo.block_data.push(block_info);
+
+                                    if(config_info.graph_type === 'clock') {
+
+                                        //默认  钟表 block大小
+                                        addBlockWidget(block_default_size[3].size_x,block_default_size[3].size_y);
+
+                                    }else if(config_info.graph_type === 'table') {
+
+                                        //默认  静态表格 block大小
+                                        addBlockWidget(block_default_size[4].size_x,block_default_size[4].size_y);
+
+                                    }
                                 } else {
                                     errorMsg_no_connect("获取展示项数据失败");
                                 }
@@ -1205,7 +1255,8 @@ z                    </div>
                 }
             })
 
-            function freshPage(group_name,page_name) {
+            //获取 page 并 draw
+            function getPage(group_name,page_name) {
                 $('#table-dimmer').addClass('active');
                 $.ajax({
                     type: 'get',
@@ -1216,6 +1267,37 @@ z                    </div>
                             page_vo = result.data;
                             drawPage($('.gridster > ul'),page_vo);
                             $('#table-dimmer').removeClass('active');
+                        }
+                        else {
+                            errorMsg_no_connect("获取页面失败");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("获取页面失败");
+                    }
+                })
+            }
+
+            //获取 page 并 refresh
+            function refreshPage(group_name,page_name) {
+                $('#table-dimmer').addClass('active');
+                $.ajax({
+                    type: 'get',
+                    url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            page_vo = result.data;
+
+                            $('#table-dimmer').removeClass('active');
+
+                            //不改变布局结构 刷新所有 block 数据
+                            var $_blocks = $('.gridster > ul').children('li');
+
+                            $_blocks.each(function(index,element) {
+                                // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
+                                drawBlock($(this),page_vo.config_data[index],0,page_vo.block_data[index],index);
+                            })
                         }
                         else {
                             errorMsg_no_connect("页面刷新失败");

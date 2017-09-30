@@ -209,11 +209,11 @@ $.fn.carProTable = function () {
 //定义 gridster 全局变量
 var gridster;
 
-//绘制页面
+//绘制页面 轮播配置使用
 function drawPage($_gridster,page_vo) {
     gridster = $_gridster.gridster({
         //widget_selector: 'li',
-        widget_margins: [50, 50],                       //margin大小
+        widget_margins: [20, 20],                       //margin大小
         widget_base_dimensions: [50, 50],             //网格粒度
         avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
         max_cols: 100,                             //最多创建多少列，null表示没有限制
@@ -222,9 +222,25 @@ function drawPage($_gridster,page_vo) {
         min_rows: 1,                               //至少创建多少横
         resize: {
             enabled: true,
-            max_size: [10, 10],
+            max_size: [20, 20],
             min_size: [1, 1]
-        }
+        },
+        //拖拽回调函数
+        /*draggable:{
+             handle: '',         //设置拖动控件
+             //拖拽之前回调
+             start: function(event, ui){
+
+             },
+             //拖拽同时回调
+             drag:function(event, ui){
+
+             },
+             //拖拽停止回调
+             stop: function(event, ui){
+
+             }
+         }*/
     }).data('gridster');
     gridster.disable();
     var layout_arr = page_vo.layout_data;
@@ -236,46 +252,78 @@ function drawPage($_gridster,page_vo) {
     $_gridster.html('');
 
     //画 页 page
-    $.each(layout_arr, function (i,value) {
-        // 画 项 block
-        drawBlock(gridster,layout_arr[i],config_arr[i],block_arr[i],i);
+    $.each(layout_arr, function (i,value) { // i 表示第几项
+
+        gridster.add_widget('<li >', value.size_x, value.size_y, value.col, value.row);
+
+        var $_block = $_gridster.children('li').eq(i);
+
+        // 画 项 block  0表示第 0 页，这里不关心第几页，所以可随意取值
+        drawBlock($_block,config_arr[i],block_arr[i],0,i);
     });
 
 }
 
-/*
- * gridster 初始化对象
- * layout_info 单个布局展示项
+function addBlockWidget(size_x,size_y) {
+
+    //添加config_info 保存至 page_vo.config_data
+    console.log('view page_vo',page_vo);
+    var last_block = page_vo.config_data.length;
+    var config_info = page_vo.config_data[page_vo.config_data.length-1];
+    var block_info = page_vo.block_data[page_vo.block_data.length-1];
+
+
+    var $_block = gridster.add_widget('<li >', size_x, size_y);
+
+    console.log('new block',$_block);
+
+    drawBlock($_block,config_info,block_info,0,last_block);
+
+    addBlockiCon($_block);
+}
+
+/**
+ * 用于轮播
+ * $_block 展示块 对象
  * config_info 单个配置展示项
  * block_info 单个渲染数据展示项
+ * index 表示第几页
  * i 表示页面中第几个展示项
  *
  * */
-function drawBlock(gridster,layout_info,config_info,block_info,i) {
-    gridster.add_widget('<li >', layout_info.size_x, layout_info.size_y, layout_info.col, layout_info.row);
+function drawBlock($_block,config_info,block_info,index,i) {
+
+    var temp_str = $('#block_temp').html();
+
+    $_block.html(temp_str);
+
+    // block 标题
+    $_block.find('.block_title').text(config_info.block_name);
+
     //根据配置画图
     if(config_info.block_type === 'view') {
         //视图
         if(config_info.graph_type === 'statepie') {
             //状态视图
-            $('.gridster > ul > li').eq(i).append(
-                '<div style="width: 430px;height: 150px;overflow: auto" >' +
-                '<div style="width: 100%;height: 10%;"></div>' +
-                '<div style="float:left;width: 45%;height: 80%;" id="host_pie'+ i +'"></div >' +
-                '<div style="float:left;width: 45%;height: 80%;" id="point_pie'+ i +'"></div>' +
-                '</div>');
 
-            var host_chart = echarts.init(document.getElementById('host_pie'+ i));
+            //block 内容
+            $_block.find('.block_content').append(
+                    '<div style="float:left;width: 45%;height: 80%;" id="host_pie' + index + '_' + i +'"></div >' +
+                    '<div style="float:left;width: 45%;height: 80%;" id="point_pie' + index + '_' + i +'"></div>');
 
-            var point_chart = echarts.init(document.getElementById('point_pie'+ i));
+            var host_chart = echarts.init(document.getElementById('host_pie' + index + '_' + i));
+
+            var point_chart = echarts.init(document.getElementById('point_pie' + index + '_' + i));
 
             getViewStatepie(host_chart,point_chart,block_info);
 
         }else if(config_info.graph_type === 'problems') {
             //问题视图
-            $('.gridster > ul > li').eq(i).append('<table id="problems_'+ i +'"></table>');
 
-            var problemTable = $('#problems_' + i).carProTable();
+            // block 内容
+            $_block.find('.block_content').append('<table id="problems_' + index + '_' + i +'"></table>');
+
+            var problemTable = $('#problems_' + index + '_' + i).carProTable();
 
             problemTable.rows.add(block_info.problems).draw();
 
@@ -288,10 +336,10 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
         //图表
         var graph_vo = block_info;
         //渲染图形
-        $('.gridster > ul > li').eq(i).append(
-            '<div style="height: 100%;width: 100%" id="graph_'+ i +'">图表数据</div>');
+        $_block.find('.block_content').append(
+            '<div style="height: 100%;width: 100%" id="graph_' + index + '_'+ i +'">图表数据</div>');
 
-        var graph_chart = echarts.init(document.getElementById('graph_' + i));//待补充
+        var graph_chart = echarts.init(document.getElementById('graph_' + index + '_' + i));//待补充
 
         var option = getGraphOption(config_info.graph_type,graph_vo);
 
@@ -303,9 +351,9 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
             //钟表
             if(config_info.contents === 'clock-clock') {
 
-                $('.gridster > ul > li').eq(i).append('<div id="clock_' + i +'">时钟数据</div>');
+                $_block.find('.block_content').append('<div id="clock_' + index + '_' + i +'"></div>');
                 //时钟显示
-                AnalogClock('clock_' + i, new AnalogClockOption(200, "black", "white"));
+                AnalogClock('clock_' + index + '_' + i, new AnalogClockOption(200, "black", "white"));
 
             }else if(config_info.contents === 'number-clock') {
                 //待完成
@@ -313,9 +361,9 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
 
         }else if (config_info.graph_type === 'table') {
             //表格
-            $('.gridster > ul > li').eq(i).append('<div id="table_' + i +'">表格数据</div>');
+            $_block.find('.block_content').append('<div id="table_' + index + '_' + i +'"></div>');
 
-            $('#table_' + i).append(block_info.html_contents);// 待完成
+            $('#table_' + index + '_' + i).append(block_info.html_contents);// 待完成
 
         }
     }else {
@@ -323,8 +371,122 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
     }
 }
 
+//添加编辑块
+function addBlockButton(gridster) {
+    //str 为添加 button
+    var str =
+        '<button ' +
+                'class="ui icon basic massive button " ' +
+                'id="addblock_button" ' +
+                'style="box-shadow:0px 0px;border:3px dashed darkgray;width: 140px;height: 140px">' +
+            '<i class="add icon" style="font-size:400%;padding-top: 10px;padding-right:30px "></i>' +
+        '</button>';
+
+    var $_add_widget = gridster.add_widget('<li id="add_widget">', 2, 2);
+
+    $_add_widget.append(str);
+
+    //console.log('addblock_button',$('#addblock_button'));
+
+    //添加块
+    $('#addblock_button').on("click",function(){
+        $('#point_modal').modal('setting', 'closable', false).modal('show');
+
+    });
+}
+
 /**
- *
+ * 给所有 block 添加 编辑按钮
+ * $_blocks 传入所有 li jquery 对象
+ */
+function addBlockiCons($_blocks) {
+
+    $_blocks.each(function(i,value){
+
+        addBlockiCon($(this),i);
+
+    });
+}
+
+// 给指定一个 block 添加 编辑按钮  i 表示第几个 block
+function addBlockiCon($_block,i) {
+
+    $_block.find('.block_edit').append(
+        '<i style="float:right" class="edit icon"></i>' +
+        '<i style="float:right" class="delete icon"></i>' +
+        '<i style="float:right" class="refresh icon"></i>'
+    );
+
+    console.log('$_block',$_block);
+
+    //添加点击事件
+    //编辑
+    $_block.find('.block_edit i.edit.icon').on('click',function(){
+
+        alert('我是block' + i +'的编辑 按钮');
+
+    });
+
+    //刷新
+    $_block.find('.block_edit i.refresh.icon').on('click',function(){
+
+        alert('我是block' + i +'的刷新 按钮');
+
+        var refresh_str =
+            '<div id="block-dimmer'+ i +'" class="ui inverted dimmer">'+
+                '<div class="ui text loader" style="text-align:center">正在刷新</div>'+
+            '</div>';
+        $_block.find('#block_temp').append(refresh_str);
+        console.log('block_temp',$_block.find('#block_temp'));
+        $('#block-dimmer'+i).addClass('active');
+        console.log('i and page_vo', i+ ' ' + page_vo);
+
+        var config_info = page_vo.config_data[i];
+        $.ajax({
+            type: 'get',
+            url: '/carousel/get_block',
+            data:config_info,
+            dataType: "json",
+            contentType:'application/json;charset=UTF-8',
+            success: function (result) {
+                if(result.success) {
+
+                    var block_info = result.data;
+
+
+                    console.log('$_block and i',$_block + '  ' + i);
+
+                    // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
+                    drawBlock($_block,config_info,block_info,0,i);
+                    $_block.find('.block_edit').append(
+                        '<i style="float:right" class="edit icon"></i>' +
+                        '<i style="float:right" class="delete icon"></i>' +
+                        '<i style="float:right" class="refresh icon"></i>'
+                    );
+
+                    $('#block-dimmer'+i).removeClass('active');
+
+                } else {
+                    errorMsg_no_connect("轮播类型 Dropdown");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("轮播类型 Dropdown");
+            }
+        })
+    });
+
+    //删除
+    $_block.find('.block_edit i.delete.icon').on('click',function(){
+
+        alert('我是block' + i +'的删除 按钮');
+
+    });
+
+}
+
+/**
+ * 废弃的方法
  * @param $_block 块对象
  * @param config_info
  * @param block_info
@@ -332,7 +494,15 @@ function drawBlock(gridster,layout_info,config_info,block_info,i) {
  * @param i  表示那一块
  */
 function drawDataBlock($_block,config_info,block_info,index,i) {
-    $_block.html('');
+
+    var temp_str = $('#block_temp').html();
+
+    $_block.html(temp_str);
+
+    // block 标题
+    $_block.find('.block_title').text(config_info.block_name);
+
+
     //根据配置画图
     if(config_info.block_type === 'view') {
         //视图
@@ -341,7 +511,7 @@ function drawDataBlock($_block,config_info,block_info,index,i) {
             $_block.append(
                 '<div style="width: 430px;height: 150px;" >' +
                 '<div style="width: 100%;height: 10%;"></div>' +
-                '<div style="float:left;width: 45%;height: 80%;" id="host_pie'+ index + '_' + i +'"></div >' +
+                '<div style="float:left;width: 45%;height: 80%;" id="host_pie' + index + '_' + i +'"></div >' +
                 '<div style="float:left;width: 45%;height: 80%;" id="point_pie'+ index + '_' + i +'"></div>' +
                 '</div>');
 
@@ -422,13 +592,12 @@ function getGraphOption(graph_type,graph_vo) {
         case 'gauge':
             option = {
                 title: {
-                    text: graph_vo.block_name},
+                    },
                 tooltip : {
                     formatter: '{a} <br/>{b} : {c}%'
                 },
                 series: [
                     {
-                        name: graph_vo.block_name,
                         type: 'gauge',
                         min:0,
                         max:100,
@@ -469,7 +638,6 @@ function getGraphOption(graph_type,graph_vo) {
             /*console.log('进入到了area域：');*/
             option = {
                 title: {
-                    text: graph_vo.block_name
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -494,7 +662,6 @@ function getGraphOption(graph_type,graph_vo) {
                     max: ymax,
                 },
                 series: [{
-                    name: graph_vo.block_name,
                     type: 'line',
                     data: graph_vo.data,
                     areaStyle: {
@@ -507,7 +674,6 @@ function getGraphOption(graph_type,graph_vo) {
         default:
             option = {
                 title: {
-                    text: graph_vo.block_name
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -533,7 +699,6 @@ function getGraphOption(graph_type,graph_vo) {
                     splitLine:{show: false},
                 },
                 series: [{
-                    name: graph_vo.block_name,
                     type: graph_type,
                     data: graph_vo.data,
                     color: [],

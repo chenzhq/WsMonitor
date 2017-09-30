@@ -22,8 +22,14 @@
             /*height: 100px;*/
         }
 
-        .gridster li {
-            background-color: #0e8c8c;
+        .gridster > div > ul > li {
+            background-color: #EFF6EC;
+            list-style-type:none;
+        }
+
+        .gridster > div > ul {
+            width: 1366px ;
+            height: 100% ;
         }
     </style>
 </head>
@@ -38,6 +44,7 @@
         <span>滚动频率：</span>
         <button id="exit">退出</button>
     </div>
+    <div th:replace="carouselview::carousel_block"></div>
 </header>
 <section id="carousel" >
     <!-- data-th- 即 th: -->
@@ -75,12 +82,17 @@
             namespace: '#page-' + i,
             widget_selector: 'li',
             widget_margins: [20, 20],                       //margin大小
-            widget_base_dimensions: [100, 100],             //网格
-//            avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
-//            max_cols: 20,                             //最多创建多少列，null表示没有限制
-//            max_rows: 20,                             //最多创建多少横，null表示没有限制
-//            min_cols: 1,                                //至少创建多少列
-//            min_rows: 1                              //至少创建多少横
+            widget_base_dimensions: [50, 50],             //网格
+            avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+            max_cols: 100,                             //最多创建多少列，null表示没有限制
+            max_rows: 100,                             //最多创建多少横，null表示没有限制
+            min_cols: 1,                                //至少创建多少列
+            min_rows: 1,                               //至少创建多少横
+            resize: {
+                enabled: true,
+                max_size: [20, 20],
+                min_size: [1, 1]
+            },
         }).data('gridster');
         grids[i].disable();
     }
@@ -108,7 +120,7 @@
                     $.each(config_data, function (i,value) {// i 表示第几项
                         // 画 项 block
                         var $_block = $_gridster.children('li').eq(i);
-                        drawDataBlock($_block,config_data[i],block_data[i],index,i);
+                        drawBlock($_block,config_data[i],block_data[i],index,i);
                     });
                 });
                 $('#table-dimmer').removeClass('active');
@@ -194,7 +206,7 @@
                     $.each(config_data, function (i,value) {
                         // 画 项 block
                         var $_block = $_gridster.children('li').eq(i);
-                        drawDataBlock($_block,config_data[i],block_data[i],index,i);
+                        drawBlock($_block,config_data[i],block_data[i],index,i);
                     });
 
                     //$('#table-dimmer').removeClass('active');
