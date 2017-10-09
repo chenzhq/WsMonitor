@@ -70,29 +70,22 @@
     var h = document.documentElement.clientHeight
         || document.body.clientHeight;
 
+    //粒度 300 为 margin，16 为默认 16 row
+    var widget_size = parseInt((w -300) / 16);
+    console.log('w ',widget_size);
+
     var grids = [];
     var grid_length = $('.gridster').length;
     for (var i = 0; i < grid_length; ++i) {
-        console.log($('.gridster').eq(i).find('ul').eq(0))
         grids[i] = $('.gridster').eq(i).find('ul').eq(0).gridster({
-//                widget_margins: [10, 10],
-//                // 留出200px给header
-//                widget_base_dimensions: [w, h - 200],
+
             // TODO: 补充其它配置
             namespace: '#page-' + i,
             widget_selector: 'li',
-            widget_margins: [20, 20],                       //margin大小
-            widget_base_dimensions: [50, 50],             //网格
+            widget_margins: [10, 10],                       //margin大小
+            widget_base_dimensions: [widget_size, widget_size],            //网格
             avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
-            max_cols: 100,                             //最多创建多少列，null表示没有限制
-            max_rows: 100,                             //最多创建多少横，null表示没有限制
-            min_cols: 1,                                //至少创建多少列
-            min_rows: 1,                               //至少创建多少横
-            resize: {
-                enabled: true,
-                max_size: [20, 20],
-                min_size: [1, 1]
-            },
+
         }).data('gridster');
         grids[i].disable();
     }
@@ -120,7 +113,12 @@
                     $.each(config_data, function (i,value) {// i 表示第几项
                         // 画 项 block
                         var $_block = $_gridster.children('li').eq(i);
+
+                        //给展示项添加模板
+                        $_block.append($('#block_temp').html());
+
                         drawBlock($_block,config_data[i],block_data[i],index,i);
+
                     });
                 });
                 $('#table-dimmer').removeClass('active');
@@ -202,10 +200,18 @@
                     var config_data = page_vo.config_data;
                     var block_data = page_vo.block_data;
                     var $_gridster = $('.gridster').eq(index).find('ul').eq(0);
+
                     //画 页 page
                     $.each(config_data, function (i,value) {
                         // 画 项 block
                         var $_block = $_gridster.children('li').eq(i);
+
+                        //清空 li 子元素
+                        $_block.children().remove();
+
+                        //给展示项添加模板
+                        $_block.append($('#block_temp').html());
+
                         drawBlock($_block,config_data[i],block_data[i],index,i);
                     });
 

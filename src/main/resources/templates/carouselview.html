@@ -283,8 +283,11 @@
                             style="float: right;width: 50%;height:20px">
 
                     </div>
-                    <div class="sixteen wide column no-padding block_content" style="margin-top: 20px;margin-left: 20px" >
+                    <div class="sixteen wide column no-padding block_content" style="width: 100%;height: 80%" >
                         <!-- 块内容 -->
+                    </div>
+                    <div class="ui inverted dimmer">
+                        <div class="ui text loader" style="text-align:center">正在刷新</div>
                     </div>
                 </div>
                 <!--Site Content-->
@@ -574,7 +577,7 @@ z                    </div>
 
             //各个图形的默认 block 大小 从左至右依次为：  问题视图 图表控件 钟表控件 静态表格
             var block_default_size = [
-                {size_x:4,size_y:3},  //状态视图
+                {size_x:7,size_y:4},  //状态视图
                 {size_x:15,size_y:3},  //问题视图
                 {size_x:5,size_y:3},  //图表控件
                 {size_x:4,size_y:4},  //钟表控件
@@ -805,6 +808,8 @@ z                    </div>
 
                     $('#deletepage_button').attr('disabled',false);
 
+                    $('#refreshpage_button').attr('disabled',false);
+
                     $(".gridster > ul > li").css("background-color","#FFF");
 
                 }else if($("#editpage_button").text().trim() === '编辑') {
@@ -832,6 +837,8 @@ z                    </div>
 
                     $('#deletepage_button').attr('disabled',true);
 
+                    $('#refreshpage_button').attr('disabled',true);
+
                     $(".gridster > ul > li").css("background-color","#EFF6EC");
                 }
 
@@ -843,8 +850,8 @@ z                    </div>
                 var page_name = $('#viewpage_select').dropdown('get value');
                 var group_name = $('#viewgroup_select').dropdown('get value');
                 if('' != page_name){
-                    getPage(group_name,page_name);
-                    //refreshPage(group_name,page_name);
+                    //getPage(group_name,page_name);
+                    refreshPage(group_name,page_name);
                 }
 
             });
@@ -862,7 +869,7 @@ z                    </div>
                 var layout_json = gridster.serialize();
 
                 //console.log('layout_json',layout_json);
-                console.log('page_vo.config_data',page_vo.config_data);
+                //console.log('page_vo.config_data',page_vo.config_data);
 
                 $.each(layout_json,function(i,value){
                     layoutDataList.push({
@@ -885,7 +892,7 @@ z                    </div>
                     layoutDataList :layoutDataList,
                     configDataList :configDataList
                 }
-                console.log('view_page',viewPage);
+                //console.log('view_page',viewPage);
 
                 $('#table-dimmer').addClass('active');
                 $.ajax({
@@ -1295,6 +1302,11 @@ z                    </div>
                             var $_blocks = $('.gridster > ul').children('li');
 
                             $_blocks.each(function(index,element) {
+
+                                element.children().first().nextAll().remove();
+
+                                element.append($('#block_temp').html());
+
                                 // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
                                 drawBlock($(this),page_vo.config_data[index],0,page_vo.block_data[index],index);
                             })
