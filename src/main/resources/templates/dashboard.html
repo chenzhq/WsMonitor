@@ -20,11 +20,22 @@
 			.pie{height: 200px}
 			.pie_copy{height: 200px;margin-top: 100px}
 			.tab_height{height: 540px;}
-			.ui.segment.row3height{
-				height: 485px;
+			.ui.segment.block_row2{
+				min-height: 360px;
+			}
+			.ui.segment.block_row3{
+				min-height: 500px;
 				width: 100%;
-				overflow:auto;
-				overflow-x:hidden
+				overflow-y:auto;
+				overflow-x:auto;
+			}
+			/*原生label 有个下外边距*/
+			.ui .label {
+				margin-bottom: 0;
+			}
+			/*原生dataTable 下外边框颜色是#111*/
+			table.dataTable.no-footer {
+				border-bottom: 1px solid #DDDDDD;
 			}
 		</style>
 	</th:block>
@@ -245,13 +256,9 @@
                             </div>
 
 
-                            <div class="ui grid segment">
+                            <div class="ui grid segment block_row2">
                                 <div class="row">
-                                    <!--<a class="header item">-->
-                                    <!--<h3><i class="bar large chart icon"></i>最新问题</h3>-->
-                                    <!--</a>-->
-                                    <!--<a class="center item">-->
-                                    <div class="twelve wide column">
+                                    <div class="sixteen wide column">
                                         <h3>
                                             <i class="tag icon"></i>
                                             当前问题
@@ -265,20 +272,20 @@
                                      </div>-->
                                     <!--</a>-->
                                 </div>
-                                <table id="problem_table"
-                                       class="ui compact very basic table center aligned " width="100%">
-                                </table>
+								<table id="problem_table"
+									   class="ui compact very basic table center aligned " width="100%">
+								</table>
                             </div>
                         </div>
                         <div class="tab_height ui tab" data-tab="platform_datatab">
                             <div class="ui grid">
                                 <div class="five wide column">
-                                    <div class="ui segment row3height">
+                                    <div class="ui segment block_row3">
                                         <div id="platform_pie_copy" class="pie_copy"></div>
                                     </div>
                                 </div>
                                 <div class="eleven wide column" style="padding-left: 0px">
-                                    <div class="ui segment row3height">
+                                    <div class="ui segment block_row3">
                                         <table id="platform_table" class="ui compact celled table center aligned" width="100%">
                                         </table>
                                     </div>
@@ -288,28 +295,28 @@
                         <div class="tab_height ui tab" data-tab="host_datatab">
                             <div class="ui grid">
                                 <div class="five wide column">
-                                    <div class="ui segment row3height">
+                                    <div class="ui segment block_row3">
                                         <div id="host_pie_copy" class="pie_copy"></div>
                                     </div>
                                 </div>
-                                <div class="eleven wide column">
-                                    <div class="ui segment row3height">
+                                <div class="eleven wide column" style="padding-left: 0px">
+                                    <div class="ui segment block_row3">
                                         <table id="host_table" class="ui compact celled table center aligned" width="100%">
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab_height ui tab segment" data-tab="point_datatab">
+                        <div class="tab_height ui tab" data-tab="point_datatab">
                             <div class="ui grid">
                                 <div class="five wide column">
-                                    <div class="ui segment row3height">
+                                    <div class="ui segment block_row3">
                                         <div id="point_pie_copy" class="pie_copy"></div>
                                     </div>
                                 </div>
-                                <div class="eleven wide column">
-                                    <div class="ui segment row3height">
-                                        <table id="point_table" class="ui compact celled table center aligned" width="100%">
+                                <div class="eleven wide column" style="padding-left: 0px">
+                                    <div class="ui segment block_row3">
+                                        <table id="point_table" class="ui compact celled table center aligned" width="100%"><!-- style="width: 300px" width="300px"-->
                                         </table>
                                     </div>
                                 </div>
@@ -591,7 +598,10 @@
             } else {
                 $(row).addClass('negative');
             }
+            $('td:eq(1)', row).addClass('right aligned');
             $('td:eq(2)', row).addClass('right aligned');
+            $('td:eq(3)', row).addClass('right aligned');
+            $('td:eq(4)', row).addClass('right aligned');
         },
         ajax: {
             url: '/platform/list',
@@ -609,17 +619,19 @@
                 "title": "健康度"
             },
             {
-                "data": null,
+                "data": "highNum",
                 "width": "50px",
-                "title": "严重／警告/设备总数",
-                render: function(data, type, row, meta) {
-                    return  '<a class="ui red header">'
-                        +row.highNum + '</a>' +
-                        '<a class="ui yellow header">  /'
-                        +row.warningNum + '</a>' +
-                        '<a class="ui header ">  /'
-                        +row.allNum + '</a>'  ;
-                }
+                "title": "严重",
+            },
+            {
+                "data": "warningNum",
+                "width": "50px",
+                "title": "警告",
+            },
+            {
+                "data": "allNum",
+                "width": "50px",
+                "title": "设备总数",
             },
             {
                 "data": "state",
@@ -638,6 +650,8 @@
                 $(row).addClass('negative');
             }
             $('td:eq(3)', row).addClass('right aligned');
+            $('td:eq(4)', row).addClass('right aligned');
+            $('td:eq(5)', row).addClass('right aligned');
         },
         ajax: {
             url: '/host/list',
@@ -662,17 +676,19 @@
                 "orderable":false,
             },
             {
-                "data": null,
-                "width": "200px",
-                "title": "严重／警告/监控点总数",
-                render: function(data, type, row, meta) {
-                    return  '<a class="ui red header">'
-                        +row.highNum + '</a>' +
-                        '<a class="ui yellow header">  /'
-                        +row.warningNum + '</a>' +
-                        '<a class="ui header ">  /'
-                        +row.allNum + '</a>'  ;
-                }
+                "data": "highNum",
+                "width": "50px",
+                "title": "严重",
+            },
+            {
+                "data": "warningNum",
+                "width": "50px",
+                "title": "警告",
+            },
+            {
+                "data": "allNum",
+                "width": "50px",
+                "title": "设备总数",
             },
             {
                 "data": "state",
@@ -684,32 +700,51 @@
     });
     //监控点datatable
     var point_table = $("#point_table").DataTable({
+        "autoWidth": false,
         "createdRow": function (row, data, dataIndex) {
             if (data.state== "正常") {
                 $(row).addClass('positive ');
             } else {
                 $(row).addClass('negative');
             }
+            if (strlen(data.name) > 70) {
+                $('td:eq(0)', row).attr("title",data.name);
+            }
+            $('td:eq(0)', row).addClass('left aligned');
         },
         ajax: {
             url: '/point/list',
             dataSrc: 'data'
         },
         columns: [
-            {
+            /*{
                 "data": "name",
-                "width": "30%",
+                "width": "70%",
                 "title": "名称"
+            },*/
+            {
+                "data": null,
+                "width": "30%",
+                "title": "名称",
+                render: function (data, type, row) {
+                    if(strlen(row.name) > 70)
+                    {
+                        return row.name.substr(0, 70)+"…";
+                    }else {
+                        return row.name ;
+
+					}
+                }
             },
             {
                 "data": "hostName",
-                "width": "40%",
+                "width": "20%",
                 "title": "所属设备",
                 "orderable":false,
             },
             {
                 "data": "state",
-                "width": "30%",
+                "width": "10%",
                 "title": "状态",
                 "orderable":false,
             },
