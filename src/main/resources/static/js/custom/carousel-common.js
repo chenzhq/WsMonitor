@@ -626,7 +626,7 @@ function getGraphOption(graph_type,graph_vo) {
                         splitNumber: 5,
                         axisLine: {            // 坐标轴线
                             lineStyle: {       // 属性lineStyle控制线条样式
-                                color: [colorGreen,colorYellow,colorRed],
+                                color: [[0.6, '#5FB878'],[0.8, '#F7B824'],[1, '#FF5722']],
                                 width: 13
                             }
                         },
@@ -651,7 +651,7 @@ function getGraphOption(graph_type,graph_vo) {
                             textStyle: {
                                 fontWeight: 'bolder', fontSize: 16,color: '#333',
                             }},
-                        data: [{value: graph_vo.data[graph_vo.data.length-1], name: ''}]
+                        data: [{value: graph_vo.data[graph_vo.data.length-1].toFixed(2), name: ''}]
                     }
                 ]
             };
