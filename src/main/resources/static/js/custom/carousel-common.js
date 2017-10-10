@@ -227,6 +227,9 @@ function drawPage($_gridster,page_vo) {
                     //console.log('graph 图形');
                     $(window).trigger("resize");
 
+                }else if('problems' === chart_id.split('_')[0]) {
+
+
                 }
 
             }
@@ -336,7 +339,7 @@ function drawBlock($_block,config_info,block_info,index,i) {
             //问题视图
 
             // block 内容
-            $_block.find('.block_content').append('<table id="problems_' + index + '_' + i +'"></table>');
+            $_block.find('.block_content').append('<table width="100%" id="problems_' + index + '_' + i +'"></table>');
 
             var problemTable = $('#problems_' + index + '_' + i).carProTable();
 
@@ -352,7 +355,7 @@ function drawBlock($_block,config_info,block_info,index,i) {
         var graph_vo = block_info;
         //渲染图形
         $_block.find('.block_content').append(
-            '<div style="height: 100%;width: 100%" id="graph_' + index + '_'+ i +'">图表数据</div>');
+            '<div style="height: 100%;width: 100%;margin-top: 20px" id="graph_' + index + '_'+ i +'">图表数据</div>');
 
         var graph_chart = echarts.init(document.getElementById('graph_' + index + '_' + i));//待补充
 
@@ -439,7 +442,436 @@ function addBlockiCon($_block,i) {
     //编辑
     $_block.find('.block_edit i.edit.icon').on('click',function(){
 
-        alert('我是block' + i +'的编辑 按钮');
+        //alert('我是block' + i +'的编辑 按钮');
+        var type = $_block.find('.block_content').children().eq(0).attr('id').split('_')[0];
+        console.log('type',type);
+        console.log('i and state page_vo',i + ' ' + page_vo.config_data[i]);
+        var old_config_info = page_vo.config_data[i];
+        console.log('old_config_info',old_config_info);
+        if('host' === type || 'problems' === type || 'appletree' === type) {
+            //视图类型
+
+            $('#point_view_modal').modal({
+                onShow:function(){
+                    $.ajax({
+                        type: "get",
+                        async:false,
+                        url: "/viewtype/get_list",
+                        dataType: "json",
+                        success: function (result) {
+                            if(result.success) {
+                                var data=result.data;
+                                getSelectByObject($('#viewtype_menu'),$('#viewtype_select'),data);
+                            }
+                            else {
+                                errorMsg_no_data(result.message);
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("视图类型下拉框 Dropdown");
+                        }
+                    })
+                },
+                onApprove : function() {
+                    var block_name  = $('#view_name').val();
+                    if('' === block_name) {
+                        alert('展示项名称不能为空');
+                        return false;
+                    }
+                    var config_info = {
+                        block_name: block_name,
+                        block_type: 'view',
+                        graph_type: $('#viewtype_select').dropdown('get value'),
+                        contents: $('#viewname_select').dropdown('get text')
+                    }
+                    $.ajax({
+                        type: "get",
+                        url: "/carousel/get_block",
+                        data:config_info,
+                        dataType: "json",
+                        contentType:'application/json;charset=UTF-8',
+                        success: function (result) {
+                            if (result.success) {
+                                //清空表单
+                                $('#view_name').val('');
+                                $('#viewtype_select').dropdown('clear');
+                                $('#viewname_select').dropdown('clear');
+                                var block_info = result.data;
+                                //更新 config_info 到page_vo 对象中
+                                page_vo.config_data[i] = config_info;
+
+                                $_block.children().first().nextAll().remove();
+
+                                $_block.append($('#block_temp').html());
+
+                                // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
+                                drawBlock($_block,config_info,block_info,0,i);
+
+                                //添加编辑按钮
+                                addBlockiCon($_block,i);
+
+                            } else {
+                                errorMsg_no_connect("获取展示项数据失败");
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("获取展示项数据失败");
+                        }
+                    });
+                }
+            }).modal('show')
+
+            //赋值
+            $('#view_name').val(old_config_info.block_name);
+            if('statepie' === old_config_info.graph_type ) {
+
+                $('#viewtype_select').dropdown('set text','状态统计');
+                $('#viewtype_select').dropdown('set value','statepie');
+
+            }else if('problems' === old_config_info.graph_type) {
+
+                $('#viewtype_select').dropdown('set text','问题视图');
+                $('#viewtype_select').dropdown('set value','problems');
+
+            }else if('appletree' === old_config_info.graph_type) {
+
+                $('#viewtype_select').dropdown('set text','苹果树');
+                $('#viewtype_select').dropdown('set value','appletree');
+
+            }else {
+
+            }
+
+            $('#viewname_select').dropdown('set text',old_config_info.contents);
+
+        }else if('graph' === type) {
+
+            $('#point_graph_modal').modal({
+                onShow:function(){
+                    //获取设备选择树
+                    var host_id ;
+                    var $host_tree = $('#host_tree');
+                    //console.log('$host_tree',$host_tree);
+                    $host_tree.genHostTree({
+                        multi: false,
+                        onChange:function(e,data){
+                            //console.log('data',data.selected[0]);
+                            host_id = data.selected[0];
+                            pointsMenu(host_id);
+                        }
+                    })
+                },
+                onApprove : function() {
+                    var block_name  = $('#graph_name').val();
+                    if('' === block_name) {
+                        alert('展示项名称不能为空');
+                        return false;
+                    }
+                    var config_info = {
+                        block_name: block_name,
+                        block_type: 'graph',
+                        graph_type: $('#typeMenu .active').attr('data-type'),
+                        contents: $('#itemsMenu .active').attr('id')
+                    }
+                    $.ajax({
+                        type: "get",
+                        url: "/carousel/get_block",
+                        data:config_info,
+                        dataType: "json",
+                        contentType:'application/json;charset=UTF-8',
+                        success: function (result) {
+                            if (result.success) {
+                                //清空表单
+                                $('#graph_name').val('');
+                                //清空选择树 待完成
+                                $('#pointsMenu').html('');
+                                $('#itemsMenu').html('');
+                                $('#typeMenu').html('');
+
+                                var block_info = result.data;
+                                //更新 config_info 到page_vo 对象中
+                                page_vo.config_data[i] = config_info;
+
+                                $_block.children().first().nextAll().remove();
+
+                                $_block.append($('#block_temp').html());
+
+                                // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
+                                drawBlock($_block,config_info,block_info,0,i);
+
+                                //添加编辑按钮
+                                addBlockiCon($_block,i);
+
+                            } else {
+                                errorMsg_no_connect("获取展示项数据失败");
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("获取展示项数据失败");
+                        }
+                    });
+                }
+            }).modal('show')
+            //赋值
+            $('#graph_name').val(old_config_info.block_name);
+            //设备选择树赋值 待完成
+
+        }else if('clock' === type || 'table' === type ) {
+
+            $('#point_chart_modal').modal({
+                onShow:function(){
+                    $.ajax({
+                        type: "get",
+                        async:false,
+                        url: "/charttype/get_list",
+                        dataType: "json",
+                        success: function (result) {
+                            if(result.success) {
+                                var data=result.data;
+                                getSelectByObject($('#charttype_menu'),$('#charttype_select'),data);
+                            }
+                            else {
+                                errorMsg_no_data(result.message);
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("chart类型下拉框 Dropdown");
+                        }
+                    })
+                },
+                onApprove : function() {
+                    console.log('type',$('#charttype_select').dropdown('get value'));
+                    var block_name  = $('#chart_name').val();
+                    if('' === block_name) {
+                        alert('展示项名称不能为空');
+                        return false;
+                    }
+                    if($('#charttype_select').dropdown('get value')=='table')
+                    {
+
+                        $('#table_thead_modal').modal({
+                            onShow: function () {
+                                var reg = /^[1-9]\d*$/;
+                                if(!(reg.test($('#row_table').val()) && reg.test($('#column_table').val())) ) {
+                                    alert('行列数必须为正整数！');
+                                }
+                                var row = $('#row_table').val();
+                                var columnd = $('#column_table').val();
+                                var str = '';
+                                for(var i=0;i<columnd;i++) {
+                                    var j=i+1;
+                                    str += "<div class='ui label no-padding'> " +
+                                        "<div class='detail'>第"+j+"列</div> " +
+                                        "<input type='text' class='th_name' style='width: 180px'></div> " +
+                                        "<div class='ui label no-padding'> " +
+                                        "<input type='text' value ='180' class='th_width' style='width: 80px;'>"+
+                                        "<div class='detail'>PX</div></div>";
+                                }
+                                $('#table_thead_content').html(str);
+                            }
+                        }).modal('show');
+
+                        $('#table_thead_modal .button').on('click',function(){
+                            $('#table_tbody_modal').modal({
+                                onShow: function () {
+                                    var str = 0;
+                                    var name = [];
+                                    var width = [];
+                                    var fields = [];//thead详情
+                                    var clientsdata=[];//tbody详情
+                                    var row = $('#row_table').val();
+                                    var columnd = $('#column_table').val();
+                                    $("#table_thead_content input.th_name").each(function () {
+                                        name.push($(this).val());
+                                    })
+                                    $("#table_thead_content input.th_width").each(function () {
+                                        var reg = /^[1-9]\d*$/;
+                                        var v=$(this).val();
+                                        if(!reg.test(v)){
+                                            str += 180;
+                                            width.push(180);
+                                        }
+                                        else {
+                                            str += parseInt(v);
+                                            width.push(parseInt(v));
+                                        }
+                                    })
+                                    for(var i=0;i<columnd;i++)
+                                    {
+                                        fields.push({
+                                            name: name[i],
+                                            type: 'text',
+                                            width: width[i],
+                                        });
+                                    }
+                                    fields.push({
+                                        type: 'control'
+                                    });
+                                    custom_edittable(fields,str);
+                                    for(var j=0;j<row;j++)
+                                    {
+                                        var jsonStr='{';
+                                        for(var i=0;i<columnd;i++) {
+                                            jsonStr+='"'+name[i]+'":"'+""+'",';
+                                        }
+                                        jsonStr+='},'
+                                        clientsdata.push(jsonStr);
+                                    }
+                                    //定义edittable功能和数据
+                                    var db = {
+
+                                        loadData: function(filter) {
+                                        },
+
+                                        insertItem: function(insertingClient) {
+                                            this.clients.push(insertingClient);
+                                        },
+
+                                        updateItem: function(updatingClient) { },
+
+                                        deleteItem: function(deletingClient) {
+                                            var clientIndex = $.inArray(deletingClient, this.clients);
+                                            this.clients.splice(clientIndex, 1);
+                                        }
+
+                                    };
+                                    window.db = db;
+                                    db.clients =clientsdata;
+                                },
+                                onApprove : function() {
+                                    //ajax，存储表格数据，并在页面展示只读表格
+                                    var config_info = {
+                                        block_name: $('#chart_name').val(),
+                                        block_type: 'chart',
+                                        graph_type: $('#charttype_select').dropdown('get value'),
+                                        contents: $('#jsGrid').prop("outerHTML")
+                                    }
+                                    $.ajax({
+                                        type: "get",
+                                        url: "/carousel/get_block",
+                                        data: config_info,
+                                        dataType: "json",
+                                        contentType: 'application/json;charset=UTF-8',
+                                        success: function (result) {
+                                            if (result.success) {
+
+                                                //清空表单
+                                                $('#chart_name').val('');
+                                                $('#charttype_select').dropdown('clear');
+                                                $('#chartname_select').dropdown('clear');
+
+                                                //$('#table_thead_content').html('');
+                                                //$('#jsGrid').html('');
+
+                                                var block_info = result.data;
+                                                //更新 config_info 到page_vo 对象中
+                                                page_vo.config_data[i] = config_info;
+
+                                                $_block.children().first().nextAll().remove();
+
+                                                $_block.append($('#block_temp').html());
+
+                                                // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
+                                                drawBlock($_block,config_info,block_info,0,i);
+
+                                                //添加编辑按钮
+                                                addBlockiCon($_block,i);
+                                                return true;
+                                            } else {
+                                                errorMsg_no_connect("获取展示项数据失败");
+                                            }
+                                        },
+                                        error: function () {
+                                            errorMsg_no_connect("获取展示项数据失败");
+                                        }
+                                    });
+                                }
+                            }).modal('show')
+                        })
+                        return false;
+
+                    }else if($('#charttype_select').dropdown('get value')=='clock') {
+                        var config_info = {
+                            block_name: block_name,
+                            block_type: 'chart',
+                            graph_type: $('#charttype_select').dropdown('get value'),
+                            contents: $('#chartname_select').dropdown('get value')
+                        }
+                        $.ajax({
+                            type: "get",
+                            url: "/carousel/get_block",
+                            data: config_info,
+                            dataType: "json",
+                            contentType: 'application/json;charset=UTF-8',
+                            success: function (result) {
+                                if (result.success) {
+
+                                    //清空表单
+                                    $('#chart_name').val('');
+                                    $('#charttype_select').dropdown('clear');
+                                    $('#chartname_select').dropdown('clear');
+
+                                    var block_info = result.data;
+                                    //更新 config_info 到page_vo 对象中
+                                    page_vo.config_data[i] = config_info;
+
+                                    $_block.children().first().nextAll().remove();
+
+                                    $_block.append($('#block_temp').html());
+
+                                    // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
+                                    drawBlock($_block,config_info,block_info,0,i);
+                                    //添加编辑按钮
+                                    addBlockiCon($_block,i);
+                                    return true;
+                                } else {
+                                    errorMsg_no_connect("获取展示项数据失败");
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("获取展示项数据失败");
+                            }
+                        });
+                    }
+                }
+            }).modal('show')
+            //赋值
+            $('#chart_name').val(old_config_info.block_name);
+
+            if('clock' === old_config_info.graph_type) {
+
+                $('#charttype_select').dropdown('set text','钟表');
+                $('#charttype_select').dropdown('set value','clock');
+
+                if('clock-clock' === old_config_info.contents) {
+
+                    $('#chartname_select').dropdown('set text','时钟样式');
+                    $('#chartname_select').dropdown('set value','clock-clock');
+
+                }else if('number-clock' === old_config_info.contents) {
+
+                    $('#chartname_select').dropdown('set text','数字样式');
+                    $('#chartname_select').dropdown('set value','number-clock');
+
+                }else {
+
+                }
+
+
+            }else if('table' === old_config_info.graph_type) {
+
+                $('#charttype_select').dropdown('set text','表格');
+                $('#charttype_select').dropdown('set value','table');
+
+            }else {
+
+            }
+
+        }else if('table' === type) {
+
+
+
+        }
 
     });
 
@@ -613,7 +1045,7 @@ function getGraphOption(graph_type,graph_vo) {
                 grid: {
                     left: '5%',
                     right: '5%',
-                    bottom: '3%',
+                    bottom: '1%',
                     height: '90%',
                     width: '90%',
                     containLabel: true
@@ -673,7 +1105,7 @@ function getGraphOption(graph_type,graph_vo) {
                 grid: {
                     left: '5%',
                     right: '5%',
-                    bottom: '3%',
+                    bottom: '1%',
                     height: '90%',
                     width: '90%',
                     containLabel: true
@@ -710,7 +1142,7 @@ function getGraphOption(graph_type,graph_vo) {
                 grid: {
                     left: '5%',
                     right: '5%',
-                    bottom: '3%',
+                    bottom: '1%',
                     height: '90%',
                     width: '90%',
                     containLabel: true
