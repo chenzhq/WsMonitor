@@ -15,6 +15,12 @@
 	<th:block th:fragment="supplement">
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
         <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+		<style type="text/css">
+			.ui.grid.block_row1{
+				min-height: 487px;
+				margin-top: 0px;
+			}
+		</style>
 	</th:block>
 </head>
 <body>
@@ -204,36 +210,32 @@
 					<div class="header item">
 						<h2><i class="bar large chart icon"></i>业务列表</h2>
 					</div>
-					<div class="ui segment" style=" min-height : 487px;">
-						<div class="row">
-							<div class="ui three column grid">
-								<div class="column">
-									<div class="ui segment">
-										<div class="ui green borderless fluid inverted two item menu">
-											<a class="fitted item">
-												名称
-											</a>
-											<div class="red fitted item">
-												<div class="ui active fluid indicating progress" data-percent="94" data-total="74" id="example1" style="width:160px;margin-bottom: 0px;padding-bottom: 0px">
-													<div class="bar">
-														<div class="progress"></div>
-													</div>
-												</div>
+					<div class="ui three column grid block_row1" >
+						<div class="column">
+							<div class="ui segment">
+								<div class="ui green borderless fluid inverted two item menu">
+									<a class="fitted item">
+										名称
+									</a>
+									<div class="red fitted item">
+										<div class="ui active fluid indicating progress" data-percent="94" data-total="74" id="example1" style="width:160px;margin-bottom: 0px;padding-bottom: 0px">
+											<div class="bar">
+												<div class="progress"></div>
 											</div>
 										</div>
-										<div id="platformBar" style="height:150px;"></div>
 									</div>
 								</div>
-								<div class="column">
-									<div class="ui segment" style="height:222px;">
-										图二
-									</div>
-								</div>
-								<div class="column">
-									<div class="ui segment" style="height:222px;">
-										图三
-									</div>
-								</div>
+								<div id="platformBar" style="height:150px;"></div>
+							</div>
+						</div>
+						<div class="column">
+							<div class="ui segment" style="height:222px;">
+								图二
+							</div>
+						</div>
+						<div class="column">
+							<div class="ui segment" style="height:222px;">
+								图三
 							</div>
 						</div>
 					</div>

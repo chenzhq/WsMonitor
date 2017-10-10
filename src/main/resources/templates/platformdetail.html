@@ -1013,16 +1013,13 @@
                 for(var i=0;i<data.length;i++)
                 {
                     str += "<div class='active title'>" +
-                        "<a class='header item editItems' id='i" +  data[i].host_id + "'style='float:right' onclick='edit_graphs(this.id)'" +
+                        /*"<a class='header item editItems' id='i" +  data[i].host_id + "'style='float:right' onclick='edit_graphs(this.id)'" +
 								"<i class='write icon'></i>" +
 								"<i class='write icon' data-tooltip='编辑图形报告' data-inverted=''></i>编辑" +
 								"<i class='trash icon' data-tooltip='删除图形报告' data-inverted=''></i>删除" +
-                        "</a>" +
-						     "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right' onclick='add_graphs(this.id)'>" +
-								"<i class='large icons' data-tooltip='添加图形报告' data-inverted=''> " +
-						    		"<i class='area chart icon'></i> " +
-									"<i class='inverted corner add icon'></i> " +
-                  				"</i>添加" +
+                        "</a>" +*/
+						     "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right;' onclick='add_graphs(this.id)'>" +
+								"<i class='add icon'> </i>添加" +
 						     "</a>" +
 						     "<i class='dropdown icon'></i>"
                               +data[i].host_name+"" +
@@ -1058,11 +1055,19 @@
                                     title =graph_datas[i].graph_name + "(" + graph_datas[i].units +")";
                                 }
                                 //append 图形定位
-                                var dimmer_str = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='i"
+                                var id = "g" + graph_datas[i].item_id;
+                                /*var dimmer_str = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='i"
 									+ graph_datas[i].item_id + "' onclick='edit_graph(this.id)'>编辑</div><div class='ui button' id='i"
 									+ graph_datas[i].item_id + "' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
-                                var id = "g" + graph_datas[i].item_id;
-                                var str_graph ="<div class='column'><div class='dimmerStr'>" + dimmer_str + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
+                                var str_graph ="<div class='column'><div class='dimmerStr'>" + dimmer_str + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";*/
+                                var str_graph ="<div class='column'><div class='ui grid'>"+
+										"<div class='eight wide column no-padding'>"+
+										"<h3>"+title+"</h3></div>"+
+										"<div class='eight wide column right aligned no-padding'>"+
+										"<i class='edit icon' id='i" + graph_datas[i].item_id + "' onclick='edit_graph(this.id)'></i>"+
+										"<i class='delete icon' id='i" + graph_datas[i].item_id + "' onclick='delete_graph(this.id)'></i></div>"+
+										"<div class='sixteen wide column no-padding'>"+
+										"<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
                                 $("#g"+graph_datas[i].host_id).append(str_graph);
                                 //console.log($("#g"+graph_datas[i].item_id).attr("id"));
                                 var myChart = echarts.init(document.getElementById(id));
@@ -1310,9 +1315,9 @@
                     }
                 }).modal('show')
 			}
-            function edit_graphs(id) {//id='g"+data[i].host_id+"'
+            /*function edit_graphs(id) {//id='g"+data[i].host_id+"'
                 $('.dimmerStr').dimmer('show');
-            }
+            }*/
             //点击修改图形 function
             function edit_graph(id) {
                 //console.log("ITEMID:" + id);
