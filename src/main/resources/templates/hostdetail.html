@@ -5,8 +5,8 @@
 	<title >设备详情</title>
 	<script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
 	<script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
-	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
-	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{css/semantic.css}"/>
+	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{/css/icon.css}"/>
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
@@ -453,7 +453,7 @@
                                 <div id="flag_true" >
 									<h4 class="ui horizontal divider header">
 										<div class="ui secondary menu">
-											<a class="header item editItems">
+											<!--<a class="header item editItems">
 												<i class="large icons" data-tooltip="编辑监控项" data-inverted="">
 													<i class="area chart icon"></i>
 													<i class="inverted corner write icon"></i>
@@ -465,8 +465,11 @@
                                                     <i class="area chart icon"></i>
                                                     <i class="inverted corner add icon"></i>
                                                 </i>
-												自定义监控视图
-                                            </a>
+												<i class="add icon" data-tooltip="添加监控项"> </i>添加
+                                            </a>-->
+											<a class="header item addItems">
+												<i class="add icon" data-tooltip="添加监控项"> </i>添加
+											</a>
 										</div>
 										</h4>
 									<div class="gridly" id="flag_true_content">
@@ -645,15 +648,15 @@
 <script type="text/javascript">
 
 	//页面加载完之后加载js
-	$(function(){
-		//加载监控项的图形
+	$(function() {
+        //加载监控项的图形
         loadHostGraph();
-		//点击编辑监控项
-        $('a.editItems').on('click', function(e) {
+        /*//点击编辑监控项
+        $('a.editItems').on('click', function (e) {
             $('.dimmerStr').dimmer('show');
-		})
+        })*/
         //点击添加监控项
-        $('a.addItems').on('click', function(e) {
+        $('a.addItems').on('click', function (e) {
             e.preventDefault();
             var graph_type = '';
             var item_id = '';
@@ -669,14 +672,14 @@
             dropdownPoints(host_id);
             $('.dropdown.points')
                 .dropdown({
-                    onChange: function(value, text, $selectedItem) {
+                    onChange: function (value, text, $selectedItem) {
                         $(".dropdown.items select").dropdown('clear');
                         dropdownItems(value);
                     }
                 });
             $('.dropdown.items')
                 .dropdown({
-                    onChange: function(value, text, $selectedItem) {
+                    onChange: function (value, text, $selectedItem) {
                         item_id = value.split("_")[1];
                         $(".dropdown.type select").dropdown('clear');
                         dropdownType(value.split("_")[0]);
@@ -684,30 +687,30 @@
                 });
             $('.dropdown.type')
                 .dropdown({
-                    onChange: function(value, text, $selectedItem) {
+                    onChange: function (value, text, $selectedItem) {
                         graph_type = value;
-                        $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                        $("#chart_icon").html("<i class='massive " + value + " chart icon'></i>");
                     }
                 });
             $('.small.modal').modal({
-                closable  : false,
+                closable: false,
                 onApprove: function () {
                     //alert("提交后校验item:" + $("#i"+ item_id).length);
 
-                    if(item_id == "") {
+                    if (item_id == "") {
                         alert("必填项--监控项");
                         return false;
-                    }else if($('.input.graph_name input').val() == "") {
+                    } else if ($('.input.graph_name input').val() == "") {
                         alert("必填项--名称");
                         return false;
-                    }else if(graph_type == "") {
+                    } else if (graph_type == "") {
                         alert("必填项--图形类型");
                         return false;
-                    }else if($("#i"+ item_id).length > 0) {
+                    } else if ($("#i" + item_id).length > 0) {
                         //校验判断 页面上是否已经存在相同监控项的图形了
                         alert("已存在图形监控项。。。");
                         return false;
-                    }else {
+                    } else {
                         $('.button.approve').addClass('loading');
                         var dataInfo = {
                             graphName: $('.input.graph_name input').val(),
@@ -721,9 +724,9 @@
                             url: "/hostgraphs/save_graph",
                             data: JSON.stringify(dataInfo),
                             dataType: "json",
-                            contentType : 'application/json',
+                            contentType: 'application/json',
                             success: function (result) {
-                                if(result.success) {
+                                if (result.success) {
                                     $('.button.approve').removeClass('loading')
                                     hostgraphs(result);
                                     $('.small.modal').modal('hide');
@@ -744,75 +747,76 @@
         });
 
         //加载监控点悬浮框
-        $('#pointButton .button').hover(
-            function() {
-                var point_id=this.id.substring(1);
-                $.ajax({
-                    type: "get",
-                    url: "/brief/point?point_id="+point_id,
-                    dataType: "json",
-                    success: function (result) {
-                        if(result.success) {
-                            var Color = ['red', 'yellow', 'green'];
-                            var data = result.data;
-                            var item_datas=data.item_datas;
-                            var str_item_datas = '';
-                            var myColor = '';
-                            for(var i=0; i<item_datas.length; i++){
-                                if (item_datas[i].with_triggers == true) {
-                                    if (item_datas[i].state == "严重") {
-                                        myColor = Color[0]
-                                    }
-                                    if (item_datas[i].state == "警告") {
-                                        myColor = Color[1]
-                                    }
-                                    if (item_datas[i].state == "正常") {
-                                        myColor = Color[2]
-                                    }
-                                }else {
-                                    myColor = ''
-                                }
-                                if(strlen(item_datas[i].item_name) > 16)
-                                {
-                                    var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
-                                }else {
-                                    var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
-                                }
-                                if(strlen(item_datas[i].value) > 16)
-                                {
-                                    var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
-                                }else {
-                                    var item_value= "<td><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
-                                }
-                                str_item_datas +="<tr>"+item_name+item_value+"</tr>";
-                            }
+		/*    $('#pointButton .button').hover(
+				function() {
+					var point_id=this.id.substring(1);
+					$.ajax({
+						type: "get",
+						url: "/brief/point?point_id="+point_id,
+						dataType: "json",
+						success: function (result) {
+							if(result.success) {
+								var Color = ['red', 'yellow', 'green'];
+								var data = result.data;
+								var item_datas=data.item_datas;
+								var str_item_datas = '';
+								var myColor = '';
+								for(var i=0; i<item_datas.length; i++){
+									if (item_datas[i].with_triggers == true) {
+										if (item_datas[i].state == "严重") {
+											myColor = Color[0]
+										}
+										if (item_datas[i].state == "警告") {
+											myColor = Color[1]
+										}
+										if (item_datas[i].state == "正常") {
+											myColor = Color[2]
+										}
+									}else {
+										myColor = ''
+									}
+									if(strlen(item_datas[i].item_name) > 16)
+									{
+										var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
+									}else {
+										var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
+									}
+									if(strlen(item_datas[i].value) > 16)
+									{
+										var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+									}else {
+										var item_value= "<td><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+									}
+									str_item_datas +="<tr>"+item_name+item_value+"</tr>";
+								}
 
-                            if (data.state == "正常"){ myColor = Color[2] }
-                            if (data.state == "严重"){ myColor = Color[0] }
-                            if (data.state == "警告"){ myColor = Color[1] }
-                            $("#point_name").html("名称："+data.point_name);
-                            $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
-                            $("#item_datas").html(str_item_datas);
-                        } else {
-                            errorMsg_no_data("监控项 Button");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("监控点 Button");
-                    }
-                })
-            }).popup({
-            popup: '.special.popup',
-            inline: true,
-            hoverable  : true,
-            delay: {
-                show: 800,
-                hide: 300
-            }
-        });
+								if (data.state == "正常"){ myColor = Color[2] }
+								if (data.state == "严重"){ myColor = Color[0] }
+								if (data.state == "警告"){ myColor = Color[1] }
+								$("#point_name").html("名称："+data.point_name);
+								$("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+								$("#item_datas").html(str_item_datas);
+							} else {
+								errorMsg_no_data("监控项 Button");
+							}
+						},
+						error: function () {
+							errorMsg_no_connect("监控点 Button");
+						}
+					})
+				}).popup({
+				popup: '.special.popup',
+				inline: true,
+				hoverable  : true,
+				delay: {
+					show: 800,
+					hide: 300
+				}
+			});
 
-	})
-
+		})
+	*/
+		})
     //修改图形 function
     function editGraph(id) {
         //console.log("ITEMID:" + id);
@@ -994,10 +998,18 @@
             var id = "i" + data[i].item_id;
             if (data[i].flag==true)
             {
-                var strAction = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='g"
+                /*var strAction = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='g"
 					+ data[i].item_id + "' onclick='editGraph(this.id)'>编辑</div><div class='ui button' id='g"
 					+ data[i].item_id + "' onclick='deleteGraph(this.id)' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
-                str_true = "<div class=' brick small'><div class='dimmerStr'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
+                str_true = "<div class=' brick small'><div class='dimmerStr'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";*/
+                str_true ="<div class=' brick small'><div class='ui grid'>"+
+                    "<div class='eight wide column no-padding'>"+
+                    "<h3>"+title+"</h3></div>"+
+                    "<div class='eight wide column right aligned no-padding'>"+
+                    "<i class='edit icon' id='g" + data[i].item_id + "' onclick='editGraph(this.id)'></i>"+
+                    "<i class='delete icon' id='g" + data[i].item_id + "' onclick='deleteGraph(this.id)'></i></div>"+
+                    "<div class='sixteen wide column no-padding'>"+
+                    "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
                 $("#flag_true_content").append(str_true);
             }
             if(data[i].flag==false){
@@ -1005,7 +1017,12 @@
                 {
                     $("#flag_false").html("<h4 class='ui horizontal divider header'><i class='tag icon'></i>问题图形视图</h4> <div class='gridly' id='flag_false_content'>");
                 }
-                str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";
+                /*str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";*/
+                str_false ="<div class=' brick small'><div class='ui grid'>"+
+                    "<div class='sixteen wide column no-padding'>"+
+                    "<h3>"+title+"</h3></div>"+
+                    "<div class='sixteen wide column no-padding'>"+
+                    "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
                 $("#flag_false_content").append(str_false);
             }
             var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
@@ -1076,7 +1093,7 @@
                     /*console.log("进入到了area域：");*/
                     option = {
                         title: {
-                            text: title
+                            text: ''
                         },
                         tooltip: {
                             trigger: 'axis',
@@ -1091,7 +1108,7 @@
                             left: '2%',
                             right: '10%',
                             bottom: '0%',
-                            top:'20%',
+                            top:'5%',
                             containLabel: true
                         },
                         xAxis: {
@@ -1114,7 +1131,7 @@
                 default:
                     option = {
                         title: {
-                            text: title
+                            text: ''
                         },
                         tooltip: {
                             trigger: 'axis',
@@ -1129,7 +1146,7 @@
                             left: '2%',
                             right: '10%',
                             bottom: '0%',
-                            top:'20%',
+                            top:'5%',
                             containLabel: true
                         },
                         xAxis: {

@@ -212,20 +212,11 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui secondary menu" style="margin-top:-10px;margin-bottom: -10px">
-						<a class="header item">
-							<h3><i class="bar large chart icon"></i>检测总数：</h3>
-						</a>
-						<a class="item">
-							<p>36个设备的222个监测点。
-								<i class="red circle icon"></i>  30
-								<i class="yellow circle icon"></i>  50
-								<i class="green circle icon"></i>  122
-								<i class="grey circle icon"></i>  20
-							</p>
-						</a>
-						<a class="right item">
-							类型：
+					<div class="header item">
+						<h2><i class="bar large chart icon"></i>问题列表</h2>
+					</div>
+					<div class="ui grid">
+						<div class="sixteen wide column right aligned">
 							<select id="ui_dropdown" class="ui dropdown">
 								<option value="">选择类型</option>
 								<option>组</option>
@@ -234,7 +225,7 @@
 								<option>网络设备</option>
 								<option>监控点</option>
 							</select>
-						</a>
+						</div>
 					</div>
 					<div class="ui segment"  style=" min-height : 487px;">
 						<div id="host_table_dimmer" class="ui inverted dimmer">
@@ -243,6 +234,7 @@
 						<table  id="host_table" class="tree ui compact very basic table center aligned " width="100%">
 						</table>
 					</div>
+					<!--</div>-->
 				</div>
 			</div>
 		</div>
