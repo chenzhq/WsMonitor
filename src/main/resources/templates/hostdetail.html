@@ -455,7 +455,7 @@
                                 <div id="flag_true" >
 									<h4 class="ui horizontal divider header">
 										<div class="ui secondary menu">
-											<a class="header item editItems">
+											<!--<a class="header item editItems">
 												<i class="large icons" data-tooltip="编辑监控项" data-inverted="">
 													<i class="area chart icon"></i>
 													<i class="inverted corner write icon"></i>
@@ -467,8 +467,11 @@
                                                     <i class="area chart icon"></i>
                                                     <i class="inverted corner add icon"></i>
                                                 </i>
-												自定义监控视图
-                                            </a>
+												<i class="add icon" data-tooltip="添加监控项"> </i>添加
+                                            </a>-->
+											<a class="header item addItems">
+												<i class="add icon" data-tooltip="添加监控项"> </i>添加
+											</a>
 										</div>
 										</h4>
 									<div class="gridly" id="flag_true_content">
@@ -653,15 +656,15 @@
 <script type="text/javascript">
 
 	//页面加载完之后加载js
-	$(function(){
-		//加载监控项的图形
+	$(function() {
+        //加载监控项的图形
         loadHostGraph();
-		//点击编辑监控项
-        $('a.editItems').on('click', function(e) {
+        /*//点击编辑监控项
+        $('a.editItems').on('click', function (e) {
             $('.dimmerStr').dimmer('show');
-		})
+        })*/
         //点击添加监控项
-        $('a.addItems').on('click', function(e) {
+        $('a.addItems').on('click', function (e) {
             e.preventDefault();
             var graph_type = '';
             var item_id = '';
@@ -676,14 +679,14 @@
             dropdownPoints(host_id);
             $('.dropdown.points')
                 .dropdown({
-                    onChange: function(value, text, $selectedItem) {
+                    onChange: function (value, text, $selectedItem) {
                         $(".dropdown.items select").dropdown('clear');
                         dropdownItems(value);
                     }
                 });
             $('.dropdown.items')
                 .dropdown({
-                    onChange: function(value, text, $selectedItem) {
+                    onChange: function (value, text, $selectedItem) {
                         item_id = value.split("_")[1];
                         $(".dropdown.type select").dropdown('clear');
                         dropdownType(value.split("_")[0]);
@@ -691,30 +694,30 @@
                 });
             $('.dropdown.type')
                 .dropdown({
-                    onChange: function(value, text, $selectedItem) {
+                    onChange: function (value, text, $selectedItem) {
                         graph_type = value;
-                        $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                        $("#chart_icon").html("<i class='massive " + value + " chart icon'></i>");
                     }
                 });
             $('.small.modal').modal({
-                closable  : false,
+                closable: false,
                 onApprove: function () {
                     //alert("提交后校验item:" + $("#i"+ item_id).length);
 
-                    if(item_id == "") {
+                    if (item_id == "") {
                         alert("必填项--监控项");
                         return false;
-                    }else if($('.input.graph_name input').val() == "") {
+                    } else if ($('.input.graph_name input').val() == "") {
                         alert("必填项--名称");
                         return false;
-                    }else if(graph_type == "") {
+                    } else if (graph_type == "") {
                         alert("必填项--图形类型");
                         return false;
-                    }else if($("#i"+ item_id).length > 0) {
+                    } else if ($("#i" + item_id).length > 0) {
                         //校验判断 页面上是否已经存在相同监控项的图形了
                         alert("已存在图形监控项。。。");
                         return false;
-                    }else {
+                    } else {
                         $('.button.approve').addClass('loading');
                         var dataInfo = {
                             graphName: $('.input.graph_name input').val(),
@@ -727,9 +730,9 @@
                             url: "/hostgraphs/save_graph",
                             data: JSON.stringify(dataInfo),
                             dataType: "json",
-                            contentType : 'application/json',
+                            contentType: 'application/json',
                             success: function (result) {
-                                if(result.success) {
+                                if (result.success) {
                                     $('.button.approve').removeClass('loading')
                                     hostgraphs(result);
                                     $('.small.modal').modal('hide');
@@ -987,10 +990,18 @@
             var id = "i" + data[i].item_id;
             if (data[i].flag==true)
             {
-                var strAction = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='g"
+                /*var strAction = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='g"
 					+ data[i].item_id + "' onclick='editGraph(this.id)'>编辑</div><div class='ui button' id='g"
 					+ data[i].item_id + "' onclick='deleteGraph(this.id)' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
-                str_true = "<div class=' brick small'><div class='dimmerStr'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
+                str_true = "<div class=' brick small'><div class='dimmerStr'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";*/
+                str_true ="<div class=' brick small'><div class='ui grid'>"+
+                    "<div class='eight wide column no-padding'>"+
+                    "<h3>"+title+"</h3></div>"+
+                    "<div class='eight wide column right aligned no-padding'>"+
+                    "<i class='edit icon' id='g" + data[i].item_id + "' onclick='editGraph(this.id)'></i>"+
+                    "<i class='delete icon' id='g" + data[i].item_id + "' onclick='deleteGraph(this.id)'></i></div>"+
+                    "<div class='sixteen wide column no-padding'>"+
+                    "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
                 $("#flag_true_content").append(str_true);
             }
             if(data[i].flag==false){
@@ -998,7 +1009,12 @@
                 {
                     $("#flag_false").html("<h4 class='ui horizontal divider header'><i class='tag icon'></i>问题图形视图</h4> <div class='gridly' id='flag_false_content'>");
                 }
-                str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";
+                /*str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";*/
+                str_false ="<div class=' brick small'><div class='ui grid'>"+
+                    "<div class='sixteen wide column no-padding'>"+
+                    "<h3>"+title+"</h3></div>"+
+                    "<div class='sixteen wide column no-padding'>"+
+                    "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
                 $("#flag_false_content").append(str_false);
             }
             var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
@@ -1067,7 +1083,7 @@
                 case "area":
                     option = {
                         title: {
-                            text: title
+                            text: ''
                         },
                         tooltip: {
                             trigger: 'axis',
@@ -1082,7 +1098,7 @@
                             left: '2%',
                             right: '10%',
                             bottom: '0%',
-                            top:'20%',
+                            top:'5%',
                             containLabel: true
                         },
                         xAxis: {
@@ -1105,7 +1121,7 @@
                 default:
                     option = {
                         title: {
-                            text: title
+                            text: ''
                         },
                         tooltip: {
                             trigger: 'axis',
@@ -1120,7 +1136,7 @@
                             left: '2%',
                             right: '10%',
                             bottom: '0%',
-                            top:'20%',
+                            top:'5%',
                             containLabel: true
                         },
                         xAxis: {
