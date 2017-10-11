@@ -241,7 +241,7 @@
                                     <ul class="ui horizontal relaxed list">
                                         <a class="manage_btn item" data-th-pfid="${platformListVO.platformId}"
                                            href="#">管理</a>
-                                        <a class="item" href="">>></a>
+                                        <a class="item" th:href="@{'/platformdetail#'+ ${platformListVO.platformId} + '_' + ${platformListVO.platformName}}"  >>></a>
                                     </ul>
 
 

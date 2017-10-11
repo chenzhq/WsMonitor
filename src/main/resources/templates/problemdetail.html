@@ -226,8 +226,12 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
+					<a href="javascript:history.go(-1)" style="float: right"><i class="share icon" ></i>返回上一页</a>
 					<div class="header item">
-						<h2><i class="bar large chart icon"></i>问题详情</h2>
+						<h2>
+							<i class="bar large chart icon"></i>问题详情
+						</h2>
+						<!--<i class="share icon" style="float: right"></i>-->
 					</div>
 					<div class="ui grid" style="padding-top: 10px">
 						<div class="six wide column row1Height">
@@ -322,7 +326,7 @@
                 begin_time : "",
                 end_time : ""
             }
-            console.log("send_data",send_data);
+
             //页面加载完加载基础数据
 			$(function() {
 				//初始化表格
@@ -459,18 +463,7 @@
                 };
                 //根据配置绘制图形
                 problemChart.setOption(option);
-                /*//点击每个节点，获取时间段
-                problemChart.on('click', function (params) {
-                    var calendar =params.data;
-                    console.log(calendar.value)
-					var starttime=new Date(calendar.value[0])
-					if(calendar.value[1]!=0){
-                        var endtime=new Date(calendar.value[1])
-					}else {
-                        var endtime="无";
-					}
-					alert("开始时间:"+starttime+"结束时间:"+endtime)
-                });*/
+
                 return problemChart;
             }
 
@@ -563,7 +556,7 @@
 
 			//获取带有数据的表格
 			function getTableList(problemsTable) {
-                console.log("list-send-data",send_data);
+
                 $.ajax({
                     type: "get",
                     url: '/problem/detail_list',
@@ -600,8 +593,7 @@
 
                 var begin_second = begin_time.getTime();
                 var end_second = end_time.getTime();
-				/*      console.log("begin_second",begin_second);
-				 console.log("end_second",end_second);*/
+
                 var time_arr = [];
                 var vo_arr = [];
                 var s = begin_second;
@@ -614,8 +606,7 @@
                 }
                 time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
                 vo_arr.push(now.Format("MM-dd hh:mm"));
-                console.log("time_arr",time_arr);
-                console.log("vo_arr",vo_arr);
+
                 $('#filter_content').css('display','block');
                 $('#time_filter').ionRangeSlider({
                     type: "double",
@@ -637,8 +628,7 @@
 //                        console.log(data);
                     },
                     onFinish: function (data) {
-//                console.log("begin",time_arr[data.from]);
-//                console.log("end",time_arr[data.to]);
+//
                         send_data.begin_time = time_arr[data.from];
                         send_data.end_time = time_arr[data.to];
                         //获取图形
@@ -648,10 +638,11 @@
                         getTableList(problemsTable)
                     },
                     onUpdate: function (data) {
-//                        console.log(data);
+
                     }
                 });
             }
+
 
 		</script>
 	</th:block>

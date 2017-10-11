@@ -209,22 +209,17 @@ function drawPage($_gridster,page_vo) {
             max_size: [20, 20],
             min_size: [1, 1],
             start: function(e, ui, $widget) {
-                //console.log('start resize');
+
             },
             resize: function(e, ui, $widget) {
-                //console.log('reading resize');
 
             },
             stop: function(e, ui, $widget) {
-               // console.log('end resize',$widget);
 
-                //画块方法
-                //console.log('width and height',$widget.width() + ' ' + $widget.height());
                 // 自适应
                 var chart_id = $widget.find('.block_content').children().eq(0).attr('id');
                 if('graph' === chart_id.split('_')[0]) {
 
-                    //console.log('graph 图形');
                     $(window).trigger("resize");
 
                 }else if('problems' === chart_id.split('_')[0]) {
@@ -234,24 +229,9 @@ function drawPage($_gridster,page_vo) {
 
             }
         },
-        /*//拖拽回调函数
-        draggable:{
-             handle: 'li',         //设置拖动控件
-             //拖拽之前回调
-             start: function(event, ui){
-                 console.log("start");
-             },
-             //拖拽同时回调
-             drag:function(event, ui){
-                 console.log("begin");
-             },
-             //拖拽停止回调
-             stop: function(event, ui){
-                 console.log("end");
-             }
-         }*/
+
     }).data('gridster');
-    //console.log('gridster',gridster);
+
     gridster.disable();
     var layout_arr = page_vo.layout_data;
     var config_arr = page_vo.config_data;
@@ -274,7 +254,6 @@ function drawPage($_gridster,page_vo) {
         drawBlock($_block,config_arr[i],block_arr[i],0,i);
     });
 
-    //console.log('graph_resize',graph_resize);
     window.onresize = function(){
         $.each(graph_resize,function( index,value){
             value.resize();
@@ -286,7 +265,7 @@ function drawPage($_gridster,page_vo) {
 function addBlockWidget(size_x,size_y) {
 
     //添加config_info 保存至 page_vo.config_data
-    //console.log('view page_vo',page_vo);
+
     var last_block = page_vo.config_data.length;
     var config_info = page_vo.config_data[page_vo.config_data.length-1];
     var block_info = page_vo.block_data[page_vo.block_data.length-1];
@@ -296,7 +275,6 @@ function addBlockWidget(size_x,size_y) {
 
     $_block.append($('#block_temp').html());
 
-    //console.log('new block',$_block);
 
     drawBlock($_block,config_info,block_info,0,last_block);
 
@@ -405,8 +383,6 @@ function addBlockButton(gridster) {
 
     $_add_widget.append(str);
 
-    //console.log('addblock_button',$('#addblock_button'));
-
     //添加块
     $('#addblock_button').on("dblclick",function(){
         $('#point_modal').modal('setting', 'closable', false).modal('show');
@@ -436,18 +412,15 @@ function addBlockiCon($_block,i) {
         '<i style="float:right" class="refresh icon"></i>'
     );
 
-    //console.log('$_block',$_block);
-
     //添加点击事件
     //编辑
     $_block.find('.block_edit i.edit.icon').on('click',function(){
 
         //alert('我是block' + i +'的编辑 按钮');
         var type = $_block.find('.block_content').children().eq(0).attr('id').split('_')[0];
-        console.log('type',type);
-        console.log('i and state page_vo',i + ' ' + page_vo.config_data[i]);
+
         var old_config_info = page_vo.config_data[i];
-        console.log('old_config_info',old_config_info);
+
         if('host' === type || 'problems' === type || 'appletree' === type) {
             //视图类型
 
@@ -551,11 +524,11 @@ function addBlockiCon($_block,i) {
                     //获取设备选择树
                     var host_id ;
                     var $host_tree = $('#host_tree');
-                    //console.log('$host_tree',$host_tree);
+
                     $host_tree.genHostTree({
                         multi: false,
                         onChange:function(e,data){
-                            //console.log('data',data.selected[0]);
+
                             host_id = data.selected[0];
                             pointsMenu(host_id);
                         }
@@ -640,7 +613,7 @@ function addBlockiCon($_block,i) {
                     })
                 },
                 onApprove : function() {
-                    console.log('type',$('#charttype_select').dropdown('get value'));
+
                     var block_name  = $('#chart_name').val();
                     if('' === block_name) {
                         alert('展示项名称不能为空');
@@ -878,12 +851,7 @@ function addBlockiCon($_block,i) {
     //刷新
     $_block.find('.block_edit i.refresh.icon').on('click',function(){
 
-        //alert('我是block' + i +'的刷新 按钮');
-
         var dimmer = $_block.find('.dimmer').html();
-        //console.log('dimmer',dimmer);
-        $_block.find('.dimmer').addClass('active');
-        //console.log('i and page_vo', i+ ' ' + page_vo);
 
         var config_info = page_vo.config_data[i];
         $.ajax({
@@ -896,8 +864,6 @@ function addBlockiCon($_block,i) {
                 if(result.success) {
 
                     var block_info = result.data;
-
-                    //console.log('$_block and i',$_block + '  ' + i);
 
                     // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
                     drawBlock($_block,config_info,block_info,0,i);
@@ -1033,7 +999,6 @@ function getGraphOption(graph_type,graph_vo) {
         ymax = null;
     }
     //图形值
-    /*console.log("图形类型： " + graph_type);*/
     switch (graph_type) {
         case 'gauge':
             option = {
@@ -1089,7 +1054,6 @@ function getGraphOption(graph_type,graph_vo) {
             };
             break;
         case 'area':
-            /*console.log('进入到了area域：');*/
             option = {
                 title: {
                 },
@@ -1166,7 +1130,6 @@ function getGraphOption(graph_type,graph_vo) {
 
 //绘制状态统计视图
 function getViewStatepie(host_chart,point_chart,data) {
-    //console.log("state-data",data);
     var hostStateNum = data.hostStateNum;
     if (hostStateNum.stateNum) {
         host_option.title.text = hostStateNum.totalNum;

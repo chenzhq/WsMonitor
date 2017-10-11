@@ -240,6 +240,7 @@
 						<div id="host_table_dimmer" class="ui inverted dimmer">
 							<div class="ui text loader">加载</div>
 						</div>
+						<span id="select_host" style="display: none" th:text="${hostId}"></span>
 						<table  id="host_table" class="tree ui compact very basic table center aligned " width="100%">
 						</table>
 					</div>
@@ -365,6 +366,14 @@
 
             },
             "createdRow": function (row, data, dataIndex) {
+                var hashCode = location.hash;
+                /*console.log('hashCode',hashCode);
+                console.log(dataIndex + ' row',data);*/
+                //选中
+                if(hashCode.substr(1) === data.cid) {
+					$(row).css('background-color','#CCFFFF');
+                    // TODO:选中tr设置展开显示
+				}
                 if (data.pid== null) {
                     var tmp='treegrid-'+ data.cid;
                 } else {

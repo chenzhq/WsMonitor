@@ -416,6 +416,9 @@
 	</th:block>
 </th:block>
 <script type="text/javascript">
+	//time filter
+    var slider ;
+
     var problemTable = $('#problems_table').problemTable();
     //页面加载完加载表格数据
     $(function() {
@@ -426,6 +429,7 @@
             if(this.value == "currentProblems"){
                 $('#filter_content').css('display','none');
                 $('#table-dimmer').addClass('active');
+                slider && slider.destroy();
                 //获取当前问题
                 $.ajax({
                     type: "get",
@@ -446,6 +450,7 @@
             }else if(this.value == "recentProblems"){
                 $('#filter_content').css('display','none');
                 $('#table-dimmer').addClass('active');
+                slider && slider.destroy();
                 //获取最近问题
                 $.ajax({
                     type: "get",
@@ -508,6 +513,7 @@
 //		console.log("time_arr",time_arr);
 //        console.log("vo_arr",vo_arr);
         $('#filter_content').css('display','block');
+
         $('#time_filter').ionRangeSlider({
             type: "double",
 //			grid:true,
@@ -568,6 +574,9 @@
 //                        console.log(data);
             }
         });
+
+        slider = $('#time_filter').data("ionRangeSlider");
+
 	}
 
 

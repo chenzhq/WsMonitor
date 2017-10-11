@@ -265,7 +265,6 @@
                     success: function (result) {
                         if(result.success) {
                             var blocks = result.data;
-                            console.log("blocks: " + blocks);
                             $(".ui.three.column.grid").empty();
                             var block_str = "";
                             for(var i=0 ;i < blocks.length; i++) {
@@ -292,7 +291,6 @@
 									" </div> " ;
 								$(".ui.three.column.grid").append(block_str);
 								//绘制健康度进度条
-								//console.log("#health_"+blocks[i].platform_id);
                                 $("#health_"+ blocks[i].platform_id ).progress({
                                     label: 'ratio',
                                     text: {

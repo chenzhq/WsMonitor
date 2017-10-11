@@ -506,7 +506,6 @@
                         "title": "状态",
                         "orderable": false,
                         render: function (data, type, row, meta) {
-                            //                                console.log('render 状态', arguments)
                             if (row.problem_state !== "问题") {
                                 return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
                             } else {
@@ -549,7 +548,6 @@
             var name=$("#viewpage_select").dropdown("get text");
             if(name !== '') {
                 //初始化状态视图
-//                    console.log("初始化下拉框select:",name+","+type);
                 if(type === 'statepie') {
                     viewstatepie(name,type);
                     $("#statepie").show();
@@ -622,16 +620,11 @@
                         $("#statepie").hide();
                         $("#problems").show();
                         $("#appletree").hide();
-//                            var name=$("#viewpage_select").dropdown("get text");
-//                            problems_Table.ajax.url('/problems/get_current?name='+name+'&type='+type).load();
-//                            $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
-//                            $("#statepie").hide();
-//                            $("#problems").show();
-//                            $("#appletree").hide();
+
                     }
                     else if (type=="appletree"){
                         var name=$("#viewpage_select").dropdown("get text");
-                        //viewsappletree(name,type);
+
                         $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
                         $("#statepie").hide();
                         $("#problems").hide();
@@ -705,7 +698,6 @@
                 $("#viewtype_menu").html(str);
                 $("#viewtype_select").dropdown("set text",data[0].name);
                 $("#viewtype_select").dropdown("set value",data[0].type);
-                //console.log("type",data[0].type);
             }
 
             //获取视图页面下拉框
@@ -743,7 +735,6 @@
             }
             //获取状态视图
             function viewstatepie(name,type) {
-//                console.log("name:type==",name+","+type);
                 $.ajax({
                     async: false,
                     type: "get",
@@ -766,7 +757,6 @@
                 })
             }
             function getviewstatepie(data) {
-                console.log("state-data",data);
                 var hostStateNum = data.hostStateNum;
                 if (hostStateNum.stateNum) {
                     host_option.title.text = hostStateNum.totalNum;
@@ -972,7 +962,6 @@
                                                 oldName:name,
                                                 type:type,
                                                 maxNum:maxNum};
-                                            console.log("send_data",send_data);
                                             $.ajax({
                                                 type: "post",
                                                 url: '/view/update_problems',

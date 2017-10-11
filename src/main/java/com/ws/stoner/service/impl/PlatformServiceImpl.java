@@ -5,6 +5,7 @@ import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.BaseConsts;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
@@ -526,6 +527,7 @@ public class PlatformServiceImpl implements PlatformService {
                     itemDTO.getName(),
                     StatusConverter.StatusTransform(itemDTO.getCustomState()),
                     value,
+                    itemDTO.getLastTime()==null ? "" :itemDTO.getLastTime().format(BaseConsts.TIME_FORMATTER),
                     withTriggers,
                     weight
             );

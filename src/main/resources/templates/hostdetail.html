@@ -254,7 +254,9 @@
 				<!--Site Content-->
 				<div class="sixteen wide column">
 					<div class="ui segments">
+
 						<div class="ui segment">
+							<a href="javascript:history.go(-1)" style="float: right"><i class="share icon" ></i>返回上一页</a>
 							<h3 class="ui header">
 								<span style="display: none" id="host_id" th:text="${hostDetailVO.hostId}">10110</span>
 
@@ -533,6 +535,9 @@
 											<p></p>
 										</div>
 									</div>
+									<div id="chart-dimmer" class="ui inverted dimmer">
+										<div class="ui text loader">正在查询</div>
+									</div>
 								</div>
 							</div>
 							<div class="ui tab segment modal-height" data-tab="Data">
@@ -565,6 +570,9 @@
 								</div>
 								<div class="row" id="rowData">
 
+								</div>
+								<div id="data-dimmer" class="ui inverted dimmer">
+									<div class="ui text loader">正在查询</div>
 								</div>
 							</div>
 						  </div>
@@ -659,7 +667,6 @@
             var item_id = '';
             var graph_type = '';
             var host_id = $('#host_id').text();
-//        console.log("监控点值：" + $(".dropdown.points select").dropdown('get value'));
             $('.ui.dropdown').dropdown();
             //初始化
             $(".dropdown.points select").dropdown('clear');
@@ -715,7 +722,6 @@
                             hostId: $('#host_id').text(),
                             itemId: item_id
                         };
-						/*console.log("graph_name:"+$('.input.graph_name input').val()+"graph_type:"+graph_type+"host_id:"+$('#host_id').text()+"item_id:"+item_id);*/
                         $.ajax({
                             type: "post",
                             url: "/hostgraphs/save_graph",
@@ -743,7 +749,7 @@
             }).modal('show')
         });
 
-        //加载监控点悬浮框
+       /* //加载监控点悬浮框
         $('#pointButton .button').hover(
             function() {
                 var point_id=this.id.substring(1);
@@ -809,13 +815,12 @@
                 show: 800,
                 hide: 300
             }
-        });
+        });*/
 
 	})
 
     //修改图形 function
     function editGraph(id) {
-        //console.log("ITEMID:" + id);
         var host_id = $("#host_id").text();
         var item_id = id.substring(1);
         var item_name = "";
@@ -849,17 +854,7 @@
                 errorMsg_no_connect("监控项 Chart");
             }
         });
-        console.log(
-            "   item_id:" + item_id +
-            "   item_name:" + item_name +
-            "   point_id:" + point_id +
-            "   point_name:" + point_name +
-            "   graph_name:" + graph_name +
-            "   graph_type:" + graph_type +
-            "   graph_value:" + graph_value +
-            "   value_type:" + value_type
-        );
-        //$('.ui.dropdown').dropdown();
+
         dropdownType(value_type);
         //初始化
         $(".small.input.graph_name input").val(graph_name);
@@ -933,7 +928,6 @@
         if (!confirm("确定删除吗？")){
             return false;
         }
-        //console.log(id);
         var host_id = $("#host_id").text();
         var item_id = id.substring(1);
         $.ajax({
@@ -958,7 +952,6 @@
 	//页面加载完后加载监控项的图形
 	function loadHostGraph() {
         var host_id = $("#host_id").text();
-		/* console.log("加载监控项图形的参数:host_id = " + host_id);*/
         $.ajax({
             type: "get",
             url: "/hostgraphs?host_id="+host_id,
@@ -1024,7 +1017,6 @@
                 var ymax = null;
 			}
 			//图形值
-            /*console.log("图形类型： " + data[i].graph_type);*/
             switch (data[i].graph_type) {
                 case "gauge":
 					option = {
@@ -1073,7 +1065,6 @@
 					 };
                     break;
                 case "area":
-                    /*console.log("进入到了area域：");*/
                     option = {
                         title: {
                             text: title

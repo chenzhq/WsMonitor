@@ -5,7 +5,7 @@ $(function(){
     //modal点击监控点按钮 进入监控点详情
     $('#pointButton').on('click', '.button',function() {
         var point_id = this.id.substring(1);
-        console.log("进入了点击监控点按钮事件：point_id："+this.id);
+        //console.log("进入了点击监控点按钮事件：point_id："+this.id);
         $('.tab_points.menu .item').tab('change tab', 'Summary');
         $("#rowData").empty();
         $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
@@ -16,6 +16,7 @@ $(function(){
             .tab({
                 'onFirstLoad': function (path) {
                     if (path === 'Report') {
+
                         tabReport( $('.top.attached.label').attr("data-id") ,40);
                     }
                     if (path === 'Data') {
@@ -88,18 +89,51 @@ $(function(){
                             .dropdown({
                                 /*useLabels: false,*/
                                 onChange: function(value, text, $selectedItem) {
-                                    /*console.log("选择的值" + value);*/
+                                    $('#data-dimmer').addClass('active');
                                     var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
-                                    tableData.ajax.url(url).load();
+                                    //tableData.ajax.url(url).load();
+                                    $.ajax({
+                                        type: "get",
+                                        url: url,
+                                        dataType: 'json',
+                                        success: function (result) {
+                                            if (result.success) {
+                                                tableData.clear().rows.add(result.data).draw()
+                                                $('#data-dimmer').removeClass('active');
+                                            } else {
+
+                                            }
+                                        },
+                                        error: function (e) {
+
+                                        }
+                                    })
                                     $('.dropdown.stateTab').prop('selectedIndex', 0);
                                 }
                             });
                         $('.ui.buttons.Time.Data .button').on('click', function() {
+                            $('#data-dimmer').addClass('active');
                             $('.buttons.Time.Data .button').removeClass('active');
                             $(this).addClass('active');
                             var item_id = $('.dropdown.itemsTab').dropdown('get value');
                             var url=  "/pointdetail/get_datas?item_id="+item_id+"&time="+this.value;
-                            tableData.ajax.url(url).load();
+                            //tableData.ajax.url(url).load();
+                            $.ajax({
+                                type: "get",
+                                url: url,
+                                dataType: 'json',
+                                success: function (result) {
+                                    if (result.success) {
+                                        tableData.clear().rows.add(result.data).draw()
+                                        $('#data-dimmer').removeClass('active');
+                                    } else {
+
+                                    }
+                                },
+                                error: function (e) {
+
+                                }
+                            })
                         })
                     }
                 }
@@ -159,6 +193,7 @@ function tabSummary(point_id) {
 
 //获取监控点详情 图形报告 标签页数据
 function tabReport(point_id,days) {
+    $('#chart-dimmer').addClass('active');
     var areaoption = {
         title: {
             text: ""
@@ -275,6 +310,7 @@ function tabReport(point_id,days) {
                     tabReport($('.top.attached.label').attr("data-id") ,this.value);
                 })
                 $('.ui.buttons.Type.Report .button').on('click', function() {
+
                     $('.buttons.Type.Report .button').removeClass('active');
                     $(this).addClass('active');
                     option.series[0].type = this.value;
@@ -289,7 +325,9 @@ function tabReport(point_id,days) {
                             echarts.init(document.getElementById(this.id)).setOption(option);
                         })
                     }
+
                 })
+                $('#chart-dimmer').removeClass('active');
             }
             else {
                 errorMsg_no_data("监控点 Tab");

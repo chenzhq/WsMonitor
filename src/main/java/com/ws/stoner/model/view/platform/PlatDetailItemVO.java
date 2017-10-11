@@ -16,16 +16,19 @@ public class PlatDetailItemVO {
     private String state;
     @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String value;
+    @JSONField(name = "last_time")
+    private String lastTime;
     @JSONField(name = "with_triggers",serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private boolean withTriggers;
     @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private Integer weight;
 
-    public PlatDetailItemVO(String itemId, String itemName, String state, String value, boolean withTriggers, Integer weight) {
+    public PlatDetailItemVO(String itemId, String itemName, String state, String value, String lastTime, boolean withTriggers, Integer weight) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.state = state;
         this.value = value;
+        this.lastTime = lastTime;
         this.withTriggers = withTriggers;
         this.weight = weight;
     }
@@ -75,6 +78,15 @@ public class PlatDetailItemVO {
 
     public PlatDetailItemVO setValue(String value) {
         this.value = value;
+        return this;
+    }
+
+    public String getLastTime() {
+        return lastTime;
+    }
+
+    public PlatDetailItemVO setLastTime(String lastTime) {
+        this.lastTime = lastTime;
         return this;
     }
 

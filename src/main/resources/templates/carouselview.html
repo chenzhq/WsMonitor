@@ -552,6 +552,7 @@ z                    </div>
                 config_data:[],
                 block_data:[]
             };
+            var stat_page_vo;
             //配置页对象
             var viewPage ;
             var layout_info = {
@@ -671,7 +672,7 @@ z                    </div>
                                 groupName:$('#viewgroup_select').dropdown('get value'),
                                 pageName:$('#page_name').val()
                             };
-                            //console.log('send_data_add',send_data);
+
                             $.ajax({
                                 type: 'post',
                                 url: '/carousel/add_page',
@@ -727,7 +728,6 @@ z                    </div>
                                 success: function (result) {
                                     if(result.success) {
                                         var data=result.data;
-                                        //console.log('page_vo',data);
                                         getSelectPage($('#viewgroup_select').dropdown('get value'));
                                         $('#viewpage_select').dropdown('set value',$('#page_name').val());
                                         $('#viewpage_select').dropdown('set text',$('#page_name').val());
@@ -781,11 +781,11 @@ z                    </div>
 
                     $('#editpage_button').html('<i class="edit icon"></i>编辑');
 
-                    //drawPage($('.gridster > ul'),page_vo);
-                    getPage($('#viewgroup_select').dropdown('get value'),$('#viewpage_select').dropdown('get value'))
+                    drawPage($('.gridster > ul'),stat_page_vo);
+                    //getPage($('#viewgroup_select').dropdown('get value'),$('#viewpage_select').dropdown('get value'))
 
-//                $('#viewgroup_select').dropdown('remove visible');
-//                $('#viewpage_select').dropdown('remove visible');
+                    $('#viewgroup_select').removeClass('disabled');
+                    $('#viewpage_select').removeClass('disabled');
 
                     $("#savepage_button").attr('disabled',true);
 
@@ -813,8 +813,8 @@ z                    </div>
                     //添加 编辑 li
                     addBlockButton(gridster);
 
-//                $('#viewgroup_select').dropdown('remove visible');
-//                $('#viewpage_select').dropdown('remove visible');
+                $('#viewgroup_select').addClass('disabled');
+                $('#viewpage_select').addClass('disabled');
 
                     $("#savepage_button").attr('disabled',false);
 
@@ -855,7 +855,6 @@ z                    </div>
                 var configDataList = [];
                 var layout_json = gridster.serialize();
 
-                //console.log('layout_json',layout_json);
                 //console.log('page_vo.config_data',page_vo.config_data);
 
                 $.each(layout_json,function(i,value){
@@ -995,11 +994,9 @@ z                    </div>
                         //获取设备选择树
                         var host_id ;
                         var $host_tree = $('#host_tree');
-                        //console.log('$host_tree',$host_tree);
                         $host_tree.genHostTree({
                             multi: false,
                             onChange:function(e,data){
-                                //console.log('data',data.selected[0]);
                                 host_id = data.selected[0];
                                 pointsMenu(host_id);
                             }
@@ -1075,7 +1072,6 @@ z                    </div>
                         })
                     },
                     onApprove : function() {
-                        console.log('type',$('#charttype_select').dropdown('get value'));
                         var block_name  = $('#chart_name').val();
                         if('' === block_name) {
                             alert('展示项名称不能为空');
@@ -1270,14 +1266,14 @@ z                    </div>
 
             $('#viewtype_select').dropdown({
                 onChange:function(value){
-                    //console.log('type',value);
+
                     getSelectViewName(value);
                 }
             })
 
             $('#charttype_select').dropdown({
                 onChange:function(value){
-                    //console.log('type',value);
+
                     if(value === 'clock') {
                         $('#clock_type').css('display','block');
                         $('#table_type').css('display','none');
@@ -1300,6 +1296,7 @@ z                    </div>
                     success: function (result) {
                         if(result.success) {
                             page_vo = result.data;
+                            stat_page_vo = result.data;
                             drawPage($('.gridster > ul'),page_vo);
                             $('#table-dimmer').removeClass('active');
                         }
@@ -1497,7 +1494,7 @@ z                    </div>
 
             //加载图形类型列表
             function typeMenu(value_type) {
-                //console.log('value_type',value_type);
+
                 $.ajax({
                     type: "get",
                     url: "/hostgraphs/get_graphs?value_type="+value_type,

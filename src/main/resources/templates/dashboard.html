@@ -609,10 +609,14 @@
         },
         columns: [
             {
-                "data": "name",
+                "data": null,
                 "width": "100px",
-                "title": "名称"
+                "title": "名称",
+                render: function (data, type, row) {
+                    return '<a href="/platformdetail#' + row.platformId + '_' + row.name + '">' + row.name + '</a>';
+                }
             },
+
             {
                 "data": "availability",
                 "width": "100px",
@@ -659,9 +663,12 @@
         },
         columns: [
             {
-                "data": "name",
+                "data": null,
                 "width": "100px",
-                "title": "名称"
+                "title": "名称",
+                render: function (data, type, row) {
+                    return '<a href="/overview#h'+ row.hostId +'">' + row.name + '</a>';
+                }
             },
             {
                 "data": "ip",
@@ -729,9 +736,9 @@
                 render: function (data, type, row) {
                     if(strlen(row.name) > 70)
                     {
-                        return row.name.substr(0, 70)+"…";
+                        return '<a href="/overview#p'+ row.pointId +'">' + row.name.substr(0, 70)+"…" + '</a>';
                     }else {
-                        return row.name ;
+                        return '<a href="/overview#p'+ row.pointId +'">' + row.name + '</a>';
 
 					}
                 }

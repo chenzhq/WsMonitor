@@ -196,7 +196,7 @@ function getAcknowledgeModal(event_id) {
                         message:$("#acknowledge_message").val(),
                         action:action
                     };
-                    console.log("dataInfo",dataInfo);
+
                     $.ajax({
                         type: "post",
                         url: "/acknowledge/acknowledge_event",
@@ -206,7 +206,6 @@ function getAcknowledgeModal(event_id) {
                         success: function (result) {
                             if (result.success) {
                                 var data = result.data;
-                                console.log("成功返回",data);
                             } else {
                                 errorMsg_no_data("一次关闭问题的确认 modal");
                             }
