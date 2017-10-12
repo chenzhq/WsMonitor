@@ -389,14 +389,17 @@ public class HostServiceImpl implements HostService {
         List<BriefHostInterfaceDTO> interfaces = hostDTO.getInterfaces();
         interfaceVO.setHostId(hostDTO.getHostId());
         for(BriefHostInterfaceDTO interfaceDTO : interfaces) {
+            interfaceVO.setUseIp(ZApiParameter.HOST_INTERFACE_USEIP.USEIP.value == Integer.parseInt(interfaceDTO.getUseIp()) ? true :false);
             if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.AGENT.value).equals(interfaceDTO.getType())) {
                 interfaceVO.setAgentDNS(interfaceDTO.getDns());
                 interfaceVO.setAgentIp(interfaceDTO.getIp());
                 interfaceVO.setAgentPort(interfaceDTO.getPort());
+
             }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.SNMP.value).equals(interfaceDTO.getType())) {
                 interfaceVO.setSNMPDNS(interfaceDTO.getDns());
                 interfaceVO.setSNMPIp(interfaceDTO.getIp());
                 interfaceVO.setSNMPPort(interfaceDTO.getPort());
+
             }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.IPMI.value).equals(interfaceDTO.getType())) {
                 interfaceVO.setIPMIDNS(interfaceDTO.getDns());
                 interfaceVO.setIPMIIp(interfaceDTO.getIp());

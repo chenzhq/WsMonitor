@@ -439,6 +439,7 @@
 							}else {
                                 $("#platform_select").dropdown("set value", hashCode.substr(1).split('_')[0]);
                                 $("#platform_select").dropdown("set text", hashCode.substr(1).split('_')[1]);
+                                window.location.href = window.location.href.split('#')[0];
 							}
 
                         }
@@ -1052,49 +1053,50 @@
                     dataType: "json",
                     success: function (result) {
                         if(result.success) {
-                            var graph_datas = result.data;
+                            var graph_data = result.data;
+                            console.log('graph_data',graph_data);
                             $.each(host_ids,function(n,value) {
                                 $("#g"+value).html('');
                             });
 							//循环绘制图形
-                            for(var i=0;i<graph_datas.length;i++) {
+                            for(var i=0;i<graph_data.length;i++) {
                                 var title = "";
-                                if(graph_datas[i].units == "") {
-                                    title = graph_datas[i].graph_name;
+                                if(graph_data[i].units == "") {
+                                    title = graph_data[i].graph_name;
                                 }else {
-                                    title =graph_datas[i].graph_name + "(" + graph_datas[i].units +")";
+                                    title =graph_data[i].graph_name + "(" + graph_data[i].units +")";
                                 }
                                 //append 图形定位
-                                var id = "g" + graph_datas[i].item_id;
+                                var id = "g" + graph_data[i].item_id;
                                 /*var dimmer_str = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='i"
-									+ graph_datas[i].item_id + "' onclick='edit_graph(this.id)'>编辑</div><div class='ui button' id='i"
-									+ graph_datas[i].item_id + "' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
+									+ graph_data[i].item_id + "' onclick='edit_graph(this.id)'>编辑</div><div class='ui button' id='i"
+									+ graph_data[i].item_id + "' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
                                 var str_graph ="<div class='column'><div class='dimmerStr'>" + dimmer_str + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";*/
                                 var str_graph ="<div class='column'><div class='ui grid'>"+
 										"<div class='eight wide column no-padding'>"+
 										"<h3>"+title+"</h3></div>"+
 										"<div class='eight wide column right aligned no-padding'>"+
-										"<i class='edit icon' id='i" + graph_datas[i].item_id + "' onclick='edit_graph(this.id)'></i>"+
-										"<i class='delete icon' id='i" + graph_datas[i].item_id + "' onclick='delete_graph(this.id)'></i></div>"+
+										"<i class='edit icon' id='i" + graph_data[i].item_id + "' onclick='edit_graph(this.id)'></i>"+
+										"<i class='delete icon' id='i" + graph_data[i].item_id + "' onclick='delete_graph(this.id)'></i></div>"+
 										"<div class='sixteen wide column no-padding'>"+
 										"<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
-                                $("#g"+graph_datas[i].host_id).append(str_graph);
+                                $("#g"+graph_data[i].host_id).append(str_graph);
                                 var myChart = echarts.init(document.getElementById(id));
                                 var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
-                                if (graph_datas[i].state == "正常"){ var myColor = Color[0] }
-                                if (graph_datas[i].state == "严重"){ var myColor = Color[1] }
-                                if (graph_datas[i].state == "警告"){ var myColor = Color[2] }
+                                if (graph_data[i].state == "正常"){ var myColor = Color[0] }
+                                if (graph_data[i].state == "严重"){ var myColor = Color[1] }
+                                if (graph_data[i].state == "警告"){ var myColor = Color[2] }
                                 var colorGreen = [0.6, '#5FB878'];
                                 var colorYellow = [0.8, '#F7B824'];
                                 var colorRed = [1, '#FF5722'];
-                                if(graph_datas[i].units == "%"){
+                                if(graph_data[i].units == "%"){
                                     var ymax = 100;
                                 }else {
                                     var ymax = null;
                                 }
                                 //图形值
                                 var option ;
-                                switch (graph_datas[i].graph_type) {
+                                switch (graph_data[i].graph_type) {
                                     case "gauge":
                                         option = {
                                             title: {
@@ -1105,7 +1107,7 @@
                                             },
                                             series: [
                                                 {
-                                                    name: graph_datas[i].item_name,
+                                                    name: graph_data[i].item_name,
                                                     type: 'gauge',
                                                     min:0,
                                                     max:100,
@@ -1137,7 +1139,7 @@
                                                         textStyle: {
                                                             fontWeight: 'bolder', fontSize: 16,color: '#333',
                                                         }},
-                                                    data: [{value: graph_datas[i].data[0], name: ''}]
+                                                    data: [{value: graph_data[i].datas[0], name: ''}]
                                                 }
                                             ]
                                         };
@@ -1164,15 +1166,15 @@
                                                 containLabel: true
                                             },
                                             xAxis: {
-                                                data: graph_datas[i].data_time
+                                                data: graph_data[i].data_time
                                             },
                                             yAxis: {
                                                 max: ymax,
                                             },
                                             series: [{
-                                                name: graph_datas[i].item_name,
+                                                name: graph_data[i].item_name,
                                                 type: 'line',
-                                                data: graph_datas[i].data,
+                                                data: graph_data[i].datas,
                                                 areaStyle: {
                                                     normal: { }
                                                 },
@@ -1202,21 +1204,23 @@
                                                 containLabel: true
                                             },
                                             xAxis: {
-                                                data: graph_datas[i].data_time
+                                                data: graph_data[i].data_time
                                             },
                                             yAxis: {
                                                 max: ymax,
                                                 splitLine:{show: false},
                                             },
                                             series: [{
-                                                name: graph_datas[i].item_name,
-                                                type: graph_datas[i].graph_type,
-                                                data: graph_datas[i].data,
+                                                name: graph_data[i].item_name,
+                                                type: graph_data[i].graph_type,
+                                                data: graph_data[i].datas,
                                                 color: [myColor],
                                             }]
                                         };
                                 }
+                                console.log('option',option);
                                 myChart.setOption(option);
+                                console.log('myChart',myChart);
 							}
                         }
                         else {

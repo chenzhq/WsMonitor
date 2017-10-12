@@ -173,6 +173,16 @@ public static enum HOSTGROUP_INTERNAL {
         }
     }
 
+    public static enum HOST_INTERFACE_USEIP {
+        USEIP(1),USEDNS(0);
+
+        public int value;
+
+        private HOST_INTERFACE_USEIP(int value) {
+            this.value = value;
+        }
+    }
+
 
 /**
  * 触发器类型

@@ -14,8 +14,10 @@ public class BriefHostInterfaceDTO {
     private String type;
     private String ip;
     private String port;
+    @JSONField(name = "useip")
+    private String useIp;
 
-    public static final String[] PROPERTY_NAMES = {"interfaceid","ip","hostid","dns","type","port"};
+    public static final String[] PROPERTY_NAMES = {"interfaceid","ip","hostid","dns","type","port","useip"};
 
     public String getIp() {
         return ip;
@@ -71,6 +73,15 @@ public class BriefHostInterfaceDTO {
         return this;
     }
 
+    public String getUseIp() {
+        return useIp;
+    }
+
+    public BriefHostInterfaceDTO setUseIp(String useIp) {
+        this.useIp = useIp;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,7 +94,8 @@ public class BriefHostInterfaceDTO {
         if (dns != null ? !dns.equals(that.dns) : that.dns != null) return false;
         if (type != null ? !type.equals(that.type) : that.type != null) return false;
         if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
-        return port != null ? port.equals(that.port) : that.port == null;
+        if (port != null ? !port.equals(that.port) : that.port != null) return false;
+        return useIp != null ? useIp.equals(that.useIp) : that.useIp == null;
     }
 
     @Override
@@ -94,6 +106,7 @@ public class BriefHostInterfaceDTO {
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (ip != null ? ip.hashCode() : 0);
         result = 31 * result + (port != null ? port.hashCode() : 0);
+        result = 31 * result + (useIp != null ? useIp.hashCode() : 0);
         return result;
     }
 
@@ -106,6 +119,7 @@ public class BriefHostInterfaceDTO {
                 ", type='" + type + '\'' +
                 ", ip='" + ip + '\'' +
                 ", port='" + port + '\'' +
+                ", useIp='" + useIp + '\'' +
                 '}';
     }
 }

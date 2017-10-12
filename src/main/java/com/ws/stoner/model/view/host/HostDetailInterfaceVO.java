@@ -18,6 +18,7 @@ public class HostDetailInterfaceVO {
     private String JMXIp;
     private String JMXDNS;
     private String JMXPort;
+    private boolean useIp;
 
     public String getHostId() {
         return hostId;
@@ -136,6 +137,15 @@ public class HostDetailInterfaceVO {
         return this;
     }
 
+    public boolean isUseIp() {
+        return useIp;
+    }
+
+    public HostDetailInterfaceVO setUseIp(boolean useIp) {
+        this.useIp = useIp;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "HostDetailInterfaceVO{" +
@@ -152,6 +162,7 @@ public class HostDetailInterfaceVO {
                 ", JMXIp='" + JMXIp + '\'' +
                 ", JMXDNS='" + JMXDNS + '\'' +
                 ", JMXPort='" + JMXPort + '\'' +
+                ", useIp=" + useIp +
                 '}';
     }
 }
