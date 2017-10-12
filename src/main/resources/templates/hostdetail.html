@@ -19,14 +19,16 @@
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.no-padding-bottom{  padding-bottom: 0px;  }
-			.chart-style{  height: 160px  }
+			.chart-style{  height: 160px;background-color: rebeccapurple;  }
 			.gridly {
 				position: relative;
 				width: 100%;
+				margin-left: 10px;
+				margin-top: 10px;
 			}
 			.brick.small {
 				height: 200px;
-				width: 360px;
+				width: 330px;
 			}
 			.modal-height{
 				height: 450px;
@@ -308,9 +310,19 @@
 										<div class="ui bottom attached tab segment tab-height" data-tab="second">
 											<div class="ui relaxed divided list">
 												<div class="item">
-													<i class="big green checkmark icon" th:class="(${interfaceVO.agentIp} == null and ${interfaceVO.agentDNS} == null and ${interfaceVO.agentPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
 													<div class="content">
-														<p class="header">Agent方式</p>
+														<div class="ui grid" style="margin-bottom: -20px">
+															<div class="eight wide column">
+																<p class="header">Agent方式</p>
+															</div>
+															<div class="eight wide column right aligned">
+																<div class="ui buttons" style="height: 15px">
+																	<button class="ui positive button" style="padding-top: 0px">IP</button>
+																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
+																	<button class="ui button" style="padding-top: 0px">DNS</button>
+																</div>
+															</div>
+														</div>
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
@@ -333,9 +345,19 @@
 													</div>
 												</div>
 												<div class="item">
-													<i class="big green checkmark icon" th:class="(${interfaceVO.SNMPIp} == null and ${interfaceVO.SNMPDNS} == null and ${interfaceVO.SNMPPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
 													<div class="content">
-														<p class="header">SNMP方式</p>
+														<div class="ui grid" style="margin-bottom: -20px">
+															<div class="eight wide column">
+																<p class="header">SNMP方式</p>
+															</div>
+															<div class="eight wide column right aligned">
+																<div class="ui buttons" style="height: 15px">
+																	<button class="ui positive button" style="padding-top: 0px">IP</button>
+																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
+																	<button class="ui button" style="padding-top: 0px">DNS</button>
+																</div>
+															</div>
+														</div>
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
@@ -358,9 +380,19 @@
 													</div>
 												</div>
 												<div class="item">
-													<i class="big green checkmark icon" th:class="(${interfaceVO.IPMIIp} == null and ${interfaceVO.IPMIDNS} == null and ${interfaceVO.IPMIPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
 													<div class="content">
-														<p class="header">IPMI</p>
+														<div class="ui grid" style="margin-bottom: -20px">
+															<div class="eight wide column">
+																<p class="header">IPMI方式</p>
+															</div>
+															<div class="eight wide column right aligned">
+																<div class="ui buttons" style="height: 15px">
+																	<button class="ui positive button" style="padding-top: 0px">IP</button>
+																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
+																	<button class="ui button" style="padding-top: 0px">DNS</button>
+																</div>
+															</div>
+														</div>
 														<div class="ui description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
@@ -383,9 +415,19 @@
 													</div>
 												</div>
 												<div class="item">
-													<i class="big green checkmark icon" th:class="(${interfaceVO.JMXIp} == null and ${interfaceVO.JMXDNS} == null and ${interfaceVO.JMXPort} == null) ? 'big red remove icon' :'big green checkmark icon'"></i>
 													<div class="content">
-														<p class="header">JMX方式</p>
+														<div class="ui grid" style="margin-bottom: -20px">
+															<div class="eight wide column">
+																<p class="header">JMX方式</p>
+															</div>
+															<div class="eight wide column right aligned">
+																<div class="ui buttons" style="height: 15px">
+																	<button class="ui button" style="padding-top: 0px">IP</button>
+																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
+																	<button class="ui positive button" style="padding-top: 0px">DNS</button>
+																</div>
+															</div>
+														</div>
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields no_margin_bottom" style="margin-bottom: 0px">
@@ -451,31 +493,28 @@
                             </div>
 							<div class="row" style="padding-top:20px; min-height : 220px;">
                                 <div class="column">
-                                </div>
-                                <div id="flag_true" >
-									<h4 class="ui horizontal divider header">
-										<div class="ui secondary menu">
-											<!--<a class="header item editItems">
-												<i class="large icons" data-tooltip="编辑监控项" data-inverted="">
-													<i class="area chart icon"></i>
-													<i class="inverted corner write icon"></i>
-												</i>
-												编辑
-											</a>
-                                            <a class="header item addItems">
-                                                <i class="large icons" data-tooltip="添加监控项" data-inverted="">
-                                                    <i class="area chart icon"></i>
-                                                    <i class="inverted corner add icon"></i>
-                                                </i>
-												<i class="add icon" data-tooltip="添加监控项"> </i>添加
-                                            </a>-->
-											<a class="header item addItems">
-												<i class="add icon" data-tooltip="添加监控项"> </i>添加
-											</a>
-										</div>
-										</h4>
-									<div class="gridly" id="flag_true_content">
 								</div>
+                                <div id="flag_true" >
+									<div class="ui segments">
+										<div class="ui segment">
+											<div class="ui grid">
+												<div class="eight wide column">
+													<h3 class="ui header">
+														<i class="tag icon"></i>
+														自定义图形
+													</h3>
+												</div>
+												<div class="eight wide column right aligned">
+													<a class="header item addItems">
+														<i class="add icon" data-tooltip="添加监控项"> </i>添加
+													</a>
+												</div>
+											</div>
+										</div>
+										<div class="ui segment">
+											<div class="gridly" id="flag_true_content"></div>
+										</div>
+									</div>
 								<div id="flag_false"></div>
 							</div>
 						</div>
@@ -990,10 +1029,6 @@
             var id = "i" + data[i].item_id;
             if (data[i].flag==true)
             {
-                /*var strAction = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='g"
-					+ data[i].item_id + "' onclick='editGraph(this.id)'>编辑</div><div class='ui button' id='g"
-					+ data[i].item_id + "' onclick='deleteGraph(this.id)' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
-                str_true = "<div class=' brick small'><div class='dimmerStr'>" + strAction + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";*/
                 str_true ="<div class=' brick small'><div class='ui grid'>"+
                     "<div class='eight wide column no-padding'>"+
                     "<h3>"+title+"</h3></div>"+
@@ -1007,7 +1042,8 @@
             if(data[i].flag==false){
                 if($("#flag_false").children().length == 0)
                 {
-                    $("#flag_false").html("<h4 class='ui horizontal divider header'><i class='tag icon'></i>问题图形视图</h4> <div class='gridly' id='flag_false_content'>");
+                    $("#flag_false").html("<div class='ui segments'> <div class='ui segment'> <h3 class='ui header'><i class='tag icon'></i> 问题图形 </h3> </div> <div class='ui segment'><div class='gridly' id='flag_false_content'></div></div></div>");
+
                 }
                 /*str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";*/
                 str_false ="<div class=' brick small'><div class='ui grid'>"+
@@ -1095,8 +1131,8 @@
                             data:[]
                         },
                         grid: {
-                            left: '2%',
-                            right: '10%',
+                            left: '3%',
+                            right: '3%',
                             bottom: '0%',
                             top:'5%',
                             containLabel: true
@@ -1133,8 +1169,8 @@
                             data:[]
                         },
                         grid: {
-                            left: '2%',
-                            right: '10%',
+                            left: '3%',
+                            right: '3%',
                             bottom: '0%',
                             top:'5%',
                             containLabel: true
@@ -1157,8 +1193,8 @@
             myChart.setOption(option);
         }
         $('.gridly').gridly({
-            base: 55, // px
-            gutter: 10, // px
+            base: 60, // px
+            gutter: 15, // px
             columns: 18
         });
     }

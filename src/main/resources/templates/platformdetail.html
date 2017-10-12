@@ -245,14 +245,25 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui secondary pointing menu">
-						<a class="active item" data-tab="platformDetail">业务概述</a>
-						<a class="item" data-tab="platformTree">业务树</a>
-						<a class="item" data-tab="platformReport">业务图形报告</a>
-						<div class="right menu">
+					<div class="ui grid">
+						<div class="eight wide column">
+							<div class="header item">
+								<h2><i class="bar large chart icon"></i>业务详情</h2>
+							</div>
+						</div>
+						<div class="eight wide column right aligned">
 							<select id="platform_select" class="ui mini dropdown ">
 							</select>
 						</div>
+					</div>
+					<div class="ui secondary pointing menu"  style="margin-top: -10px">
+						<a class="active item" data-tab="platformDetail">业务概述</a>
+						<a class="item" data-tab="platformTree">业务树</a>
+						<a class="item" data-tab="platformReport">业务图形报告</a>
+						<!--<div class="right menu">
+							<select id="platform_select" class="ui mini dropdown ">
+							</select>
+						</div>-->
 					</div>
 					<div class="ui active tab fixedHeight no-padding" data-tab="platformDetail">
 						<div class="sixteen wide column">
@@ -1025,11 +1036,6 @@
                 for(var i=0;i<data.length;i++)
                 {
                     str += "<div class='active title'>" +
-                        /*"<a class='header item editItems' id='i" +  data[i].host_id + "'style='float:right' onclick='edit_graphs(this.id)'" +
-								"<i class='write icon'></i>" +
-								"<i class='write icon' data-tooltip='编辑图形报告' data-inverted=''></i>编辑" +
-								"<i class='trash icon' data-tooltip='删除图形报告' data-inverted=''></i>删除" +
-                        "</a>" +*/
 						     "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right;' onclick='add_graphs(this.id)'>" +
 								"<i class='add icon'> </i>添加" +
 						     "</a>" +
@@ -1073,12 +1079,12 @@
 									+ graph_data[i].item_id + "' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
                                 var str_graph ="<div class='column'><div class='dimmerStr'>" + dimmer_str + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";*/
                                 var str_graph ="<div class='column'><div class='ui grid'>"+
-										"<div class='eight wide column no-padding'>"+
+										"<div class='eight wide column'>"+
 										"<h3>"+title+"</h3></div>"+
-										"<div class='eight wide column right aligned no-padding'>"+
+										"<div class='eight wide column right aligned'>"+
 										"<i class='edit icon' id='i" + graph_data[i].item_id + "' onclick='edit_graph(this.id)'></i>"+
 										"<i class='delete icon' id='i" + graph_data[i].item_id + "' onclick='delete_graph(this.id)'></i></div>"+
-										"<div class='sixteen wide column no-padding'>"+
+										"<div class='sixteen wide column'>"+
 										"<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
                                 $("#g"+graph_data[i].host_id).append(str_graph);
                                 var myChart = echarts.init(document.getElementById(id));

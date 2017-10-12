@@ -54,6 +54,21 @@
     </div>
     <div th:replace="carouselview::carousel_block"></div>
 </header>
+<div id="side">
+    <div class="inner">
+        <div class="hgroup">
+            <h1>固定区域</a></h1>
+        </div>
+    </div>
+    <ul id="menu">
+        <li class="active" data-menuanchor="page1"><a class="a1" href="#page1" title="快速创建移动站点">快速创建移动站点</a></li>
+        <li data-menuanchor="page2"><a class="a2" href="#page2" title="丰富的模板">丰富的模板</a></li>
+        <li data-menuanchor="page3"><a class="a3" href="#page3" title="强大的功能组件">强大的功能组件</a></li>
+        <li data-menuanchor="page4"><a class="a4" href="#page4" title="多种屏幕预览">多种屏幕预览</a></li>
+        <li data-menuanchor="page5"><a class="a5" href="#page5" title="全网高速访问">全网高速访问</a></li>
+    </ul>
+</div>
+
 <section id="carousel" >
     <!-- data-th- 即 th: -->
     <div class="gridster" th:data-name="${page.pageName}" th:each="page:${pages}" id="page-"
