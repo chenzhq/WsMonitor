@@ -29,6 +29,19 @@
         header {
             /*height: 100px;*/
         }
+        #side{
+            position: fixed; left: 0px; top: 0;; z-index: 10;
+            height: 33px; width: 100%;
+            background-color: #767676;
+            color: #E5E5E5;
+        }
+        .ui.grid.side{ margin-left: 5px;margin-right: 5px }
+        .nine.wide.column.side{ margin-top: 5px }
+        .three.wide.column.side{ padding-top: 20px }
+        .two.wide.column.side{ padding-top: 20px }
+        #carousel{
+            margin-top: 20px;
+        }
 
         .gridster > div > ul > li {
             background-color: #EFF6EC;
@@ -42,34 +55,41 @@
     </style>
 </head>
 <body>
-<header>
-    <div>
-        <h2 id="group_title" th:text="${groupName}">组标题</h2>
-        <h3 id="page_title">页面标题</h3>
-    </div>
-    <div>
-        <span>刷新时间：</span>
-        <span>滚动频率：</span>
-        <button id="exit">退出</button>
-    </div>
-    <div th:replace="carouselview::carousel_block"></div>
-</header>
 <div id="side">
-    <div class="inner">
-        <div class="hgroup">
-            <h1>固定区域</a></h1>
+    <div class="ui grid side">
+        <div class="nine wide column side">
+            <div class="header item">
+                <h3 id="page_title">页面标题</h3>
+                <h2 id="group_title" style="display:none;" th:text="${groupName}">组标题</h2>
+            </div>
+        </div>
+        <div class="three wide column side">
+            <span>刷新时间：</span>
+        </div>
+        <div class="two wide column side">
+            <span>滚动频率：</span>
+        </div>
+        <div class="two wide column right aligned">
+            <button id="exit" class="tiny  ui secondary button">退出</button>
         </div>
     </div>
-    <ul id="menu">
-        <li class="active" data-menuanchor="page1"><a class="a1" href="#page1" title="快速创建移动站点">快速创建移动站点</a></li>
-        <li data-menuanchor="page2"><a class="a2" href="#page2" title="丰富的模板">丰富的模板</a></li>
-        <li data-menuanchor="page3"><a class="a3" href="#page3" title="强大的功能组件">强大的功能组件</a></li>
-        <li data-menuanchor="page4"><a class="a4" href="#page4" title="多种屏幕预览">多种屏幕预览</a></li>
-        <li data-menuanchor="page5"><a class="a5" href="#page5" title="全网高速访问">全网高速访问</a></li>
-    </ul>
+    <div th:replace="carouselview::carousel_block"></div>
 </div>
 
-<section id="carousel" >
+<section id="carousel">
+    <!-- data-th- 即 th: -->
+    <div class="gridster" th:data-name="${page.pageName}" th:each="page:${pages}" id="page-"
+         th:attrappend="id=${pageStat.index}">
+        <ul>
+            <li th:each="block:${page.layoutDataList}"
+                th:data-row="${block.row}"
+                th:data-col="${block.col}"
+                th:data-sizex="${block.xSize}"
+                th:data-sizey="${block.ySize}"
+            ></li>
+        </ul>
+    </div>
+</section>
     <!-- data-th- 即 th: -->
     <div class="gridster" th:data-name="${page.pageName}" th:each="page:${pages}" id="page-"
          th:attrappend="id=${pageStat.index}">
@@ -163,6 +183,7 @@
         // 滚动频率，30s
         scrollingSpeed: 3000,
         autoScrolling: true,
+        'navigation': true,
         afterLoad: function (anchorLink, index) {
             var current_name = $('#carousel').find('.gridster').eq(index).attr('data-name');
             $('#page_title').html(current_name);
