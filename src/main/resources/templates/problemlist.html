@@ -34,6 +34,7 @@
 				max-height:160px;
 				margin-bottom: 10px;
 			}
+			/*问题详情modle固定高度*/
 			.ui.segment.detailconfirm{
 				height: 232px;overflow-y:auto;overflow-x:hidden
 			}
@@ -283,7 +284,7 @@
 									<input type="hidden" id="acknowledge_eventid">
 									<input type="text" id="acknowledge_message" placeholder="不能为空">
 								</div>
-								<div id="acknowledge_history">
+								<div id="acknowledge_history" class="ui segment no-padding detailconfirm">
 									<table class="ui very basic very compact table center aligned">
 										<thead>
 										<tr>
