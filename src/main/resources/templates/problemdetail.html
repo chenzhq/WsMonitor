@@ -18,8 +18,8 @@
 		<script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
 		<link rel="stylesheet" href="../static/css/ion.rangeSlider.css"
 			  th:href="@{css/ion.rangeSlider.css}">
-		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinFlat.css"
-			  th:href="@{css/ion.rangeSlider.skinFlat.css}">
+		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinNice.css"
+			  th:href="@{css/ion.rangeSlider.skinNice.css}">
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.ui.table.dataTable thead th {
@@ -275,9 +275,10 @@
 						</div>
 						<div class="ten wide column row1Height" style="padding-left: 0px">
 							<div class="ui segment left aligned detailconfirm">
+
 								<div id="problemChart" class="chartBar"></div>
 								<div id="filter_content" style="display: none;">
-									<input type="text" id="time_filter" name="time_filter" value=""/>
+									<input type="text"  id="time_filter" name="time_filter" value=""/>
 								</div>
 							</div>
 
@@ -333,7 +334,6 @@
                 var problemTable = initProblemTable();
 				//初始化图形
                 var problemChart = drawProblemChart();
-
                 //获取数据
                 showTimeCons(problemTable,problemChart);
 
@@ -463,13 +463,13 @@
                 };
                 //根据配置绘制图形
                 problemChart.setOption(option);
-
                 return problemChart;
             }
 
 			//初始当前问题列表 无数据
 			function initProblemTable() {
                 var problemsTable = $("#problemsTable").DataTable({
+					"searching":true,
                     "iDisplayLength" : 5,
                     "ordering":false,
                     "createdRow": function (row, data, dataIndex) {

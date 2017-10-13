@@ -14,6 +14,8 @@ function eventDetailModal(event_id) {
     //告警详情部分
     var alertStr = getAlertDetailContent(event_id);
     $("#alertDetailModal").html(alertStr);
+
+
     //显示弹出框
     $('.ui.modal.detail').modal('show');
 }
@@ -66,10 +68,17 @@ function getAlertDetailContent(event_id){
         dataType: "json",
         success: function (result) {
             if (result.success) {
+                var color;
                 var data = result.data;
+                console.log('alert data',data);
                 for(var i=0;i<data.length;i++)
                 {
-                    str += "<tr><td>"
+                    if(data[i].recovery) {
+                        color = '#BBFFBB';
+                    }else {
+                        color = '#FF9797';
+                    }
+                    str += "<tr style='background-color: "+ color +"' ><td>"
                         +data[i].esc_step+"</td><td>"
                         +data[i].last_time+"</td><td>"
                         +data[i].sendto+"</td><td>"
@@ -100,7 +109,10 @@ function getEventDetailContent(event_id) {
         dataType: "json",
         success: function (result) {
             if (result.success) {
+
                 var event_data = result.data;
+                //标题赋值
+                $('#event_title').text(event_data.trigger_name);
                 if(event_data.closed){
                     var closed = '已关闭';
                 }else{
