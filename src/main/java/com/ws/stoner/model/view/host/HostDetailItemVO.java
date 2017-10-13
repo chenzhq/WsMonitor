@@ -17,6 +17,7 @@ public class HostDetailItemVO {
     @JSONField(name = "data_time")
     private String[] dataTime;
     private Float[] data;
+    @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private String units;
     @JSONField(name = "graph_name")
     private String graphName;

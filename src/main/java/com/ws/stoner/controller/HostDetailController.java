@@ -33,11 +33,9 @@ public class HostDetailController {
         BriefHostDTO hostDTO = hostService.getHostsByHostIds(hostIds).get(0);
         //新建DetailHostVO对象,ItemVO对象 List,PointVO对象list,InterfaceVO对象
         HostDetailVO hostDetailVO = hostService.getHostDetailByHostDTO(hostDTO);
-        HostDetailInterfaceVO interfaceVO = hostService.getHostInterfaceByHostDTO(hostDTO);
         List<HostDetailPointVO> pointVOS = hostService.getPointsByHostDTO(hostDTO);
         ModelAndView mav = new ModelAndView("hostdetail");
         mav.addObject("hostDetailVO", hostDetailVO );
-        mav.addObject("interfaceVO", interfaceVO );
         mav.addObject("pointVOS", pointVOS );
         return mav;
     }

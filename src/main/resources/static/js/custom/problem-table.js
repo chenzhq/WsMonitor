@@ -7,6 +7,7 @@
         var settings = $.extend({}, options);
 
         var problemsTable = this.DataTable({
+            searching: true,
             iDisplayLength: 10,
             order: [0, 'desc'],
             createdRow: function (row, rowData) {

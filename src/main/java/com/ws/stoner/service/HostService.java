@@ -134,13 +134,6 @@ public interface HostService {
     HostDetailVO getHostDetailByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
 
     /**
-     * 根据 BriefHostDTO hostDTO 组装 设备接口信息的 InterfaceVO
-     * @return
-     * @throws ServiceException
-     */
-    HostDetailInterfaceVO getHostInterfaceByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
-
-    /**
      * 根据 BriefHostDTO hostDTO 组装 设备下所有监控点状态信息 的 pointVO
      * @return
      * @throws ServiceException

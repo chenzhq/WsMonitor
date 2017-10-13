@@ -1,24 +1,60 @@
 package com.ws.stoner.model.view.host;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.ws.bix4j.ZApiParameter;
+import com.ws.stoner.model.dto.BriefHostDTO;
+import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
+
+import java.util.List;
+
 /**
  * Created by pc on 2017/7/14.
  */
 public class HostDetailInterfaceVO {
 
+
+    @JSONField(name = "host_id")
     private String hostId;
+    @JSONField(name = "agent_ip")
     private String agentIp;
+    @JSONField(name = "agent_dns")
     private String agentDNS;
+    @JSONField(name = "agent_port")
     private String agentPort;
+    @JSONField(name = "agent_useip")
+    private boolean agentUseIp;
+    @JSONField(name = "snmp_ip")
     private String SNMPIp;
+    @JSONField(name = "snmp_dns")
     private String SNMPDNS;
+    @JSONField(name = "snmp_port")
     private String SNMPPort;
+    @JSONField(name = "snmp_useip")
+    private boolean SNMPUseIp;
+    @JSONField(name = "host_id")
     private String IPMIIp;
+    @JSONField(name = "ipmi_dns")
     private String IPMIDNS;
+    @JSONField(name = "ipmi_port")
     private String IPMIPort;
+    @JSONField(name = "ipmi_useip")
+    private boolean IPMIUseIp;
+    @JSONField(name = "jmx_ip")
     private String JMXIp;
+    @JSONField(name = "jmx_dns")
     private String JMXDNS;
+    @JSONField(name = "jmx_port")
     private String JMXPort;
-    private boolean useIp;
+    @JSONField(name = "jmx_useip")
+    private boolean JMXUseIp;
+
+    public HostDetailInterfaceVO() {
+        //初始化
+        this.agentUseIp = true;
+        this.SNMPUseIp = true;
+        this.IPMIUseIp = true;
+        this.JMXUseIp = true;
+    }
 
     public String getHostId() {
         return hostId;
@@ -137,12 +173,39 @@ public class HostDetailInterfaceVO {
         return this;
     }
 
-    public boolean isUseIp() {
-        return useIp;
+    public boolean isAgentUseIp() {
+        return agentUseIp;
     }
 
-    public HostDetailInterfaceVO setUseIp(boolean useIp) {
-        this.useIp = useIp;
+    public HostDetailInterfaceVO setAgentUseIp(boolean agentUseIp) {
+        this.agentUseIp = agentUseIp;
+        return this;
+    }
+
+    public boolean isSNMPUseIp() {
+        return SNMPUseIp;
+    }
+
+    public HostDetailInterfaceVO setSNMPUseIp(boolean SNMPUseIp) {
+        this.SNMPUseIp = SNMPUseIp;
+        return this;
+    }
+
+    public boolean isIPMIUseIp() {
+        return IPMIUseIp;
+    }
+
+    public HostDetailInterfaceVO setIPMIUseIp(boolean IPMIUseIp) {
+        this.IPMIUseIp = IPMIUseIp;
+        return this;
+    }
+
+    public boolean isJMXUseIp() {
+        return JMXUseIp;
+    }
+
+    public HostDetailInterfaceVO setJMXUseIp(boolean JMXUseIp) {
+        this.JMXUseIp = JMXUseIp;
         return this;
     }
 
@@ -153,16 +216,53 @@ public class HostDetailInterfaceVO {
                 ", agentIp='" + agentIp + '\'' +
                 ", agentDNS='" + agentDNS + '\'' +
                 ", agentPort='" + agentPort + '\'' +
+                ", agentUseIp=" + agentUseIp +
                 ", SNMPIp='" + SNMPIp + '\'' +
                 ", SNMPDNS='" + SNMPDNS + '\'' +
                 ", SNMPPort='" + SNMPPort + '\'' +
+                ", SNMPUseIp=" + SNMPUseIp +
                 ", IPMIIp='" + IPMIIp + '\'' +
                 ", IPMIDNS='" + IPMIDNS + '\'' +
                 ", IPMIPort='" + IPMIPort + '\'' +
+                ", IPMIUseIp=" + IPMIUseIp +
                 ", JMXIp='" + JMXIp + '\'' +
                 ", JMXDNS='" + JMXDNS + '\'' +
                 ", JMXPort='" + JMXPort + '\'' +
-                ", useIp=" + useIp +
+                ", JMXUseIp=" + JMXUseIp +
                 '}';
+    }
+
+    static public HostDetailInterfaceVO transforByHostDTO(BriefHostDTO hostDTO) {
+        HostDetailInterfaceVO interfaceVO = new HostDetailInterfaceVO();
+        // interfaces[interfaceid,dns ,hostid ,ip ,type],
+        List<BriefHostInterfaceDTO> interfaces = hostDTO.getInterfaces();
+        interfaceVO.setHostId(hostDTO.getHostId());
+        for(BriefHostInterfaceDTO interfaceDTO : interfaces) {
+            if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.AGENT.value).equals(interfaceDTO.getType())) {
+                interfaceVO.setAgentDNS(interfaceDTO.getDns());
+                interfaceVO.setAgentIp(interfaceDTO.getIp());
+                interfaceVO.setAgentPort(interfaceDTO.getPort());
+                interfaceVO.setAgentUseIp(ZApiParameter.HOST_INTERFACE_USEIP.USEIP.value == Integer.parseInt(interfaceDTO.getUseIp()) ? true :false);
+
+            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.SNMP.value).equals(interfaceDTO.getType())) {
+                interfaceVO.setSNMPDNS(interfaceDTO.getDns());
+                interfaceVO.setSNMPIp(interfaceDTO.getIp());
+                interfaceVO.setSNMPPort(interfaceDTO.getPort());
+                interfaceVO.setSNMPUseIp(ZApiParameter.HOST_INTERFACE_USEIP.USEIP.value == Integer.parseInt(interfaceDTO.getUseIp()) ? true :false);
+
+            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.IPMI.value).equals(interfaceDTO.getType())) {
+                interfaceVO.setIPMIDNS(interfaceDTO.getDns());
+                interfaceVO.setIPMIIp(interfaceDTO.getIp());
+                interfaceVO.setIPMIPort(interfaceDTO.getPort());
+                interfaceVO.setIPMIUseIp(ZApiParameter.HOST_INTERFACE_USEIP.USEIP.value == Integer.parseInt(interfaceDTO.getUseIp()) ? true :false);
+
+            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.JMX.value).equals(interfaceDTO.getType())) {
+                interfaceVO.setJMXDNS(interfaceDTO.getDns());
+                interfaceVO.setJMXIp(interfaceDTO.getIp());
+                interfaceVO.setJMXPort(interfaceDTO.getPort());
+                interfaceVO.setJMXUseIp(ZApiParameter.HOST_INTERFACE_USEIP.USEIP.value == Integer.parseInt(interfaceDTO.getUseIp()) ? true :false);
+            }
+        }
+        return interfaceVO;
     }
 }

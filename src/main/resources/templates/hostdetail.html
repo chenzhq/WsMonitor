@@ -317,27 +317,26 @@
 															</div>
 															<div class="eight wide column right aligned">
 																<div class="ui buttons" style="height: 15px">
-																	<button class="ui positive button" style="padding-top: 0px">IP</button>
+																	<button id="agent_ip_btn" class="ui button" style="padding-top: 0px">IP</button>
 																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
-																	<button class="ui button" style="padding-top: 0px">DNS</button>
+																	<button id="agent_dns_btn" class="ui button" style="padding-top: 0px">DNS</button>
 																</div>
 															</div>
 														</div>
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
-																	<div class="field" th:class="${interfaceVO.agentIp} == null ?  'disabled field': 'field'">
+																	<div class="field" id="agent_ip">
 																		IP:
-																		<span th:text="${interfaceVO.agentIp}">127.0.0.1</span>
+																		<span ></span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.agentDNS} == null ? 'disabled field': 'field'">
+																	<div class="field" id="agent_dns">
 																		DNS:
-																		<span  th:text="${interfaceVO.agentDNS} "></span>
-
+																		<span ></span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.agentPort} == null ? 'disabled field': 'field'">
+																	<div class="field" id="agent_port">
 																		端口号:
-																		<span th:text="${interfaceVO.agentPort}">10050</span>
+																		<span ></span>
 																	</div>
 																</div>
 															</div>
@@ -352,27 +351,27 @@
 															</div>
 															<div class="eight wide column right aligned">
 																<div class="ui buttons" style="height: 15px">
-																	<button class="ui positive button" style="padding-top: 0px">IP</button>
+																	<button id="snmp_ip_btn" class="ui button" style="padding-top: 0px">IP</button>
 																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
-																	<button class="ui button" style="padding-top: 0px">DNS</button>
+																	<button id="snmp_dns_btn" class="ui button" style="padding-top: 0px">DNS</button>
 																</div>
 															</div>
 														</div>
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
-																	<div class="field" th:class="${interfaceVO.SNMPIp} == null ? 'disabled field': 'field'">
+																	<div class="field" id="snmp_ip">
 																		IP:
-																		<span th:text="${interfaceVO.SNMPIp}">127.0.0.1</span>
+																		<span ></span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.SNMPDNS} == null ? 'disabled field': 'field'">
+																	<div class="field" id="snmp_dns">
 																		DNS:
-																		<span  th:text="${interfaceVO.SNMPDNS} "></span>
+																		<span ></span>
 
 																	</div>
-																	<div class="field" th:class="${interfaceVO.SNMPPort} == null ? 'disabled field': 'field'">
+																	<div class="field" id="snmp_port">
 																		端口号:
-																		<span th:text="${interfaceVO.SNMPPort}">10050</span>
+																		<span ></span>
 																	</div>
 																</div>
 															</div>
@@ -387,27 +386,27 @@
 															</div>
 															<div class="eight wide column right aligned">
 																<div class="ui buttons" style="height: 15px">
-																	<button class="ui positive button" style="padding-top: 0px">IP</button>
+																	<button id="ipmi_ip_btn" class="ui button" style="padding-top: 0px">IP</button>
 																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
-																	<button class="ui button" style="padding-top: 0px">DNS</button>
+																	<button id="ipmi_dns_btn" class="ui button" style="padding-top: 0px">DNS</button>
 																</div>
 															</div>
 														</div>
 														<div class="ui description">
 															<div class="ui form">
 																<div class="inline fields" style="margin-bottom: 0px">
-																	<div class="field" th:class="${interfaceVO.IPMIIp} == null ? 'disabled field': 'field'">
+																	<div class="field" id="ipmi_ip" >
 																		IP:
-																		<span th:text="${interfaceVO.IPMIIp}">127.0.0.1</span>
+																		<span ></span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIDNS} == null ? 'disabled field': 'field'">
+																	<div class="field" id="ipmi_dns">
 																		DNS:
-																		<span  th:text="${interfaceVO.IPMIDNS} "></span>
+																		<span ></span>
 
 																	</div>
-																	<div class="field" th:class="${interfaceVO.IPMIPort} == null ? 'disabled field': 'field'">
+																	<div class="field" id="ipmi_port">
 																		端口号:
-																		<span th:text="${interfaceVO.IPMIPort}">10050</span>
+																		<span ></span>
 																	</div>
 																</div>
 															</div>
@@ -422,27 +421,27 @@
 															</div>
 															<div class="eight wide column right aligned">
 																<div class="ui buttons" style="height: 15px">
-																	<button class="ui button" style="padding-top: 0px">IP</button>
+																	<button id="jmx_ip_btn" class="ui button" style="padding-top: 0px">IP</button>
 																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
-																	<button class="ui positive button" style="padding-top: 0px">DNS</button>
+																	<button id="jmx_dns_btn" class="ui button" style="padding-top: 0px">DNS</button>
 																</div>
 															</div>
 														</div>
 														<div class="description">
 															<div class="ui form">
 																<div class="inline fields no_margin_bottom" style="margin-bottom: 0px">
-																	<div class="field" th:class="${interfaceVO.JMXIp} == null ? 'disabled field': 'field'">
+																	<div class="field" id="jmx_ip">
 																		IP:
-																		<span th:text="${interfaceVO.JMXIp}">127.0.0.1</span>
+																		<span ></span>
 																	</div>
-																	<div class="field" th:class="${interfaceVO.JMXDNS} == null ? 'disabled field': 'field'">
+																	<div class="field" id="jmx_dns">
 																		DNS:
-																		<span  th:text="${interfaceVO.JMXDNS} "></span>
+																		<span  ></span>
 
 																	</div>
-																	<div class="field" th:class="${interfaceVO.JMXPort} == null ? 'disabled field': 'field'">
+																	<div class="field" id="jmx_port">
 																		端口号:
-																		<span th:text="${interfaceVO.JMXPort}">10050</span>
+																		<span ></span>
 																	</div>
 																</div>
 															</div>
@@ -694,6 +693,172 @@
 </th:block>
 <script type="text/javascript">
 
+	//加载hostInterface 静态数据
+    $.ajax({
+        type: "get",
+        url: "/hostdetail/get_interface?host_id=" + $('#host_id').text(),
+        dataType: "json",
+        contentType: 'application/json',
+        success: function (result) {
+            if (result.success) {
+                var interface_vo = result.data;
+                //agent
+				$('#agent_port span').text(interface_vo.agent_port);
+                if(interface_vo.agent_useip) {
+					$('#agent_ip_btn').addClass('positive');
+                    $('#agent_ip').show();
+                    $('#agent_dns').hide();
+					$('#agent_ip span').text(interface_vo.agent_ip);
+
+				}else {
+                    $('#agent_dns_btn').addClass('positive');
+                    $('#agent_ip').hide();
+                    $('#agent_dns').show();
+                    var agent_dns = interface_vo.agent_dns;
+                    $('#agent_dns span').text(agent_dns.substring(0,10));
+				}
+
+				//snmp
+                $('#snmp_port span').text(interface_vo.snmp_port);
+
+                console.log('useip snmp',interface_vo.snmp_useip + ' ' + interface_vo.snmp_dns);
+                if(interface_vo.snmp_useip) {
+                    $('#snmp_ip_btn').addClass('positive');
+                    $('#snmp_ip').show();
+                    $('#snmp_dns').hide();
+                    $('#snmp_ip span').text(interface_vo.snmp_ip);
+
+                }else {
+                    $('#snmp_dns_btn').addClass('positive');
+                    $('#snmp_ip').hide();
+                    $('#snmp_dns').show();
+                    var snmp_dns = interface_vo.snmp_dns;
+                    $('#snmp_dns span').text(snmp_dns.substring(0,10));
+                }
+                
+                //ipmi
+                $('#ipmi_port span').text(interface_vo.ipmi_port);
+                if(interface_vo.ipmi_useip) {
+                    $('#ipmi_ip_btn').addClass('positive');
+                    $('#ipmi_ip').show();
+                    $('#ipmi_dns').hide();
+                    $('#ipmi_ip span').text(interface_vo.ipmi_ip);
+
+                }else {
+                    $('#ipmi_dns_btn').addClass('positive');
+                    $('#ipmi_ip').hide();
+                    $('#ipmi_dns').show();
+                    var ipmi_dns = interface_vo.ipmi_dns;
+                    $('#ipmi_dns span').text(ipmi_dns.substring(0,10));
+                }
+
+				//jmx
+                $('#jmx_port span').text(interface_vo.jmx_port);
+                if(interface_vo.jmx_useip) {
+                    $('#jmx_ip_btn').addClass('positive');
+                    $('#jmx_ip').show();
+                    $('#jmx_dns').hide();
+                    $('#jmx_ip span').text(interface_vo.jmx_ip);
+
+                }else {
+                    $('#jmx_dns_btn').addClass('positive');
+                    $('#jmx_ip').hide();
+                    $('#jmx_dns').show();
+                    var jmx_dns = interface_vo.jmx_dns;
+                    $('#jmx_dns span').text(jmx_dns.substring(0,10));
+                }
+
+                //绑定事件
+				$('#agent_ip_btn').on('click',function(){
+				    if(!$(this).hasClass('positive')) {
+
+                        $(this).addClass('positive');
+                        $('#agent_dns_btn').removeClass('positive');
+                        $('#agent_ip').show();
+						$('#agent_dns').hide();
+
+					}
+
+				});
+                $('#agent_dns_btn').on('click',function(){
+                    if(!$(this).hasClass('positive')) {
+                        $(this).addClass('positive');
+                        $('#agent_ip_btn').removeClass('positive');
+                        $('#agent_dns').show();
+                        $('#agent_ip').hide();
+
+                    }
+                });
+                $('#snmp_ip_btn').on('click',function(){
+                    if(!$(this).hasClass('positive')) {
+
+                        $(this).addClass('positive');
+                        $('#snmp_dns_btn').removeClass('positive');
+                        $('#snmp_ip').show();
+                        $('#snmp_dns').hide();
+
+                    }
+                });
+                $('#snmp_dns_btn').on('click',function(){
+                    if(!$(this).hasClass('positive')) {
+
+                        $(this).addClass('positive');
+                        $('#snmp_ip_btn').removeClass('positive');
+                        $('#snmp_dns').show();
+                        $('#snmp_ip').hide();
+
+                    }
+                });
+                $('#ipmi_ip_btn').on('click',function(){
+                    if(!$(this).hasClass('positive')) {
+
+                        $(this).addClass('positive');
+                        $('#ipmi_dns_btn').removeClass('positive');
+                        $('#ipmi_ip').show();
+                        $('#ipmi_dns').hide();
+
+                    }
+                });
+                $('#ipmi_dns_btn').on('click',function(){
+                    if(!$(this).hasClass('positive')) {
+
+                        $(this).addClass('positive');
+                        $('#ipmi_ip_btn').removeClass('positive');
+                        $('#ipmi_dns').show();
+                        $('#ipmi_ip').hide();
+
+                    }
+                });
+                $('#jmx_ip_btn').on('click',function(){
+                    if(!$(this).hasClass('positive')) {
+
+                        $(this).addClass('positive');
+                        $('#jmx_dns_btn').removeClass('positive');
+                        $('#jmx_ip').show();
+                        $('#jmx_dns').hide();
+
+                    }
+                });
+                $('#jmx_dns_btn').on('click',function(){
+                    if(!$(this).hasClass('positive')) {
+
+                        $(this).addClass('positive');
+                        $('#jmx_ip_btn').removeClass('positive');
+                        $('#jmx_dns').show();
+                        $('#jmx_ip').hide();
+
+                    }
+                });
+            }
+            else {
+                errorMsg_no_data("主机接口信息 问题");
+            }
+        },
+        error: function () {
+            errorMsg_no_connect("主机接口信息 问题");
+        }
+    });
+
 	//页面加载完之后加载js
 	$(function() {
         //加载监控项的图形
@@ -791,7 +956,7 @@
             }).modal('show')
         });
 
-       /* //加载监控点悬浮框
+        //加载监控点悬浮框
         $('#pointButton .button').hover(
             function() {
                 var point_id=this.id.substring(1);
@@ -857,7 +1022,7 @@
                 show: 800,
                 hide: 300
             }
-        });*/
+        });
 
 	})
 
@@ -1020,11 +1185,13 @@
         $("#flag_false").empty();
         $("#flag_true_content").empty();
         for (var i=0; i<data.length; i++){
+            var graph_name = data[i].graph_name;
+            var name = graph_name.length<30 ? graph_name : graph_name.substring(0,30)+'...' ;
             var title = "";
             if(data[i].units == "") {
-                title = data[i].graph_name;
+                title = name;
             }else {
-                title =data[i].graph_name + "(" + data[i].units +")";
+                title =name + "(" + data[i].units +")";
             }
             var id = "i" + data[i].item_id;
             if (data[i].flag==true)

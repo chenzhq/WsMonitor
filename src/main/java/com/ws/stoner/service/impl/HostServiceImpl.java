@@ -378,42 +378,6 @@ public class HostServiceImpl implements HostService {
     }
 
     /**
-     * 根据 BriefHostDTO hostDTO 组装 设备接口信息的 InterfaceVO
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public HostDetailInterfaceVO getHostInterfaceByHostDTO(BriefHostDTO hostDTO) throws ServiceException {
-        HostDetailInterfaceVO interfaceVO = new HostDetailInterfaceVO();
-        // interfaces[interfaceid,dns ,hostid ,ip ,type],
-        List<BriefHostInterfaceDTO> interfaces = hostDTO.getInterfaces();
-        interfaceVO.setHostId(hostDTO.getHostId());
-        for(BriefHostInterfaceDTO interfaceDTO : interfaces) {
-            interfaceVO.setUseIp(ZApiParameter.HOST_INTERFACE_USEIP.USEIP.value == Integer.parseInt(interfaceDTO.getUseIp()) ? true :false);
-            if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.AGENT.value).equals(interfaceDTO.getType())) {
-                interfaceVO.setAgentDNS(interfaceDTO.getDns());
-                interfaceVO.setAgentIp(interfaceDTO.getIp());
-                interfaceVO.setAgentPort(interfaceDTO.getPort());
-
-            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.SNMP.value).equals(interfaceDTO.getType())) {
-                interfaceVO.setSNMPDNS(interfaceDTO.getDns());
-                interfaceVO.setSNMPIp(interfaceDTO.getIp());
-                interfaceVO.setSNMPPort(interfaceDTO.getPort());
-
-            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.IPMI.value).equals(interfaceDTO.getType())) {
-                interfaceVO.setIPMIDNS(interfaceDTO.getDns());
-                interfaceVO.setIPMIIp(interfaceDTO.getIp());
-                interfaceVO.setIPMIPort(interfaceDTO.getPort());
-            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.JMX.value).equals(interfaceDTO.getType())) {
-                interfaceVO.setJMXDNS(interfaceDTO.getDns());
-                interfaceVO.setJMXIp(interfaceDTO.getIp());
-                interfaceVO.setJMXPort(interfaceDTO.getPort());
-            }
-        }
-        return interfaceVO;
-    }
-
-    /**
      * 根据 BriefHostDTO hostDTO 组装 设备下所有监控点状态信息 的 pointVO
      * @return
      * @throws ServiceException

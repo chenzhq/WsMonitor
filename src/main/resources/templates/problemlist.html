@@ -16,8 +16,8 @@
 		<script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
 		<link rel="stylesheet" href="../static/css/ion.rangeSlider.css"
 			  th:href="@{css/ion.rangeSlider.css}">
-		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinFlat.css"
-			  th:href="@{css/ion.rangeSlider.skinFlat.css}">
+		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinNice.css"
+			  th:href="@{css/ion.rangeSlider.skinNice.css}">
 		<style type="text/css">
 			.ui.table.dataTable thead th {
 				border-left: 0px;
@@ -318,6 +318,12 @@
 					<!--事件详情弹出框 start-->
 					<div class="ui big modal detail">
 						<div class="content">
+
+							<h2 >
+								<i class="list layout icon"></i>
+								<span id="event_title"></span>
+							</h2>
+
 							<div class="sixteen wide column">
 								<div class="ui grid">
 									<div class="eight wide column">
@@ -384,7 +390,7 @@
 													</tr></thead>
 													<tbody id="alertDetailModal">
 													<tr>
-														<td colspan="7">无历史确认记录</td>
+														<td colspan="7">无告警历史记录</td>
 													</tr>
 													</tbody>
 												</table>

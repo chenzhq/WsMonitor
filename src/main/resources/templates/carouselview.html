@@ -532,6 +532,9 @@ z                    </div>
         <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
         <script src="../static/js/custom/carousel-common.js" th:src="@{js/custom/carousel-common.js}"></script>
 
+        <script src="../static/js/moment.min.js" th:src="@{js/moment.min.js}"></script>
+        <link rel="stylesheet" type="text/css" href="../static/css/num-clock.css" th:href="@{css/num-clock.css}" />
+
         <script src="../static/js/db.js" th:src="@{js/db.js}"></script>
         <script src="../static/js/mindmup-editabletable.js" th:src="@{js/mindmup-editabletable.js}"></script>
         <script src="../static/js/custom-editable.js" th:src="@{js/custom-editable.js}"></script>
@@ -567,7 +570,8 @@ z                    </div>
                 {size_x:8,size_y:4},  //状态视图
                 {size_x:15,size_y:3},  //问题视图
                 {size_x:5,size_y:3},  //图表控件
-                {size_x:4,size_y:4},  //钟表控件
+                {size_x:4,size_y:4},  //钟表样式
+                {size_x:6,size_y:3},  //数字样式
                 {size_x:5,size_y:3},  //静态表格
                 ];
 
@@ -1109,9 +1113,19 @@ z                    </div>
                                         page_vo.config_data.push(config_info);
 
                                         page_vo.block_data.push(block_info);
+                                        console.log('config_info',config_info);
+                                        if('clock-clock' === config_info.contents) {
+                                            //默认  钟表 block大小
+                                            addBlockWidget(block_default_size[3].size_x,block_default_size[3].size_y);
 
-                                        //默认  钟表 block大小
-                                        addBlockWidget(block_default_size[3].size_x,block_default_size[3].size_y);
+                                        }else if('number-clock' === config_info.contents) {
+                                            //默认  钟表 block大小
+                                            addBlockWidget(block_default_size[4].size_x,block_default_size[4].size_y);
+
+                                        }else {
+
+                                        }
+
                                         return true;
                                     } else {
                                         errorMsg_no_connect("获取展示项数据失败");
@@ -1250,7 +1264,7 @@ z                    </div>
                                     page_vo.block_data.push(block_info);
 
                                     //默认  静态表格 block大小
-                                    addBlockWidget(block_default_size[4].size_x,block_default_size[4].size_y);
+                                    addBlockWidget(block_default_size[5].size_x,block_default_size[5].size_y);
 
                                 } else {
                                     errorMsg_no_connect("获取展示项数据失败");
