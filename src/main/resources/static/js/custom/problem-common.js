@@ -156,9 +156,11 @@ function getAcknowledgeModal(event_id) {
                 var data = result.data;
                 if (!data.checkbox_enable){
                     $("#acknowledge_checkbox").addClass("disabled");
-                    $("#label_checkbox").html(data.disable_message);
+                    $("#text_checkbox").attr("data-tooltip",data.disable_message);
+                    //$("#label_checkbox").html(data.disable_message);
                 }else {
-                    $("#label_checkbox").html("问题可关闭")
+                    $("#text_checkbox").attr("data-tooltip","问题可关闭");
+                    //$("#label_checkbox").html("问题可关闭")
                 }
                 //确认历史记录数据
                 var str = '';
@@ -190,11 +192,18 @@ function getAcknowledgeModal(event_id) {
     //绑定点击确定提交事件
     $("#submit_bnt").on("click",function(){
         $('.ui.modal.confirm').modal({
+            /*onShow: function () {
+                if($("#acknowledge_message").val()=="") {
+                    $("#submit_bnt").addClass("disabled ");
+                }else {
+                    $("#submit_bnt").removeClass("disabled ");
+                }
+            },*/
             onApprove: function () {
                 //验证是否为空
                 if($("#acknowledge_message").val()=="")
                 {
-                    $("#text_field").addClass("error");
+                    $("#submit_bnt").addClass("error");
                     return false;
                 }else {
                     var action = "";

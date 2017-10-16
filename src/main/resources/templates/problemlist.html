@@ -282,7 +282,8 @@
 							<div class="ui form">
 								<div class="required inline field" id="text_field">
 									<input type="hidden" id="acknowledge_eventid">
-									<input type="text" id="acknowledge_message" placeholder="不能为空">
+									<textarea rows="2" id="acknowledge_message" placeholder="不能为空"></textarea>
+									<!--<input type="text" id="acknowledge_message" placeholder="不能为空">-->
 								</div>
 								<div id="acknowledge_history" class="ui segment no-padding detailconfirm">
 									<table class="ui very basic very compact table center aligned">
@@ -300,7 +301,7 @@
 										</tbody>
 									</table>
 								</div>
-								<div class="required inline field" id="text_checkbox">
+								<div class="required inline field" id="text_checkbox"  data-position="top left">
 									<div class="ui checkbox">
 										<input id="acknowledge_checkbox" type="checkbox" tabindex="0" class="hidden">
 										<label  id="label_checkbox">关闭问题</label>
