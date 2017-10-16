@@ -906,11 +906,17 @@ z                    </div>
                         errorMsg_no_connect("添加状态视图 add");
                     }
                 });
+
+                $('#savepage_button').attr('disabled',true);
+
                 $('#addpage_button').attr('disabled',false);
 
                 $('#writepage_button').attr('disabled',false);
 
                 $('#deletepage_button').attr('disabled',false);
+
+                $('#viewgroup_select').removeClass('disabled');
+                $('#viewpage_select').removeClass('disabled');
 
                 $('#editpage_button').html('<i class="edit icon"></i>编辑');
 

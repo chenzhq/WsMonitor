@@ -69,7 +69,7 @@
             <span>刷新时间：</span>
         </div>
         <div class="two wide column side">
-            <span>滚动频率：</span>
+            <span>滚动频率：6</span>
         </div>
         <div class="two wide column right aligned">
             <button id="exit" class="tiny  ui secondary button">退出</button>
@@ -92,19 +92,6 @@
         </ul>
     </div>
 </section>
-    <!-- data-th- 即 th: -->
-    <div class="gridster" th:data-name="${page.pageName}" th:each="page:${pages}" id="page-"
-         th:attrappend="id=${pageStat.index}">
-        <ul>
-            <li th:each="block:${page.layoutDataList}"
-                th:data-row="${block.row}"
-                th:data-col="${block.col}"
-                th:data-sizex="${block.xSize}"
-                th:data-sizey="${block.ySize}"
-               ></li>
-        </ul>
-    </div>
-</section>
 <!-- 刷新读条 -->
 <div id="table-dimmer" class="ui inverted dimmer">
     <div class="ui text loader" style="text-align:center">正在刷新</div>
@@ -116,7 +103,7 @@
         || document.body.clientHeight;
 
     //粒度 300 为 margin，16 为默认 16 row
-    var widget_size = parseInt((w -300) / 16);
+    var widget_size = parseInt((w - 300) / 16);
     console.log('w ',widget_size);
 
     var grids = [];
@@ -134,12 +121,12 @@
         }).data('gridster');
         grids[i].disable();
     }
-    console.log('grids',grids);
+    //console.log('grids',grids);
     // 根据情况选择是否在进入此页面时调用全屏方法
     fullScreen();
 
     // TODO: 首次加载 刷新整个组下的所有页面
-    $('#table-dimmer').addClass('active');
+    /*$('#table-dimmer').addClass('active');
     $.ajax({
         type: 'get',
         url: '/carousel/get_alldata?group_name=' + $('#group_title').text().trim(),
@@ -176,18 +163,26 @@
         error: function () {
             errorMsg_no_connect("页面刷新失败");
         }
-    })
+    })*/
+
+    // TODO: 首次加载 只加载第一个和第二个页面
+    var group_name = $('#group_title').text();
+    var first_page_name = $('#carousel').find('.gridster').eq(0).attr('data-name');
+    var second_page_name = $('#carousel').find('.gridster').eq(1).attr('data-name');
+    refreshPage(group_name,first_page_name,0);
+    refreshPage(group_name,second_page_name,1);
+
 
     // 标记是否正在刷新
     var refreshing = false;
     $('#carousel').fullpage({
         sectionSelector: '.gridster',
-        // 滚动频率，30s
+        // 滚动频率，3s
         scrollingSpeed: 3000,
         autoScrolling: true,
-        'navigation': true,
+        continuousVertical:true,
         afterLoad: function (anchorLink, index) {
-            var current_name = $('#carousel').find('.gridster').eq(index).attr('data-name');
+            var current_name = $('#carousel').find('.gridster').eq(index-1).attr('data-name');
             $('#page_title').html(current_name);
             if (refreshing) {
                 refreshing = false;
@@ -197,19 +192,34 @@
                 var pre_index = index==0 ? pages-1 : index-1;
                 var pre_group_name = $('#group_title').text();
                 var pre_page_name = $('#carousel').find('.gridster').eq(pre_index).attr('data-name');
-                console.log('group and page',pre_group_name + '  ' + pre_index + '  ' + pre_page_name) ;
+                //console.log('group and page',pre_group_name + '  ' + pre_index + '  ' + pre_page_name) ;
                 refreshPage(pre_group_name,pre_page_name,pre_index);
             }
+        },
+        afterRender:function () {
+            idInterval = setInterval(function(){
+                $.fn.fullpage.moveSectionDown();
+            }, 5000);
         }
     });
 
     // 设置刷新频率，暂时定为60s
+    /*var len = $('#carousel').find('.gridster').length;
+    var num = 0;
+    //滚动页面
+    $.fn.fullpage.moveTo(num+1);
+    //console.log('len and num',len + '  ' + num);
+    num++;
+    //如果ai等于锚点数时,将ai重新赋值为0
+    if(num===len){
+        num=0;
+    }*/
     setInterval(function () {
         refreshing = true;
         // 刷新页面
         refresh();
 
-    }, 60000);
+    }, 5000);
 
     function refresh() {
         var group_name = $('#group_title').text();
