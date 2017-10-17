@@ -32,6 +32,10 @@
 				overflow:auto;
 				overflow-x:hidden
 			}
+			.row2_3Height{
+				min-height: 310px;
+				width: 100%;
+			}
 			.row3Height{  height: 240px;  }
 			.row4Height{
 				height: 206px;
@@ -284,38 +288,32 @@
 									</div>
 								</div>
 								<div class="sixteen wide column" style="padding-top: 0px;">
-									<div  class="ui segment" style="padding: 0px">
+									<div  class="ui segment">
 										<div class="ui grid">
-											<div class="three wide column" style="padding-left: 15px;">
-												<div class="ui secondary vertical menu row2Height" id="hostsMenu">
+											<div class="three wide column no-padding" style="">
+												<div class="ui fluid vertical inverted menu row2Height" id="hostsMenu" style="">
 												</div>
 											</div>
-											<div class="three wide column">
-												<div class="ui secondary vertical menu row2Height" id="pointsMenu" style="margin: 0px">
+											<div class="three wide column no-padding">
+												<div class="ui fluid vertical inverted menu row2Height" id="pointsMenu" style="">
 												</div>
 											</div>
-											<div class="ten wide column">
-												<div class="ui row2Height"  id="itemsMenu" style="padding-top: 10px;">
-													<div class="ui grid">
-														<div class="row">
-															<div class="sixteen wide column">
-																<table class="ui very basic fixed single line table">
-																	<thead>
-																	<tr>
-																		<th width="40%">名字</th>
-																		<th width="15%">值</th>
-																		<th width="10%">状态</th>
-																		<th width="10%">权值</th>
-																		<th width="25%">最新时间</th>
-																		<th width="10%"><a><i class='browser icon'></i>详情</a></th>
-																	</tr>
-																	</thead>
-																	<tbody id="itemsTable">
-																	</tbody>
-																</table>
-															</div>
-														</div>
-													</div>
+											<div class="ten wide column no-padding"  style="">
+												<div class="ui row2Height"  id="itemsMenu">
+												<table class="ui fixed single line compact inverted table row2_3Height center aligned">
+													<thead>
+													<tr>
+														<th width="33%">名称</th>
+														<th width="33%">值</th>
+														<th width="7%">状态</th>
+														<th width="7%">权值</th>
+														<th width="20%">最新时间<a style="float: right"><i class='browser icon'></i>详情</a></th>
+													</tr>
+													</thead>
+													<tbody id="itemsTable">
+														<td colspan="6"> 无数据</td>
+													</tbody>
+												</table>
 												</div>
 											</div>
 										</div>
@@ -354,6 +352,26 @@
 				<!--图形报告弹出框-->
 				<div  th:replace="hostdetail::graph_conf_page" class="ui small modal">
 
+				</div>
+				<!--删除弹出框-->
+				<div class="ui basic modal" id="delete_modal">
+					<div class="ui icon header" id="delete_header">
+						<i class="trash icon"></i>
+						确定删除吗？
+					</div>
+					<div class="content" id="delete_content">
+						<p>提醒：删除后将不可退回。</p>
+					</div>
+					<div class="actions">
+						<div class="ui red ok inverted button">
+							<i class="remove icon"></i>
+							确认
+						</div>
+						<div class="ui green basic cancel inverted button">
+							<i class="checkmark icon"></i>
+							取消
+						</div>
+					</div>
 				</div>
 			</div>
 				<!--modal end-->
@@ -601,6 +619,20 @@
                 for(var i=0;i<data.length;i++)
                 {
                     if(data[i].state == '正常'){
+                        var state = 'green';
+                    }
+                    else if(data[i].state == '警告'){
+                        var state = 'yellow';
+                    }
+                    else if(data[i].state == '严重'){
+                        var state = 'red';
+                    }
+                    if (i==0){
+                        str +="<a class='"+state+" item textOverflow active' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
+                    }else {
+                        str +="<a class='"+state+" item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
+                    }
+                    /*if(data[i].state == '正常'){
                         var state = '<i class="green desktop icon"></i>';
                     }
                     if(data[i].state == '警告'){
@@ -613,7 +645,7 @@
                         str +="<a class='item textOverflow active' id='"+data[i].host_id+"' >"+data[i].host_name+state+"</a> ";
                     }else {
                         str +="<a class='item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+state+"</a> ";
-                    }
+                    }*/
                 }
                 $("#hostsMenu").html("");
                 $("#hostsMenu").html(str);
@@ -651,6 +683,20 @@
                 for(var i=0;i<data.length;i++)
                 {
                     if(data[i].state == '正常'){
+                        var state = 'green';
+                    }
+                    else if(data[i].state == '警告'){
+                        var state = 'yellow';
+                    }
+                    else if(data[i].state == '严重'){
+                        var state = 'red';
+                    }
+                    if (i==0){
+                        str +="<a class='"+state+" item textOverflow active' id='"+data[i].point_id+"' >"+data[i].point_name+"<i class='"+state+" desktop icon'></i></a> ";
+                    }else {
+                        str +="<a class='"+state+" item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+"<i class='"+state+" desktop icon'></i></a> ";
+                    }
+                    /*if(data[i].state == '正常'){
                         var state = '<i class="green circle icon"></i>';
                     }
                     if(data[i].state == '警告'){
@@ -663,7 +709,7 @@
                         str +="<a class='item textOverflow active' id='"+data[i].point_id+"' >"+data[i].point_name+state+"</a> ";
                     }else {
                         str +="<a class='item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+state+"</a> ";
-                    }
+                    }*/
                 }
                 $("#pointsMenu").html(str);
             }
@@ -677,7 +723,11 @@
                     success: function (result) {
                         if(result.success) {
                             var data = result.data;
-                            getitemsMenu(data);
+                            if (data!=''){
+                                getitemsMenu(data);
+							}else {
+                                $("#itemsTable").html("<td colspan='6'> 无数据</td>");
+							}
                         }
                         else {
                             errorMsg_no_data("监控项列表 Menu");
@@ -690,20 +740,34 @@
             }
             function getitemsMenu(data) {
                 var str = '';
+                var str_item_name = '';
+                var str_value = '';
                 for(var i=0;i<data.length;i++)
                 {
                     if(data[i].state == '正常'){
                         var state = '<i class="green square icon"></i>';
                     }
-                    if(data[i].state == '警告'){
+                    else if(data[i].state == '警告'){
                         var state = '<i class="yellow square icon"></i>';
                     }
-                    if(data[i].state == '严重'){
-                        var state = '<i class="red square icon"></i>';
+                    else if(data[i].state == '严重'){
+                        var state = '<i class="red square icon" ></i>';
                     }
-                    str +="<tr id='"+data[i].item_id+"' ><td>"
-                        +data[i].item_name +"</td><td> "
-                        +data[i].value+"</td><td> "
+                    //判断超出字符长度，浮动显示
+                    if (strlen(data[i].item_name) > 40) {
+                        str_item_name = "<td title='"+data[i].item_name +"'>" +data[i].item_name +"</td>";
+					}else {
+                        str_item_name = "<td>" +data[i].item_name +"</td>";
+					}
+                    if (strlen(data[i].value) > 40) {
+                        str_value = "<td title='"+data[i].value +"'> " +data[i].value+"</td>";
+                    }else {
+                        str_value = "<td> " +data[i].value+"</td>";
+					}
+                    str +="<tr id='"+data[i].item_id+"' >"
+						+ str_item_name
+						+str_value
+						+ "<td title='"+data[i].state +"'> "
                         +state+"</td><td> "
                         +data[i].weight+"</td>" +
 						"<td>" + data[i].last_time + "</td>" +
@@ -1074,16 +1138,12 @@
                                 }
                                 //append 图形定位
                                 var id = "g" + graph_data[i].item_id;
-                                /*var dimmer_str = "<div class='ui dimmer'><div class='content'><div class='center'><h2 class='ui inverted header'>"+title+"</h2><div class='ui primary button' id='i"
-									+ graph_data[i].item_id + "' onclick='edit_graph(this.id)'>编辑</div><div class='ui button' id='i"
-									+ graph_data[i].item_id + "' onclick='delete_graph(this.id)'>删除</div></div></div></div>" ;
-                                var str_graph ="<div class='column'><div class='dimmerStr'>" + dimmer_str + "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";*/
                                 var str_graph ="<div class='column'><div class='ui grid'>"+
 										"<div class='eight wide column'>"+
 										"<h3>"+title+"</h3></div>"+
 										"<div class='eight wide column right aligned'>"+
 										"<i class='edit icon' id='i" + graph_data[i].item_id + "' onclick='edit_graph(this.id)'></i>"+
-										"<i class='delete icon' id='i" + graph_data[i].item_id + "' onclick='delete_graph(this.id)'></i></div>"+
+										"<i class='delete icon' id='i" + graph_data[i].item_id + "' data-name='"+title+"' onclick='delete_graph(this.id)'></i></div>"+
 										"<div class='sixteen wide column'>"+
 										"<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
                                 $("#g"+graph_data[i].host_id).append(str_graph);
@@ -1438,27 +1498,41 @@
 
             //点击删除图形 function
             function delete_graph(id) {
-                if (!confirm("确定删除吗？")){
+                $('#delete_modal').modal({
+                    closable: false,
+                    duration:1200,
+                    onShow: function () {
+                        $("#delete_header").html("<i class='trash icon'></i>业务图形报告："+$("#"+id).attr("data-name")+"，确定删除吗？")
+                    },
+                    onApprove: function () {
+                        var item_id = id.substring(1);
+                        $.ajax({
+                            type: "get",
+                            url: "/platformdetail/del_graph?item_id="+item_id,
+                            dataType: "json",
+                            success: function (result) {
+                                if(result.success) {
+									$("#delete_header").html("<i class='trash icon'></i>删除成功！");
+                                    $("#delete_content").html("");
+									hostAccordion();
+                                }
+                                else {
+                                    alert("删除失败！")
+                                   	$("#delete_header").html("<i class='trash icon'></i>删除失败~~");
+                                    $("#delete_content").html("");
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("监控项 Chart");
+                            }
+                        });
+                    }
+                })
+                $('#delete_modal').modal('show');
+               /* if (!confirm("确定删除吗？")){
                     return false;
                 }
-                var item_id = id.substring(1);
-                $.ajax({
-                    type: "get",
-                    url: "/platformdetail/del_graph?item_id="+item_id,
-                    dataType: "json",
-                    success: function (result) {
-                        if(result.success) {
-                            alert("删除成功~~~");
-                            hostAccordion();
-                        }
-                        else {
-                            alert("删除失败！！！");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("监控项 Chart");
-                    }
-                });
+                */
             }
 
 
