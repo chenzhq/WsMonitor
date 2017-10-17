@@ -277,7 +277,7 @@
 				<div th:fragment="problem_acknowledge_page">
 
 					<!--确认记录弹出框 start-->
-					<div class="ui small modal confirm">
+					<div class="ui small modal confirm" id="ack_modal">
 						<div class="content">
 							<div class="ui form">
 								<div class="required inline field" id="text_field">
@@ -303,14 +303,14 @@
 								</div>
 								<div class="required inline field" id="text_checkbox"  data-position="top left">
 									<div class="ui checkbox">
-										<input id="acknowledge_checkbox" type="checkbox" tabindex="0" class="hidden">
+										<input id="acknowledge_checkbox" type="checkbox" tabindex="0" >
 										<label  id="label_checkbox">关闭问题</label>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="actions">
-							<div id="submit_bnt" class="ui approve submit button">确认</div>
+							<div class="ui approve submit button" id="submit_bnt">确认</div>
 							<div class="ui cancel button">取消</div>
 						</div>
 					</div>
@@ -483,7 +483,6 @@
             }
         });
 
-
     })
 
     //显示时间控件
@@ -504,8 +503,6 @@
 
         var begin_second = begin_time.getTime();
         var end_second = end_time.getTime();
-  /*      console.log("begin_second",begin_second);
-        console.log("end_second",end_second);*/
         var time_arr = [];
         var vo_arr = [];
         var s = begin_second;
@@ -518,8 +515,6 @@
 		}
 		time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
         vo_arr.push(now.Format("MM-dd hh:mm"));
-//		console.log("time_arr",time_arr);
-//        console.log("vo_arr",vo_arr);
         $('#filter_content').css('display','block');
 
         $('#time_filter').ionRangeSlider({
@@ -552,11 +547,10 @@
                 });
             },
             onChange: function (data) {
-//                        console.log(data);
+
             },
             onFinish: function (data) {
-//                console.log("begin",time_arr[data.from]);
-//                console.log("end",time_arr[data.to]);
+
                 var begin_time = time_arr[data.from];
                 var end_time = time_arr[data.to];
                 $('#table-dimmer').addClass('active');
@@ -579,7 +573,7 @@
                 });
             },
             onUpdate: function (data) {
-//                        console.log(data);
+
             }
         });
 
