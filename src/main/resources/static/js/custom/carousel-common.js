@@ -263,9 +263,7 @@ function drawPage($_gridster,page_vo) {
 }
 
 function addBlockWidget(size_x,size_y) {
-
-    //添加config_info 保存至 page_vo.config_data
-
+    //块的数量 这个时候新增加的块已经加入到了page_vo中，所以drawBlock 的index 应为 length-1
     var last_block = page_vo.config_data.length;
     var config_info = page_vo.config_data[page_vo.config_data.length-1];
     var block_info = page_vo.block_data[page_vo.block_data.length-1];
@@ -275,10 +273,10 @@ function addBlockWidget(size_x,size_y) {
 
     $_block.append($('#block_temp').html());
 
+    console.log('last_block',last_block);
+    drawBlock($_block,config_info,block_info,0,last_block-1);
 
-    drawBlock($_block,config_info,block_info,0,last_block);
-
-    addBlockiCon($_block);
+    addBlockiCon($_block,last_block-1);
 }
 
 /**
@@ -354,7 +352,7 @@ function drawBlock($_block,config_info,block_info,index,i) {
 
             }else if(config_info.contents === 'number-clock') {
                 $_block.find('.block_content').append(
-                    ' <div style = "margin-top: 20px" class="clock-num">'+
+                    ' <div style = "margin-top: 20px" id="clock_' + index + '_' + i +'" class="clock-num">'+
                         '<div class="display">'+
                             '<div class="date"></div>'+
                             '<div class="digits"></div>'+
@@ -892,12 +890,11 @@ function addBlockiCon($_block,i) {
 
         if(confirm("确定删除该展示项")){
             //点击确定后操作
-            //alert('我是block' + i +'的删除 按钮');
-            console.log('page_vo',page_vo);
-            page_vo.config_data.splice(i,1);
-            page_vo.block_data.splice(i,1);
             gridster.remove_widget($_block);
-
+            page_vo.config_data.splice(i,1,null);
+            page_vo.block_data.splice(i,1,null);
+            page_vo.layout_data.splice(i,1,null);
+            console.log('delete the ' + i + ' page_vo', page_vo);
             return true;
         }else {
             return false;

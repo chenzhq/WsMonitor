@@ -1,7 +1,7 @@
 .clock-num{
 	width:100%;
 	height:100%;
-	background:#fff;
+	/*background:#fff;*/
 }
 
 .clock-num:after{
@@ -37,12 +37,12 @@
 
 
 .clock-num{
-	background-color:#fff;
+	/*background-color:#fff;*/
 	color:#272e38;
 }
 
 .clock-num:after{
-	box-shadow:0 4px 10px rgba(0,0,0,0.15);
+	/*box-shadow:0 4px 10px rgba(0,0,0,0.15);*/
 }
 
 .clock-num .digits div span{
