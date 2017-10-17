@@ -72,6 +72,14 @@ public interface ViewService {
     StateViewVO getStateViewByName(String name,String type) throws ServiceException;
 
     /**
+     * 根据给定的 hostids 获取这些设备的 各个状态指标
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    StateViewVO getStateViewByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
      * 根据视图名称 获取 问题视图 信息
      * @param name
      * @return

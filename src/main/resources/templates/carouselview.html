@@ -517,6 +517,70 @@ z                    </div>
                 <div class="ui cancel button">取消</div>
             </div>
         </div>
+        <!-- 轮播展示配置弹出框 -->
+        <div class="ui tiny modal full" id="full_config">
+            <i class="close icon"></i>
+            <div class="header">
+                轮播频率配置
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field">
+                        <label>轮播组</label>
+                        <div class="ui selection dropdown" id="group_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text"></div>
+                            <div class="menu" id="group_menu">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field ">
+                        <label>滚动频率</label>
+                        <div class="ui selection dropdown" id="scroll_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="default text"></div>
+                            <div class="menu" id="scroll_menu">
+                                <div class="item" data-value="10000" >10s</div>
+                                <div class="item" data-value="30000" >30s</div>
+                                <div class="item" data-value="60000" >1分钟</div>
+                                <div class="item" data-value="180000" >3分钟</div>
+                                <div class="item" data-value="300000" >5分钟</div>
+                                <div class="item" data-value="480000" >8分钟</div>
+                                <div class="item" data-value="600000" >10分钟</div>
+                                <div class="item" data-value="900000" >15分钟</div>
+                                <div class="item" data-value="1800000" >30分钟</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field ">
+                        <label>刷新频率</label>
+                        <div class="ui selection dropdown" id="refresh_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="default text"></div>
+                            <div class="menu" id="refresh_menu" >
+                                <div class="item" data-value="10000" >10s</div>
+                                <div class="item" data-value="30000" >30s</div>
+                                <div class="item" data-value="60000" >1分钟</div>
+                                <div class="item" data-value="180000" >3分钟</div>
+                                <div class="item" data-value="300000" >5分钟</div>
+                                <div class="item" data-value="480000" >8分钟</div>
+                                <div class="item" data-value="600000" >10分钟</div>
+                                <div class="item" data-value="900000" >15分钟</div>
+                                <div class="item" data-value="1800000" >30分钟</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui approve submit button">确认</div>
+                <div class="ui cancel button">取消</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -658,7 +722,60 @@ z                    </div>
 
             //轮播 按钮
             $('button.carouselpage').on('click',function(){
-                window.location.href = '/carouselfull?group_name=' + $('#viewgroup_select').dropdown('get value');
+                console.log('alert 轮播');
+                $('#full_config').modal({
+                    onShow:function(){
+                        $.ajax({
+                            type: 'get',
+                            url: '/carousel/get_groups',
+                            dataType: 'json',
+                            success: function (result) {
+                                if(result.success) {
+                                    var data=result.data;
+                                    getSelectByString($('#group_menu'),$('#group_select'),data);
+                                }
+                                else {
+                                    errorMsg_no_data(result.message);
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("展示组下拉框 Dropdown");
+                            }
+                        })
+                    },
+                    onApprove:function(){
+
+                        var group_name = $('#group_select').dropdown('get value');
+                        var scroll_time = $('#scroll_select').dropdown('get value');
+                        var scroll_timestring = $('#scroll_select').dropdown('get text');
+                        var refresh_time = $('#refresh_select').dropdown('get value');
+                        var refresh_timestring = $('#refresh_select').dropdown('get text');
+                        console.log('full config',group_name + ' ' + scroll_time + ' ' + refresh_time);
+                        if('' === scroll_time) {
+                            alert('滚动时间必须选择');
+                            return false;
+                        }
+                        if('' === refresh_time) {
+                            alert('刷新时间必须选择');
+                            return false;
+                        }
+                        if(confirm('定轮播' + group_name + '组吗？')){
+                            window.location.href = '/carouselfull?' +
+                                'group_name=' + group_name +
+                                '&scroll_time=' + scroll_time +
+                                '&scroll_timestring=' + scroll_timestring +
+                                '&refresh_time=' + refresh_time +
+                                '&refresh_timestring=' + refresh_timestring;
+                            return true;
+                        }else {
+                            return false;
+                        }
+
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+
+
+
             });
 
             //添加弹出框
@@ -868,21 +985,24 @@ z                    </div>
                         col: value.col,
                         row: value.row
                     })
-                    configDataList.push({
-                        blockName: page_vo.config_data[i].block_name,
-                        blockType: page_vo.config_data[i].block_type,
-                        graphType: page_vo.config_data[i].graph_type,
-                        contents: page_vo.config_data[i].contents
-                    })
                 })
-
+                $.each(page_vo.config_data,function(i,value) {
+                    if(null !== value) {
+                        configDataList.push({
+                            blockName: page_vo.config_data[i].block_name,
+                            blockType: page_vo.config_data[i].block_type,
+                            graphType: page_vo.config_data[i].graph_type,
+                            contents: page_vo.config_data[i].contents
+                        })
+                    }
+                })
                 viewPage = {
                     groupName :$('#viewgroup_select').dropdown('get value'),
                     pageName :$('#viewpage_select').dropdown('get value'),
                     layoutDataList :layoutDataList,
                     configDataList :configDataList
                 }
-                //console.log('view_page',viewPage);
+                console.log('view_page',viewPage);
 
                 $('#table-dimmer').addClass('active');
                 $.ajax({
@@ -894,6 +1014,7 @@ z                    </div>
                     success: function (result) {
                         if (result.success) {
                             page_vo = result.data;
+                            stat_page_vo = result.data;
                             //console.log('page_vo',page_vo);
                             drawPage($('.gridster > ul'),page_vo);
                             $('#table-dimmer').removeClass('active');
@@ -973,6 +1094,7 @@ z                    </div>
                                     page_vo.config_data.push(config_info);
 
                                     page_vo.block_data.push(block_info);
+                                    console.log('view add page_vo',page_vo);
                                     if(config_info.graph_type === 'statepie') {
 
                                         //默认  状态视图 block大小
@@ -1044,7 +1166,7 @@ z                    </div>
                                     page_vo.config_data.push(config_info);
 
                                     page_vo.block_data.push(block_info);
-
+                                    console.log('add graph page_vo',page_vo);
                                     //默认  图表控件 block大小
                                     addBlockWidget(block_default_size[2].size_x,block_default_size[2].size_y);
                                 } else {
@@ -1119,7 +1241,7 @@ z                    </div>
                                         page_vo.config_data.push(config_info);
 
                                         page_vo.block_data.push(block_info);
-                                        console.log('config_info',config_info);
+                                        console.log('add chart page_vo',config_info);
                                         if('clock-clock' === config_info.contents) {
                                             //默认  钟表 block大小
                                             addBlockWidget(block_default_size[3].size_x,block_default_size[3].size_y);

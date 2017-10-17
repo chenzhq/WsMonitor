@@ -45,7 +45,7 @@
             margin-top: 20px;
         }
 
-        .gridster > div > ul > li {
+        .gridster > ul > li {
             background-color: #EFF6EC;
             list-style-type:none;
         }
@@ -66,10 +66,14 @@
             </div>
         </div>
         <div class="three wide column side">
-            <span>刷新时间：</span>
+            刷新时间：
+            <span style="display: none" th:text="${refreshTime}" id="refresh_time"></span>
+            <span th:text="${refreshTimeString}"></span>
         </div>
         <div class="two wide column side">
-            <span>滚动频率：6</span>
+            滚动频率：
+            <span style="display: none" th:text="${refreshTime}" id="scroll_time"></span>
+            <span th:text="${scrollTimeString}"></span>
         </div>
         <div class="two wide column right aligned">
             <button id="exit" class="tiny  ui secondary button">退出</button>
@@ -78,20 +82,24 @@
     <div th:replace="carouselview::carousel_block"></div>
 </div>
 
-<section id="carousel">
-    <!-- data-th- 即 th: -->
-    <div class="gridster" th:data-name="${page.pageName}" th:each="page:${pages}" id="page-"
-         th:attrappend="id=${pageStat.index}">
-        <ul>
-            <li th:each="block:${page.layoutDataList}"
-                th:data-row="${block.row}"
-                th:data-col="${block.col}"
-                th:data-sizex="${block.xSize}"
-                th:data-sizey="${block.ySize}"
-            ></li>
-        </ul>
+<div id="carousel">
+    <div class="section" >
+        <!-- data-th- 即 th: -->
+        <div class="slide" th:each="page:${pages}">
+            <div class="gridster" th:data-name="${page.pageName}" id="page-"
+                 th:attrappend="id=${pageStat.index}">
+                <ul>
+                    <li th:each="block:${page.layoutDataList}"
+                        th:data-row="${block.row}"
+                        th:data-col="${block.col}"
+                        th:data-sizex="${block.xSize}"
+                        th:data-sizey="${block.ySize}"
+                    ></li>
+                </ul>
+            </div>
+        </div>
     </div>
-</section>
+</div>
 <!-- 刷新读条 -->
 <div id="table-dimmer" class="ui inverted dimmer">
     <div class="ui text loader" style="text-align:center">正在刷新</div>
@@ -103,7 +111,7 @@
         || document.body.clientHeight;
 
     //粒度 300 为 margin，16 为默认 16 row
-    var widget_size = parseInt((w - 300) / 16);
+    var widget_size = parseInt((w - 150) / 16);
     console.log('w ',widget_size);
 
     var grids = [];
@@ -176,20 +184,22 @@
     // 标记是否正在刷新
     var refreshing = false;
     $('#carousel').fullpage({
-        sectionSelector: '.gridster',
-        // 滚动频率，3s
-        scrollingSpeed: 3000,
-        autoScrolling: true,
+        //loopBottom: true,
+        continuousHorizontal:true,
+        //scrollingSpeed: 300,
+        slidesNavigation:false,
+        controlArrows: false,
         continuousVertical:true,
-        afterLoad: function (anchorLink, index) {
-            var current_name = $('#carousel').find('.gridster').eq(index-1).attr('data-name');
+        afterSlideLoad: function (anchorLink, index, slideAnchor, slideIndex) {
+            var current_name = $('#carousel').find('.gridster').eq(slideIndex).attr('data-name');
+            //console.log('current_name',current_name);
             $('#page_title').html(current_name);
             if (refreshing) {
                 refreshing = false;
                 // TODO: 刷新上一个页面 index-1
                 var pages = $('#carousel').find('.gridster').length;
                 //获取参数值
-                var pre_index = index==0 ? pages-1 : index-1;
+                var pre_index = slideIndex==0 ? pages-1 : index-1;
                 var pre_group_name = $('#group_title').text();
                 var pre_page_name = $('#carousel').find('.gridster').eq(pre_index).attr('data-name');
                 //console.log('group and page',pre_group_name + '  ' + pre_index + '  ' + pre_page_name) ;
@@ -197,29 +207,31 @@
             }
         },
         afterRender:function () {
-            idInterval = setInterval(function(){
-                $.fn.fullpage.moveSectionDown();
-            }, 5000);
+
+            var first_name = $('#carousel').find('.gridster').eq(0).attr('data-name');
+            $('#page_title').html(first_name);
+
+            var scroll_time = $('#scroll_time').text();
+            var refresh_time = $('#refresh_time').text();
+            //console.log('scroll_time and refresh_time',scroll_time + '  ' + refresh_time);
+
+            //左右滚动频率
+            setInterval(function(){
+                $.fn.fullpage.moveSlideRight();
+
+            }, scroll_time);
+
+            // 设置刷新频率
+            setInterval(function () {
+                refreshing = true;
+                // 刷新页面
+                refresh();
+
+            }, refresh_time);
+
         }
     });
 
-    // 设置刷新频率，暂时定为60s
-    /*var len = $('#carousel').find('.gridster').length;
-    var num = 0;
-    //滚动页面
-    $.fn.fullpage.moveTo(num+1);
-    //console.log('len and num',len + '  ' + num);
-    num++;
-    //如果ai等于锚点数时,将ai重新赋值为0
-    if(num===len){
-        num=0;
-    }*/
-    setInterval(function () {
-        refreshing = true;
-        // 刷新页面
-        refresh();
-
-    }, 5000);
 
     function refresh() {
         var group_name = $('#group_title').text();

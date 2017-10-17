@@ -258,7 +258,7 @@ public class EventServiceImpl implements EventService {
         if(triggerDTO.getManualClose().equals(ZApiParameter.TRIGGER_MANUAL_CLOSE.NO.value)) {
             //如果不可关闭
             checkboxVO.setCheckboxEnable(false);
-            checkboxVO.setDisableMessage("问题不可关闭");
+            checkboxVO.setDisableMessage("该问题不可关闭，必须设置该触发器问题能够关闭");
             return checkboxVO;
         }
         //step3:Login User类型：Super Admin OR 所属用户群组 对 Trigger所属主机的主机群组 有读写权限（3）
@@ -280,7 +280,7 @@ public class EventServiceImpl implements EventService {
             }
             //循环结束还未返回方法，则无权限
             checkboxVO.setCheckboxEnable(false);
-            checkboxVO.setDisableMessage("无权限");
+            checkboxVO.setDisableMessage("当前用户无权限关闭此问题");
             return checkboxVO;
         }else {
             //Super Admin

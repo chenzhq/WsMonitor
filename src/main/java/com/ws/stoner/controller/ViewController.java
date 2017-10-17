@@ -34,11 +34,19 @@ public class ViewController {
     }
 
     @RequestMapping(value = {"/carouselfull", ""})
-    public ModelAndView carouselfull(@RequestParam(name = "group_name")String groupName) throws ServiceException {
+    public ModelAndView carouselfull(@RequestParam(name = "group_name")String groupName,
+                                     @RequestParam(name = "scroll_time")String scrollTime,
+                                     @RequestParam(name = "scroll_timestring")String scrollTimeString,
+                                     @RequestParam(name = "refresh_time")String refreshTime,
+                                     @RequestParam(name = "refresh_timestring")String refreshTimeString) throws ServiceException {
         ModelAndView mav = new ModelAndView("carouselfull");
         List<ViewPage> pages = viewService.getAllViewPagesByGroupName(groupName);
         mav.addObject("pages",pages);
         mav.addObject("groupName",groupName);
+        mav.addObject("scrollTime",scrollTime);
+        mav.addObject("scrollTimeString",scrollTimeString);
+        mav.addObject("refreshTime",refreshTime);
+        mav.addObject("refreshTimeString",refreshTimeString);
         return mav;
     }
 }

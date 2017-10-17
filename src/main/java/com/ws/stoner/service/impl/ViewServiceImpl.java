@@ -164,6 +164,17 @@ public class ViewServiceImpl implements ViewService {
             return null;
         }
         List<String> hostIds = stateView.getHostIds();
+        return getStateViewByHostIds(hostIds);
+    }
+
+    /**
+     * 根据给定的 hostids 获取这些设备的 各个状态指标
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public StateViewVO getStateViewByHostIds(List<String> hostIds) throws ServiceException {
         //主机状态统计
         int allHostNum = hostIds.size();
         int warningHostNum = hostService.countWarningHostByHostIds(hostIds);

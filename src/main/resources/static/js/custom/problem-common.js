@@ -70,7 +70,6 @@ function getAlertDetailContent(event_id){
             if (result.success) {
                 var color;
                 var data = result.data;
-                console.log('alert data',data);
                 for(var i=0;i<data.length;i++)
                 {
                     if(data[i].recovery) {
@@ -140,103 +139,94 @@ function getEventDetailContent(event_id) {
 
 //获取确认操作modal框
 function getAcknowledgeModal(event_id) {
-    //modal框 数据初始化
-    $("#acknowledge_message").val("");
-    $("#text_field").removeClass("error");
-    $("#text_checkbox").removeClass("error");
-    $("#acknowledge_checkbox").attr("checked",false);
-    //用户是否可以关闭问题
-    $.ajax({
-        type: "get",
-        url: "/acknowledge/is_closed?event_id=" + event_id,
-        dataType: "json",
-        success: function (result) {
-            if (result.success) {
-                $("#acknowledge_eventid").val(event_id);
-                var data = result.data;
-                if (!data.checkbox_enable){
-                    $("#acknowledge_checkbox").addClass("disabled");
-                    $("#text_checkbox").attr("data-tooltip",data.disable_message);
-                    //$("#label_checkbox").html(data.disable_message);
-                }else {
-                    $("#text_checkbox").attr("data-tooltip","问题可关闭");
-                    //$("#label_checkbox").html("问题可关闭")
-                }
-                //确认历史记录数据
-                var str = '';
-                var history_data = data. acknowledge_history;
-                for(var i=0;i<history_data.length;i++)
-                {
-                    if(history_data[i].action == '0'){
-                        var action = '';
-                    }
-                    else if(history_data[i].action == '1'){
-                        var action = '已关闭问题';
-                    }
-                    str += "<tr><td>"
-                        +history_data[i].clock+"</td><td>"
-                        +history_data[i].alias+"</td><td class='left aligned'>"
-                        +history_data[i].message+"</td><td>"
-                        +action+"</td></tr>"
-                }
-                $("#acknowledge_data").html(str);
-            } else {
-                errorMsg_no_data("用户是否可关闭问题 modal");
-            }
-        },
-        error: function () {
-            errorMsg_no_connect("用户是否可关闭问题 modal");
-        }
-    })
-    $(".ui.modal.confirm").modal("show");
-    //绑定点击确定提交事件
-    $("#submit_bnt").on("click",function(){
-        $('.ui.modal.confirm').modal({
-            /*onShow: function () {
-                if($("#acknowledge_message").val()=="") {
-                    $("#submit_bnt").addClass("disabled ");
-                }else {
-                    $("#submit_bnt").removeClass("disabled ");
-                }
-            },*/
-            onApprove: function () {
-                //验证是否为空
-                if($("#acknowledge_message").val()=="")
-                {
-                    $("#submit_bnt").addClass("error");
-                    return false;
-                }else {
-                    var action = "";
-                    if($("#acknowledge_checkbox").attr("checked")) {
-                        action = "1";
-                    }else {
-                        action = "0";
-                    }
-                    var dataInfo = {
-                        eventId: $("#acknowledge_eventid").val(),
-                        message:$("#acknowledge_message").val(),
-                        action:action
-                    };
 
-                    $.ajax({
-                        type: "post",
-                        url: "/acknowledge/acknowledge_event",
-                        data:JSON.stringify(dataInfo),
-                        dataType: "json",
-                        contentType:'application/json;charset=UTF-8',
-                        success: function (result) {
-                            if (result.success) {
-                                var data = result.data;
-                            } else {
-                                errorMsg_no_data("一次关闭问题的确认 modal");
-                            }
-                        },
-                        error: function () {
-                            errorMsg_no_connect("一次关闭问题的确认 modal");
+    $('#ack_modal').modal({
+        onShow:function(){
+            //modal框 数据初始化
+            $("#acknowledge_message").val("");
+            $("#text_field").removeClass("error");
+            $("#text_checkbox").removeClass("error");
+            $("#acknowledge_checkbox").attr("checked",false);
+            //用户是否可以关闭问题
+            $.ajax({
+                type: "get",
+                url: "/acknowledge/is_closed?event_id=" + event_id,
+                dataType: "json",
+                success: function (result) {
+                    if (result.success) {
+                        $("#acknowledge_eventid").val(event_id);
+                        var data = result.data;
+                        $("#text_checkbox").attr("data-tooltip",data.disable_message);
+                        if (!data.checkbox_enable){
+                            $("#acknowledge_checkbox").attr("disabled",true);
+                        }else {
+                            $("#acknowledge_checkbox").attr("disabled",false);
                         }
-                    });
+                        //确认历史记录数据
+                        var str = '';
+                        var history_data = data. acknowledge_history;
+                        for(var i=0;i<history_data.length;i++)
+                        {
+                            if(history_data[i].action == '0'){
+                                var action = '';
+                            }
+                            else if(history_data[i].action == '1'){
+                                var action = '已关闭问题';
+                            }
+                            str += "<tr><td>"
+                                +history_data[i].clock+"</td><td>"
+                                +history_data[i].alias+"</td><td class='left aligned'>"
+                                +history_data[i].message+"</td><td>"
+                                +action+"</td></tr>"
+                        }
+                        $("#acknowledge_data").html(str);
+                    } else {
+                        errorMsg_no_data("用户是否可关闭问题 modal");
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("用户是否可关闭问题 modal");
                 }
+            })
+        },
+        onApprove:function(){
+            //验证是否为空
+            if($("#acknowledge_message").val()=="")
+            {
+                $("#submit_bnt").addClass("error");
+                return false;
+            }else {
+                var action = "";
+                if($("#acknowledge_checkbox").prop('checked')) {
+                    action = "1";
+                }else {
+                    action = "0";
+                }
+                var dataInfo = {
+                    eventId: $("#acknowledge_eventid").val(),
+                    message:$("#acknowledge_message").val(),
+                    action:action
+                };
+                $.ajax({
+                    type: "post",
+                    url: "/acknowledge/acknowledge_event",
+                    data:JSON.stringify(dataInfo),
+                    dataType: "json",
+                    contentType:'application/json;charset=UTF-8',
+                    success: function (result) {
+                        if (result.success) {
+                            var data = result.data;
+                            window.location.reload(true);
+                        } else {
+                            errorMsg_no_data("一次关闭问题的确认 modal");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("一次关闭问题的确认 modal");
+                    }
+                });
             }
-        }).modal('setting', 'closable', false).modal('show');
-    });
+        }
+    }).modal('setting', 'closable', false).modal('show');
+
 }
