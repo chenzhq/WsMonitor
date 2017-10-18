@@ -18,7 +18,7 @@
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
-			.textOverflow{
+			.textoverflow{
 				overflow: hidden; /*自动隐藏文字*/
 				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
 				white-space: nowrap;/*强制不换行*/
@@ -582,10 +582,10 @@
                 //加载设备列表
                 hostsMenu(platform_id);
 				//加载监控点列表
-                var host_id = $("#hostsMenu").children(".item.textOverflow.active").attr("id");
+                var host_id = $("#hostsMenu").children(".item.textoverflow.active").attr("id");
                 pointsMenu(host_id);
 				//加载监控项列表
-                var point_id = $("#pointsMenu").children(".item.textOverflow.active").attr("id");
+                var point_id = $("#pointsMenu").children(".item.textoverflow.active").attr("id");
                 itemsMenu(point_id);
 			}
 			//加载设备列表
@@ -628,24 +628,10 @@
                         var state = 'red';
                     }
                     if (i==0){
-                        str +="<a class='"+state+" item textOverflow active' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
+                        str +="<a class='"+state+" item textoverflow active' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
                     }else {
-                        str +="<a class='"+state+" item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
+                        str +="<a class='"+state+" item textoverflow' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
                     }
-                    /*if(data[i].state == '正常'){
-                        var state = '<i class="green desktop icon"></i>';
-                    }
-                    if(data[i].state == '警告'){
-                        var state = '<i class="yellow desktop icon"></i>';
-                    }
-                    if(data[i].state == '严重'){
-                        var state = '<i class="red desktop icon"></i>';
-                    }
-                    if (i==0){
-                        str +="<a class='item textOverflow active' id='"+data[i].host_id+"' >"+data[i].host_name+state+"</a> ";
-                    }else {
-                        str +="<a class='item textOverflow' id='"+data[i].host_id+"' >"+data[i].host_name+state+"</a> ";
-                    }*/
                 }
                 $("#hostsMenu").html("");
                 $("#hostsMenu").html(str);
@@ -692,24 +678,10 @@
                         var state = 'red';
                     }
                     if (i==0){
-                        str +="<a class='"+state+" item textOverflow active' id='"+data[i].point_id+"' >"+data[i].point_name+"<i class='"+state+" desktop icon'></i></a> ";
+                        str +="<a class='"+state+" item textoverflow active' id='"+data[i].point_id+"' >"+data[i].point_name+"<i class='"+state+" circle icon'></i></a> ";
                     }else {
-                        str +="<a class='"+state+" item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+"<i class='"+state+" desktop icon'></i></a> ";
+                        str +="<a class='"+state+" item textoverflow' id='"+data[i].point_id+"' >"+data[i].point_name+"<i class='"+state+" circle icon'></i></a> ";
                     }
-                    /*if(data[i].state == '正常'){
-                        var state = '<i class="green circle icon"></i>';
-                    }
-                    if(data[i].state == '警告'){
-                        var state = '<i class="yellow circle icon"></i>';
-                    }
-                    if(data[i].state == '严重'){
-                        var state = '<i class="red circle icon"></i>';
-                    }
-                    if (i==0){
-                        str +="<a class='item textOverflow active' id='"+data[i].point_id+"' >"+data[i].point_name+state+"</a> ";
-                    }else {
-                        str +="<a class='item textOverflow' id='"+data[i].point_id+"' >"+data[i].point_name+state+"</a> ";
-                    }*/
                 }
                 $("#pointsMenu").html(str);
             }
@@ -723,7 +695,7 @@
                     success: function (result) {
                         if(result.success) {
                             var data = result.data;
-                            if (data!=''){
+                            if (data!==''){
                                 getitemsMenu(data);
 							}else {
                                 $("#itemsTable").html("<td colspan='6'> 无数据</td>");
