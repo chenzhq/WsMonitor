@@ -112,8 +112,8 @@
     var h = document.documentElement.clientHeight
         || document.body.clientHeight;
 
-    //粒度 300 为 margin，16 为默认 16 row
-    var widget_size = parseInt((w - 150) / 16);
+    //粒度 300 为 margin，40 为默认 40 row
+    var widget_size = parseInt((w - 100) / 40);
     console.log('w ',widget_size);
 
     var grids = [];
@@ -124,7 +124,7 @@
             // TODO: 补充其它配置
             namespace: '#page-' + i,
             widget_selector: 'li',
-            widget_margins: [10, 10],                       //margin大小
+            widget_margins: [5, 5],                       //margin大小
             widget_base_dimensions: [widget_size, widget_size],            //网格
             avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
 

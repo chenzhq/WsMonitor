@@ -603,15 +603,16 @@ z                    </div>
                 size_y:2
             }
 
-            //各个图形的默认 block 大小 从左至右依次为：  问题视图 图表控件 钟表控件 静态表格
+            //各个图形的默认 block 大小
             var block_default_size = [
-                {size_x:8,size_y:4},  //状态视图
-                {size_x:15,size_y:3},  //问题视图
-                {size_x:5,size_y:3},  //图表控件
-                {size_x:4,size_y:4},  //钟表样式
-                {size_x:6,size_y:3},  //数字样式
-                {size_x:5,size_y:3},  //静态表格
-                ];
+                {size_x:18,size_y:8},  //状态视图 0
+                {size_x:36,size_y:10},  //问题视图 1
+                {size_x:10,size_y:6},  //图表控件 非仪表盘 2
+                {size_x:8,size_y:8},  //钟表样式 3
+                {size_x:10,size_y:6},  //数字样式 4
+                {size_x:10,size_y:6},  //静态表格 5
+                {size_x:8,size_y:7},  //仪表盘 6
+            ];
 
             //加载展示项编辑框
             $.ajax({
@@ -732,18 +733,13 @@ z                    </div>
                             alert('刷新时间必须选择');
                             return false;
                         }
-                        if(confirm('定轮播' + group_name + '组吗？')){
-                            window.location.href = '/carouselfull?' +
-                                'group_name=' + group_name +
-                                '&scroll_time=' + scroll_time +
-                                '&scroll_timestring=' + scroll_timestring +
-                                '&refresh_time=' + refresh_time +
-                                '&refresh_timestring=' + refresh_timestring;
-                            return true;
-                        }else {
-                            return false;
-                        }
-
+                        window.location.href = '/carouselfull?' +
+                            'group_name=' + group_name +
+                            '&scroll_time=' + scroll_time +
+                            '&scroll_timestring=' + scroll_timestring +
+                            '&refresh_time=' + refresh_time +
+                            '&refresh_timestring=' + refresh_timestring;
+                        return true;
                     }
                 }).modal('setting', 'closable', false).modal('show');
 
@@ -1138,8 +1134,18 @@ z                    </div>
                                     page_vo.config_data.push(config_info);
 
                                     page_vo.block_data.push(block_info);
-                                    //默认  图表控件 block大小
-                                    addBlockWidget(block_default_size[2].size_x,block_default_size[2].size_y);
+                                    if(config_info.graph_type === 'gauge') {
+
+                                        //默认  仪表盘 block大小
+                                        addBlockWidget(block_default_size[6].size_x,block_default_size[6].size_y);
+
+                                    }else {
+
+                                        //默认  非仪表盘 block大小
+                                        addBlockWidget(block_default_size[2].size_x,block_default_size[2].size_y);
+
+                                    }
+
                                 } else {
                                     errorMsg_no_connect("获取展示项数据失败");
                                 }

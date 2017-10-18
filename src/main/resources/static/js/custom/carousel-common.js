@@ -204,16 +204,16 @@ var graph_resize = [];
 function drawPage($_gridster,page_vo) {
     gridster = $_gridster.gridster({
         //widget_selector: 'li',
-        widget_margins: [20, 20],                       //margin大小
-        widget_base_dimensions: [50, 50],             //网格粒度
+        widget_margins: [5, 5],                       //margin大小
+        widget_base_dimensions: [25, 25],             //网格粒度
         avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
-        max_cols: 100,                             //最多创建多少列，null表示没有限制
-        max_rows: 100,                             //最多创建多少横，null表示没有限制
+        max_cols: 200,                             //最多创建多少列，null表示没有限制
+        max_rows: 200,                             //最多创建多少横，null表示没有限制
         min_cols: 1,                                //至少创建多少列
         min_rows: 1,                               //至少创建多少横
         resize: {
             enabled: true,
-            max_size: [20, 20],
+            max_size: [200, 200],
             min_size: [1, 1],
             start: function(e, ui, $widget) {
 
@@ -387,11 +387,11 @@ function addBlockButton(gridster) {
         '<button ' +
                 'class="ui icon basic massive button " ' +
                 'id="addblock_button" ' +
-                'style="box-shadow:0px 0px;border:3px dashed darkgray;width: 140px;height: 140px">' +
+                'style="box-shadow:0px 0px;width: 140px;height: 140px">' +
             '<i class="add icon" style="font-size:400%;padding-top: 10px;padding-right:30px "></i>' +
         '</button>';
 
-    var $_add_widget = gridster.add_widget('<li id="add_widget">', 2, 2);
+    var $_add_widget = gridster.add_widget('<li id="add_widget">', 4, 4);
 
     $_add_widget.append(str);
 
