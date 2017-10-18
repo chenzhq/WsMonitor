@@ -135,7 +135,7 @@ $.fn.carProTable = function () {
         columns: [
             {
                 "data": "problem_time",
-                "width": "25%",
+                "width": "15%",
                 "title": "发生时间",
                 "orderable": false,
 
@@ -148,25 +148,32 @@ $.fn.carProTable = function () {
             },
             {
                 "data": "description",
-                "width": "20%",
+                "width": "25%",
                 "title": "问题",
                 "orderable": false
             },
             {
                 "data": "priority_state",
-                "width": "10%",
+                "width": "8%",
                 "title": "级别",
                 "orderable": false,
             },
             {
                 "data": "problem_state",
-                "width": "10%",
+                "width": "8%",
                 "title": "状态",
                 "orderable": false,
+                render: function (data, type, row, meta) {
+                    if (row.problem_state !== "问题") {
+                        return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
+                    } else {
+                        return '<div class="ui mini red label" style="margin-bottom: 0px">' + row.problem_state + '</div>';
+                    }
+                }
             },
             {
                 "data": "duration_string",
-                "width": "15%",
+                "width": "14%",
                 "title": "持续时间",
                 "orderable": false,
             },
@@ -315,7 +322,7 @@ function drawBlock($_block,config_info,block_info,index,i) {
             //问题视图
 
             // block 内容
-            $_block.find('.block_content').append('<table width="100%" id="problems_' + index + '_' + i +'"></table>');
+            $_block.find('.block_content').append('<table class="ui compact basic table center aligned " style="width: 98%;margin:0 auto;" id="problems_' + index + '_' + i +'"></table>');
 
             var problemTable = $('#problems_' + index + '_' + i).carProTable();
 
@@ -627,145 +634,8 @@ function addBlockiCon($_block,i) {
                     if($('#charttype_select').dropdown('get value')=='table')
                     {
 
-                        $('#table_thead_modal').modal({
-                            onShow: function () {
-                                var reg = /^[1-9]\d*$/;
-                                if(!(reg.test($('#row_table').val()) && reg.test($('#column_table').val())) ) {
-                                    alert('行列数必须为正整数！');
-                                }
-                                var row = $('#row_table').val();
-                                var columnd = $('#column_table').val();
-                                var str = '';
-                                for(var i=0;i<columnd;i++) {
-                                    var j=i+1;
-                                    str += "<div class='ui label no-padding'> " +
-                                        "<div class='detail'>第"+j+"列</div> " +
-                                        "<input type='text' class='th_name' style='width: 180px'></div> " +
-                                        "<div class='ui label no-padding'> " +
-                                        "<input type='text' value ='180' class='th_width' style='width: 80px;'>"+
-                                        "<div class='detail'>PX</div></div>";
-                                }
-                                $('#table_thead_content').html(str);
-                            }
-                        }).modal('show');
+                        // TODO 接入编辑静态框部分
 
-                        $('#table_thead_modal .button').on('click',function(){
-                            $('#table_tbody_modal').modal({
-                                onShow: function () {
-                                    var str = 0;
-                                    var name = [];
-                                    var width = [];
-                                    var fields = [];//thead详情
-                                    var clientsdata=[];//tbody详情
-                                    var row = $('#row_table').val();
-                                    var columnd = $('#column_table').val();
-                                    $("#table_thead_content input.th_name").each(function () {
-                                        name.push($(this).val());
-                                    })
-                                    $("#table_thead_content input.th_width").each(function () {
-                                        var reg = /^[1-9]\d*$/;
-                                        var v=$(this).val();
-                                        if(!reg.test(v)){
-                                            str += 180;
-                                            width.push(180);
-                                        }
-                                        else {
-                                            str += parseInt(v);
-                                            width.push(parseInt(v));
-                                        }
-                                    })
-                                    for(var i=0;i<columnd;i++)
-                                    {
-                                        fields.push({
-                                            name: name[i],
-                                            type: 'text',
-                                            width: width[i],
-                                        });
-                                    }
-                                    fields.push({
-                                        type: 'control'
-                                    });
-                                    custom_edittable(fields,str);
-                                    for(var j=0;j<row;j++)
-                                    {
-                                        var jsonStr='{';
-                                        for(var i=0;i<columnd;i++) {
-                                            jsonStr+='"'+name[i]+'":"'+""+'",';
-                                        }
-                                        jsonStr+='},'
-                                        clientsdata.push(jsonStr);
-                                    }
-                                    //定义edittable功能和数据
-                                    var db = {
-
-                                        loadData: function(filter) {
-                                        },
-
-                                        insertItem: function(insertingClient) {
-                                            this.clients.push(insertingClient);
-                                        },
-
-                                        updateItem: function(updatingClient) { },
-
-                                        deleteItem: function(deletingClient) {
-                                            var clientIndex = $.inArray(deletingClient, this.clients);
-                                            this.clients.splice(clientIndex, 1);
-                                        }
-
-                                    };
-                                    window.db = db;
-                                    db.clients =clientsdata;
-                                },
-                                onApprove : function() {
-                                    //ajax，存储表格数据，并在页面展示只读表格
-                                    var config_info = {
-                                        block_name: $('#chart_name').val(),
-                                        block_type: 'chart',
-                                        graph_type: $('#charttype_select').dropdown('get value'),
-                                        contents: $('#jsGrid').prop("outerHTML")
-                                    }
-                                    $.ajax({
-                                        type: "get",
-                                        url: "/carousel/get_block",
-                                        data: config_info,
-                                        dataType: "json",
-                                        contentType: 'application/json;charset=UTF-8',
-                                        success: function (result) {
-                                            if (result.success) {
-
-                                                //清空表单
-                                                $('#chart_name').val('');
-                                                $('#charttype_select').dropdown('clear');
-                                                $('#chartname_select').dropdown('clear');
-
-                                                //$('#table_thead_content').html('');
-                                                //$('#jsGrid').html('');
-
-                                                var block_info = result.data;
-                                                //更新 config_info 到page_vo 对象中
-                                                page_vo.config_data[i] = config_info;
-
-                                                $_block.children().first().nextAll().remove();
-
-                                                $_block.append($('#block_temp').html());
-
-                                                // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
-                                                drawBlock($_block,config_info,block_info,0,i);
-
-                                                //添加编辑按钮
-                                                addBlockiCon($_block,i);
-                                                return true;
-                                            } else {
-                                                errorMsg_no_connect("获取展示项数据失败");
-                                            }
-                                        },
-                                        error: function () {
-                                            errorMsg_no_connect("获取展示项数据失败");
-                                        }
-                                    });
-                                }
-                            }).modal('show')
-                        })
                         return false;
 
                     }else if($('#charttype_select').dropdown('get value')=='clock') {
@@ -894,7 +764,7 @@ function addBlockiCon($_block,i) {
             page_vo.config_data.splice(i,1,null);
             page_vo.block_data.splice(i,1,null);
             page_vo.layout_data.splice(i,1,null);
-            console.log('delete the ' + i + ' page_vo', page_vo);
+            //console.log('delete the ' + i + ' page_vo', page_vo);
             return true;
         }else {
             return false;

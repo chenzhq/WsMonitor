@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
     <link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
     <script src="../static/js/jquery.fullpage.min.js" th:src="@{js/jquery.fullpage.min.js}"></script>
+    <script src="../static/js/jquery.easings.min.js" th:src="@{js/jquery.easings.min.js}"></script>
+
     <link rel="stylesheet" href="../static/css/jquery.fullpage.min.css" th:href="@{css/jquery.fullpage.min.css}">
     <script src="../static/js/jquery.gridster.js" th:src="@{js/jquery.gridster.js}"></script>
     <link rel="stylesheet" href="../static/css/jquery.gridster.css" th:href="@{css/jquery.gridster.css}">
@@ -184,12 +186,17 @@
     // 标记是否正在刷新
     var refreshing = false;
     $('#carousel').fullpage({
-        //loopBottom: true,
-        continuousHorizontal:true,
+        continuousHorizontal:true,   //左右无缝循环
+        loopHorizontal:true,         //支持左右循环
         //scrollingSpeed: 300,
-        slidesNavigation:false,
-        controlArrows: false,
-        continuousVertical:true,
+        slidesNavigation:false,      //slides导航
+        controlArrows: false,        //左右切换箭头显示
+        verticalCentered:false,      //section不居中显示
+        css3:false,
+        easing: 'easeOutCirc',     //滚动样式
+        easingcss3: 'linear',
+        //continuousVertical:true,
+        //scrollOverflow:true,
         afterSlideLoad: function (anchorLink, index, slideAnchor, slideIndex) {
             var current_name = $('#carousel').find('.gridster').eq(slideIndex).attr('data-name');
             //console.log('current_name',current_name);

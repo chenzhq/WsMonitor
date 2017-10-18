@@ -188,44 +188,46 @@ function getAcknowledgeModal(event_id) {
                     errorMsg_no_connect("用户是否可关闭问题 modal");
                 }
             })
+            $("#acknowledge_message").on('blur',function(){
+                if($('#acknowledge_message').val()=='') {
+                    $("#submit_bnt").hide();
+
+                }else {
+                    $("#submit_bnt").show();
+                }
+            });
         },
         onApprove:function(){
-            //验证是否为空
-            if($("#acknowledge_message").val()=="")
-            {
-                $("#submit_bnt").addClass("error");
-                return false;
+
+            var action = "";
+            if($("#acknowledge_checkbox").prop('checked')) {
+                action = "1";
             }else {
-                var action = "";
-                if($("#acknowledge_checkbox").prop('checked')) {
-                    action = "1";
-                }else {
-                    action = "0";
-                }
-                var dataInfo = {
-                    eventId: $("#acknowledge_eventid").val(),
-                    message:$("#acknowledge_message").val(),
-                    action:action
-                };
-                $.ajax({
-                    type: "post",
-                    url: "/acknowledge/acknowledge_event",
-                    data:JSON.stringify(dataInfo),
-                    dataType: "json",
-                    contentType:'application/json;charset=UTF-8',
-                    success: function (result) {
-                        if (result.success) {
-                            var data = result.data;
-                            window.location.reload(true);
-                        } else {
-                            errorMsg_no_data("一次关闭问题的确认 modal");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("一次关闭问题的确认 modal");
-                    }
-                });
+                action = "0";
             }
+            var dataInfo = {
+                eventId: $("#acknowledge_eventid").val(),
+                message:$("#acknowledge_message").val(),
+                action:action
+            };
+            $.ajax({
+                type: "post",
+                url: "/acknowledge/acknowledge_event",
+                data:JSON.stringify(dataInfo),
+                dataType: "json",
+                contentType:'application/json;charset=UTF-8',
+                success: function (result) {
+                    if (result.success) {
+                        var data = result.data;
+                        window.location.reload(true);
+                    } else {
+                        errorMsg_no_data("一次关闭问题的确认 modal");
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("一次关闭问题的确认 modal");
+                }
+            });
         }
     }).modal('setting', 'closable', false).modal('show');
 
