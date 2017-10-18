@@ -698,11 +698,6 @@ function addBlockiCon($_block,i) {
                             success: function (result) {
                                 if (result.success) {
 
-                                    //清空表单
-                                    $('#chart_name').val('');
-                                    $('#charttype_select').dropdown('clear');
-                                    $('#chartname_select').dropdown('clear');
-
                                     var block_info = result.data;
                                     //更新 config_info 到page_vo 对象中
                                     page_vo.config_data[i] = config_info;
@@ -727,39 +722,9 @@ function addBlockiCon($_block,i) {
                     }
                 }
             }).modal('show')
-            //赋值
-            $('#chart_name').val(old_config_info.block_name);
-
-            if('clock' === old_config_info.graph_type) {
-
-                $('#charttype_select').dropdown('set text','钟表');
-                $('#charttype_select').dropdown('set value','clock');
-
-                if('clock-clock' === old_config_info.contents) {
-
-                    $('#chartname_select').dropdown('set text','时钟样式');
-                    $('#chartname_select').dropdown('set value','clock-clock');
-
-                }else if('number-clock' === old_config_info.contents) {
-
-                    $('#chartname_select').dropdown('set text','数字样式');
-                    $('#chartname_select').dropdown('set value','number-clock');
-
-                }else {
-
-                }
 
 
-            }else if('table' === old_config_info.graph_type) {
-
-                $('#charttype_select').dropdown('set text','表格');
-                $('#charttype_select').dropdown('set value','table');
-
-            }else {
-
-            }
-
-        }else if('table' === type) {
+        }else {
 
 
 

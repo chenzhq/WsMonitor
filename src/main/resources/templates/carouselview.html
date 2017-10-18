@@ -1016,6 +1016,9 @@ z                    </div>
             $('#view').on('click',function(){
                 $('#point_view_modal').modal({
                     onShow:function(){
+                        //清空表单
+                        $('#view_name').val('');
+
                         $.ajax({
                             type: "get",
                             url: "/viewtype/get_list",
@@ -1054,10 +1057,7 @@ z                    </div>
                             contentType:'application/json;charset=UTF-8',
                             success: function (result) {
                                 if (result.success) {
-                                    //清空表单
-                                    $('#view_name').val('');
-                                    $('#viewtype_select').dropdown('clear');
-                                    $('#viewname_select').dropdown('clear');
+
                                     var block_info = result.data;
                                     //添加 config_info 和 block_info 到page_vo 对象中
                                     page_vo.config_data.push(config_info);
@@ -1091,6 +1091,14 @@ z                    </div>
             $('#graph').on('click',function(){
                 $('#point_graph_modal').modal({
                     onShow:function(){
+
+                        //清空表单
+                        $('#graph_name').val('');
+                        //清空选择树 待完成
+                        $('#pointsMenu').html('');
+                        $('#itemsMenu').html('');
+                        $('#typeMenu').html('');
+
                         //获取设备选择树
                         var host_id ;
                         var $host_tree = $('#host_tree');
@@ -1122,12 +1130,6 @@ z                    </div>
                             contentType:'application/json;charset=UTF-8',
                             success: function (result) {
                                 if (result.success) {
-                                    //清空表单
-                                    $('#graph_name').val('');
-                                    //清空选择树 待完成
-                                    $('#pointsMenu').html('');
-                                    $('#itemsMenu').html('');
-                                    $('#typeMenu').html('');
 
                                     var block_info = result.data;
                                     //添加 config_info 和 block_info 到page_vo 对象中
@@ -1162,6 +1164,14 @@ z                    </div>
             $('#chart').on('click',function(){
                 $('#point_chart_modal').modal({
                     onShow:function(){
+
+                        //清空并激活各个组件
+                        $('#chart_name').val('');
+                        $('#charttype_select').removeClass('disabled');
+                        $('#chartname_select').removeClass('disabled');
+                        $('#row_table').attr("disabled",false);
+                        $('#column_table').attr("disabled",false);
+
                         $.ajax({
                             type: "get",
                             url: "/charttype/get_list",
@@ -1213,11 +1223,6 @@ z                    </div>
                                 contentType: 'application/json;charset=UTF-8',
                                 success: function (result) {
                                     if (result.success) {
-
-                                        //清空表单
-                                        $('#chart_name').val('');
-                                        $('#charttype_select').dropdown('clear');
-                                        $('#chartname_select').dropdown('clear');
 
                                         var block_info = result.data;
                                         //添加 config_info 和 block_info 到page_vo 对象中
