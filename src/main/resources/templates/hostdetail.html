@@ -16,6 +16,9 @@
 		<script src="../static/js/jquery.gridly.js" th:src="@{js/jquery.gridly.js}"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
+		<link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
+			  th:href="@{css/jstree-default/style.min.css}">
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.no-padding-bottom{  padding-bottom: 0px;  }
@@ -59,6 +62,13 @@
 				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
 				white-space: nowrap;/*强制不换行*/
 				width: 10em;/*不允许出现半汉字截断*/
+			}
+			/*原生label 有个下边距*/
+			.ui.buttons {
+				margin-bottom: 0px;
+			}
+			.ui.fixed.sticky + p {
+				margin-top: 39px;
 			}
 		</style>
 	</th:block>
@@ -255,18 +265,29 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui segments">
-
-						<div class="ui segment">
-							<a href="javascript:history.go(-1)" style="float: right"><i class="share icon" ></i>返回上一页</a>
-							<h3 class="ui header">
-								<span style="display: none" id="host_id" th:text="${hostDetailVO.hostId}">10110</span>
-
-								<span th:class="${hostDetailVO.state}=='正常' ? 'ui green top attached button textOverflow' : (${hostDetailVO.state}=='警告' ? 'ui yellow top attached button textOverflow' : 'ui red top attached button textOverflow')  "  th:text="${hostDetailVO.hostName}">设备名称</span>
-							</h3>
+					<div class="ui sticky" style="position:fixed;top:72px;height: 43px;left: 330px;!important;background-color: yellow">
+						<i class="reply icon"></i>
+					</div>
+					<div class="ui grid">
+						<div class="eight wide column">
+							<div class="header item">
+								<h2><i class="bar large chart icon"></i>设备详情</h2>
+							</div>
+							<span style="display: none" id="host_id" th:text="${hostDetailVO.hostId}">10110</span>
 						</div>
-						<div class="ui segment">
-							<div class="sixteen wide column">
+						<div class="eight wide column right aligned">
+							<div class="ui buttons" th:class="${hostDetailVO.state}=='正常' ? 'ui green buttons' : (${hostDetailVO.state}=='警告' ? 'ui yellow buttons' : 'ui red buttons')  "  >
+								<div class="ui button" th:text="${hostDetailVO.hostName}">保存</div>
+								<div class="ui floating dropdown icon button" id="host_select_dropdown">
+									<i class="dropdown icon"></i>
+									<div class="menu">
+										<div class="item" data-value="host"><i class="edit icon"></i> 更改设备</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="sixteen wide column" style="padding-top: 0px">
+							<div class="ui segment">
 								<div class="ui grid">
 									<div class="five wide column">
 										<div class="ui top attached tabular menu">
@@ -472,28 +493,28 @@
 									</div>
 								</div>
 							</div>
-                            <div class="ui special popup" style="height: 260px;width: 260px;overflow:auto;z-index:20">
-                                <div class="ui relaxed divided list">
-                                    <div class="item">
+							<!--<div class="ui special popup" style="height: 260px;width: 260px;overflow:auto;z-index:20">
+								<div class="ui relaxed divided list">
+									<div class="item">
 										<div class="header" id="point_name"></div>
-                                    </div>
-                                    <div class="item">
-                                        <div class="header" id="point_state"></div>
-                                    </div>
-                                    <div class="item">
-                                        <p class="header">监控项：
-                                        <div class="description">
-                                            <table id="item_datas" class="ui very basic compact collapsing celled fixed single line table" style="width: 220px">
-                                            </table>
-                                        </div>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-							<div class="row" style="padding-top:20px; min-height : 220px;">
-                                <div class="column">
+									</div>
+									<div class="item">
+										<div class="header" id="point_state"></div>
+									</div>
+									<div class="item">
+										<p class="header">监控项：
+										<div class="description">
+											<table id="item_datas" class="ui very basic compact collapsing celled fixed single line table" style="width: 220px">
+											</table>
+										</div>
+										</p>
+									</div>
 								</div>
-                                <div id="flag_true" >
+							</div>-->
+							<div class="row" style="padding-top:0px; min-height : 220px;">
+								<div class="column">
+								</div>
+								<div id="flag_true" >
 									<div class="ui segments">
 										<div class="ui segment">
 											<div class="ui grid">
@@ -514,7 +535,8 @@
 											<div class="gridly" id="flag_true_content"></div>
 										</div>
 									</div>
-								<div id="flag_false"></div>
+									<div id="flag_false"></div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -672,6 +694,20 @@
 							<div class="ui green button approve">确认</div>
 						</div>
 					</div>
+					<!--设备树弹出框 start-->
+					<div class="ui tiny modal page" id="host_tree_modal">
+						<div class="header">
+							选择设备
+						</div>
+						<i class="close icon"></i>
+						<div class="content" style="min-height: 200px">
+							<div id="host_tree"></div>
+						</div>
+						<div class="actions">
+							<div class="ui approve submit button">确认</div>
+							<div class="ui cancel button">取消</div>
+						</div>
+					</div>
 				<!--Site Content-->
 			</div>
 		</div>
@@ -689,6 +725,7 @@
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 		<script src="../static/js/pointModal.js" th:src="@{js/pointModal.js}"></script>
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+		<script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
@@ -863,10 +900,11 @@
 	$(function() {
         //加载监控项的图形
         loadHostGraph();
-        /*//点击编辑监控项
-        $('a.editItems').on('click', function (e) {
-            $('.dimmerStr').dimmer('show');
-        })*/
+       //初始化黏贴固定
+        $('.ui.sticky')
+            .sticky()
+        ;
+
         //点击添加监控项
         $('a.addItems').on('click', function (e) {
             e.preventDefault();
@@ -1023,7 +1061,30 @@
                 hide: 300
             }
         });*/
-
+        //选择设备下拉框
+        $('#host_select_dropdown').dropdown({
+            action: function (text, value) {
+                if (value === 'host') {
+                    var host_id ;
+                    $('#host_tree_modal').modal({
+                        closable  : false,
+                        onShow:function(){
+                            //获取设备选择树
+                            var $host_tree = $('#host_tree');
+                            $host_tree.genHostTree({
+                                multi: false,
+                                onChange:function(e,data){
+                                    host_id = data.selected[0];
+                                }
+                            })
+                        },
+                        onApprove : function() {
+                            window.location.href="hostDetail?host_id="+host_id;
+						}
+                    }).modal('show')
+                }
+            }
+		})
 	})
 
     //修改图形 function
