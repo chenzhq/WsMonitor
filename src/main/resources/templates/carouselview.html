@@ -477,35 +477,8 @@ z                    </div>
                 <div class="ui cancel button">取消</div>
             </div>
         </div>
-        <!--添加表头详情，展示项添加静态数据弹出框 start-->
-        <div class="ui tiny modal page" id="table_thead_modal">
-            <i class="close icon"></i>
-            <div class="header">
-                添加表头
-            </div>
-            <div class="ui content  center aligned basic segment no-padding">
-                <form class="ui form" id="table_thead_content">
-
-                </form>
-            </div>
-            <div class="actions">
-                <div class="ui approve submit button">继续</div>
-            </div>
-        </div>
-        <!--添加表内容详情，展示项添加静态数据弹出框 start-->
-        <div class="ui big modal page" id="table_tbody_modal">
-            <i class="close icon"></i>
-            <div class="header">
-                添加表详情
-            </div>
-            <div class="ui content  center aligned basic segment">
-                <div id="jsGrid"></div>
-            </div>
-            <div class="actions">
-                <div class="ui approve submit button">确认</div>
-                <div class="ui cancel button">取消</div>
-            </div>
-        </div>
+        <!-- 静态表格编辑区 -->
+        <div class="ui tiny modal page" id="stat_table"></div>
         <!--删除页面弹出框 start-->
         <div class="ui tiny modal delete" id="delete_modal">
             <div class="ui icon header">
@@ -595,6 +568,7 @@ z                    </div>
         <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
         <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
         <script src="../static/js/custom/carousel-common.js" th:src="@{js/custom/carousel-common.js}"></script>
+        <script src="../static/js/custom/carousel-table.js" th:src="@{js/custom/carousel-table.js}"></script>
 
         <script src="../static/js/moment.min.js" th:src="@{js/moment.min.js}"></script>
         <link rel="stylesheet" type="text/css" href="../static/css/num-clock.css" th:href="@{css/num-clock.css}" />
@@ -722,7 +696,6 @@ z                    </div>
 
             //轮播 按钮
             $('button.carouselpage').on('click',function(){
-                console.log('alert 轮播');
                 $('#full_config').modal({
                     onShow:function(){
                         $.ajax({
@@ -750,7 +723,7 @@ z                    </div>
                         var scroll_timestring = $('#scroll_select').dropdown('get text');
                         var refresh_time = $('#refresh_select').dropdown('get value');
                         var refresh_timestring = $('#refresh_select').dropdown('get text');
-                        console.log('full config',group_name + ' ' + scroll_time + ' ' + refresh_time);
+                        //console.log('full config',group_name + ' ' + scroll_time + ' ' + refresh_time);
                         if('' === scroll_time) {
                             alert('滚动时间必须选择');
                             return false;
@@ -1002,7 +975,7 @@ z                    </div>
                     layoutDataList :layoutDataList,
                     configDataList :configDataList
                 }
-                console.log('view_page',viewPage);
+                //console.log('view_page',viewPage);
 
                 $('#table-dimmer').addClass('active');
                 $.ajax({
@@ -1094,7 +1067,6 @@ z                    </div>
                                     page_vo.config_data.push(config_info);
 
                                     page_vo.block_data.push(block_info);
-                                    console.log('view add page_vo',page_vo);
                                     if(config_info.graph_type === 'statepie') {
 
                                         //默认  状态视图 block大小
@@ -1166,7 +1138,6 @@ z                    </div>
                                     page_vo.config_data.push(config_info);
 
                                     page_vo.block_data.push(block_info);
-                                    console.log('add graph page_vo',page_vo);
                                     //默认  图表控件 block大小
                                     addBlockWidget(block_default_size[2].size_x,block_default_size[2].size_y);
                                 } else {
@@ -1212,8 +1183,14 @@ z                    </div>
                         if($('#charttype_select').dropdown('get value')=='table')
                         {
 
-                            $('#table_thead_modal').modal('show');
-                            return false;
+                           // TODO 接入到静态表格编辑框部分
+                            var stat_tab_opt = {
+                                cols: $('#column_table').val(),
+                                rows: $('#row_table').val(),
+                                modalId: 'stat_table'
+                            }
+                            genTableBlock(stat_tab_opt);
+                            return true;
 
                         }else if($('#charttype_select').dropdown('get value')=='clock') {
                             var config_info = {
@@ -1241,7 +1218,6 @@ z                    </div>
                                         page_vo.config_data.push(config_info);
 
                                         page_vo.block_data.push(block_info);
-                                        console.log('add chart page_vo',config_info);
                                         if('clock-clock' === config_info.contents) {
                                             //默认  钟表 block大小
                                             addBlockWidget(block_default_size[3].size_x,block_default_size[3].size_y);
@@ -1264,144 +1240,6 @@ z                    </div>
                                 }
                             });
                         }
-                    }
-                }).modal('show')
-            })
-
-            //绑定事件 静态表格
-            $('#table_type .button').on('click',function(){
-                $('#table_thead_modal').modal({
-                    onShow: function () {
-                        var reg = /^[1-9]\d*$/;
-                        if(!(reg.test($('#row_table').val()) && reg.test($('#column_table').val())) ) {
-                            alert('行列数必须为正整数！');
-                        }
-                        var row = $('#row_table').val();
-                        var columnd = $('#column_table').val();
-                        var str = '';
-                        for(var i=0;i<columnd;i++) {
-                            var j=i+1;
-                            str += "<div class='ui label no-padding'> " +
-                                "<div class='detail'>第"+j+"列</div> " +
-                                "<input type='text' class='th_name' style='width: 180px'></div> " +
-                                "<div class='ui label no-padding'> " +
-                                "<input type='text' value ='180' class='th_width' style='width: 80px;'>"+
-                                "<div class='detail'>PX</div></div>";
-                        }
-                        $('#table_thead_content').html(str);
-                    }
-                }).modal('show')
-            })
-
-            $('#table_thead_modal .button').on('click',function(){
-                $('#table_tbody_modal').modal({
-                    onShow: function () {
-                        var str = 0;
-                        var name = [];
-                        var width = [];
-                        var fields = [];//thead详情
-                        var clientsdata=[];//tbody详情
-                        var row = $('#row_table').val();
-                        var columnd = $('#column_table').val();
-                        $("#table_thead_content input.th_name").each(function () {
-                            name.push($(this).val());
-                        })
-                        $("#table_thead_content input.th_width").each(function () {
-                            var reg = /^[1-9]\d*$/;
-                            var v=$(this).val();
-                            if(!reg.test(v)){
-                                str += 180;
-                                width.push(180);
-                            }
-                            else {
-                                str += parseInt(v);
-                                width.push(parseInt(v));
-                            }
-                        })
-                        for(var i=0;i<columnd;i++)
-                        {
-                            fields.push({
-                                name: name[i],
-                                type: 'text',
-                                width: width[i],
-                            });
-                        }
-                        fields.push({
-                            type: 'control'
-                        });
-                        custom_edittable(fields,str);
-                        for(var j=0;j<row;j++)
-                        {
-                            var jsonStr='{';
-                            for(var i=0;i<columnd;i++) {
-                                jsonStr+='"'+name[i]+'":"'+""+'",';
-                            }
-                            jsonStr+='},'
-                            clientsdata.push(jsonStr);
-                        }
-                        //定义edittable功能和数据
-                        var db = {
-
-                            loadData: function(filter) {
-                            },
-
-                            insertItem: function(insertingClient) {
-                                this.clients.push(insertingClient);
-                            },
-
-                            updateItem: function(updatingClient) { },
-
-                            deleteItem: function(deletingClient) {
-                                var clientIndex = $.inArray(deletingClient, this.clients);
-                                this.clients.splice(clientIndex, 1);
-                            }
-
-                        };
-                        window.db = db;
-                        db.clients =clientsdata;
-                    },
-                    onApprove : function() {
-                        //ajax，存储表格数据，并在页面展示只读表格
-                        var config_info = {
-                            block_name: $('#chart_name').val(),
-                            block_type: 'chart',
-                            graph_type: $('#charttype_select').dropdown('get value'),
-                            contents: $('#jsGrid').prop("outerHTML")
-                        }
-                        $.ajax({
-                            type: "get",
-                            url: "/carousel/get_block",
-                            data: config_info,
-                            dataType: "json",
-                            contentType: 'application/json;charset=UTF-8',
-                            success: function (result) {
-                                if (result.success) {
-
-                                    //清空表单
-                                    $('#chart_name').val('');
-                                    $('#charttype_select').dropdown('clear');
-                                    $('#chartname_select').dropdown('clear');
-
-                                    //$('#table_thead_content').html('');
-                                    //$('#jsGrid').html('');
-
-                                    var block_info = result.data;
-                                    //添加 config_info 和 block_info 到page_vo 对象中
-                                    page_vo.config_data.push(config_info);
-
-                                    page_vo.block_data.push(block_info);
-
-                                    //默认  静态表格 block大小
-                                    addBlockWidget(block_default_size[5].size_x,block_default_size[5].size_y);
-
-                                } else {
-                                    errorMsg_no_connect("获取展示项数据失败");
-                                }
-                            },
-                            error: function () {
-                                errorMsg_no_connect("获取展示项数据失败");
-                            }
-                        });
                     }
                 }).modal('show')
             })

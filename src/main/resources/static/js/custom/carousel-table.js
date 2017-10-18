@@ -32,8 +32,48 @@ function genTableBlock(options) {
                     values[i] = inputs[i].value;
                 }
                 // result是table的html结构
-                let result = genTableHtml(rows, cols, values);
+                let result = genTableHtml(settings.rows, settings.cols, values);
+                console.log('result',result);
                 // TODO: 补充其它逻辑
+                //ajax，存储表格数据
+                var config_info = {
+                    block_name: $('#chart_name').val(),
+                    block_type: 'chart',
+                    graph_type: $('#charttype_select').dropdown('get value'),
+                    contents: result
+                }
+                $.ajax({
+                    type: "get",
+                    url: "/carousel/get_block",
+                    data: config_info,
+                    dataType: "json",
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function (result) {
+                        if (result.success) {
+
+                            //清空表单
+                            $('#chart_name').val('');
+                            $('#charttype_select').dropdown('clear');
+                            $('#chartname_select').dropdown('clear');
+
+
+                            var block_info = result.data;
+                            //添加 config_info 和 block_info 到page_vo 对象中
+                            page_vo.config_data.push(config_info);
+
+                            page_vo.block_data.push(block_info);
+
+                            //默认  静态表格 block大小
+                            addBlockWidget(block_default_size[5].size_x,block_default_size[5].size_y);
+
+                        } else {
+                            errorMsg_no_connect("获取展示项数据失败");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("获取展示项数据失败");
+                    }
+                });
             }
         }
     ).modal('show');
@@ -77,6 +117,6 @@ function genTableHtml(row, col, values) {
         }
         body += '</tr>';
     }
-    return "<table class=\"ui celled striped table\"><tbody>" + body +
+    return "<table class=\"ui celled striped table\" style=\" width: 98%;margin: 0 auto; \"><tbody>" + body +
         "</tbody></table>";
 }
