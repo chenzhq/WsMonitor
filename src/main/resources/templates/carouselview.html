@@ -462,11 +462,11 @@ z                    </div>
                     </div>
                     <div class="required inline field" id="table_type" display="block">
                         <div class="ui label no-padding">
-                            <input type="text" id="row_table" placeholder="1" value ="1" style="width: 80px;">
+                            <input type="text" id="row_table"  style="width: 80px;">
                             <div class="detail">行</div>
                         </div>
                         <div class="ui label no-padding">
-                            <input type="text" id="column_table" placeholder="1" value ="1" style="width: 80px;">
+                            <input type="text" id="column_table"  style="width: 80px;">
                             <div class="detail">列</div>
                         </div>
                     </div>
@@ -1283,6 +1283,7 @@ z                    </div>
                         if(result.success) {
                             page_vo = result.data;
                             stat_page_vo = result.data;
+                            console.log('page_vo',page_vo);
                             drawPage($('.gridster > ul'),page_vo);
                             $('#table-dimmer').removeClass('active');
                         }

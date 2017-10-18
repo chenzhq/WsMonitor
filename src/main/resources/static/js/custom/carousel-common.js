@@ -605,24 +605,49 @@ function addBlockiCon($_block,i) {
 
             $('#point_chart_modal').modal({
                 onShow:function(){
-                    $.ajax({
-                        type: "get",
-                        async:false,
-                        url: "/charttype/get_list",
-                        dataType: "json",
-                        success: function (result) {
-                            if(result.success) {
-                                var data=result.data;
-                                getSelectByObject($('#charttype_menu'),$('#charttype_select'),data);
-                            }
-                            else {
-                                errorMsg_no_data(result.message);
-                            }
-                        },
-                        error: function () {
-                            errorMsg_no_connect("chart类型下拉框 Dropdown");
+                    console.log('old_config_info',old_config_info);
+
+                    if('clock' === old_config_info.graph_type) {
+
+
+                        $('#charttype_select').dropdown('set value', old_config_info.graph_type);
+                        $('#charttype_select').dropdown('set text', '钟表');
+                        $('#charttype_select').addClass('disabled');
+
+                        if('clock-clock' === old_config_info.contents) {
+
+                            $('#chartname_select').dropdown('set value', old_config_info.contents);
+                            $('#chartname_select').dropdown('set text', '时钟样式');
+                            $('#chartname_select').addClass('disabled');
+
+                        }else if('number-clock' === old_config_info.contents) {
+
+                            $('#chartname_select').dropdown('set value', old_config_info.contents);
+                            $('#chartname_select').dropdown('set text', '数字样式');
+                            $('#chartname_select').addClass('disabled');
+
                         }
-                    })
+
+                    }else if('table' === old_config_info.graph_type) {
+
+                        $('#charttype_select').dropdown('set value', old_config_info.graph_type);
+                        $('#charttype_select').dropdown('set text', '表格');
+                        $('#charttype_select').addClass('disabled');
+
+                        var contents = old_config_info.contents;
+                        var row_regex = new RegExp('<tr>', 'g'); // 使用g表示整个字符串都要匹配
+                        var col_regex = new RegExp('<td>','g');
+                        var row_num = !contents.match(row_regex) ? 0 : contents.match(row_regex).length;
+                        var col_num = (!contents.match(col_regex) ? 0 : contents.match(col_regex).length) / row_num;
+                        // console.log('row and col',row_num + ' ' + col_num);
+                        $('#row_table').val(row_num);
+                        $('#column_table').val(col_num);
+                        $('#row_table').attr("disabled","disabled");
+                        $('#column_table').attr("disabled","disabled");
+
+                    }else {
+
+                    }
                 },
                 onApprove : function() {
 
@@ -635,8 +660,27 @@ function addBlockiCon($_block,i) {
                     {
 
                         // TODO 接入编辑静态框部分
+                        var $table = $(old_config_info.contents);
+                        var values = [];
+                        $.each($table.find('tr'),function(i,value) {
 
-                        return false;
+                            $.each($(value).find('td'),function(index,e){
+
+                                values.push($(e).text());
+
+                            });$(value).find('td')
+
+                        });
+
+                        var stat_tab_opt = {
+                            cols: $('#column_table').val(),
+                            rows: $('#row_table').val(),
+                            modalId: 'stat_table',
+                            editMode: true,
+                            values: values,
+                        }
+                        genTableBlock(stat_tab_opt);
+                        return true;
 
                     }else if($('#charttype_select').dropdown('get value')=='clock') {
                         var config_info = {
@@ -835,7 +879,7 @@ function getGraphOption(graph_type,graph_vo) {
                             textStyle: {
                                 fontWeight: 'bolder', fontSize: 16,color: '#333',
                             }},
-                        data: [{value: graph_vo.data[graph_vo.data.length-1].toFixed(2), name: ''}]
+                        data: [{value: graph_vo.data.length===0 ? 0 : graph_vo.data[graph_vo.data.length-1].toFixed(2), name: ''}]
                     }
                 ]
             };
