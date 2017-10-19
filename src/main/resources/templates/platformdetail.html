@@ -1138,7 +1138,6 @@
                                     case "gauge":
                                         option = {
                                             title: {
-                                                text: title,
 											},
                                             tooltip : {
                                                 formatter: "{a} <br/>{b} : {c}%"
@@ -1177,7 +1176,8 @@
                                                         textStyle: {
                                                             fontWeight: 'bolder', fontSize: 16,color: '#333',
                                                         }},
-                                                    data: [{value: graph_data[i].datas[0], name: ''}]
+                                                    data: [{value: graph_data[i].datas.length===0 ? 0 : graph_data[i].datas[graph_data[i].datas.length-1].toFixed(2), name: ''}]
+
                                                 }
                                             ]
                                         };

@@ -430,10 +430,10 @@ public class ItemServiceImpl implements ItemService {
                     if(itemIdInfo.equals(itemDTO.getItemId())) {
                         if(triggerDTO.getPriority() == 2) {
                             // priority为2:警告阀值取expression的逻辑比较符号后面数据；
-                            itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
+                            itemVO.setWarningPoint(ThresholdUtils.getThresholdValueSymbol(expression));
                         }else if(triggerDTO.getPriority() == 4) {
                             // priority为4:严重阀值取expression的逻辑比较符号后面数据；
-                            itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
+                            itemVO.setHighPoint(ThresholdUtils.getThresholdValueSymbol(expression));
                         }
                     }
                 }

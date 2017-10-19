@@ -275,15 +275,15 @@
                 <div th:fragment="carousel_block" class="ui grid" display="none" id="block_temp">
                     <div
                             class="eight wide column no-padding"
-                            style="float: left;width: 50%;height:20px">
+                            style="float: left;width: 70%;height:20px">
                         <h3 class="block_title"></h3>
                     </div>
                     <div
                             class="eight wide column right aligned no-padding block_edit"
-                            style="float: right;width: 50%;height:20px">
+                            style="float: right;width: 30%;height:20px;line-height:20px">
 
                     </div>
-                    <div class="sixteen wide column no-padding block_content" style="width: 100%;height: 80%" >
+                    <div class="sixteen wide column no-padding block_content" style="width: 100%;height: 80%;margin-top: 25px" >
                         <!-- 块内容 -->
                     </div>
                     <div class="ui inverted dimmer">
@@ -605,13 +605,13 @@ z                    </div>
 
             //各个图形的默认 block 大小
             var block_default_size = [
-                {size_x:18,size_y:8},  //状态视图 0
+                {size_x:17,size_y:7},  //状态视图 0
                 {size_x:36,size_y:10},  //问题视图 1
-                {size_x:10,size_y:6},  //图表控件 非仪表盘 2
-                {size_x:8,size_y:8},  //钟表样式 3
+                {size_x:9,size_y:6},  //图表控件 非仪表盘 2
+                {size_x:7,size_y:7},  //钟表样式 3
                 {size_x:10,size_y:6},  //数字样式 4
                 {size_x:10,size_y:6},  //静态表格 5
-                {size_x:8,size_y:7},  //仪表盘 6
+                {size_x:6,size_y:6},  //仪表盘 6
             ];
 
             //加载展示项编辑框
@@ -671,6 +671,7 @@ z                    </div>
             function getSelectPage(group_name) {
                 $.ajax({
                     type: 'get',
+                    async : false,
                     url: '/carousel/get_pages?group_name=' + group_name,
                     dataType: 'json',
                     success: function (result) {
@@ -819,8 +820,8 @@ z                    </div>
                                     if(result.success) {
                                         var data=result.data;
                                         getSelectPage($('#viewgroup_select').dropdown('get value'));
-                                        $('#viewpage_select').dropdown('set value',$('#page_name').val());
-                                        $('#viewpage_select').dropdown('set text',$('#page_name').val());
+                                        $('#viewpage_select').dropdown('set value',send_data.newPageName);
+                                        $('#viewpage_select').dropdown('set text',send_data.newPageName);
                                     }
                                     else {
                                         errorMsg_no_connect("修改展示页 Dropdown");
@@ -1008,6 +1009,8 @@ z                    </div>
                 $('#writepage_button').attr('disabled',false);
 
                 $('#deletepage_button').attr('disabled',false);
+
+                $('#carousel_button').attr('disabled',false);
 
                 $('#viewgroup_select').removeClass('disabled');
                 $('#viewpage_select').removeClass('disabled');

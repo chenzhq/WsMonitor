@@ -104,6 +104,6 @@ function genTableHtml(row, col, values, edited) {
         }
         body += '</tr>';
     }
-    return "<table class=\"ui celled striped table\" style=\" width: 98%;margin: 0 auto; \"><tbody>" + body +
+    return "<table class=\"ui celled striped table\" style=\" width: 98%;min-height:100%;height:100%;margin: 0 auto; \"><tbody>" + body +
         "</tbody></table>";
 }

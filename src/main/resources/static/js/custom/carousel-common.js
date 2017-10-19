@@ -207,13 +207,13 @@ function drawPage($_gridster,page_vo) {
         widget_margins: [5, 5],                       //margin大小
         widget_base_dimensions: [25, 25],             //网格粒度
         avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
-        max_cols: 200,                             //最多创建多少列，null表示没有限制
-        max_rows: 200,                             //最多创建多少横，null表示没有限制
+        max_cols: 50,                             //最多创建多少列，null表示没有限制
+        max_rows: 50,                             //最多创建多少横，null表示没有限制
         min_cols: 1,                                //至少创建多少列
         min_rows: 1,                               //至少创建多少横
         resize: {
             enabled: true,
-            max_size: [200, 200],
+            max_size: [50, 50],
             min_size: [1, 1],
             start: function(e, ui, $widget) {
 
@@ -298,7 +298,17 @@ function addBlockWidget(size_x,size_y) {
 function drawBlock($_block,config_info,block_info,index,i) {
 
     // block 标题
-    $_block.find('.block_title').text(config_info.block_name);
+    var block_title = '';
+    if('graph' === config_info.block_type) {
+        if(block_info.units !== '' && block_info.units !== 'undefined' ) {
+            block_title = config_info.block_name + '(' + block_info.units + ')';
+        }else {
+            block_title = config_info.block_name;
+        }
+    }else {
+        block_title = config_info.block_name;
+    }
+    $_block.find('.block_title').text(block_title);
 
     //根据配置画图
     $_block.find('.block_content').html('');
@@ -309,8 +319,8 @@ function drawBlock($_block,config_info,block_info,index,i) {
 
             //block 内容
             $_block.find('.block_content').append(
-                    '<div style="float:left;width: 240px;height: 200px;" id="host_pie' + index + '_' + i +'"></div >' +
-                    '<div style="float:left;width: 240px;height: 200px;" id="point_pie' + index + '_' + i +'"></div>');
+                    '<div style="float:left;width: 240px;height: 100%;" id="host_pie' + index + '_' + i +'"></div >' +
+                    '<div style="float:left;width: 240px;height: 100%;" id="point_pie' + index + '_' + i +'"></div>');
 
             var host_chart = echarts.init(document.getElementById('host_pie' + index + '_' + i));
 
@@ -338,7 +348,7 @@ function drawBlock($_block,config_info,block_info,index,i) {
         var graph_vo = block_info;
         //渲染图形
         $_block.find('.block_content').append(
-            '<div style="height: 100%;width: 100%;margin-top: 20px" id="graph_' + index + '_'+ i +'">图表数据</div>');
+            '<div style="height: 100%;width: 100%;" id="graph_' + index + '_'+ i +'">图表数据</div>');
 
         var graph_chart = echarts.init(document.getElementById('graph_' + index + '_' + i));//待补充
 
@@ -372,7 +382,7 @@ function drawBlock($_block,config_info,block_info,index,i) {
             //表格
             $_block.find('.block_content').append('<div id="table_' + index + '_' + i +'"></div>');
 
-            $('#table_' + index + '_' + i).append(block_info.html_contents);// 待完成
+            $('#table_' + index + '_' + i).append(block_info.html_contents);
 
         }
     }else {
@@ -849,14 +859,6 @@ function getGraphOption(graph_type,graph_vo) {
                     },
                 tooltip : {
                     formatter: '{a} <br/>{b} : {c}%'
-                },
-                grid: {
-                    left: '5%',
-                    right: '5%',
-                    bottom: '1%',
-                    height: '90%',
-                    width: '90%',
-                    containLabel: true
                 },
                 series: [
                     {
