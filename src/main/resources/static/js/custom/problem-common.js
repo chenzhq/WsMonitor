@@ -35,16 +35,22 @@ function getAcknowledgeContent(event_id) {
                 for(var i=0;i<data.length;i++)
                 {
                     var action = "";
+                    var str_message = "";
                     if(data[i].action == '0'){
                         action = '未确认';
                     }
                     else if(data[i].action == '1'){
                         action = '已确认';
                     }
+                    if(strlen(data[i].message) > 40){
+                        str_message = "<td title="+data[i].message+" class='left aligned'>"+data[i].message+"</td>"
+                    }else {
+                        str_message = "<td class='left aligned'>"+data[i].message+"</td>"
+                    }
                     str += "<tr><td>"
                         +data[i].clock+"</td><td>"
-                        +data[i].alias+"</td><td class='left aligned'>"
-                        +data[i].message+"</td><td>"
+                        +data[i].alias+"</td>"
+                        +str_message+"<td>"
                         +action+"</td></tr>"
                 }
             } else {
@@ -69,6 +75,10 @@ function getAlertDetailContent(event_id){
         success: function (result) {
             if (result.success) {
                 var color;
+                var str_item = "";
+                var str_tab =  "";
+                var str_table = "";
+                var data_tab = "";
                 var data = result.data;
                 for(var i=0;i<data.length;i++)
                 {
@@ -77,15 +87,35 @@ function getAlertDetailContent(event_id){
                     }else {
                         color = '#FF9797';
                     }
-                    str += "<tr style='background-color: "+ color +"' ><td>"
-                        +data[i].esc_step+"</td><td>"
-                        +data[i].last_time+"</td><td>"
-                        +data[i].sendto+"</td><td>"
-                        +data[i].alert_type+"</td><td>"
-                        +data[i].subject+"</td><td>"
-                        +data[i].message+"</td><td>"
-                        +data[i].status+"("+data[i].retries+")</td></tr>";
+                    if(i=0){
+                        str_item  += "<a class='active item' data-tab='alert"+i+"'>"+data[i].last_time+"</a>";
+                        str_tab  ="<div class='ui active tab' data-tab='alert"+i+"'>"
+                    }
+                    else {
+                        str_item  += "<a class='item' data-tab='alert"+i+"'>"+data[i].last_time+"</a>";
+                        str_tab  ="<div class='ui tab' data-tab='alert"+i+"'>"
+                    }
+                    str_table= "<table class='ui very basic compact fixed table center aligned'>"
+                    +"<thead><tr><th width='5%'>步骤</th><th width='10%'>时间</th>"
+                    +"<th width='10%'>接收者</th><th width='10%'>方式</th>"
+                    +"<th width='15%'>主题</th><th width='40%'>信息</th>"
+                    +"<th width='10%' title='状态(重试次数)'>状态…</th></tr></thead>"
+                    + "<tbody><tr style='background-color: "+ color +"' ><td>"
+                    +data[i].esc_step+"</td><td>"
+                    +data[i].sendto+"</td><td>"
+                    +data[i].alert_type+"</td><td>"
+                    +data[i].subject+"</td><td>"
+                    +data[i].message+"</td><td>"
+                    +data[i].status+"("+data[i].retries+")</td></tr></tbody></table>";
+                    data_tab += str_tab + str_table + "</div>";
                 }
+                str="<div class='ui grid'><div class='four wide column'>"
+                +"<div class='ui fluid secondary v" +
+                    "ertical pointing  tabular menu'>"
+                +str_item+"</div></div>"
+                +"<div class='twelve wide column' style='padding-left: 0px'>"
+                +data_tab+"</div></div>"
+                alert(str)
             } else {
                 errorMsg_no_data("已告警 Popup");
             }
@@ -164,6 +194,7 @@ function getAcknowledgeModal(event_id) {
                         }
                         //确认历史记录数据
                         var str = '';
+                        var str_message = '';
                         var history_data = data. acknowledge_history;
                         for(var i=0;i<history_data.length;i++)
                         {
@@ -173,10 +204,15 @@ function getAcknowledgeModal(event_id) {
                             else if(history_data[i].action == '1'){
                                 var action = '已关闭问题';
                             }
+                            if(strlen(history_data[i].message) > 60){
+                                str_message = "<td title="+history_data[i].message+" class='left aligned'>"+history_data[i].message+"</td>"
+                            }else {
+                                str_message = "<td class='left aligned'>"+history_data[i].message+"</td>"
+                            }
                             str += "<tr><td>"
                                 +history_data[i].clock+"</td><td>"
-                                +history_data[i].alias+"</td><td class='left aligned'>"
-                                +history_data[i].message+"</td><td>"
+                                +history_data[i].alias+"</td>"
+                                +str_message+"<td>"
                                 +action+"</td></tr>"
                         }
                         $("#acknowledge_data").html(str);

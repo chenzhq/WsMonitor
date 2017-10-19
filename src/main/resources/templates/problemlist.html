@@ -49,7 +49,11 @@
 			.ui .label {
 				margin-bottom: 0;
 			}
-		</style>
+			.ui.segment {
+			/* margin: 1rem 0em
+			 */
+			}
+</style>
 	</th:block>
 </head>
 <body>
@@ -356,10 +360,10 @@
 												<table class="ui very basic compact fixed single line table center aligned">
 													<thead>
 													<tr>
-														<th class="four wide">时间</th>
-														<th class="four wide">用户</th>
-														<th class="four wide">消息</th>
-														<th class="four wide">用户动作</th>
+														<th width="31%">时间</th>
+														<th width="15%">用户</th>
+														<th width="39%">消息</th>
+														<th width="15%">用户动作</th>
 													</tr></thead>
 													<tbody id="acknowledgeModal">
 													<tr>
@@ -377,24 +381,43 @@
 													告警记录
 												</h4>
 											</div>
-											<div class="ui segment detailalarmed">
-												<table class="ui very basic compact fixed single line table center aligned">
-													<thead>
-													<tr>
-														<th class="one wide">步骤</th>
-														<th class="three wide">时间</th>
-														<th class="two wide">接收者</th>
-														<th class="one wide">方式</th>
-														<th class="four wide">主题</th>
-														<th class="four wide">信息</th>
-														<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
-													</tr></thead>
-													<tbody id="alertDetailModal">
-													<tr>
-														<td colspan="7">无告警历史记录</td>
-													</tr>
-													</tbody>
-												</table>
+											<div class="ui segment detailalarmed" id="alertDetailModal">
+												<div class="ui grid">
+													<div class="four wide column">
+														<div class="ui fluid secondary vertical pointing  tabular menu">
+															<a class="active item" data-tab="first">第一时间</a>
+															<a class="item" data-tab="second">第二时间</a>
+															<a class="item" data-tab="third">第三时间</a>
+														</div>
+													</div>
+													<div class="twelve wide column" style="padding-left: 0px">
+														<div class="ui active tab" data-tab="first">
+															<table class="ui very basic compact fixed table center aligned">
+																<thead>
+																<tr>
+																	<th width="5%">步骤</th>
+																	<th width="10%">时间</th>
+																	<th width="10%">接收者</th>
+																	<th width="10%">方式</th>
+																	<th width="15%">主题</th>
+																	<th width="40%">信息</th>
+																	<th width="10%" title="状态(重试次数)">状态…</th>
+																</tr></thead>
+																<tbody><!--<tbody id="alertDetailModal">-->
+																<tr>
+																	<td colspan="7">无告警历史记录</td>
+																</tr>
+																</tbody>
+															</table>
+														</div>
+														<div class="ui tab" data-tab="second">
+															第二
+														</div>
+														<div class="ui tab" data-tab="third">
+															第三
+														</div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
