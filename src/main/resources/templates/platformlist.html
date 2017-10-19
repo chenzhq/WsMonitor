@@ -211,8 +211,8 @@
                         <table class="ui compact  very basic table center aligned">
                             <thead>
                             <tr>
-                                <th width="25%">名称</th>
-                                <th width="10%" data-tooltip="当业务平台下有任意一个设备为警告/严重状态时，该平台则为警告/严重状态。" data-inverted="">状态<i class="help circle icon"></i></th>
+                                <th width="28%">名称</th>
+                                <th width="7%" data-tooltip="当业务平台下有任意一个设备为警告/严重状态时，该平台则为警告/严重状态。" data-inverted="">状态<i class="help circle icon"></i></th>
                                 <th width="15%">健康度（%）</th>
                                 <th width="10%">严重设备数量</th>
                                 <th width="10%">警告设备数量</th>
@@ -227,7 +227,7 @@
                                     <input text="hidden" th:id="${platformListVO.platformId}"/>
                                     OA
                                 </td>
-                                <td><i class="red square icon" th:class="${platformListVO.state} == '正常' ?
+                                <td  th:data-tooltip="${platformListVO.state}" data-position="right center"><i class="red square icon" th:class="${platformListVO.state} == '正常' ?
                                     'green square icon' :
                                         (${platformListVO.state} =='警告' ?
                                         'yellow square icon' : 'red square icon') "></i></td>
