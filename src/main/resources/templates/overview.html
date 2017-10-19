@@ -234,18 +234,22 @@
 					<div class="ui grid">
 						<div class="five wide column" style="margin-top: 20px">
 							<h3 style="float: left;margin-bottom: 0px;margin-left: 15px">设备检测：</h3>
-							<p style="float: left">36台设备
-								<i class="red desktop icon"></i>  30
-								<i class="yellow desktop icon"></i>  50
-								<i class="green desktop icon"></i>  122
+							<p style="float: left">
+								<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备
+								<span th:each="stateNum:${stateViewVO.hostStateNum.stateNum}">
+									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' desktop icon'"></i>
+									<span th:text="${stateNum.value}"></span>
+								</span>
 							</p>
 						</div>
 						<div class="five wide column" style="margin-top: 20px">
 							<h3 style="float: left;margin-bottom: 0px">监测点检测：</h3>
-							<p style="float: left">36个监测点
-								<i class="red circle icon"></i>  30
-								<i class="yellow circle icon"></i>  50
-								<i class="green circle icon"></i>  122
+							<p style="float: left">
+								<span th:text="${stateViewVO.pointStateNum.totalNum}"></span>个监测点
+								<span th:each="stateNum:${stateViewVO.pointStateNum.stateNum}">
+									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' circle icon'"></i>
+									<span th:text="${stateNum.value}"></span>
+								</span>
 							</p>
 						</div>
 						<div class="six wide column right aligned">
