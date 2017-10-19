@@ -14,7 +14,8 @@ function genTableBlock(options) {
         cols: 1,
         modalId: '',
         editMode: false,
-        values: ['1', '2', '3', '4']
+        values: [],
+        onApprove: (result) => {}
     }, options);
 
     const modal = document.getElementById(settings.modalId);
@@ -45,47 +46,9 @@ function genTableBlock(options) {
                 }
                 // result是table的html结构
                 let result = genTableHtml(settings.rows, settings.cols, values);
+                settings.onApprove(result);
                 console.log('result',result);
-                // TODO: 补充其它逻辑
-                //ajax，存储表格数据
-                var config_info = {
-                    block_name: $('#chart_name').val(),
-                    block_type: 'chart',
-                    graph_type: $('#charttype_select').dropdown('get value'),
-                    contents: result
-                }
-                $.ajax({
-                    type: "get",
-                    url: "/carousel/get_block",
-                    data: config_info,
-                    dataType: "json",
-                    contentType: 'application/json;charset=UTF-8',
-                    success: function (result) {
-                        if (result.success) {
 
-                            //清空表单
-                            $('#chart_name').val('');
-                            $('#charttype_select').dropdown('clear');
-                            $('#chartname_select').dropdown('clear');
-
-
-                            var block_info = result.data;
-                            //添加 config_info 和 block_info 到page_vo 对象中
-                            page_vo.config_data.push(config_info);
-
-                            page_vo.block_data.push(block_info);
-
-                            //默认  静态表格 block大小
-                            addBlockWidget(block_default_size[5].size_x,block_default_size[5].size_y);
-
-                        } else {
-                            errorMsg_no_connect("获取展示项数据失败");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("获取展示项数据失败");
-                    }
-                });
             }
         }
     ).modal('show');
@@ -112,21 +75,24 @@ function genTableHtml(row, col, values, edited) {
     let body = '';
     for (let i = 0; i < row; ++i) {
         body += '<tr>';
-        if (values && !edited) {
-            for (let j = 0; j < col; ++j) {
-                body += '<td>' +
-                    values[i * col + j] +
-                    '</td>';
-            }
-        } else if (values && edited) {
-            console.log('edit')
-            for (let j = 0; j < col; ++j) {
-                body += '<td>' +
-                    '<div id="cell-' + i + '-' + j + '" class="ui large fluid transparent input" style="margin-bottom: 0">' +
-                    '  <input placeholder="..." ' + 'value="' + values[i * col + j] + '">' +
-                    '</div>' +
-                    '</td>';
-            }
+        console.log(values);
+        if (values && values.length !== 0) {
+            if (!edited) {
+                for (let j = 0; j < col; ++j) {
+                    body += '<td>' +
+                        values[i * col + j] +
+                        '</td>';
+                }
+            } else {
+                for (let j = 0; j < col; ++j) {
+                    body += '<td>' +
+                        '<div id="cell-' + i + '-' + j + '" class="ui large fluid transparent input" style="margin-bottom: 0">' +
+                        '  <input placeholder="..." ' + 'value="' + values[i * col + j] + '">' +
+                        '</div>' +
+                        '</td>';
+                }
+        }
+
         } else {
             for (let j = 0; j < col; ++j) {
                 body += '<td>' +

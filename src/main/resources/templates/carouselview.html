@@ -251,7 +251,7 @@
                             <button class="ui blue button" id="refreshpage_button"><i class="refresh icon"></i> 刷新</button>
                             <button class="ui blue button" id="savepage_button"><i class="save  icon"></i> 保存</button>
 
-                            <button class="ui secondary  button carouselpage"><i class="record icon"></i> 轮播</button>
+                            <button class="ui secondary  button carouselpage" id="carousel_button"><i class="record icon"></i> 轮播</button>
                         </div>
                     </div>
                     <div class="ui segment" style=" min-height : 520px;" id="content">
@@ -887,6 +887,8 @@ z                    </div>
 
                     $('#refreshpage_button').attr('disabled',false);
 
+                    $('#carousel_button').attr('disabled',false);
+
                     $(".gridster > ul > li").css("background-color","#FFF");
 
                 }else if($("#editpage_button").text().trim() === '编辑') {
@@ -915,6 +917,8 @@ z                    </div>
                     $('#deletepage_button').attr('disabled',true);
 
                     $('#refreshpage_button').attr('disabled',true);
+
+                    $('#carousel_button').attr('disabled',true);
 
                     $(".gridster > ul > li").css("background-color","#EFF6EC");
                 }
@@ -1203,9 +1207,47 @@ z                    </div>
                             var stat_tab_opt = {
                                 cols: $('#column_table').val(),
                                 rows: $('#row_table').val(),
-                                modalId: 'stat_table'
+                                modalId: 'stat_table',
+                                onApprove: function (result) {
+                                    // TODO: 补充其它逻辑
+                                    //ajax，存储表格数据
+                                    var config_info = {
+                                        block_name: $('#chart_name').val(),
+                                        block_type: 'chart',
+                                        graph_type: $('#charttype_select').dropdown('get value'),
+                                        contents: result
+                                    }
+                                    $.ajax({
+                                        type: "get",
+                                        url: "/carousel/get_block",
+                                        data: config_info,
+                                        dataType: "json",
+                                        contentType: 'application/json;charset=UTF-8',
+                                        success: function (result) {
+                                            if (result.success) {
+
+                                                var block_info = result.data;
+
+                                                //添加 config_info 和 block_info 到page_vo 对象中
+                                                page_vo.config_data.push(config_info);
+
+                                                page_vo.block_data.push(block_info);
+
+                                                //默认  静态表格 block大小
+                                                addBlockWidget(block_default_size[5].size_x,block_default_size[5].size_y);
+                                            } else {
+                                                errorMsg_no_connect("获取展示项数据失败");
+                                            }
+                                        },
+                                        error: function () {
+                                            errorMsg_no_connect("获取展示项数据失败");
+                                        }
+                                    });
+                                }
                             }
+
                             genTableBlock(stat_tab_opt);
+
                             return true;
 
                         }else if($('#charttype_select').dropdown('get value')=='clock') {

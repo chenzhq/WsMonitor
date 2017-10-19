@@ -438,6 +438,10 @@ function addBlockiCon($_block,i) {
 
             $('#point_view_modal').modal({
                 onShow:function(){
+
+                    //清空表单
+                    $('#view_name').val('');
+
                     $.ajax({
                         type: "get",
                         async:false,
@@ -477,10 +481,7 @@ function addBlockiCon($_block,i) {
                         contentType:'application/json;charset=UTF-8',
                         success: function (result) {
                             if (result.success) {
-                                //清空表单
-                                $('#view_name').val('');
-                                $('#viewtype_select').dropdown('clear');
-                                $('#viewname_select').dropdown('clear');
+
                                 var block_info = result.data;
                                 //更新 config_info 到page_vo 对象中
                                 page_vo.config_data[i] = config_info;
@@ -532,7 +533,15 @@ function addBlockiCon($_block,i) {
         }else if('graph' === type) {
 
             $('#point_graph_modal').modal({
+
                 onShow:function(){
+
+                    //赋值表单
+                    $('#graph_name').val(old_config_info.block_name);
+                    $('#pointsMenu').html('');
+                    $('#itemsMenu').html('');
+                    $('#typeMenu').html('');
+
                     //获取设备选择树
                     var host_id ;
                     var $host_tree = $('#host_tree');
@@ -566,12 +575,6 @@ function addBlockiCon($_block,i) {
                         contentType:'application/json;charset=UTF-8',
                         success: function (result) {
                             if (result.success) {
-                                //清空表单
-                                $('#graph_name').val('');
-                                //清空选择树 待完成
-                                $('#pointsMenu').html('');
-                                $('#itemsMenu').html('');
-                                $('#typeMenu').html('');
 
                                 var block_info = result.data;
                                 //更新 config_info 到page_vo 对象中
@@ -605,6 +608,8 @@ function addBlockiCon($_block,i) {
 
             $('#point_chart_modal').modal({
                 onShow:function(){
+                    $('#chart_name').val(old_config_info.block_name);
+
                     console.log('old_config_info',old_config_info);
 
                     if('clock' === old_config_info.graph_type) {
@@ -678,6 +683,48 @@ function addBlockiCon($_block,i) {
                             modalId: 'stat_table',
                             editMode: true,
                             values: values,
+                            onApprove: function (result) {
+                                // TODO: 补充其它逻辑
+                                //ajax，存储表格数据
+                                var config_info = {
+                                    block_name: $('#chart_name').val(),
+                                    block_type: 'chart',
+                                    graph_type: $('#charttype_select').dropdown('get value'),
+                                    contents: result
+                                }
+                                $.ajax({
+                                    type: "get",
+                                    url: "/carousel/get_block",
+                                    data: config_info,
+                                    dataType: "json",
+                                    contentType: 'application/json;charset=UTF-8',
+                                    success: function (result) {
+                                        if (result.success) {
+
+                                            var block_info = result.data;
+
+                                            //更新 config_info 到page_vo 对象中
+                                            page_vo.config_data[i] = config_info;
+
+                                            $_block.children().first().nextAll().remove();
+
+                                            $_block.append($('#block_temp').html());
+
+                                            // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
+                                            drawBlock($_block,config_info,block_info,0,i);
+
+                                            //添加编辑按钮
+                                            addBlockiCon($_block,i);
+
+                                        } else {
+                                            errorMsg_no_connect("获取展示项数据失败");
+                                        }
+                                    },
+                                    error: function () {
+                                        errorMsg_no_connect("获取展示项数据失败");
+                                    }
+                                });
+                            }
                         }
                         genTableBlock(stat_tab_opt);
                         return true;
