@@ -27,7 +27,7 @@ function genTableBlock(options) {
         }
     }
 
-    console.log(settings)
+    //console.log(settings)
     if (!modal.innerHTML || modal.innerHTML.length === 0) {
         modal.innerHTML = genModal(settings.rows, settings.cols, settings.values, settings.editMode);
     } else {
@@ -47,7 +47,6 @@ function genTableBlock(options) {
                 // result是table的html结构
                 let result = genTableHtml(settings.rows, settings.cols, values);
                 settings.onApprove(result);
-                console.log('result',result);
 
             }
         }
@@ -75,7 +74,7 @@ function genTableHtml(row, col, values, edited) {
     let body = '';
     for (let i = 0; i < row; ++i) {
         body += '<tr>';
-        console.log(values);
+
         if (values && values.length !== 0) {
             if (!edited) {
                 for (let j = 0; j < col; ++j) {

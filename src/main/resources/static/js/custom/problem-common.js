@@ -43,10 +43,10 @@ function getAcknowledgeContent(event_id) {
                         var action = "";
                         var str_message = "";
                         if(data[i].action == '0'){
-                            action = '未确认';
+                            action = '未关闭';
                         }
                         else if(data[i].action == '1'){
-                            action = '已确认';
+                            action = '已关闭';
                         }
                         if(strlen(data[i].message) > 40){
                             str_message = "<td title="+data[i].message+" class='left aligned'>"+data[i].message+"</td>"

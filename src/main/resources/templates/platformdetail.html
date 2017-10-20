@@ -255,9 +255,16 @@
 								<h2><i class="bar large chart icon"></i>业务详情</h2>
 							</div>
 						</div>
+
 						<div class="eight wide column right aligned">
-							<select id="platform_select" class="ui mini dropdown ">
-							</select>
+							<div id="platform_select" class="ui selection dropdown">
+								<!--<input type="hidden" name="hosts">-->
+								<i class="dropdown icon"></i>
+								<div class="text"></div>
+								<div class="menu"  id="platform_menu">
+
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="ui secondary pointing menu"  style="margin-top: -10px">
@@ -394,58 +401,57 @@
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 
 		<script type="text/javascript">
-            //页面加载完加载基础数据
-			$(function() {
-                //初始折叠菜单
-                $('#hostAccordion').accordion({
-					exclusive:false,
-                    selector: {
-                        trigger: '.title .dropdown.icon'
+
+			var platform_id ;
+
+            //初始化业务平台下拉框
+            selectPlaltform();
+
+            //业务平台下拉框onchange
+            $("#platform_select").dropdown({
+                onChange : function(value,text, $choice){
+
+                    platform_id = value;
+					//加载健康度和图形数据
+					getPlatDates(platform_id);
+					//加载分类菜单数据 诠释权值含义
+					initWeightMenu(platform_id);
+                    //加载业务树
+                    platformTree(platform_id);
+                    //加载业务图形报告
+                    hostAccordion(platform_id);
+
+            	}
+            });
+
+            //初始折叠菜单
+            $('#hostAccordion').accordion({
+                exclusive:false,
+                selector: {
+                    trigger: '.title .dropdown.icon'
+                }
+            });
+
+            //初始化选项页
+            $('.secondary.pointing.menu .item')
+                .tab({
+                    'onFirstLoad': function (path) {
+                        if (path === 'platformTree') {
+                            //加载业务树
+                            platformTree(platform_id);
+
+                        }
+                        if (path === 'platformReport') {
+                            //加载业务图形报告
+                            hostAccordion(platform_id);
+
+                        }
                     }
                 });
-                //初始化业务平台下拉框
-                selectPlaltform();
-                //加载健康度和图形数据
-                getPlatDates();
-                //加载分类菜单数据 诠释权值含义
-                initWeightMenu();
-                //业务平台下拉框onchange
-                $("#platform_select").change(function(){
-                    //加载健康度和图形数据
-                    getPlatDates();
-                    //加载分类菜单数据 诠释权值含义
-                    initWeightMenu();
-                });
-                //初始化选项页
-                $('.secondary.pointing.menu .item')
-                    .tab({
-                        'onVisible': function (path) {
-                            if (path === 'platformTree') {
-                                //加载业务树
-                                platformTree();
-                                //业务平台下拉框onchange
-                                $("#platform_select").change(function(){
-                                    //加载业务树
-                                    platformTree();
-                                });
-                            }
-                            if (path === 'platformReport') {
-                                //加载业务图形报告
-                                hostAccordion();
-                                //业务平台下拉框onchange
-                                $("#platform_select").change(function(){
-                                    //加载业务图形报告
-                                    hostAccordion();
-                                });
-                            }
-                        }
-                    });
-			})
 
 			//加载 业务平台 下拉框
 			function selectPlaltform() {
                 $.ajax({
-                    async: false,
                     type: "get",
                     url: "/platformdetail/get_platforms",
                     dataType: "json",
@@ -455,11 +461,11 @@
                             var str = "";
                             for(var i=0;i<platform_data.length;i++)
                             {
-                                str +=" <option value='"+platform_data[i].platform_id+"'  >"+platform_data[i].platform_name+"</option> ";
+                                str +="<div class='item' data-value='"+platform_data[i].platform_id+"'  >"+platform_data[i].platform_name+"</div> ";
+
                             }
 
-                            $("#platform_select").html("");
-                            $("#platform_select").html(str);
+                            $("#platform_menu").html(str);
                             var hashCode = location.hash;
                             //console.log('hashCode',hashCode);
                             if(hashCode === '') {
@@ -468,8 +474,15 @@
 							}else {
                                 $("#platform_select").dropdown("set value", hashCode.substr(1).split('_')[0]);
                                 $("#platform_select").dropdown("set text", hashCode.substr(1).split('_')[1]);
-                                window.location.href = window.location.href.split('#')[0];
+                                //window.location.href = window.location.href.split('#')[0];
 							}
+
+							platform_id = $("#platform_select").dropdown('get value');
+
+                            //加载健康度和图形数据
+                            getPlatDates(platform_id);
+                            //加载分类菜单数据 诠释权值含义
+                            initWeightMenu(platform_id);
 
                         }
                         else {
@@ -483,8 +496,8 @@
 			}
 
             //加载健康度和图形数据
-			function getPlatDates() {
-                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+			function getPlatDates(platform_id) {
+                //var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
                 $.ajax({
                     type: "get",
                     url: "/platformdetail/get_datas?platform_id="+platform_id,
@@ -577,21 +590,15 @@
 			}
 
             //加载分类菜单数据 诠释权值含义
-			function initWeightMenu() {
-                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+			function initWeightMenu(platform_id) {
+
                 //加载设备列表
                 hostsMenu(platform_id);
-				//加载监控点列表
-                var host_id = $("#hostsMenu").children(".item.textoverflow.active").attr("id");
-                pointsMenu(host_id);
-				//加载监控项列表
-                var point_id = $("#pointsMenu").children(".item.textoverflow.active").attr("id");
-                itemsMenu(point_id);
+
 			}
 			//加载设备列表
             function hostsMenu(platform_id) {
                 $.ajax({
-                    async: false,
                     type: "get",
                     url: "/platformdetail/get_hosts?platform_id="+platform_id,
                     dataType: "json",
@@ -599,6 +606,9 @@
                         if(result.success) {
                             var data = result.data;
                             gethostsMenu(data);
+                            //加载监控点列表
+                            var host_id = $("#hostsMenu").children(".item.textoverflow.active").attr("id");
+                            pointsMenu(host_id);
                             $('#hostsMenu a').on('click',function () {
                                 $('#hostsMenu a').removeClass('active');
                                 $(this).addClass('active');
@@ -633,14 +643,12 @@
                         str +="<a class='"+state+" item textoverflow' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
                     }
                 }
-                $("#hostsMenu").html("");
                 $("#hostsMenu").html(str);
             }
 
             //加载监控点列表
             function pointsMenu(host_id) {
                 $.ajax({
-                    async: false,
                     type: "get",
                     url: "/platformdetail/get_points?host_id="+host_id,
                     dataType: "json",
@@ -648,7 +656,10 @@
                         if(result.success) {
                             var data = result.data;
                             getpointsMenu(data);
-                            itemsMenu(data[0].point_id);
+                            //加载监控项列表
+                            var point_id = $("#pointsMenu").children(".item.textoverflow.active").attr("id");
+                            itemsMenu(point_id);
+                            //itemsMenu(data[0].point_id);
                             $('#pointsMenu a').on('click',function () {
                                 $('#pointsMenu a').removeClass('active');
                                 $(this).addClass('active');
@@ -885,11 +896,9 @@
             }
 
 			//加载业务树方法
-			function platformTree() {
-                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+			function platformTree(platform_id) {
 				$.ajax({
 					type: "get",
-					async:false,
 					url: "/platformtree/get_tree?platform_id="+platform_id,
 					dataType: "json",
 					success: function (result) {
@@ -1045,10 +1054,8 @@
 			}
 
             //加载业务图形报告
-            function hostAccordion() {
-                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+            function hostAccordion(platform_id) {
                 $.ajax({
-                    async:false,
                     type: "get",
                     url: "/platformdetail/get_hosts?platform_id="+platform_id,
                     dataType: "json",
@@ -1096,7 +1103,6 @@
                     success: function (result) {
                         if(result.success) {
                             var graph_data = result.data;
-                            console.log('graph_data',graph_data);
                             $.each(host_ids,function(n,value) {
                                 $("#g"+value).html('');
                             });
@@ -1256,9 +1262,7 @@
                                             }]
                                         };
                                 }
-                                console.log('option',option);
                                 myChart.setOption(option);
-                                console.log('myChart',myChart);
 							}
                         }
                         else {
@@ -1273,8 +1277,8 @@
             }
 
             //点击添加业务图形报告
-            function add_graphs(id) {
-                var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
+            function add_graphs(id,platform_id) {
+               // var platform_id = $("#platform_select").dropdown("get value")[0].split(",")[0];
                 var item_id = '';
                 var graph_type = '';
                 var host_id = id.substring(1);
@@ -1361,9 +1365,7 @@
                     }
                 }).modal('show')
 			}
-            /*function edit_graphs(id) {//id='g"+data[i].host_id+"'
-                $('.dimmerStr').dimmer('show');
-            }*/
+
             //点击修改图形 function
             function edit_graph(id) {
                 var item_id = id.substring(1);
@@ -1376,7 +1378,6 @@
                 var value_type = "";
                 $.ajax({
                     type: "get",
-                    async:false,
                     url: "/platformdetail/get_update?item_id="+item_id,
                     dataType: "json",
                     success: function (result) {
@@ -1389,6 +1390,74 @@
                             graph_type = graph_data.graph_type;
                             graph_value = graph_data.graph_value;
                             value_type = graph_data.value_type;
+
+                            //$('.ui.dropdown').dropdown();
+                            dropdownType(value_type);
+                            //初始化
+                            $(".small.input.graph_name input").val(graph_name);
+                            $(".dropdown.points select").dropdown("set value", point_id);
+                            $(".dropdown.points select").dropdown("set text", point_name);
+                            $(".dropdown.items select").dropdown("set value", value_type + "_" + item_id);
+                            $(".dropdown.items select").dropdown("set text", item_name);
+                            $(".dropdown.type select").dropdown("set value", graph_type);
+                            $(".dropdown.type select").dropdown("set text", graph_value);
+
+                            $(".dropdown.points select").dropdown("remove active");
+                            $(".dropdown.items select").dropdown("remove active");
+                            $(".dropdown.type select")
+                                .dropdown({
+                                    onChange: function(value, text, $selectedItem) {
+                                        graph_type = value;
+                                        $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
+                                    }
+                                });
+                            $('.small.modal').modal({
+                                closable  : false,
+                                onApprove: function () {
+                                    //alert("提交后校验item:" + $("#i"+ item_id).length);
+
+                                    if(item_id == "") {
+                                        alert("必填项--监控项");
+                                        return false;
+                                    }else if($('.input.graph_name input').val() == "") {
+                                        alert("必填项--名称");
+                                        return false;
+                                    }else if(graph_type == "") {
+                                        alert("必填项--图形类型");
+                                        return false;
+                                    }else {
+                                        $('.button.approve').addClass('loading');
+                                        var dataInfo = {
+                                            graphName: $('.input.graph_name input').val(),
+                                            graphType: graph_type,
+                                            itemId: item_id
+                                        };
+                                        $.ajax({
+                                            type: "post",
+                                            url: "/platformdetail/update_graph",
+                                            data: JSON.stringify(dataInfo),
+                                            dataType: "json",
+                                            contentType : 'application/json',
+                                            success: function (result) {
+                                                if(result.success) {
+                                                    $('.button.approve').removeClass('loading');
+                                                    hostAccordion(platform_id);
+                                                    $('.small.modal').modal('hide');
+                                                } else {
+                                                    $('.button.approve').removeClass('loading');
+                                                    $('.small.modal').modal('hide');
+                                                    errorMsg_no_data("监控项 Modal");
+                                                }
+                                            },
+                                            error: function () {
+                                                errorMsg_no_connect("监控项 Modal");
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }).modal('show');
+
                         }
                         else {
                             errorMsg_no_data("监控项 Chart");
@@ -1399,73 +1468,6 @@
                     }
                 });
 
-                //$('.ui.dropdown').dropdown();
-                dropdownType(value_type);
-                //初始化
-                $(".small.input.graph_name input").val(graph_name);
-                $(".dropdown.points select").dropdown("set value", point_id);
-                $(".dropdown.points select").dropdown("set text", point_name);
-                $(".dropdown.items select").dropdown("set value", value_type + "_" + item_id);
-                $(".dropdown.items select").dropdown("set text", item_name);
-                $(".dropdown.type select").dropdown("set value", graph_type);
-                $(".dropdown.type select").dropdown("set text", graph_value);
-
-                $(".dropdown.points select").dropdown("remove active");
-                $(".dropdown.items select").dropdown("remove active");
-                $(".dropdown.type select")
-                    .dropdown({
-                        onChange: function(value, text, $selectedItem) {
-                            graph_type = value;
-                            $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
-                        }
-                    });
-                $('.small.modal').modal({
-                    closable  : false,
-                    onApprove: function () {
-                        //alert("提交后校验item:" + $("#i"+ item_id).length);
-
-                        if(item_id == "") {
-                            alert("必填项--监控项");
-                            return false;
-                        }else if($('.input.graph_name input').val() == "") {
-                            alert("必填项--名称");
-                            return false;
-                        }else if(graph_type == "") {
-                            alert("必填项--图形类型");
-                            return false;
-                        }else {
-                            $('.button.approve').addClass('loading');
-                            var dataInfo = {
-                                graphName: $('.input.graph_name input').val(),
-                                graphType: graph_type,
-                                itemId: item_id
-                            };
-
-                            $.ajax({
-                                type: "post",
-                                url: "/platformdetail/update_graph",
-                                data: JSON.stringify(dataInfo),
-                                dataType: "json",
-                                contentType : 'application/json',
-                                success: function (result) {
-                                    if(result.success) {
-                                        $('.button.approve').removeClass('loading');
-                                        hostAccordion();
-                                        $('.small.modal').modal('hide');
-                                    } else {
-                                        $('.button.approve').removeClass('loading');
-                                        $('.small.modal').modal('hide');
-                                        errorMsg_no_data("监控项 Modal");
-                                    }
-                                },
-                                error: function () {
-                                    errorMsg_no_connect("监控项 Modal");
-                                }
-                            });
-
-                        }
-                    }
-                }).modal('show');
             }
 
             //点击删除图形 function
@@ -1501,10 +1503,7 @@
                     }
                 })
                 $('#delete_modal').modal('show');
-               /* if (!confirm("确定删除吗？")){
-                    return false;
-                }
-                */
+
             }
 
 

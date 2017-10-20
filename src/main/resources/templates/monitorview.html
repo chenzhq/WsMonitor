@@ -533,6 +533,7 @@
                     }
                 ],
             });
+
             //初始化选择树
             $('#host_tree').genHostTree({
                 multi: true,
@@ -542,96 +543,7 @@
 
             //初始化视图类型下拉框
             selectViewtype();
-            //初始化视图页面下拉框
-            var type=$("#viewtype_select").dropdown("get value");
-            selectViewpage(type);
-            var name=$("#viewpage_select").dropdown("get text");
-            if(name !== '') {
-                //初始化状态视图
-                if(type === 'statepie') {
-                    viewstatepie(name,type);
-                    $("#statepie").show();
-                    $("#problems").hide();
-                    $("#appletree").hide();
-                }else if(type === 'problems') {
-                    $.ajax({
-                        async: false,
-                        type: 'get',
-                        url: '/view/get_graph?name='+name+'&type='+type,
-                        dataType: 'json',
-                        success: function (result) {
-                            if(result.success) {
-                                var data=result.data;
-                                problems_Table.clear().rows.add(data).draw();
-                            }
-                            else {
-                                errorMsg_no_data(result.message);
-                            }
-                        },
-                        error: function () {
-                            errorMsg_no_connect('');
-                        }
-                    });
-                    $("#statepie").hide();
-                    $("#problems").show();
-                    $("#appletree").hide();
-                }
-            }
 
-            $('#viewtype_select').dropdown({
-                onChange: function (value) {
-                    $('#viewtype_select').addClass('loading disabled');
-                    var type=$("#viewtype_select").dropdown("get value");
-                    selectViewpage(type);
-                }
-            })
-            $('#viewpage_select').dropdown({
-                onChange: function (value) {
-                    $('#viewpage_select').addClass('loading disabled');
-                    var type=$("#viewtype_select").dropdown("get value");
-                    if(type=="statepie"){
-                        var name=$("#viewpage_select").dropdown("get text");
-                        viewstatepie(name,type);
-                        $("#statepie").show();
-                        $("#problems").hide();
-                        $("#appletree").hide();
-                    }
-                    else if (type=="problems"){
-                        var name=$("#viewpage_select").dropdown("get text");
-                        $.ajax({
-                            async: false,
-                            type: "get",
-                            url: "/view/get_graph?name="+name+"&type="+type,
-                            dataType: "json",
-                            success: function (result) {
-                                if(result.success) {
-                                    var data=result.data;
-                                    problems_Table.clear().rows.add(data).draw();
-                                }
-                                else {
-                                    errorMsg_no_data(result.message);
-                                }
-                            },
-                            error: function () {
-                                errorMsg_no_connect("");
-                            }
-                        })
-                        $('#viewtype_select, #viewpage_select').removeClass('loading disabled');
-                        $("#statepie").hide();
-                        $("#problems").show();
-                        $("#appletree").hide();
-
-                    }
-                    else if (type=="appletree"){
-                        var name=$("#viewpage_select").dropdown("get text");
-
-                        $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
-                        $("#statepie").hide();
-                        $("#problems").hide();
-                        $("#appletree").show();
-                    }
-                }
-            })
             //编辑页面弹出框
             $("button.editpage").on("click",function(){
                 var type=$("#viewtype_select").dropdown("get value");
@@ -642,6 +554,7 @@
                 if(name=="默认页面"){$("#name_field").addClass("disabled");}
                 editpage(name,type);
             });
+
             //添加页面弹出框
             $("button.addpage").on("click",function(){
                 $("#name_field").removeClass("error");
@@ -649,6 +562,7 @@
                 $("#modal_name").html("添加页面【"+$("#viewtype_select").dropdown("get text")+"】");
                 addpage();
             });
+
             //删除页面弹出框
             $("button.deletepage").on("click",function(){
                 var type=$("#viewtype_select").dropdown("get value");
@@ -664,19 +578,93 @@
                 }).modal('setting', 'closable', false).modal('show');
             });
 
+            function drawPage(type,name) {
+                if(name !== '') {
+                    //初始化状态视图
+                    if(type === 'statepie') {
+                        $.ajax({
+                            type: "get",
+                            url: "/view/get_graph?name="+name+"&type="+type,
+                            dataType: "json",
+                            success: function (result) {
+                                if(result.success) {
+                                    var data=result.data;
+                                    getviewstatepie(data);
+                                }
+                                else {
+                                    errorMsg_no_data(result.message);
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("状态视图 Dropdown");
+                            }
+                        }).done(function () {
+                            $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
+                        })
+                        $("#statepie").show();
+                        $("#problems").hide();
+                        $("#appletree").hide();
+                    }else if(type === 'problems') {
+                        $.ajax({
+                            type: 'get',
+                            url: '/view/get_graph?name='+name+'&type='+type,
+                            dataType: 'json',
+                            success: function (result) {
+                                if(result.success) {
+                                    var problems = result.data;
+                                    problems_Table.clear().rows.add(problems).draw();
+                                }
+                                else {
+                                    errorMsg_no_data(result.message);
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect('');
+                            }
+                        }).done(function () {
+                            $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
+                        });
+                        $("#statepie").hide();
+                        $("#problems").show();
+                        $("#appletree").hide();
+                    }
+                }
+            }
+
             //获取视图类型下拉框
             function selectViewtype() {
                 $.ajax({
-                    async: false,
                     type: "get",
                     url: "/viewtype/get_list",
                     dataType: "json",
                     success: function (result) {
                         if(result.success) {
+
                             var data=result.data;
                             getselectViewtype(data);
-                                  }
-                        else {
+
+                            $('#viewtype_select').dropdown({
+                                onChange: function (value) {
+                                    $('#viewtype_select').addClass('loading disabled');
+                                    var type=value;
+                                    selectViewpage(type);
+                                }
+                            })
+
+                            $('#viewpage_select').dropdown({
+                                onChange: function () {
+                                    $('#viewpage_select').addClass('loading disabled');
+                                    var type = $("#viewtype_select").dropdown("get value");
+                                    var name = $("#viewpage_select").dropdown("get text");
+                                    drawPage(type,name);
+                                }
+                            })
+
+                            //初始化视图页面下拉框
+                            var type=$("#viewtype_select").dropdown("get value");
+                            selectViewpage(type);
+
+                        } else {
                             errorMsg_no_data(result.message);
                         }
                     },
@@ -703,7 +691,6 @@
             //获取视图页面下拉框
             function selectViewpage(type) {
                 $.ajax({
-                    async: false,
                     type: "get",
                     url: "/view/get_names?type="+type,
                     dataType: "json",
@@ -712,6 +699,7 @@
                             var data=result.data;
                             if(data.length !== 0) {
                                 getselectViewpage(data);
+
                             }
                         }
                         else {
@@ -723,39 +711,27 @@
                     }
                 })
             }
-            function getselectViewpage(data) {
+            function getselectViewpage() {
+                var data = arguments[0];
+                var default_value = arguments[1];
+                var default_text = arguments[2];
+
                 var str = "";
                 for(var i=0;i<data.length;i++)
                 {
                     str +="<div class='item' data-value='"+data[i].type+"'  >"+data[i].name+"</div> ";
                 }
                 $("#viewpage_menu").html(str);
-                $("#viewpage_select").dropdown("set text",data[data.length-1].name);
-                $("#viewpage_select").dropdown("set value",data[data.length-1].type);
+                if(typeof default_value === 'undefined' || typeof default_text === 'undefined') {
+                    $("#viewpage_select").dropdown("set text",data[data.length-1].name);
+                    $("#viewpage_select").dropdown("set value",data[data.length-1].type);
+                }else {
+                    $("#viewpage_select").dropdown("set text",default_text);
+                    $("#viewpage_select").dropdown("set value",default_value);
+                }
+
             }
-            //获取状态视图
-            function viewstatepie(name,type) {
-                $.ajax({
-                    async: false,
-                    type: "get",
-                    url: "/view/get_graph?name="+name+"&type="+type,
-                    dataType: "json",
-                    success: function (result) {
-                        if(result.success) {
-                            var data=result.data;
-                            getviewstatepie(data);
-                        }
-                        else {
-                            errorMsg_no_data(result.message);
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("状态视图 Dropdown");
-                    }
-                }).done(function () {
-                    $('#viewtype_select, #viewpage_select').removeClass('loading disabled')
-                })
-            }
+
             function getviewstatepie(data) {
                 var hostStateNum = data.hostStateNum;
                 if (hostStateNum.stateNum) {
@@ -866,7 +842,6 @@
                 if(type==''){type="statepie"}
                 if(type=="statepie") {
                     $.ajax({
-                        async: false,
                         type: "get",
                         url: "/stateview/get_hostids?name=" + name + "&type=" + type,
                         dataType: "json",
@@ -885,7 +860,6 @@
                     })
                 }else if(type=="problems"){
                     $.ajax({
-                        async: false,
                         type: "get",
                         url: "/problemsview/get_hostids?name=" + name + "&type=" + type,
                         dataType: "json",
@@ -942,10 +916,11 @@
                                                 contentType:'application/json;charset=UTF-8',
                                                 success: function (result) {
                                                     if (result.success) {
-                                                        var data = result.data;
-                                                        getviewstatepie(data);
-                                                        selectViewpage(type);
-                                                        $("#viewpage_select").dropdown('set text', newName);
+                                                        var name_list = result.data;
+                                                        if(data.length !== 0) {
+                                                            getselectViewpage(name_list,type,newName);
+
+                                                        }
                                                     } else {
                                                         errorMsg_no_data(result.message);
                                                     }
@@ -970,8 +945,10 @@
                                                 contentType:'application/json;charset=UTF-8',
                                                 success: function (result) {
                                                     if(result.success) {
-                                                        var data=result.data;
-                                                        problems_Table.clear().rows.add(data).draw();
+                                                        var name_list = result.data;
+                                                        if(data.length !== 0) {
+                                                            getselectViewpage(name_list,type,newName);
+                                                        }
                                                     }
                                                     else {
                                                         errorMsg_no_data(result.message);
@@ -981,8 +958,7 @@
                                                     errorMsg_no_connect('');
                                                 }
                                             })
-                                            selectViewpage(type);
-                                            $("#viewpage_select").dropdown('set text', newName);
+
                                         }
                                     }
                                 }
@@ -999,36 +975,7 @@
                     dataType: "json",
                     success: function (result) {
                         if (result.success) {
-                            if(type=="statepie"){
-                                selectViewpage(type);
-                                name=$("#viewpage_select").dropdown('get text');
-                                viewstatepie(name,type);
-                            }
-                            else if(type=="problems"){
-                                selectViewpage(type);
-                                name=$("#viewpage_select").dropdown('get text');
-                                $.ajax({
-                                    async: false,
-                                    type: 'get',
-                                    url: '/view/get_graph?name='+name+'&type='+type,
-                                    dataType: 'json',
-                                    success: function (result) {
-                                        if(result.success) {
-                                            var data=result.data;
-                                            problems_Table.clear().rows.add(data).draw();
-                                        }
-                                        else {
-                                            errorMsg_no_data(result.message);
-                                        }
-                                    },
-                                    error: function () {
-                                        errorMsg_no_connect('');
-                                    }
-                                });
-                                $("#statepie").hide();
-                                $("#problems").show();
-                                $("#appletree").hide();
-                            }
+                            selectViewpage(type);
                         }
                         else {
                             errorMsg_no_data(result.message);

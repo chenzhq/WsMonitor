@@ -228,7 +228,7 @@ public class ViewRestController {
                 editViewForm.getHostIds());
         boolean success =  viewService.updateStateView(stateView,editViewForm.getOldName());
         if(success) {
-            return getViewList(stateView);
+            return RestResultGenerator.genResult(getViewNameList(editViewForm.getType()), REST_UPDATE_SUCCESS).toString();
         }else {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
@@ -250,7 +250,8 @@ public class ViewRestController {
                 editViewForm.getMaxNum());
         boolean success =  viewService.updateProblemsView(problemsView,editViewForm.getOldName());
         if(success) {
-            return getViewList(problemsView);
+
+            return RestResultGenerator.genResult(getViewNameList(editViewForm.getType()), REST_UPDATE_SUCCESS).toString();
         }else {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
@@ -425,6 +426,19 @@ public class ViewRestController {
 
         }
         return RestResultGenerator.genResult(null, REST_UPDATE_SUCCESS).toString();
+    }
+
+    private String getViewNameList(String type) throws ServiceException {
+        List<GraphView> graphViews = viewService.listGraphViewsByType(type);
+        List<GraphView> graphViewsVOS = new ArrayList<>();
+        for(GraphView graphView : graphViews) {
+            GraphView graphViewVO = new GraphView(
+                    graphView.getName(),
+                    graphView.getType()
+            );
+            graphViewsVOS.add(graphViewVO);
+        }
+        return RestResultGenerator.genResult(graphViewsVOS, REST_UPDATE_SUCCESS).toString();
     }
 
 

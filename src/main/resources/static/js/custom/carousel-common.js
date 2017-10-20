@@ -280,7 +280,6 @@ function addBlockWidget(size_x,size_y) {
 
     $_block.append($('#block_temp').html());
 
-    console.log('last_block',last_block);
     drawBlock($_block,config_info,block_info,0,last_block-1);
 
     addBlockiCon($_block,last_block-1);
@@ -620,7 +619,6 @@ function addBlockiCon($_block,i) {
                 onShow:function(){
                     $('#chart_name').val(old_config_info.block_name);
 
-                    console.log('old_config_info',old_config_info);
 
                     if('clock' === old_config_info.graph_type) {
 
@@ -654,7 +652,7 @@ function addBlockiCon($_block,i) {
                         var col_regex = new RegExp('<td>','g');
                         var row_num = !contents.match(row_regex) ? 0 : contents.match(row_regex).length;
                         var col_num = (!contents.match(col_regex) ? 0 : contents.match(col_regex).length) / row_num;
-                        // console.log('row and col',row_num + ' ' + col_num);
+
                         $('#row_table').val(row_num);
                         $('#column_table').val(col_num);
                         $('#row_table').attr("disabled","disabled");
@@ -830,7 +828,7 @@ function addBlockiCon($_block,i) {
             page_vo.config_data.splice(i,1,null);
             page_vo.block_data.splice(i,1,null);
             page_vo.layout_data.splice(i,1,null);
-            //console.log('delete the ' + i + ' page_vo', page_vo);
+
             return true;
         }else {
             return false;
@@ -1053,7 +1051,7 @@ function showNumClock($_block) {
     //构建数字时钟的时分秒
 
     var digit_holder = clock.find('.digits');
-    //console.log('digit_holder',clock);
+
 
     $.each(positions, function(){
 

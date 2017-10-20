@@ -493,8 +493,7 @@
             },
             "createdRow": function (row, data, dataIndex) {
                 var hashCode = location.hash;
-                /*console.log('hashCode',hashCode);
-                console.log(dataIndex + ' row',data);*/
+
                 //选中
                 if(hashCode.substr(1) === data.cid) {
 					$(row).css('background-color','#CCFFFF');

@@ -31,7 +31,7 @@
     <script src="../static/js/custom-editable.js" th:src="@{js/custom-editable.js}"></script>
     <style>
         header {
-            /*height: 100px;*/
+
         }
         #side{
             position: fixed; left: 0px; top: 0;; z-index: 10;
@@ -114,7 +114,6 @@
 
     //粒度 300 为 margin，40 为默认 40 row
     var widget_size = parseInt((w - 100) / 40);
-    console.log('w ',widget_size);
 
     var grids = [];
     var grid_length = $('.gridster').length;
@@ -132,49 +131,9 @@
         }).data('gridster');
         grids[i].disable();
     }
-    //console.log('grids',grids);
+
     // 根据情况选择是否在进入此页面时调用全屏方法
     fullScreen();
-
-    // TODO: 首次加载 刷新整个组下的所有页面
-    /*$('#table-dimmer').addClass('active');
-    $.ajax({
-        type: 'get',
-        url: '/carousel/get_alldata?group_name=' + $('#group_title').text().trim(),
-        dataType: 'json',
-        success: function (result) {
-            if(result.success) {
-                var page_vos = result.data;
-                //绘制每个页面
-                $.each(page_vos,function(index,value){//index 表示第几页
-                    var page_vo = value;
-                    var config_data = page_vo.config_data;
-                    var block_data = page_vo.block_data;
-                    var $_gridster = $('.gridster').eq(index).find('ul').eq(0);
-
-                    //画 页 page
-                    $.each(config_data, function (i,value) {// i 表示第几项
-                        // 画 项 block
-                        var $_block = $_gridster.children('li').eq(i);
-
-                        //给展示项添加模板
-                        $_block.append($('#block_temp').html());
-
-                        drawBlock($_block,config_data[i],block_data[i],index,i);
-
-                    });
-                });
-                $('#table-dimmer').removeClass('active');
-
-            }
-            else {
-                errorMsg_no_connect("页面刷新失败");
-            }
-        },
-        error: function () {
-            errorMsg_no_connect("页面刷新失败");
-        }
-    })*/
 
     // TODO: 首次加载 只加载第一个和第二个页面
     var group_name = $('#group_title').text();
@@ -189,18 +148,15 @@
     $('#carousel').fullpage({
         continuousHorizontal:true,   //左右无缝循环
         loopHorizontal:true,         //支持左右循环
-        //scrollingSpeed: 300,
         slidesNavigation:false,      //slides导航
         controlArrows: false,        //左右切换箭头显示
         verticalCentered:false,      //section不居中显示
         css3:false,
         easing: 'easeOutCirc',     //滚动样式
         easingcss3: 'linear',
-        //continuousVertical:true,
-        //scrollOverflow:true,
         afterSlideLoad: function (anchorLink, index, slideAnchor, slideIndex) {
             var current_name = $('#carousel').find('.gridster').eq(slideIndex).attr('data-name');
-            //console.log('current_name',current_name);
+
             $('#page_title').html(current_name);
             if (refreshing) {
                 refreshing = false;
@@ -210,7 +166,7 @@
                 var pre_index = slideIndex==0 ? pages-1 : index-1;
                 var pre_group_name = $('#group_title').text();
                 var pre_page_name = $('#carousel').find('.gridster').eq(pre_index).attr('data-name');
-                //console.log('group and page',pre_group_name + '  ' + pre_index + '  ' + pre_page_name) ;
+
                 refreshPage(pre_group_name,pre_page_name,pre_index);
             }
         },
@@ -221,7 +177,6 @@
 
             var scroll_time = $('#scroll_time').text();
             var refresh_time = $('#refresh_time').text();
-            //console.log('scroll_time and refresh_time',scroll_time + '  ' + refresh_time);
 
             //左右滚动频率
             setInterval(function(){
@@ -232,7 +187,6 @@
             // 设置刷新频率
             setInterval(function () {
                 refreshing = true;
-                // 刷新页面
                 refresh();
 
             }, refresh_time);
@@ -264,7 +218,6 @@
 
     //刷新页面 index 表示当前是第几个页面
     function refreshPage(group_name,page_name,index) {
-        //$('#table-dimmer').addClass('active');
         $.ajax({
             type: 'get',
             url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,
@@ -291,7 +244,6 @@
                         drawBlock($_block,config_data[i],block_data[i],index,i);
                     });
 
-                    //$('#table-dimmer').removeClass('active');
                 }
                 else {
                     errorMsg_no_connect("页面刷新失败");
