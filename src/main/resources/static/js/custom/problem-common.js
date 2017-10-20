@@ -5,6 +5,10 @@
 
 //事件详情弹出框
 function eventDetailModal(event_id) {
+    $("#eventDetailModal").html("");
+    $("#acknowledgeModal").html("");
+    $("#nullDetailModal").show();
+    $("#alertDetailModal").hide();
     //事件详情细节部分
     var eventDetailStr = getEventDetailContent(event_id);
     $("#eventDetailModal").html(eventDetailStr);
@@ -12,8 +16,9 @@ function eventDetailModal(event_id) {
     var acknowledgeStr = getAcknowledgeContent(event_id);
     $("#acknowledgeModal").html(acknowledgeStr);
     //告警详情部分
-    var alertStr = getAlertDetailContent(event_id);
-    $("#alertDetailModal").html(alertStr);
+    getAlertDetailContent(event_id)
+    //var alertStr = getAlertDetailContent(event_id);
+    //$("#alertDetailModal").html(alertStr);
 
 
     //显示弹出框
@@ -32,26 +37,30 @@ function getAcknowledgeContent(event_id) {
         success: function (result) {
             if (result.success) {
                 var data = result.data;
-                for(var i=0;i<data.length;i++)
-                {
-                    var action = "";
-                    var str_message = "";
-                    if(data[i].action == '0'){
-                        action = '未确认';
+                if (data!=''){
+                    for(var i=0;i<data.length;i++)
+                    {
+                        var action = "";
+                        var str_message = "";
+                        if(data[i].action == '0'){
+                            action = '未确认';
+                        }
+                        else if(data[i].action == '1'){
+                            action = '已确认';
+                        }
+                        if(strlen(data[i].message) > 40){
+                            str_message = "<td title="+data[i].message+" class='left aligned'>"+data[i].message+"</td>"
+                        }else {
+                            str_message = "<td class='left aligned'>"+data[i].message+"</td>"
+                        }
+                        str += "<tr><td>"
+                            +data[i].clock+"</td><td>"
+                            +data[i].alias+"</td>"
+                            +str_message+"<td>"
+                            +action+"</td></tr>"
                     }
-                    else if(data[i].action == '1'){
-                        action = '已确认';
-                    }
-                    if(strlen(data[i].message) > 40){
-                        str_message = "<td title="+data[i].message+" class='left aligned'>"+data[i].message+"</td>"
-                    }else {
-                        str_message = "<td class='left aligned'>"+data[i].message+"</td>"
-                    }
-                    str += "<tr><td>"
-                        +data[i].clock+"</td><td>"
-                        +data[i].alias+"</td>"
-                        +str_message+"<td>"
-                        +action+"</td></tr>"
+                }else {
+                    str = "<td colspan='4'> 无数据</td>";
                 }
             } else {
                 errorMsg_no_data("确认记录 Popup");
@@ -67,6 +76,7 @@ function getAcknowledgeContent(event_id) {
 //获取已告警详细信息内容 str
 function getAlertDetailContent(event_id){
     var str = "";
+    var str_menu = "";
     $.ajax({
         async: false,
         type: "get",
@@ -74,48 +84,53 @@ function getAlertDetailContent(event_id){
         dataType: "json",
         success: function (result) {
             if (result.success) {
-                var color;
-                var str_item = "";
-                var str_tab =  "";
-                var str_table = "";
-                var data_tab = "";
                 var data = result.data;
-                for(var i=0;i<data.length;i++)
-                {
-                    if(data[i].recovery) {
-                        color = '#BBFFBB';
-                    }else {
-                        color = '#FF9797';
+                if (data!=''){
+                    $("#alertDetailModal").show();
+                    $("#nullDetailModal").hide();
+                    for(var i=0;i<data.length;i++)
+                    {
+                        if(data[i].recovery){
+                            var state = 'green';
+                            var icon = '<i class="green checkmark icon"></i>'
+                        }
+                        else {
+                            var state = 'red';
+                            var icon = '<i class="red remove icon"></i>'
+                        }
+                        if (i==0){
+                            str_menu +="<a class='"+state+" item textoverflow active' id='"+i+"' >"+data[i].last_time+"<i class='"+state+" circle icon'></i></a> ";
+                            $("#esc_step").html(data[i].esc_step);
+                            $("#sendto").html(data[i].sendto);
+                            $("#alert_type").html(data[i].alert_type);
+                            $("#subject").html(data[i].subject);
+                            $("#message").html(data[i].message);
+                            $("#status").html(icon+data[i].status+"("+data[i].retries+"次)");
+                        }else {
+                            str_menu +="<a class='"+state+" item textoverflow' id='"+i+"' >"+data[i].last_time+"<i class='"+state+" circle icon'></i></a> ";
+                        }
                     }
-                    if(i=0){
-                        str_item  += "<a class='active item' data-tab='alert"+i+"'>"+data[i].last_time+"</a>";
-                        str_tab  ="<div class='ui active tab' data-tab='alert"+i+"'>"
-                    }
-                    else {
-                        str_item  += "<a class='item' data-tab='alert"+i+"'>"+data[i].last_time+"</a>";
-                        str_tab  ="<div class='ui tab' data-tab='alert"+i+"'>"
-                    }
-                    str_table= "<table class='ui very basic compact fixed table center aligned'>"
-                    +"<thead><tr><th width='5%'>步骤</th><th width='10%'>时间</th>"
-                    +"<th width='10%'>接收者</th><th width='10%'>方式</th>"
-                    +"<th width='15%'>主题</th><th width='40%'>信息</th>"
-                    +"<th width='10%' title='状态(重试次数)'>状态…</th></tr></thead>"
-                    + "<tbody><tr style='background-color: "+ color +"' ><td>"
-                    +data[i].esc_step+"</td><td>"
-                    +data[i].sendto+"</td><td>"
-                    +data[i].alert_type+"</td><td>"
-                    +data[i].subject+"</td><td>"
-                    +data[i].message+"</td><td>"
-                    +data[i].status+"("+data[i].retries+")</td></tr></tbody></table>";
-                    data_tab += str_tab + str_table + "</div>";
+                    $("#alertMenu").html(str_menu);
+                    $('#alertMenu a').on('click',function () {
+                        $('#alertMenu a').removeClass('active');
+                        $(this).addClass('active');
+                        if(data[this.id].recovery){
+                            var icon = '<i class="green checkmark icon"></i>'
+                        }
+                        else {
+                            var icon = '<i class="red remove icon"></i>'
+                        }
+                        $("#esc_step").html(data[this.id].esc_step);
+                        $("#sendto").html(data[this.id].sendto);
+                        $("#alert_type").html(data[this.id].alert_type);
+                        $("#subject").html(data[this.id].subject);
+                        $("#message").html(data[this.id].message);
+                        $("#status").html(icon+data[this.id].status+"("+data[this.id].retries+"次)");
+                    })
+                }else {
+                    $("#nullDetailModal").show();
+                    $("#alertDetailModal").hide();
                 }
-                str="<div class='ui grid'><div class='four wide column'>"
-                +"<div class='ui fluid secondary v" +
-                    "ertical pointing  tabular menu'>"
-                +str_item+"</div></div>"
-                +"<div class='twelve wide column' style='padding-left: 0px'>"
-                +data_tab+"</div></div>"
-                alert(str)
             } else {
                 errorMsg_no_data("已告警 Popup");
             }

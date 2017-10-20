@@ -39,7 +39,13 @@
 				height: 232px;overflow-y:auto;overflow-x:hidden
 			}
 			.ui.segment.detailalarmed{
-				height: 180px;overflow-y:auto;overflow-x:hidden
+				min-height: 130px;
+			}
+			#alertMenu{
+				height: 137px;overflow-y:auto;overflow-x:hidden
+			}
+			#alertmessage{
+				height: 40px;overflow-y:auto;overflow-x:hidden
 			}
 			#filter_content {
 				width: 80%;
@@ -381,40 +387,30 @@
 													告警记录
 												</h4>
 											</div>
-											<div class="ui segment detailalarmed" id="alertDetailModal">
-												<div class="ui grid">
-													<div class="four wide column">
-														<div class="ui fluid secondary vertical pointing  tabular menu">
-															<a class="active item" data-tab="first">第一时间</a>
-															<a class="item" data-tab="second">第二时间</a>
-															<a class="item" data-tab="third">第三时间</a>
+											<div class="ui segment detailalarmed">
+												<div  id="nullDetailModal">无数据</div>
+												<div class="ui grid"  id="alertDetailModal">
+													<div class="four wide column no-padding">
+														<div class="ui fluid vertical menu " id="alertMenu">
 														</div>
 													</div>
-													<div class="twelve wide column" style="padding-left: 0px">
-														<div class="ui active tab" data-tab="first">
-															<table class="ui very basic compact fixed table center aligned">
-																<thead>
-																<tr>
-																	<th width="5%">步骤</th>
-																	<th width="10%">时间</th>
-																	<th width="10%">接收者</th>
-																	<th width="10%">方式</th>
-																	<th width="15%">主题</th>
-																	<th width="40%">信息</th>
-																	<th width="10%" title="状态(重试次数)">状态…</th>
-																</tr></thead>
-																<tbody><!--<tbody id="alertDetailModal">-->
-																<tr>
-																	<td colspan="7">无告警历史记录</td>
-																</tr>
-																</tbody>
-															</table>
-														</div>
-														<div class="ui tab" data-tab="second">
-															第二
-														</div>
-														<div class="ui tab" data-tab="third">
-															第三
+													<div class="twelve wide column no-padding">
+														<div class="ui fluid card" >
+															<div class="content">
+																<div class="header">主题:<span id="subject"></span></div>
+																<div class="meta">
+																	<span class="right floated time"><span id="status"></span></span>
+																	<span class="category">步骤:<span id="esc_step"></span> </span>
+																</div>
+																<div class="description" id="alertmessage">
+																	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="message"></span>
+																</div>
+															</div>
+															<div class="extra content">
+																<div class="right floated author">
+																	<i class="user icon"></i> <span id="sendto"></span>(<span id="alert_type"></span>)
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>

@@ -295,10 +295,10 @@
 												</div>
 											</div>
 											<div class="three wide column no-padding">
-												<div class="ui fluid vertical menu row2Height" id="pointsMenu" style="">
+												<div class="ui fluid vertical menu row2Height" id="pointsMenu">
 												</div>
 											</div>
-											<div class="ten wide column no-padding"  style="">
+											<div class="ten wide column no-padding">
 												<div class="ui row2Height"  id="itemsMenu">
 												<table class="ui fixed single line compact table row2_3Height center aligned">
 													<thead>
@@ -695,7 +695,7 @@
                     success: function (result) {
                         if(result.success) {
                             var data = result.data;
-                            if (data!==''){
+                            if (data!=''){
                                 getitemsMenu(data);
 							}else {
                                 $("#itemsTable").html("<td colspan='6'> 无数据</td>");
