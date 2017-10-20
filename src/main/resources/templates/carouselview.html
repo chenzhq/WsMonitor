@@ -28,6 +28,11 @@
         <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
         <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
         <style type="text/css">
+            .textoverflow{
+                overflow: hidden; /*自动隐藏文字*/
+                text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+                white-space: nowrap;/*强制不换行*/
+            }
             .gridster > ul > li {
                 overflow: hidden;
                 border:1px dashed #613030
@@ -37,6 +42,12 @@
                 margin: 30px auto;
             }
             .detail { padding-top: 10px;padding-right: 5px;margin-left: 5px }
+            #point_graph_modal .column{
+                height: 220px;
+                width: 100%;
+                overflow:auto;
+                overflow-x:hidden
+            }
         </style>
     </th:block>
 </head>
@@ -396,30 +407,34 @@ z                    </div>
         </div>
         <!--添加展示项添加图表弹出框 start-->
         <div class="ui small modal page" id="point_graph_modal">
-            <div class="required inline field">
-                <label>名&nbsp&nbsp&nbsp&nbsp称</label>
-                <input type="text" id="graph_name" placeholder="不能为空" style="width: 168px;">
-            </div>
             <i class="close icon"></i>
-            <div class="ui horizontal segments" style="border: none;box-shadow:0px 0px;">
-                <div class="ui segment">
-                    <div id="host_tree"></div>
-                </div>
-                <div class="ui segment no-padding">
-                    <div class="ui middle aligned selection list" id="pointsMenu">
-
+            <div class="header">
+                添加监控项图表
+            </div>
+            <div class="ui content left aligned basic segment no-padding">
+                <form class="ui form" style="padding-left: 10px;padding-right: 10px">
+                    <div class="required inline field">
+                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
+                        <input type="text" id="graph_name" placeholder="不能为空" style="width: 168px;">
                     </div>
-                </div>
-                <div class="ui segment no-padding">
-                    <div class="ui middle aligned selection list" id="itemsMenu">
-
+                    <div class="ui celled grid">
+                        <div class="five wide column no-padding">
+                            <div class="required inline field">
+                                <label>选择设备</label>
+                                <div id="host_tree"></div>
+                            </div>
+                        </div>
+                        <div class="four wide column no-padding">
+                            <div class="ui middle aligned selection list" id="pointsMenu"></div>
+                        </div>
+                        <div class="four wide column no-padding">
+                            <div class="ui middle aligned selection list" id="itemsMenu"></div>
+                        </div>
+                        <div class="three wide column no-padding">
+                            <div class="ui middle aligned selection list" id="typeMenu"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="ui segment no-padding">
-                    <div class="ui middle aligned selection list" id="typeMenu">
-
-                    </div>
-                </div>
+                </form>
             </div>
             <div class="actions">
                 <div class="ui approve submit button">确认</div>
@@ -1457,9 +1472,9 @@ z                    </div>
                 {
                     var state = '<i class="green circle icon"></i>';
                     if (i==0){
-                        str +="<div class='item textOverflow active' id='"+data[i].point_id+"' >"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                        str +="<div class='item textoverflow active' data-tooltip='"+data[i].point_name+"' id='"+data[i].point_id+"' >"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
                     }else {
-                        str +="<div class='item textOverflow' id='"+data[i].point_id+"' >"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                        str +="<div class='item textoverflow' data-tooltip='"+data[i].point_name+"' id='"+data[i].point_id+"' >"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
                     }
                 }
                 $('#pointsMenu').html('');
@@ -1519,9 +1534,9 @@ z                    </div>
                 for (var i = 0; i < data.length; i++) {
                     var state = '<i class="green square icon"></i>';
                     if (i == 0) {
-                        str += "<div class='item textOverflow active' id='" + data[i].item_id + "' data-type='" + data[i].value_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
+                        str += "<div class='item textoverflow active' id='" + data[i].item_id + "' data-type='" + data[i].value_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
                     } else {
-                        str += "<div class='item textOverflow' id='" + data[i].item_id + "' data-type='" + data[i].value_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
+                        str += "<div class='item textoverflow' id='" + data[i].item_id + "' data-type='" + data[i].value_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
                     }
 
                     $('#itemsMenu').html('');
@@ -1562,9 +1577,9 @@ z                    </div>
                 {
                     var state = '<i class="green square icon"></i>';
                     if (i==0){
-                        str +="<div class='item textOverflow active' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
+                        str +="<div class='item textoverflow active' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
                     }else {
-                        str +="<div class='item textOverflow' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
+                        str +="<div class='item textoverflow' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
                     }
                 }
                 $("#typeMenu").html('');
