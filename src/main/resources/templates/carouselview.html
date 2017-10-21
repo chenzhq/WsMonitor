@@ -927,16 +927,6 @@ z                    </div>
             //禁止保存按钮
             $("#savepage_button").attr('disabled',true);
 
-            $('#viewpage_select').dropdown({
-                onChange: function() {
-                    var page_name = $('#viewpage_select').dropdown('get value');
-                    var group_name = $('#viewgroup_select').dropdown('get value');
-                    if('' != page_name){
-                        getPage(group_name,page_name);
-                    }
-                }
-            })
-
             //初始化组下拉框
             function getSelectGroup() {
                 $.ajax({
@@ -946,6 +936,17 @@ z                    </div>
                     success: function (result) {
                         if(result.success) {
                             var data=result.data;
+
+                            $('#viewpage_select').dropdown({
+                                onChange: function() {
+                                    var page_name = $('#viewpage_select').dropdown('get value');
+                                    var group_name = $('#viewgroup_select').dropdown('get value');
+                                    if('' != page_name){
+                                        getPage(group_name,page_name);
+                                    }
+                                }
+                            })
+
                             getSelectByString($('#viewgroup_menu'),$('#viewgroup_select'),data);
                             var group_name = $('#viewgroup_select').dropdown('get value');
                             getSelectPage(group_name);

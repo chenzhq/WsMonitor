@@ -213,6 +213,9 @@ public class ViewServiceImpl implements ViewService {
     @Override
     public List<ProblemListVO> getProblemViewByName(String name,String type) throws ServiceException {
         ProblemsView problemsView = getGraphViewByName(name,type,ProblemsView.class);
+        if(problemsView == null) {
+            return null;
+        }
         List<String> hostIds = problemsView.getHostIds();
         Integer limit = problemsView.getMaxNum() == null ? 0 : problemsView.getMaxNum();
         //获取问题触发器
@@ -576,6 +579,9 @@ public class ViewServiceImpl implements ViewService {
             if(ViewTypeEnum.STATEPIE.type.equals(config.getGraphType())) {
                 //statepie
                 StateViewVO stateViewVO = getStateViewByName(config.getContents(),config.getGraphType());
+                if(stateViewVO == null) {
+                    return null;
+                }
                 blockVO = stateViewVO.setBlockName(config.getBlockName());
             }else if(ViewTypeEnum.PROBLEMS.type.equals(config.getGraphType())) {
                 //problems

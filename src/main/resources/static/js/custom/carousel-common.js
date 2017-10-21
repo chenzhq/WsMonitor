@@ -313,8 +313,13 @@ function drawBlock($_block,config_info,block_info,index,i) {
     $_block.find('.block_content').html('');
     if(config_info.block_type === 'view') {
         //视图
-        if(config_info.graph_type === 'statepie') {
+        if(config_info.graph_type === 'statepie' ) {
             //状态视图
+
+            if(block_info == null) {
+                $_block.find('.block_content').append('内容加载失败，可能在监控视图中被删除或修改');
+                return;
+            }
 
             //block 内容
             $_block.find('.block_content').append(
@@ -329,7 +334,10 @@ function drawBlock($_block,config_info,block_info,index,i) {
 
         }else if(config_info.graph_type === 'problems') {
             //问题视图
-
+            if(block_info.problems === null) {
+                $_block.find('.block_content').append('内容加载失败，可能在监控视图中被删除或修改');
+                return;
+            }
             // block 内容
             $_block.find('.block_content').append('<table class="ui compact basic table center aligned " style="width: 98%;margin:0 auto;" id="problems_' + index + '_' + i +'"></table>');
 

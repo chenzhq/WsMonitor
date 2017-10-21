@@ -1,5 +1,7 @@
 package com.ws.stoner.model.view.carousel;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
  */
 public class ProblemsVO extends BlockVO {
 
+    @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private List<ProblemListVO> problems;
 
     public ProblemsVO() {

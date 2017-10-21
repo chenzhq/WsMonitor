@@ -1,13 +1,16 @@
 package com.ws.stoner.model.view.statepie;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ws.stoner.model.view.carousel.BlockVO;
 
 /**
  * Created by zkf on 2017/9/12.
  */
 public class StateViewVO extends BlockVO {
-
+    @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private StateNumVO hostStateNum;
+    @JSONField(serialzeFeatures = SerializerFeature.WriteNullStringAsEmpty)
     private StateNumVO pointStateNum;
 
     public StateViewVO() {
