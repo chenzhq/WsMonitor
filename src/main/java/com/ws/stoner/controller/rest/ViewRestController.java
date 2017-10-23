@@ -13,8 +13,10 @@ import com.ws.stoner.model.query.EditViewForm;
 import com.ws.stoner.model.view.carousel.BlockVO;
 import com.ws.stoner.model.view.carousel.PageVO;
 import com.ws.stoner.model.view.carousel.UpdatePageVO;
+import com.ws.stoner.model.view.itemvalue.ItemConfigVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.model.view.statepie.StateViewVO;
+import com.ws.stoner.service.ItemService;
 import com.ws.stoner.service.ViewService;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class ViewRestController {
 
     @Autowired
     private ViewService viewService;
+
+    @Autowired
+    private ItemService itemService;
 
     /**
      * 监控视图 获取视图类型 下拉框
@@ -290,6 +295,17 @@ public class ViewRestController {
         List<String> names = viewService.getAllGroupNames();
         return RestResultGenerator.genResult(names, REST_UPDATE_SUCCESS).toString();
     }
+
+    /**
+     * 获取所有展示组的名称，用于展示组下拉框
+     * @return
+     */
+    @RequestMapping(value = "/carousel/get_graphcfg", method = RequestMethod.GET)
+    public String getItemGraphConfig(@RequestParam("item_id") String itemId) throws ServiceException {
+        ItemConfigVO itemConfigVO = itemService.getItemConfigByItemId(itemId);
+        return RestResultGenerator.genResult(itemConfigVO, REST_UPDATE_SUCCESS).toString();
+    }
+
 
     /**
      * 保存一个 viewpage 配置  添加页面 功能

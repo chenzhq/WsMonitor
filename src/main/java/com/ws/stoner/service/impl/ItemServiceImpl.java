@@ -15,6 +15,7 @@ import com.ws.stoner.model.DO.mongo.item.Item;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.host.HostDetailPointItemVO;
 import com.ws.stoner.model.view.host.HostDetailPointVO;
+import com.ws.stoner.model.view.itemvalue.ItemConfigVO;
 import com.ws.stoner.service.HistoryService;
 import com.ws.stoner.service.ItemService;
 import com.ws.stoner.service.TriggerService;
@@ -543,6 +544,30 @@ public class ItemServiceImpl implements ItemService {
             itemHistoryDatas.add(itemHistoryData);
         }
         return itemHistoryDatas;
+
+    }
+
+    /**
+     * 根据itemid 获取 归属的 hostid 和 pointid
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public ItemConfigVO getItemConfigByItemId(String itemId) throws ServiceException {
+        ItemConfigVO itemConfigVO = null;
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(itemId);
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        itemGetRequest.getParams()
+                .setItemIds(itemIds)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setOutput(BriefItemDTO.PROPERTY_NAMES);
+        List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
+        if(itemDTOS.size() != 0) {
+            itemConfigVO = ItemConfigVO.transformItemConfig(itemDTOS.get(0));
+        }
+        return itemConfigVO;
 
     }
 }

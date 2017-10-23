@@ -299,7 +299,7 @@ function drawBlock($_block,config_info,block_info,index,i) {
     // block 标题
     var block_title = '';
     if('graph' === config_info.block_type) {
-        if(block_info.units !== '' && block_info.units !== 'undefined' ) {
+        if(block_info.units !== '' && typeof block_info.units !== 'undefined' ) {
             block_title = config_info.block_name + '(' + block_info.units + ')';
         }else {
             block_title = config_info.block_name;
@@ -317,7 +317,9 @@ function drawBlock($_block,config_info,block_info,index,i) {
             //状态视图
 
             if(block_info == null) {
-                $_block.find('.block_content').append('内容加载失败，可能在监控视图中被删除或修改');
+                $_block.find('.block_content').append(
+                    '<div id="host_pie' + index + '_' + i +'">内容加载失败，可能在监控视图中被删除或修改</div>'
+                );
                 return;
             }
 
@@ -335,7 +337,9 @@ function drawBlock($_block,config_info,block_info,index,i) {
         }else if(config_info.graph_type === 'problems') {
             //问题视图
             if(block_info.problems === null) {
-                $_block.find('.block_content').append('内容加载失败，可能在监控视图中被删除或修改');
+                $_block.find('.block_content').append(
+                    '<div id="problems_' + index + '_' + i +'">内容加载失败，可能在监控视图中被删除或修改</div>'
+                );
                 return;
             }
             // block 内容
@@ -449,6 +453,7 @@ function addBlockiCon($_block,i) {
         var type = $_block.find('.block_content').children().eq(0).attr('id').split('_')[0];
 
         var old_config_info = page_vo.config_data[i];
+        //console.log('edit config_info',old_config_info);
 
         if('host' === type || 'problems' === type || 'appletree' === type) {
             //视图类型
@@ -456,18 +461,36 @@ function addBlockiCon($_block,i) {
             $('#point_view_modal').modal({
                 onShow:function(){
 
-                    //清空表单
-                    $('#view_name').val('');
-
                     $.ajax({
                         type: "get",
-                        async:false,
                         url: "/viewtype/get_list",
                         dataType: "json",
                         success: function (result) {
                             if(result.success) {
                                 var data=result.data;
                                 getSelectByObject($('#viewtype_menu'),$('#viewtype_select'),data);
+                                //赋值
+                                $('#view_name').val(old_config_info.block_name);
+                                if('statepie' === old_config_info.graph_type ) {
+
+                                    $('#viewtype_select').dropdown('set text','状态统计');
+                                    $('#viewtype_select').dropdown('set value','statepie');
+
+                                }else if('problems' === old_config_info.graph_type) {
+
+                                    $('#viewtype_select').dropdown('set text','问题视图');
+                                    $('#viewtype_select').dropdown('set value','problems');
+
+                                }else if('appletree' === old_config_info.graph_type) {
+
+                                    $('#viewtype_select').dropdown('set text','苹果树');
+                                    $('#viewtype_select').dropdown('set value','appletree');
+
+                                }else {
+
+                                }
+
+                                $('#viewname_select').dropdown('set text',old_config_info.contents);
                             }
                             else {
                                 errorMsg_no_data(result.message);
@@ -524,28 +547,6 @@ function addBlockiCon($_block,i) {
                 }
             }).modal('show')
 
-            //赋值
-            $('#view_name').val(old_config_info.block_name);
-            if('statepie' === old_config_info.graph_type ) {
-
-                $('#viewtype_select').dropdown('set text','状态统计');
-                $('#viewtype_select').dropdown('set value','statepie');
-
-            }else if('problems' === old_config_info.graph_type) {
-
-                $('#viewtype_select').dropdown('set text','问题视图');
-                $('#viewtype_select').dropdown('set value','problems');
-
-            }else if('appletree' === old_config_info.graph_type) {
-
-                $('#viewtype_select').dropdown('set text','苹果树');
-                $('#viewtype_select').dropdown('set value','appletree');
-
-            }else {
-
-            }
-
-            $('#viewname_select').dropdown('set text',old_config_info.contents);
 
         }else if('graph' === type) {
 
@@ -553,24 +554,69 @@ function addBlockiCon($_block,i) {
 
                 onShow:function(){
 
-                    //赋值表单
+                    $.ajax({
+                        type: "get",
+                        url: "/carousel/get_graphcfg?item_id="+old_config_info.contents,
+                        dataType: "json",
+                        contentType:'application/json;charset=UTF-8',
+                        success: function (result) {
+                            if (result.success) {
+
+                                //赋值
+                                $('#graph_name').val(old_config_info.block_name);
+
+                                //获取设备选择树
+                                $('#host_tree').jstree("destroy");
+                                var hostId = result.data.hostid;
+                                var pointId = result.data.pointid;
+                                var itemId = result.data.itemid;
+                                var type = old_config_info.graph_type;
+
+                                var $host_tree = $('#host_tree');
+                                var hostIds = [hostId];
+                                $host_tree.genHostTree({
+                                    multi: false,
+                                    initHosts: hostIds,
+                                    onChange:function(e,data){
+                                        hostId = data.selected[0];
+                                        var tree_type = $host_tree.jstree(true).get_type(hostId).split('-')[0];
+                                        //console.log('tree_type',data);
+                                        if('host' === tree_type) {
+                                            pointsMenu(hostId,pointId,itemId,type);
+                                        }else if('group' === tree_type) {
+                                            alert('必须选择设备');
+                                        }
+
+                                        pointId = undefined;
+                                        itemId = undefined;
+                                        type = undefined;
+                                    },
+                                    finish:function() {
+
+                                        $host_tree.jstree(true).select_node(hostId,true);
+
+                                    }
+                                })
+
+
+
+                            } else {
+                                errorMsg_no_connect("获取图形修改参数失败");
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("获取图形修改参数失败");
+                        }
+                    });
+
+
+                   /* //赋值表单
                     $('#graph_name').val(old_config_info.block_name);
                     $('#pointsMenu').html('');
                     $('#itemsMenu').html('');
-                    $('#typeMenu').html('');
+                    $('#typeMenu').html('');*/
 
-                    //获取设备选择树
-                    var host_id ;
-                    var $host_tree = $('#host_tree');
 
-                    $host_tree.genHostTree({
-                        multi: false,
-                        onChange:function(e,data){
-
-                            host_id = data.selected[0];
-                            pointsMenu(host_id);
-                        }
-                    })
                 },
                 onApprove : function() {
                     var block_name  = $('#graph_name').val();

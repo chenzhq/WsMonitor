@@ -74,7 +74,7 @@
         </div>
         <div class="two wide column side">
             滚动频率：
-            <span style="display: none" th:text="${refreshTime}" id="scroll_time"></span>
+            <span style="display: none" th:text="${scrollTime}" id="scroll_time"></span>
             <span th:text="${scrollTimeString}"></span>
         </div>
         <div class="two wide column right aligned">
@@ -177,7 +177,7 @@
 
             var scroll_time = $('#scroll_time').text();
             var refresh_time = $('#refresh_time').text();
-
+            console.log(scroll_time,refresh_time);
             //左右滚动频率
             setInterval(function(){
                 $.fn.fullpage.moveSlideRight();

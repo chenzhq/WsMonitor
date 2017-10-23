@@ -1418,7 +1418,7 @@ z                    </div>
             }
 
             //加载监控点列表
-            function pointsMenu(host_id) {
+            function pointsMenu(host_id,point_id,item_id,type) {
                 $.ajax({
                     type: "get",
                     url: "/hostgraphs/get_points?host_id="+host_id,
@@ -1427,7 +1427,13 @@ z                    </div>
                         if(result.success) {
                             var data = result.data;
                             getpointsMenu(data);
-                            itemsMenu(data[0].point_id);
+                            if(typeof point_id === 'undefined') {
+                                itemsMenu(data[0].point_id);
+                            }else {
+                                $('#pointsMenu div.item').removeClass('active');
+                                $('#'+point_id).addClass('active');
+                                itemsMenu(point_id,item_id,type);
+                            }
                             $('#pointsMenu > div').on('click',function () {
                                 $('#pointsMenu div').removeClass('active');
                                 $(this).addClass('active');
@@ -1459,22 +1465,35 @@ z                    </div>
             }
 
             //加载监控项列表
-            function itemsMenu(point_id) {
+            function itemsMenu(point_id,item_id,type) {
                 $.ajax({
                     type: "get",
                     url: "/hostgraphs/get_items?point_id="+point_id,
                     dataType: "json",
                     success: function (result) {
                         if(result.success && result.data.length > 0) {
+                            var value_type;
                             var data = result.data;
                             getitemsMenu(data);
-                            var value_type = data[0].value_type;
+
+                            if(typeof item_id === 'undefined') {
+                                value_type = data[0].value_type;
+                            }else {
+                                $('#itemsMenu div.item').removeClass('active');
+                                $('#'+item_id).addClass('active');
+                                for(var i = 0; i < data.length; i++) {
+                                    if(item_id === data[i].item_id) {
+                                        value_type = data[i].value_type;
+                                    }
+                                }
+                            }
+                            //console.log('type',value_type);
                             if(value_type == '0' || value_type == '3' || value_type == '%') {
 
                                 if(value_type == '%') {
                                     value_type = '%25';
                                 }
-                                typeMenu(value_type);
+                                typeMenu(value_type,type);
                             }else {
 
                                 alert('该监控项不适合图形展示');
@@ -1515,14 +1534,12 @@ z                    </div>
                     } else {
                         str += "<div class='item textoverflow' id='" + data[i].item_id + "' data-type='" + data[i].value_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
                     }
-
-                    $('#itemsMenu').html('');
                     $("#itemsMenu").html(str);
                 }
             }
 
             //加载图形类型列表
-            function typeMenu(value_type) {
+            function typeMenu(value_type,type) {
 
                 $.ajax({
                     type: "get",
@@ -1532,7 +1549,10 @@ z                    </div>
                         if(result.success) {
                             var data = result.data;
                             gettypeMenu(data);
-
+                            if(typeof type !== 'undefined') {
+                                $('#typeMenu div.item').removeClass('active');
+                                $('[data-type="' + type +'"]').addClass('active');
+                            }
                             $('#typeMenu > div.item').on('click',function () {
 
                                 $('#typeMenu div.item').removeClass('active');

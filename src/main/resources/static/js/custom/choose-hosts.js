@@ -178,14 +178,14 @@ function genHostsTree() {
                             plugins: plugins
                         });
                         $tree.on('changed.jstree', settings.onChange)
+                        $tree.on('loaded.jstree', settings.finish)
                     }
 
                     if (settings.multi && settings.initHosts) {
                         $tree.jstree(true).uncheck_all()
                         $tree.jstree(true).check_node(settings.initHosts)
                     }
-                    //请求成功后，执行回调函数
-                    settings.finish()
+
                 } else {
                     console.error(res.message)
                 }
