@@ -18,7 +18,7 @@
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.ui.table.dataTable thead th {
-				border-left: 0px;
+				border-left: 0;
 			}
 			/*原生a 颜色是蓝色*/
 			a{ color: rgba(0, 0, 0, 0.87); }
@@ -239,6 +239,7 @@
 								<span th:each="stateNum:${stateViewVO.hostStateNum.stateNum}">
 									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' desktop icon'"></i>
 									<span th:text="${stateNum.value}"></span>
+									<span>&nbsp&nbsp&nbsp&nbsp</span>
 								</span>
 							</p>
 						</div>
@@ -249,6 +250,7 @@
 								<span th:each="stateNum:${stateViewVO.pointStateNum.stateNum}">
 									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' circle icon'"></i>
 									<span th:text="${stateNum.value}"></span>
+									<span>&nbsp&nbsp&nbsp&nbsp</span>
 								</span>
 							</p>
 						</div>

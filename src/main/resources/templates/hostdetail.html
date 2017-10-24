@@ -52,7 +52,7 @@
 				margin-bottom: -10px;
 			}
 			.ui.celled.grid > .row > .column {  padding: 0.5em  }
-			.textOverflow{
+			.text-hidden{
 				overflow: hidden; /*自动隐藏文字*/
 				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
 				white-space: nowrap;/*强制不换行*/
@@ -69,6 +69,21 @@
 			}
 			.ui.fixed.sticky + p {
 				margin-top: 39px;
+			}
+			#hostConnection .grid {
+				margin-bottom: -12px;
+			}
+			#hostConnection .grid .buttons {
+				height: 15px;
+			}
+			#hostConnection .grid .buttons .button {
+				padding-top: 0px;
+			}
+			#hostConnection .grid .buttons .or {
+				margin-top: -8px;
+			}
+			#hostConnection .fields {
+				margin-bottom: 0px;
 			}
 		</style>
 	</th:block>
@@ -328,25 +343,25 @@
 												</div>
 											</div>
 										</div>
-										<div class="ui bottom attached tab segment tab-height" data-tab="second">
+										<div class="ui bottom attached tab segment tab-height" id="hostConnection" data-tab="second">
 											<div class="ui relaxed divided list">
 												<div class="item">
 													<div class="content">
-														<div class="ui grid" style="margin-bottom: -20px">
+														<div class="ui grid">
 															<div class="eight wide column">
 																<p class="header">Agent方式</p>
 															</div>
 															<div class="eight wide column right aligned">
-																<div class="ui buttons" style="height: 15px">
-																	<button id="agent_ip_btn" class="ui button" style="padding-top: 0px">IP</button>
-																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
-																	<button id="agent_dns_btn" class="ui button" style="padding-top: 0px">DNS</button>
+																<div class="ui buttons">
+																	<button id="agent_ip_btn" class="ui button">IP</button>
+																	<div class="or" data-text="或"></div>
+																	<button id="agent_dns_btn" class="ui button">DNS</button>
 																</div>
 															</div>
 														</div>
 														<div class="description">
 															<div class="ui form">
-																<div class="inline fields" style="margin-bottom: 0px">
+																<div class="inline fields">
 																	<div class="field" id="agent_ip">
 																		IP:
 																		<span ></span>
@@ -366,21 +381,21 @@
 												</div>
 												<div class="item">
 													<div class="content">
-														<div class="ui grid" style="margin-bottom: -20px">
+														<div class="ui grid">
 															<div class="eight wide column">
 																<p class="header">SNMP方式</p>
 															</div>
 															<div class="eight wide column right aligned">
-																<div class="ui buttons" style="height: 15px">
-																	<button id="snmp_ip_btn" class="ui button" style="padding-top: 0px">IP</button>
-																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
-																	<button id="snmp_dns_btn" class="ui button" style="padding-top: 0px">DNS</button>
+																<div class="ui buttons">
+																	<button id="snmp_ip_btn" class="ui button">IP</button>
+																	<div class="or" data-text="或"></div>
+																	<button id="snmp_dns_btn" class="ui button">DNS</button>
 																</div>
 															</div>
 														</div>
 														<div class="description">
 															<div class="ui form">
-																<div class="inline fields" style="margin-bottom: 0px">
+																<div class="inline fields">
 																	<div class="field" id="snmp_ip">
 																		IP:
 																		<span ></span>
@@ -401,21 +416,21 @@
 												</div>
 												<div class="item">
 													<div class="content">
-														<div class="ui grid" style="margin-bottom: -20px">
+														<div class="ui grid">
 															<div class="eight wide column">
 																<p class="header">IPMI方式</p>
 															</div>
 															<div class="eight wide column right aligned">
-																<div class="ui buttons" style="height: 15px">
-																	<button id="ipmi_ip_btn" class="ui button" style="padding-top: 0px">IP</button>
-																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
-																	<button id="ipmi_dns_btn" class="ui button" style="padding-top: 0px">DNS</button>
+																<div class="ui buttons">
+																	<button id="ipmi_ip_btn" class="ui button">IP</button>
+																	<div class="or" data-text="或"></div>
+																	<button id="ipmi_dns_btn" class="ui button">DNS</button>
 																</div>
 															</div>
 														</div>
 														<div class="ui description">
 															<div class="ui form">
-																<div class="inline fields" style="margin-bottom: 0px">
+																<div class="inline fields">
 																	<div class="field" id="ipmi_ip" >
 																		IP:
 																		<span ></span>
@@ -436,21 +451,21 @@
 												</div>
 												<div class="item">
 													<div class="content">
-														<div class="ui grid" style="margin-bottom: -20px">
+														<div class="ui grid">
 															<div class="eight wide column">
 																<p class="header">JMX方式</p>
 															</div>
 															<div class="eight wide column right aligned">
-																<div class="ui buttons" style="height: 15px">
-																	<button id="jmx_ip_btn" class="ui button" style="padding-top: 0px">IP</button>
-																	<div class="or" data-text="或" style="margin-top: -8px;"></div>
-																	<button id="jmx_dns_btn" class="ui button" style="padding-top: 0px">DNS</button>
+																<div class="ui buttons">
+																	<button id="jmx_ip_btn" class="ui button">IP</button>
+																	<div class="or" data-text="或"></div>
+																	<button id="jmx_dns_btn" class="ui button">DNS</button>
 																</div>
 															</div>
 														</div>
 														<div class="description">
 															<div class="ui form">
-																<div class="inline fields no_margin_bottom" style="margin-bottom: 0px">
+																<div class="inline fields no_margin_bottom">
 																	<div class="field" id="jmx_ip">
 																		IP:
 																		<span ></span>
@@ -482,7 +497,7 @@
 											<div class="ui segment">
 												<div class="ui five column grid fixed-height" id="pointButton">
 													<div class="column" th:each="pointVO : ${pointVOS}">
-														<div class="ui red top attached button" id="" th:class="${pointVO.state}=='正常' ? 'ui green top attached button textOverflow' : (${pointVO.state}=='警告' ? 'ui yellow top attached button textOverflow' : 'ui red top attached button textOverflow')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
+														<div class="ui red top attached button" id="" th:class="${pointVO.state}=='正常' ? 'ui green top attached button text-hidden' : (${pointVO.state}=='警告' ? 'ui yellow top attached button text-hidden' : 'ui red top attached button text-hidden')  " th:id="p+${pointVO.pointId}" th:text="${pointVO.name}">CPU</div>
 													</div>
 													<div class="column" th:remove="all">
 														<div class="ui red top attached button" id="0114" >CPU</div>
@@ -655,7 +670,7 @@
 							<div class="ui left floated image">
 								请定义图形的标题：
 								<p></p>
-								<div class="required field">
+								<div class="required inline field" id="graphTitle">
 									<div class="ui small input graph_name">
 										<input type="text" placeholder="请输入标题">
 									</div>
@@ -664,23 +679,23 @@
 								<i class="massive area chart icon"></i>
 								</div>
 							</div>
-							<div class="description" id="test">
+							<div class="description">
 								请选择图形的内容：
 								<p></p>
 								<form class="ui form">
-									<div class="required inline field" >
+									<div class="required inline field" id="graphPoints">
 										<label>监控点：</label>
 										<select class="ui dropdown points">
 											<option value="">请选择监控点</option>
 										</select>
 									</div>
-									<div class="required inline field">
+									<div class="required inline field" id="graphItems">
 										<label>监控项：</label>
 										<select class="ui dropdown items">
 											<option value="">请选择监控项</option>
 										</select>
 									</div>
-									<div class="required inline field">
+									<div class="required inline field" id="graphType">
 										<label>图类别：</label>
 										<select class="ui dropdown type">
 											<option value="">请选择图类别</option>
@@ -913,6 +928,9 @@
             var host_id = $('#host_id').text();
             $('.ui.dropdown').dropdown();
             //初始化
+            $('#graphItems').removeClass('error')
+            $('#graphTitle').removeClass('error')
+            $('#graphType').removeClass('error')
             $(".dropdown.points select").dropdown('clear');
             $(".small.input.graph_name input").val("");
             $(".dropdown.items select").dropdown('clear');
@@ -943,16 +961,18 @@
             $('.small.modal').modal({
                 closable: false,
                 onApprove: function () {
-                    //alert("提交后校验item:" + $("#i"+ item_id).length);
-
+                    //("提交后校验item:" + $("#i"+ item_id).length);
                     if (item_id == "") {
-                        alert("必填项--监控项");
+                        $('#graphItems').addClass('error')//graphPoints
+                        //"必填项--监控项"
                         return false;
                     } else if ($('.input.graph_name input').val() == "") {
-                        alert("必填项--名称");
+                        $('#graphTitle').addClass('error')
+                        //"必填项--名称"
                         return false;
                     } else if (graph_type == "") {
-                        alert("必填项--图形类型");
+                        $('#graphType').addClass('error')
+                        //("必填项--图形类型");
                         return false;
                     } else if ($("#i" + item_id).length > 0) {
                         //校验判断 页面上是否已经存在相同监控项的图形了
@@ -1030,9 +1050,9 @@
                                 }
                                 if(strlen(item_datas[i].value) > 16)
                                 {
-                                    var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+                                    var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header text-hidden'>" +item_datas[i].value+"</span></td>"
                                 }else {
-                                    var item_value= "<td><span class='ui "+myColor+" header textOverflow'>" +item_datas[i].value+"</span></td>"
+                                    var item_value= "<td><span class='ui "+myColor+" header text-hidden'>" +item_datas[i].value+"</span></td>"
                                 }
                                 str_item_datas +="<tr>"+item_name+item_value+"</tr>";
                             }
@@ -1134,16 +1154,19 @@
                     $('.small.modal').modal({
                         closable  : false,
                         onApprove: function () {
-                            //alert("提交后校验item:" + $("#i"+ item_id).length);
+                            //"提交后校验item:" + $("#i"+ item_id).length
 
                             if(item_id == "") {
-                                alert("必填项--监控项");
+                                $('#graphItems').addClass('error')
+                                //("必填项--监控项");
                                 return false;
                             }else if($('.input.graph_name input').val() == "") {
-                                alert("必填项--名称");
+                                $('#graphTitle').addClass('error')
+                                //"必填项--名称"
                                 return false;
                             }else if(graph_type == "") {
-                                alert("必填项--图形类型");
+                                $('#graphType').addClass('error')
+                                //("必填项--图形类型");
                                 return false;
                             }else {
                                 $('.button.approve').addClass('loading');
@@ -1246,20 +1269,26 @@
         $("#flag_true_content").empty();
         for (var i=0; i<data.length; i++){
             var graph_name = data[i].graph_name;
-            var name = graph_name.length<30 ? graph_name : graph_name.substring(0,30)+'...' ;
-            var title = "";
+            var name;
+			var title;
             if(data[i].units == "") {
-                title = name;
+                title = graph_name;
             }else {
-                title =name + "(" + data[i].units +")";
+                title =graph_name + "(" + data[i].units +")";
+            }
+            if(strlen(graph_name) > 40)
+            {
+                name = "<div class='fourteen wide column no-padding' data-tooltip='"+title+"'>"+
+                    "<h3 class='text-hidden'>"+title+"</h3></div>";
+            }else {
+                name = "<div class='fourteen wide column no-padding'>"+
+                    "<h3 class='text-hidden'>"+title+"</h3></div>";
             }
             var id = "i" + data[i].item_id;
             if (data[i].flag==true)
             {
-                str_true ="<div class=' brick small'><div class='ui grid'>"+
-                    "<div class='eight wide column no-padding'>"+
-                    "<h3>"+title+"</h3></div>"+
-                    "<div class='eight wide column right aligned no-padding'>"+
+                str_true ="<div class=' brick small'><div class='ui grid'>"+name+
+                    "<div class='two wide column right aligned no-padding'>"+
                     "<i class='edit icon' id='g" + data[i].item_id + "' onclick='editGraph(this.id)'></i>"+
                     "<i class='delete icon' id='g" + data[i].item_id + "' onclick='deleteGraph(this.id)'></i></div>"+
                     "<div class='sixteen wide column no-padding'>"+
@@ -1272,10 +1301,7 @@
                     $("#flag_false").html("<div class='ui segments'> <div class='ui segment'> <h3 class='ui header'><i class='tag icon'></i> 问题图形 </h3> </div> <div class='ui segment'><div class='gridly' id='flag_false_content'></div></div></div>");
 
                 }
-                /*str_false ="<div class=' brick small'><div id='"+id+"' class='chart-style'>"+id+"</div></div>";*/
-                str_false ="<div class=' brick small'><div class='ui grid'>"+
-                    "<div class='sixteen wide column no-padding'>"+
-                    "<h3>"+title+"</h3></div>"+
+                str_false ="<div class=' brick small'><div class='ui grid'>"+ name+
                     "<div class='sixteen wide column no-padding'>"+
                     "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
                 $("#flag_false_content").append(str_false);
