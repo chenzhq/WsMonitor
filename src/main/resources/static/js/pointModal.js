@@ -304,6 +304,26 @@ function tabReport(point_id,days) {
                     areaoption.series[0].color[0] = myColor;
                     echarts.init(document.getElementById(id)).setOption(option);
                 }
+                $('.ui.buttons.Type.Report .button').on('click', function() {
+
+                    $('.buttons.Type.Report .button').removeClass('active');
+                    $(this).addClass('active');
+                    option.series[0].type = this.value;
+                    console.log('this',$(this));
+                    if (this.value == "area")
+                    {
+                        $("div#chartReport .chart-style").each(function(){
+                            echarts.init(document.getElementById(this.id)).setOption(areaoption);
+                        })
+                    }else {
+                        option.series[0].areaStyle = "";
+                        $("div#chartReport .chart-style").each(function(){
+                            echarts.init(document.getElementById(this.id)).setOption(option);
+                        })
+                    }
+
+                })
+
                 $('#chart-dimmer').removeClass('active');
             }
             else {
@@ -322,24 +342,6 @@ $('.ui.buttons.Time.Report .button').on('click', function() {
     tabReport($('.top.attached.label').attr("data-id") ,this.value);
 })
 
-$('.ui.buttons.Type.Report .button').on('click', function() {
-
-    $('.buttons.Type.Report .button').removeClass('active');
-    $(this).addClass('active');
-    option.series[0].type = this.value;
-    if (this.value == "area")
-    {
-        $("div#chartReport .chart-style").each(function(){
-            echarts.init(document.getElementById(this.id)).setOption(areaoption);
-        })
-    }else {
-        option.series[0].areaStyle = "";
-        $("div#chartReport .chart-style").each(function(){
-            echarts.init(document.getElementById(this.id)).setOption(option);
-        })
-    }
-
-})
 
 //时序数据中 加载监控项下拉框数据
 function dropdownitemsTab(point_id,item_id){
