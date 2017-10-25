@@ -1342,11 +1342,11 @@
                                 if (point_id === '') {
                                     $('#graphPoints').addClass('error');
                                     is_point = false;
-                                    console.log('point empty');
+                                    //console.log('point empty');
                                 }else {
                                     $('#graphPoints').removeClass('error');
                                     is_point = true;
-                                    console.log('point ok');
+                                    //console.log('point ok');
                                 }
                                 $(".dropdown.items select").dropdown('clear');
                                 dropdownItems(value);
@@ -1356,22 +1356,22 @@
                         $('.dropdown.items').dropdown({
                             onChange: function(value, text, $selectedItem) {
                                 item_id = value.split("_")[1];
-                                console.log('item_id',item_id);
+                                //console.log('item_id',item_id);
                                 //item 校验
                                 if (item_id === '') {
                                     $('#graphItems').addClass('error');
                                     is_item = false;
-                                    console.log('item empty');
+                                    //console.log('item empty');
                                 }else if ($("#g" + item_id).length > 0) {
                                     //校验判断 页面上是否已经存在相同监控项的图形了
                                     alert("已添加过该监控项图形。。。");
                                     $('#graphItems').addClass('error');
                                     is_item = false;
-                                    console.log('item exist');
+                                    //console.log('item exist');
                                 }else {
                                     $('#graphItems').removeClass('error');
                                     is_item = true;
-                                    console.log('item ok');
+                                    //console.log('item ok');
                                 }
                                 $(".dropdown.type select").dropdown('clear');
                                 dropdownType(value.split("_")[0]);
@@ -1385,11 +1385,11 @@
                                 if (graph_type === '') {
                                     $('#graphType').addClass('error');
                                     is_type = false;
-                                    console.log('type empty');
+                                    //console.log('type empty');
                                 }else {
                                     $('#graphType').removeClass('error');
                                     is_type = true;
-                                    console.log('type ok',value);
+                                    //console.log('type ok',value);
                                 }
                                 $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
                             }
@@ -1400,37 +1400,37 @@
                         if (point_id === '') {
                             $('#graphPoints').addClass('error');
                             is_point = false;
-                            console.log('point empty');
+                            //console.log('point empty');
                         }else {
                             $('#graphPoints').removeClass('error');
                             is_point = true;
-                            console.log('point ok');
+                            //console.log('point ok');
                         }
                         //item 校验
                         if (item_id === '') {
                             $('#graphItems').addClass('error');
                             is_item = false;
-                            console.log('item empty');
+                            //console.log('item empty');
                         }else if ($("#g" + item_id).length > 0) {
                             //校验判断 页面上是否已经存在相同监控项的图形了
                             alert("已存在图形监控项。。。");
                             $('#graphItems').addClass('error');
                             is_item = false;
-                            console.log('item exist');
+                            //console.log('item exist');
                         }else {
                             $('#graphItems').removeClass('error');
                             is_item = true;
-                            console.log('item ok');
+                            //console.log('item ok');
                         }
                         //type 校验
                         if (graph_type === '') {
                             $('#graphType').addClass('error');
                             is_type = false;
-                            console.log('type empty');
+                            //console.log('type empty');
                         }else {
                             $('#graphType').removeClass('error');
                             is_type = true;
-                            console.log('type ok');
+                            //console.log('type ok');
                         }
 
                         success = is_name && is_point && is_item && is_type ;
@@ -1444,7 +1444,6 @@
                                 itemId: item_id,
 								platformId:platform_id
                             };
-							console.log("add dataInfo",dataInfo);
                             $.ajax({
                                 type: "post",
                                 url: "/platformdetail/save_graph",
@@ -1528,11 +1527,11 @@
                                                 if (graph_type === '') {
                                                     $('#graphType').addClass('error');
                                                     is_type = false;
-                                                    console.log('type empty');
+                                                    //console.log('type empty');
                                                 }else {
                                                     $('#graphType').removeClass('error');
                                                     is_type = true;
-                                                    console.log('type ok');
+                                                    //console.log('type ok');
                                                 }
                                                 $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
                                             }
@@ -1543,11 +1542,11 @@
                                         if ($('#graphName').val() === '') {
                                             $('#graphTitle').addClass('error');
                                             is_name = false;
-                                            console.log('name empty');
+                                            //console.log('name empty');
                                         }else {
                                             $('#graphTitle').removeClass('error');
                                             is_name = true;
-                                            console.log('name ok');
+                                            //console.log('name ok');
                                         }
                                     });
 
@@ -1565,19 +1564,19 @@
                         if ($('#graphName').val() === '') {
                             $('#graphTitle').addClass('error');
                             is_name = false;
-                            console.log('name empty');
+                            //console.log('name empty');
                         }else {
                             $('#graphTitle').removeClass('error');
                             is_name = true;
-                            console.log('name ok');
+                            //console.log('name ok');
                         }
                         if (graph_type === '') {
                             $('#graphType').addClass('error');
                             is_type = false;
-                            console.log('type empty');
+                            //console.log('type empty');
                         }else {
                             $('#graphType').removeClass('error');
-                            is_type = true;console.log('type ok');
+                            is_type = true;//console.log('type ok');
                         }
                         success = is_name && is_type ;
                         if(success) {
@@ -1587,7 +1586,7 @@
                                 graphType: graph_type,
                                 itemId: item_id
                             };
-                            console.log('edit datainfo',dataInfo);
+
                             $.ajax({
                                 type: "post",
                                 url: "/platformdetail/update_graph",

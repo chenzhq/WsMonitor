@@ -996,7 +996,7 @@
                                 if (item_id === '') {
                                     $('#graphItems').addClass('error');
                                     is_item = false;
-                                    console.log('item empty');
+                                    //console.log('item empty');
                                 }else if ($("#i" + item_id).length > 0) {
                                     //校验判断 页面上是否已经存在相同监控项的图形了
                                     alert("已添加过该监控项图形。。。");
@@ -1044,7 +1044,7 @@
                     if (item_id === '') {
                         $('#graphItems').addClass('error');
                         is_item = false;
-                        console.log('item empty');
+                        //console.log('item empty');
                     }else if ($("#i" + item_id).length > 0) {
                         //校验判断 页面上是否已经存在相同监控项的图形了
                         alert("已存在图形监控项。。。");
@@ -1178,20 +1178,30 @@
             action: function (text, value) {
                 if (value === 'host') {
                     var host_id ;
+                    var $host_tree;
                     $('#host_tree_modal').modal({
                         closable  : false,
                         onShow:function(){
                             //获取设备选择树
-                            var $host_tree = $('#host_tree');
+                            $host_tree = $('#host_tree');
                             $host_tree.genHostTree({
                                 multi: false,
                                 onChange:function(e,data){
                                     host_id = data.selected[0];
+
                                 }
                             })
                         },
                         onApprove : function() {
-                            window.location.href="hostDetail?host_id="+host_id;
+                            var tree_type = $host_tree.jstree(true).get_type(host_id).split('-')[0];
+                            //console.log('tree_type',data);
+                            if('host' === tree_type) {
+                                window.location.href="hostDetail?host_id="+host_id;
+                            }else if('group' === tree_type) {
+                                alert('必须选择设备');
+                                return false;
+                            }
+
 						}
                     }).modal('show')
                 }
@@ -1253,11 +1263,11 @@
                                         if (graph_type === '') {
                                             $('#graphType').addClass('error');
                                             is_type = false;
-                                            console.log('type empty');
+                                            //console.log('type empty');
                                         }else {
                                             $('#graphType').removeClass('error');
                                             is_type = true;
-                                            console.log('type ok');
+                                            //console.log('type ok');
                                         }
                                         $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
                                     }
@@ -1268,11 +1278,11 @@
                                 if ($('#graphName').val() === '') {
                                     $('#graphTitle').addClass('error');
                                     is_name = false;
-                                    console.log('name empty');
+                                    //console.log('name empty');
                                 }else {
                                     $('#graphTitle').removeClass('error');
                                     is_name = true;
-                                    console.log('name ok');
+                                    //console.log('name ok');
                                 }
 							});
 
@@ -1291,19 +1301,19 @@
                 if ($('#graphName').val() === '') {
                     $('#graphTitle').addClass('error');
                     is_name = false;
-                    console.log('name empty');
+                    //console.log('name empty');
                 }else {
                     $('#graphTitle').removeClass('error');
                     is_name = true;
-                    console.log('name ok');
+                    //console.log('name ok');
                 }
                 if (graph_type === '') {
                     $('#graphType').addClass('error');
                     is_type = false;
-                    console.log('type empty');
+                    //console.log('type empty');
                 }else {
                     $('#graphType').removeClass('error');
-                    is_type = true;console.log('type ok');
+                    is_type = true;//console.log('type ok');
                 }
                 success = is_name && is_type ;
                 if(success) {

@@ -309,7 +309,7 @@ function tabReport(point_id,days) {
                     $('.buttons.Type.Report .button').removeClass('active');
                     $(this).addClass('active');
                     option.series[0].type = this.value;
-                    console.log('this',$(this));
+                    //console.log('this',$(this));
                     if (this.value == "area")
                     {
                         $("div#chartReport .chart-style").each(function(){
