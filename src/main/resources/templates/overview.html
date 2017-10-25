@@ -277,7 +277,8 @@
 
 					<!--</div>-->
 				</div>
-			</div>
+                <!--监控点详情弹出框-->
+                <div  th:replace="hostdetail::point_detail_page" class="ui large modal"></div>
 		</div>
 	</div>
 </div>
@@ -324,9 +325,6 @@
 		<div class="ui green approve button" id="move_submit">确认</div>
 	</div>
 </div>
-
-<!--监控点详情弹出框-->
-<div  th:replace="hostdetail::point_detail_page" class="ui large modal" ></div>
 
 <div id="del-pop" class="ui custom popup transition hidden">
 	<div class="description">是否删除该分组？</div>
@@ -504,7 +502,7 @@
                     $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
                     $("#pointDetailArea").text(point_id);
                     tabSummary(point_id);
-                    $('.large.modal').modal('show');
+                    $('.ui.large.modal').modal('show');
                     $('.tab_points.menu .item')
                         .tab({
                             'onFirstLoad': function (path) {

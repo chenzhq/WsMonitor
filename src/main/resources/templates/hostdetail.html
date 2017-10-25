@@ -567,93 +567,93 @@
 						<div class="content">
 						  <div class="ui grid points">
                             <div id="labelPoints"></div>
-                            <div class="sixteen wide column">
-							<div class="ui pointing secondary menu tab_points">
-								<a class="item active" data-tab="Summary">概述</a>
-								<a class="item" data-tab="Report">报告</a>
-								<a class="item" data-tab="Data">数据</a>
-							</div>
-							<div class="ui tab segment active modal-height" data-tab="Summary" style="margin-bottom: 0px;">
-								<div class="row">
-									<table class="ui compact basic fixed single line table center aligned">
-										<thead>
-										<tr><th width="20%">指标</th>
-											<th width="20%">值</th>
-											<th width="10%">危险阈值</th>
-											<th width="10%">故障阈值</th>
-											<th width="20%">最新时间</th>
-										</tr></thead>
-										<tbody id="tableSummary" >
-										</tbody>
-									</table>
-								</div>
-							</div>
-							<div class="ui tab segment modal-height" data-tab="Report" style="margin-bottom: 0px;">
-								<div class="ui grid">
-									<div class="row">
-										<div class="eight wide column">
-											<div class="ui basic top attached left floated  buttons Time Report">
-												<button value="40" class="ui active button">最新40条</button>
-												<button value="1" class="ui button">1天</button>
-												<button value="3" class="ui button">3天</button>
-												<button value="7" class="ui button">7天</button>
-												<button value="30" class="ui button">30天</button>
+								<div class="sixteen wide column">
+									<div class="ui pointing secondary menu tab_points">
+										<a class="item active" data-tab="Summary">概述</a>
+										<a class="item" data-tab="Report">报告</a>
+										<a class="item" data-tab="Data">数据</a>
+									</div>
+									<div class="ui tab segment active modal-height" data-tab="Summary" style="margin-bottom: 0px;">
+										<div class="row">
+											<table class="ui compact basic fixed single line table center aligned">
+												<thead>
+												<tr><th width="20%">指标</th>
+													<th width="20%">值</th>
+													<th width="10%">危险阈值</th>
+													<th width="10%">故障阈值</th>
+													<th width="20%">最新时间</th>
+												</tr></thead>
+												<tbody id="tableSummary" >
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<div class="ui tab segment modal-height" data-tab="Report" style="margin-bottom: 0px;">
+										<div class="ui grid">
+											<div class="row">
+												<div class="eight wide column">
+													<div class="ui basic top attached left floated  buttons Time Report">
+														<button value="40" class="ui active button">最新40条</button>
+														<button value="1" class="ui button">1天</button>
+														<button value="3" class="ui button">3天</button>
+														<button value="7" class="ui button">7天</button>
+														<button value="30" class="ui button">30天</button>
+													</div>
+												</div>
+												<div class="eight wide column">
+													<div class="ui basic top attached right floated buttons Type Report">
+														<button value="bar" class="ui button">柱状图</button>
+														<button value="line" class="ui button">线状图</button>
+														<button value="area" class="ui button">面积图</button>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="ui three column grid" id="chartReport">
+													<p></p>
+												</div>
+											</div>
+											<div id="chart-dimmer" class="ui inverted dimmer">
+												<div class="ui text loader">正在查询</div>
 											</div>
 										</div>
-										<div class="eight wide column">
-											<div class="ui basic top attached right floated buttons Type Report">
-												<button value="bar" class="ui button">柱状图</button>
-												<button value="line" class="ui button">线状图</button>
-												<button value="area" class="ui button">面积图</button>
+									</div>
+									<div class="ui tab segment modal-height" data-tab="Data">
+										<div class="ui grid">
+											<div class="eight wide column">
+												<div class="ui basic top attached left floated buttons Time Data">
+													<button value="40" class="ui active button">最新40条</button>
+													<button value="1" class="ui button">1天</button>
+													<button value="3" class="ui button">3天</button>
+													<button value="7" class="ui button">7天</button>
+													<button value="30" class="ui button">30天</button>
+												</div>
+											</div>
+											<div class="right aligned four wide column">
+												监控项：
+												<select class="ui dropdown itemsTab">
+													<!--<option value="">选择监控项</option>-->
+												</select>
+											</div>
+											<div class="right aligned four wide column">
+												状态：
+												<select class="ui dropdown stateTab">
+													<option value="">请选择状态</option>
+													<option>全部</option>
+													<option>正常</option>
+													<option>严重</option>
+													<option>警告</option>
+												</select>
 											</div>
 										</div>
-									</div>
-									<div class="row">
-										<div class="ui three column grid" id="chartReport">
-											<p></p>
-										</div>
-									</div>
-									<div id="chart-dimmer" class="ui inverted dimmer">
-										<div class="ui text loader">正在查询</div>
-									</div>
-								</div>
-							</div>
-							<div class="ui tab segment modal-height" data-tab="Data">
-								<div class="ui grid">
-									<div class="eight wide column">
-										<div class="ui basic top attached left floated buttons Time Data">
-											<button value="40" class="ui active button">最新40条</button>
-											<button value="1" class="ui button">1天</button>
-											<button value="3" class="ui button">3天</button>
-											<button value="7" class="ui button">7天</button>
-											<button value="30" class="ui button">30天</button>
-										</div>
-									</div>
-									<div class="right aligned four wide column">
-										监控项：
-										<select class="ui dropdown itemsTab">
-											<!--<option value="">选择监控项</option>-->
-										</select>
-									</div>
-									<div class="right aligned four wide column">
-										状态：
-										<select class="ui dropdown stateTab">
-											<option value="">请选择状态</option>
-											<option>全部</option>
-											<option>正常</option>
-											<option>严重</option>
-											<option>警告</option>
-										</select>
-									</div>
-								</div>
-								<div class="row" id="rowData">
+										<div class="row" id="rowData">
 
-								</div>
-								<div id="data-dimmer" class="ui inverted dimmer">
-									<div class="ui text loader">正在查询</div>
-								</div>
-							</div>
-						  </div>
+										</div>
+										<div id="data-dimmer" class="ui inverted dimmer">
+											<div class="ui text loader">正在查询</div>
+										</div>
+									</div>
+							  </div>
 						  </div>
                         </div>
 						<!--监控点modal end-->

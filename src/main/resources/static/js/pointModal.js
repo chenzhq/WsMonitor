@@ -11,7 +11,7 @@ $(function(){
         $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
         $("#pointDetailArea").text(point_id);
         tabSummary(point_id);
-        $('.large.modal').modal('show');
+        $('.large.modal').modal('setting', 'transition', 'Horizontal Filp').modal('show');
         $('.tab_points.menu .item')
             .tab({
                 'onFirstLoad': function (path) {
@@ -272,7 +272,7 @@ function tabReport(point_id,days) {
                 $("#chartReport").empty();
                 for (var i=0; i<data.length; i++){
                     var id="pi"+data[i].item_id;
-                    str ="<div class='column'><div id='"+id+"' class='chart-style'>"+id+"</div></div></div>";
+                    str ="<div class='column' ><div id='"+id+"' class='chart-style' style='height:200px'>"+id+"</div></div></div>";
                     $("#chartReport").append(str);
                     var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
                     if (data[i].state == "正常"){ var myColor = Color[0] }
@@ -304,29 +304,6 @@ function tabReport(point_id,days) {
                     areaoption.series[0].color[0] = myColor;
                     echarts.init(document.getElementById(id)).setOption(option);
                 }
-                $('.ui.buttons.Time.Report .button').on('click', function() {
-                    $('.buttons.Time.Report .button').removeClass('active');
-                    $(this).addClass('active');
-                    tabReport($('.top.attached.label').attr("data-id") ,this.value);
-                })
-                $('.ui.buttons.Type.Report .button').on('click', function() {
-
-                    $('.buttons.Type.Report .button').removeClass('active');
-                    $(this).addClass('active');
-                    option.series[0].type = this.value;
-                    if (this.value == "area")
-                    {
-                        $("div#chartReport .chart-style").each(function(){
-                            echarts.init(document.getElementById(this.id)).setOption(areaoption);
-                        })
-                    }else {
-                        option.series[0].areaStyle = "";
-                        $("div#chartReport .chart-style").each(function(){
-                            echarts.init(document.getElementById(this.id)).setOption(option);
-                        })
-                    }
-
-                })
                 $('#chart-dimmer').removeClass('active');
             }
             else {
@@ -338,6 +315,31 @@ function tabReport(point_id,days) {
         }
     });
 }
+
+$('.ui.buttons.Time.Report .button').on('click', function() {
+    $('.buttons.Time.Report .button').removeClass('active');
+    $(this).addClass('active');
+    tabReport($('.top.attached.label').attr("data-id") ,this.value);
+})
+
+$('.ui.buttons.Type.Report .button').on('click', function() {
+
+    $('.buttons.Type.Report .button').removeClass('active');
+    $(this).addClass('active');
+    option.series[0].type = this.value;
+    if (this.value == "area")
+    {
+        $("div#chartReport .chart-style").each(function(){
+            echarts.init(document.getElementById(this.id)).setOption(areaoption);
+        })
+    }else {
+        option.series[0].areaStyle = "";
+        $("div#chartReport .chart-style").each(function(){
+            echarts.init(document.getElementById(this.id)).setOption(option);
+        })
+    }
+
+})
 
 //时序数据中 加载监控项下拉框数据
 function dropdownitemsTab(point_id,item_id){
