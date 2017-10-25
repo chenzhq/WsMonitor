@@ -15,6 +15,7 @@
 		<link rel="stylesheet" href="../static/css/jquery.treegrid.css" th:href="@{css/jquery.treegrid.css}">
 		<link rel="stylesheet" href="../static/css/jstree-default/style.min.css" th:href="@{css/jstree-default/style.min.css}">
 		<script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.ui.table.dataTable thead th {
@@ -273,6 +274,7 @@
 						<table  id="host_table" class="tree ui compact very basic fixed single line table center aligned " width="100%">
 						</table>
 					</div>
+
 					<!--</div>-->
 				</div>
 			</div>
@@ -323,12 +325,15 @@
 	</div>
 </div>
 
+<!--监控点详情弹出框-->
+<div  th:replace="hostdetail::point_detail_page" class="ui large modal" ></div>
 
 <div id="del-pop" class="ui custom popup transition hidden">
 	<div class="description">是否删除该分组？</div>
 	<i class="mini checkmark negative icon "></i>
 
 </div>
+
 
 <div id="point-pop" class="ui special popup">
 	<div class="ui relaxed divided list">
@@ -358,6 +363,7 @@
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="../static/js/pointModal.js" th:src="@{js/pointModal.js}"></script>
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 	</th:block>
 </th:block>
@@ -413,85 +419,218 @@
                     position: 'top right',
                     on: 'click'
                 })
-                $('a.point-detail').hover(function() {
-                    $(this).parent().parent().css("background-color","#E0E0E0")
-                    var point_id=this.id;
-                    //加载监控点悬浮框
-                    $('a.point-detail').popup({
-                        onShow: function () {
-                            //var point_id=this.id放在hover外层获取不到ID
-                            $.ajax({
-                                type: "get",
-                                url: "/brief/point?point_id="+point_id,
-                                dataType: "json",
-                                success: function (result) {
-                                    if(result.success) {
-                                        var Color = ['red', 'yellow', 'green'];
-                                        var data = result.data;
-                                        console.log(data)
-                                        var item_datas=data.item_datas;
-                                        var str_item_datas = '';
-                                        var myColor = '';
-                                        for(var i=0; i<item_datas.length; i++){
-                                            if (item_datas[i].with_triggers == true) {
-                                                if (item_datas[i].state == "严重") {
-                                                    myColor = Color[0]
-                                                }
-                                                if (item_datas[i].state == "警告") {
-                                                    myColor = Color[1]
-                                                }
-                                                if (item_datas[i].state == "正常") {
-                                                    myColor = Color[2]
-                                                }
-                                            }else {
-                                                myColor = ''
-                                            }
-                                            if(strlen(item_datas[i].item_name) > 30)
-                                            {
-                                                var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
-                                            }else {
-                                                var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
-                                            }
-                                            if(strlen(item_datas[i].value) > 15)
-                                            {
-                                                var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header'>" +item_datas[i].value+"</span></td>"
-                                            }else {
-                                                var item_value= "<td><span class='ui "+myColor+" header'>" +item_datas[i].value+"</span></td>"
-                                            }
-                                            str_item_datas +="<tr>"+item_name+item_value+"</tr>";
-                                        }
 
-                                        if (data.state == "正常"){ myColor = Color[2] }
-                                        if (data.state == "严重"){ myColor = Color[0] }
-                                        if (data.state == "警告"){ myColor = Color[1] }
-                                        $("#point_name").html("名称："+data.point_name);
-                                        $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
-                                        $("#item_datas").html(str_item_datas);
-                                    } else {
-                                        errorMsg_no_data("监控项 Pop");
+                $('a.point-detail').parent().popup({
+                    onShow: function (module) {
+                        $(module).parent().css("background-color","#E0E0E0");
+                        var point_id = $(module).find('a').attr('id');
+                        $.ajax({
+                            type: "get",
+                            url: "/brief/point?point_id="+point_id,
+                            dataType: "json",
+                            success: function (result) {
+                                if(result.success) {
+                                    var Color = ['red', 'yellow', 'green'];
+                                    var data = result.data;
+                                    console.log(data)
+                                    var item_datas=data.item_datas;
+                                    var str_item_datas = '';
+                                    var myColor = '';
+                                    for(var i=0; i<item_datas.length; i++){
+                                        if (item_datas[i].with_triggers == true) {
+                                            if (item_datas[i].state == "严重") {
+                                                myColor = Color[0]
+                                            }
+                                            if (item_datas[i].state == "警告") {
+                                                myColor = Color[1]
+                                            }
+                                            if (item_datas[i].state == "正常") {
+                                                myColor = Color[2]
+                                            }
+                                        }else {
+                                            myColor = ''
+                                        }
+                                        if(strlen(item_datas[i].item_name) > 30)
+                                        {
+                                            var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
+                                        }else {
+                                            var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
+                                        }
+                                        if(strlen(item_datas[i].value) > 15)
+                                        {
+                                            var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header'>" +item_datas[i].value+"</span></td>"
+                                        }else {
+                                            var item_value= "<td><span class='ui "+myColor+" header'>" +item_datas[i].value+"</span></td>"
+                                        }
+                                        str_item_datas +="<tr>"+item_name+item_value+"</tr>";
                                     }
-                                },
-                                error: function () {
-                                    errorMsg_no_connect("监控点 Pop");
+
+                                    if (data.state == "正常"){ myColor = Color[2] }
+                                    if (data.state == "严重"){ myColor = Color[0] }
+                                    if (data.state == "警告"){ myColor = Color[1] }
+                                    $("#point_name").html("名称："+data.point_name);
+                                    $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                                    $("#item_datas").html(str_item_datas);
+                                } else {
+                                    errorMsg_no_data("监控项 Pop");
                                 }
-                            })
-                        },
-                        onHidden: function (result) {
-                            $("#point_name").html("名称：");
-                            $("#point_state").html("状态：&nbsp&nbsp");
-                            $("#item_datas").html("");
-                        },
-                        popup: '#point-pop',
-                        inline: true,
-                        hoverable  : true,
-                        delay: {
-                            show: 500,
-                            hide: 100
-                        }
-                    })
-                    },function(){
-                    $(this).parent().parent().css("background-color","#FFF")
-                });
+                            },
+                            error: function () {
+                                errorMsg_no_connect("监控点 Pop");
+                            }
+                        })
+
+                    },
+                    onHidden: function (module) {
+                        $(module).parent().css("background-color","#fff");
+                        $("#point_name").html("名称：");
+                        $("#point_state").html("状态：&nbsp&nbsp");
+                        $("#item_datas").html("");
+                    },
+                    popup: '#point-pop',
+                    inline: true,
+                    hoverable  : true,
+                    position   : 'bottom ',
+                    delay: {
+                        show: 1500,
+                        hide: 100
+                    }
+				});
+
+               /* $('a.point-detail').on('click',function(){
+                    var point_id = this.id;
+                    $('.tab_points.menu .item').tab('change tab', 'Summary');
+                    $("#rowData").empty();
+                    $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
+                    $("#pointDetailArea").text(point_id);
+                    tabSummary(point_id);
+                    $('.large.modal').modal('show');
+                    $('.tab_points.menu .item')
+                        .tab({
+                            'onFirstLoad': function (path) {
+                                if (path === 'Report') {
+                                    tabReport( $('.top.attached.label').attr("data-id") ,40);
+                                }
+                                if (path === 'Data') {
+                                    var point_id = $("#pointDetailArea").text();
+                                    var item_id = $("#pointDetailFirstItem").text() ;
+                                    var tableData = $("#tableData").DataTable({
+                                        "orderFixed": [ 0, 'desc' ],
+                                        "paging": false,
+                                        ajax: {
+                                            url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
+                                            dataSrc: 'data'
+                                        },
+                                        "columnDefs": [ {
+                                            "targets": [ 3 ],
+                                            "visible": false } ] ,
+                                        columns: [
+                                            //item_id
+                                            {
+                                                "data": "last_time",
+                                                "width": "30%",
+                                                "title": "最新时间",
+                                            },
+                                            {
+                                                "data": null,
+                                                "width": "10%",
+                                                "title": "状态",
+                                                "orderable": false,
+                                                render: function (data, type, row, meta) {
+                                                    var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
+                                                    if (row.state == "正常") {
+                                                        var myColor = Color[0]
+                                                    }
+                                                    if (row.state == "严重") {
+                                                        var myColor = Color[1]
+                                                    }
+                                                    if (row.state == "警告") {
+                                                        var myColor = Color[2]
+                                                    }
+                                                    return '<i class="'+ myColor + ' square icon"></i>';
+                                                }
+                                            },
+                                            {
+                                                "data": "value",
+                                                "width": "30%",
+                                                "title": "值",
+                                                "orderable":false,
+                                            },
+                                            {
+                                                "data": "state",
+                                                "width": "30%",
+                                                "title": "状态",
+                                                "orderable":false,
+                                            },
+                                        ],
+                                    });
+                                    dropdownitemsTab(point_id,item_id);
+                                    $('.dropdown.stateTab')
+                                        .dropdown({
+                                            useLabels: false,
+                                            onChange: function(value, text, $selectedItem) {
+                                                if (text == '全部')
+                                                {
+                                                    tableData.search('').draw();
+                                                }else {
+                                                    tableData.search(text).draw();
+                                                }
+                                            }
+                                        });
+                                    $('.dropdown.itemsTab')
+                                        .dropdown({
+											/!*useLabels: false,*!/
+                                            onChange: function(value, text, $selectedItem) {
+                                                $('#data-dimmer').addClass('active');
+                                                var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
+                                                //tableData.ajax.url(url).load();
+                                                $.ajax({
+                                                    type: "get",
+                                                    url: url,
+                                                    dataType: 'json',
+                                                    success: function (result) {
+                                                        if (result.success) {
+                                                            tableData.clear().rows.add(result.data).draw()
+                                                            $('#data-dimmer').removeClass('active');
+                                                        } else {
+
+                                                        }
+                                                    },
+                                                    error: function (e) {
+
+                                                    }
+                                                })
+                                                $('.dropdown.stateTab').prop('selectedIndex', 0);
+                                            }
+                                        });
+                                    $('.ui.buttons.Time.Data .button').on('click', function() {
+                                        $('#data-dimmer').addClass('active');
+                                        $('.buttons.Time.Data .button').removeClass('active');
+                                        $(this).addClass('active');
+                                        var item_id = $('.dropdown.itemsTab').dropdown('get value');
+                                        var url=  "/pointdetail/get_datas?item_id="+item_id+"&time="+this.value;
+                                        //tableData.ajax.url(url).load();
+                                        $.ajax({
+                                            type: "get",
+                                            url: url,
+                                            dataType: 'json',
+                                            success: function (result) {
+                                                if (result.success) {
+                                                    tableData.clear().rows.add(result.data).draw()
+                                                    $('#data-dimmer').removeClass('active');
+                                                } else {
+
+                                                }
+                                            },
+                                            error: function (e) {
+
+                                            }
+                                        })
+                                    })
+                                }
+                            }
+                        });
+                });*/
             },
             "createdRow": function (row, data, dataIndex) {
                 var hashCode = location.hash;
