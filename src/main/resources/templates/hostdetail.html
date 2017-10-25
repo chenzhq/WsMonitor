@@ -668,13 +668,15 @@
 						</div>
 						<div class="image content" style="padding-left: 150px;">
 							<div class="ui left floated image">
-								请定义图形的标题：
-								<p></p>
-								<div class="required inline field" id="graphTitle">
-									<div class="ui small input graph_name">
+								<form class="ui form">
+								<div class="required field" id="graphTitle">
+									<label>请定义图形的标题：</label>
+									<p></p>
+									<div class="ui small input" id="graphName">
 										<input type="text" placeholder="请输入标题">
 									</div>
 								</div>
+								</form>
 								<div id="chart_icon">
 								<i class="massive area chart icon"></i>
 								</div>
@@ -923,22 +925,25 @@
         $('a.addItems').on('click', function (e) {
             e.preventDefault();
             var graph_type = '';
+            var point_id = '';
             var item_id = '';
             var graph_type = '';
             var host_id = $('#host_id').text();
             $('.ui.dropdown').dropdown();
             //初始化
-            $('#graphItems').removeClass('error')
             $('#graphTitle').removeClass('error')
+            $('#graphPoints').removeClass('error')
+            $('#graphItems').removeClass('error')
             $('#graphType').removeClass('error')
             $(".dropdown.points select").dropdown('clear');
-            $(".small.input.graph_name input").val("");
+            $("#graphName").val("");
             $(".dropdown.items select").dropdown('clear');
             $(".dropdown.type select").dropdown('clear');
             dropdownPoints(host_id);
             $('.dropdown.points')
                 .dropdown({
                     onChange: function (value, text, $selectedItem) {
+                        point_id = value.split("_")[1];
                         $(".dropdown.items select").dropdown('clear');
                         dropdownItems(value);
                     }
@@ -961,27 +966,31 @@
             $('.small.modal').modal({
                 closable: false,
                 onApprove: function () {
+                    var success = true;
                     //("提交后校验item:" + $("#i"+ item_id).length);
+                    if ($('#graphName').val() == "") {
+                        $('#graphTitle').addClass('error');
+                        success = false;
+                    }
+                    if (point_id == "") {
+                        $('#graphPoints').addClass('error');
+                        success = false;
+                    }
+                    if (graph_type == "") {
+                        $('#graphType').addClass('error');
+                        success = false;
+                    }
                     if (item_id == "") {
-                        $('#graphItems').addClass('error')//graphPoints
-                        //"必填项--监控项"
-                        return false;
-                    } else if ($('.input.graph_name input').val() == "") {
-                        $('#graphTitle').addClass('error')
-                        //"必填项--名称"
-                        return false;
-                    } else if (graph_type == "") {
-                        $('#graphType').addClass('error')
-                        //("必填项--图形类型");
-                        return false;
-                    } else if ($("#i" + item_id).length > 0) {
+                        $('#graphItems').addClass('error');
+                        success = false;
+                    }else if ($("#i" + item_id).length > 0) {
                         //校验判断 页面上是否已经存在相同监控项的图形了
                         alert("已存在图形监控项。。。");
-                        return false;
-                    } else {
+                        success = false;
+                    }else {
                         $('.button.approve').addClass('loading');
                         var dataInfo = {
-                            graphName: $('.input.graph_name input').val(),
+                            graphName: $('#graphName').val(),
                             graphType: graph_type,
                             hostId: $('#host_id').text(),
                             itemId: item_id
@@ -1002,13 +1011,14 @@
                                     $('.small.modal').modal('hide')
                                     errorMsg_no_data("监控项 Modal");
                                 }
+                                success = true;
                             },
                             error: function () {
                                 errorMsg_no_connect("监控项 Modal");
                             }
                         });
-
                     }
+                    return  success;
                 }
             }).modal('show')
         });
@@ -1134,7 +1144,7 @@
 
                     dropdownType(value_type);
                     //初始化
-                    $(".small.input.graph_name input").val(graph_name);
+                    $("#graphName").val(graph_name);
                     $(".dropdown.points select").dropdown("set value", point_id);
                     $(".dropdown.points select").dropdown("set text", point_name);
                     $(".dropdown.items select").dropdown("set value", value_type + "_" + item_id);
@@ -1160,7 +1170,7 @@
                                 $('#graphItems').addClass('error')
                                 //("必填项--监控项");
                                 return false;
-                            }else if($('.input.graph_name input').val() == "") {
+                            }else if($('#graphName').val() == "") {
                                 $('#graphTitle').addClass('error')
                                 //"必填项--名称"
                                 return false;
@@ -1171,7 +1181,7 @@
                             }else {
                                 $('.button.approve').addClass('loading');
                                 var dataInfo = {
-                                    graphName: $('.input.graph_name input').val(),
+                                    graphName: $('#graphName').val(),
                                     graphType: graph_type,
                                     hostId: host_id,
                                     itemId: item_id
