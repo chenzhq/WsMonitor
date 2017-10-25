@@ -18,12 +18,15 @@
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
+			.chart-style {
+				height: 160px;
+			}
 			.ui.table.dataTable thead th {
 				border-left: 0;
 			}
 			/*原生a 颜色是蓝色*/
 			a{ color: rgba(0, 0, 0, 0.87); }
-			#point-pop{
+			#pointPop{
 				height: 260px;
 				width: 260px;
 				overflow-y:auto;
@@ -31,11 +34,33 @@
 				z-index:20;
 				background-color: #E0E0E0
 			}
-			#point_name{
+			#pointName{
 				width: 220px;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
+			}
+			#pointDetailModal .ui.tab.segment {
+				height: 450px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden;
+				/*原生tab 有个下边距*/
+				margin-bottom: 0px;
+			}
+			#pointDetailModal .ui.buttons {
+				/*原生buttons 有个下边距*/
+				margin-bottom: 0px;
+			}
+			#pointDetailModal table.dataTable.no-footer {
+				/*原生dataTable 下外边框颜色是#111*/
+				border-bottom: 1px solid #DDDDDD;
+			}
+			#pointDetailModal .ui.three.column.grid {
+				margin: -20px 0 0 0;
+			}
+			#pointDetailModal .ui.three.column.grid .column {
+				margin-bottom: 10px;
 			}
 		</style>
 	</th:block>
@@ -333,18 +358,18 @@
 </div>
 
 
-<div id="point-pop" class="ui special popup">
+<div id="pointPop" class="ui special popup">
 	<div class="ui relaxed divided list">
 		<div class="item">
-			<div class="header" id="point_name"></div>
+			<div class="header" id="pointName"></div>
 		</div>
 		<div class="item">
-			<div class="header" id="point_state"></div>
+			<div class="header" id="pointState"></div>
 		</div>
 		<div class="item">
 			<p class="header">监控项：
 			<div class="description">
-				<table id="item_datas" class="ui very basic compact collapsing celled fixed single line table" style="width: 220px">
+				<table id="itemData" class="ui very basic compact collapsing celled fixed single line table" style="width: 220px">
 				</table>
 			</div>
 			</p>
@@ -466,9 +491,9 @@
                                     if (data.state == "正常"){ myColor = Color[2] }
                                     if (data.state == "严重"){ myColor = Color[0] }
                                     if (data.state == "警告"){ myColor = Color[1] }
-                                    $("#point_name").html("名称："+data.point_name);
-                                    $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
-                                    $("#item_datas").html(str_item_datas);
+                                    $("#pointName").html("名称："+data.point_name);
+                                    $("#pointState").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                                    $("#itemData").html(str_item_datas);
                                 } else {
                                     errorMsg_no_data("监控项 Pop");
                                 }
@@ -480,12 +505,11 @@
 
                     },
                     onHidden: function (module) {
-
-                        $("#point_name").html("名称：");
-                        $("#point_state").html("状态：&nbsp&nbsp");
-                        $("#item_datas").html("");
+                        $("#pointName").html("名称：");
+                        $("#pointState").html("状态：&nbsp&nbsp");
+                        $("#itemData").html("");
                     },
-                    popup: '#point-pop',
+                    popup: '#pointPop',
                     inline: true,
                     hoverable  : true,
                     position   : 'top center',

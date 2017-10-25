@@ -208,10 +208,10 @@ function tabReport(point_id,days) {
             data:[]
         },
         grid: {
-            left: '2%',
-            right: '10%',
+            left: '3%',
+            right: '3%',
             bottom: '0%',
-            top:'20%',
+            top:'5%',
             containLabel: true
         },
         xAxis: {
@@ -241,10 +241,10 @@ function tabReport(point_id,days) {
             data:[]
         },
         grid: {
-            left: '2%',
-            right: '10%',
+            left: '3%',
+            right: '3%',
             bottom: '0%',
-            top:'20%',
+            top:'5%',
             containLabel: true
         },
         xAxis: {
@@ -272,8 +272,6 @@ function tabReport(point_id,days) {
                 $("#chartReport").empty();
                 for (var i=0; i<data.length; i++){
                     var id="pi"+data[i].item_id;
-                    str ="<div class='column' ><div id='"+id+"' class='chart-style' style='height:200px'>"+id+"</div></div></div>";
-                    $("#chartReport").append(str);
                     var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
                     if (data[i].state == "正常"){ var myColor = Color[0] }
                     if (data[i].state == "严重"){ var myColor = Color[1] }
@@ -284,19 +282,30 @@ function tabReport(point_id,days) {
                         option.yAxis.max = null;
                     }
                     var title = "";
+                    var name = "";
                     if(data[i].units == "") {
                         title = data[i].item_name;
                     }else {
                         title = data[i].item_name + "(" + data[i].units +")";
                     }
-                    option.title.text = title;
+                    if(strlen(title) > 30)
+                    {
+                        name = "<div class='fourteen wide column no-padding' data-tooltip='"+title+"'>"+
+                            "<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>";
+                    }else {
+                        name = "<div class='fourteen wide column no-padding'>"+
+                            "<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>";
+                    }
+                    str ="<div class='column'><div class='ui grid'>"+ name+
+                    "<div class='sixteen wide column no-padding'>"+
+                    "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
+                    $("#chartReport").append(str);
                     option.xAxis.data = data[i].data_time;
                     option.series[0].name = data[i].graph_name;
                     option.series[0].type = data[i].graph_type;
                     option.series[0].data = data[i].data;
                     option.series[0].color[0] = myColor;
                     //面积图存
-                    areaoption.title.text = title;
                     areaoption.xAxis.data = data[i].data_time;
                     areaoption.series[0].name = data[i].graph_name;
                     areaoption.series[0].type = data[i].graph_type;
