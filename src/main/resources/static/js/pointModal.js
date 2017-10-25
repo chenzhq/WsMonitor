@@ -11,7 +11,7 @@ $(function(){
         $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
         $("#pointDetailArea").text(point_id);
         tabSummary(point_id);
-        $('.large.modal').modal('setting', 'transition', 'Horizontal Filp').modal('show');
+        $('.large.modal').modal('show');
         $('.tab_points.menu .item')
             .tab({
                 'onFirstLoad': function (path) {

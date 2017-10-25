@@ -669,11 +669,11 @@
 						<div class="image content" style="padding-left: 150px;">
 							<div class="ui left floated image">
 								<form class="ui form">
-								<div class="required field" id="graphTitle">
+								<div class="required field" id="graphTitle" >
 									<label>请定义图形的标题：</label>
 									<p></p>
-									<div class="ui small input" id="graphName">
-										<input type="text" placeholder="请输入标题">
+									<div class="ui small input" >
+										<input type="text" placeholder="请输入标题" id="graphName">
 									</div>
 								</div>
 								</form>
@@ -923,71 +923,152 @@
 
         //点击添加监控项
         $('a.addItems').on('click', function (e) {
-            e.preventDefault();
-            var graph_type = '';
-            var point_id = '';
-            var item_id = '';
-            var graph_type = '';
-            var host_id = $('#host_id').text();
+
             $('.ui.dropdown').dropdown();
-            //初始化
-            $('#graphTitle').removeClass('error')
-            $('#graphPoints').removeClass('error')
-            $('#graphItems').removeClass('error')
-            $('#graphType').removeClass('error')
-            $(".dropdown.points select").dropdown('clear');
-            $("#graphName").val("");
-            $(".dropdown.items select").dropdown('clear');
-            $(".dropdown.type select").dropdown('clear');
-            dropdownPoints(host_id);
-            $('.dropdown.points')
-                .dropdown({
-                    onChange: function (value, text, $selectedItem) {
-                        point_id = value.split("_")[1];
-                        $(".dropdown.items select").dropdown('clear');
-                        dropdownItems(value);
-                    }
-                });
-            $('.dropdown.items')
-                .dropdown({
-                    onChange: function (value, text, $selectedItem) {
-                        item_id = value.split("_")[1];
-                        $(".dropdown.type select").dropdown('clear');
-                        dropdownType(value.split("_")[0]);
-                    }
-                });
-            $('.dropdown.type')
-                .dropdown({
-                    onChange: function (value, text, $selectedItem) {
-                        graph_type = value;
-                        $("#chart_icon").html("<i class='massive " + value + " chart icon'></i>");
-                    }
-                });
+
+            var host_id = $('#host_id').text();
+
+            //用于赋值
+            var graph_type = '',
+           		point_id = '',
+				item_id = '';
+			//用于校验
+            var success = true;
+            var is_name = true,
+                is_point = true,
+                is_item = true,
+                is_type = true;
+
             $('.small.modal').modal({
                 closable: false,
+				onShow:function() {
+
+                    //初始化 清除样式
+                    $('#graphTitle').removeClass('error')
+                    $('#graphPoints').removeClass('error')
+                    $('#graphItems').removeClass('error')
+                    $('#graphType').removeClass('error')
+                    $(".dropdown.points.selection").removeClass('disabled');
+                    $(".dropdown.items.selection").removeClass('disabled');
+
+					//清除内容
+                    $("#graphName").val('');
+                    $(".dropdown.points select").dropdown('clear');
+                    $(".dropdown.items select").dropdown('clear');
+                    $(".dropdown.type select").dropdown('clear');
+                    dropdownPoints(host_id);
+					//绑定事件
+                    $('#graphName').on('blur',function() {
+                        //name 校验
+                        if ($('#graphName').val() === '') {
+                            $('#graphTitle').addClass('error');
+                            is_name = false;
+                            //console.log('name empty');
+                        }else {
+                            $('#graphTitle').removeClass('error');
+                            is_name = true;
+                            //console.log('name ok');
+                        }
+					});
+
+                    $('.dropdown.points').dropdown({
+                            onChange: function (value, text, $selectedItem) {
+                                point_id = value;
+								//point 校验
+                                if (point_id === '') {
+                                    $('#graphPoints').addClass('error');
+                                    is_point = false;
+                                    //console.log('point empty');
+                                }else {
+                                    $('#graphPoints').removeClass('error');
+                                    is_point = true;
+                                    //console.log('point ok');
+                                }
+                                $(".dropdown.items select").dropdown('clear');
+                                dropdownItems(value);
+                            }
+                        });
+
+                    $('.dropdown.items').dropdown({
+                            onChange: function (value, text, $selectedItem) {
+                                item_id = value.split("_")[1];
+								//item 校验
+                                if (item_id === '') {
+                                    $('#graphItems').addClass('error');
+                                    is_item = false;
+                                    console.log('item empty');
+                                }else if ($("#i" + item_id).length > 0) {
+                                    //校验判断 页面上是否已经存在相同监控项的图形了
+                                    alert("已添加过该监控项图形。。。");
+                                    is_item = false;
+                                    //console.log('item exist');
+                                }else {
+                                    $('#graphItems').removeClass('error');
+                                    is_item = true;
+                                    //console.log('item ok');
+                                }
+                                $(".dropdown.type select").dropdown('clear');
+                                dropdownType(value.split("_")[0]);
+                            }
+                        });
+
+                    $('.dropdown.type').dropdown({
+                            onChange: function (value, text, $selectedItem) {
+                                graph_type = value;
+								//type 校验
+                                if (graph_type === '') {
+                                    $('#graphType').addClass('error');
+                                    is_type = false;
+                                    //console.log('type empty');
+                                }else {
+                                    $('#graphType').removeClass('error');
+                                    is_type = true;
+                                    //console.log('type ok');
+                                }
+                                $("#chart_icon").html("<i class='massive " + value + " chart icon'></i>");
+                            }
+                        });
+				},
                 onApprove: function () {
-                    var success = true;
-                    //("提交后校验item:" + $("#i"+ item_id).length);
-                    if ($('#graphName').val() == "") {
-                        $('#graphTitle').addClass('error');
-                        success = false;
-                    }
-                    if (point_id == "") {
+					//point 校验
+                    if (point_id === '') {
                         $('#graphPoints').addClass('error');
-                        success = false;
+                        is_point = false;
+                        //console.log('point empty');
+                    }else {
+                        $('#graphPoints').removeClass('error');
+                        is_point = true;
+                        //console.log('point ok');
                     }
-                    if (graph_type == "") {
-                        $('#graphType').addClass('error');
-                        success = false;
-                    }
-                    if (item_id == "") {
+                    //item 校验
+                    if (item_id === '') {
                         $('#graphItems').addClass('error');
-                        success = false;
+                        is_item = false;
+                        console.log('item empty');
                     }else if ($("#i" + item_id).length > 0) {
                         //校验判断 页面上是否已经存在相同监控项的图形了
                         alert("已存在图形监控项。。。");
-                        success = false;
+                        is_item = false;
+                        //console.log('item exist');
                     }else {
+                        $('#graphItems').removeClass('error');
+                        is_item = true;
+                        //console.log('item ok');
+                    }
+                    //type 校验
+                    if (graph_type === '') {
+                        $('#graphType').addClass('error');
+                        is_type = false;
+                        //console.log('type empty');
+                    }else {
+                        $('#graphType').removeClass('error');
+                        is_type = true;
+                        //console.log('type ok');
+                    }
+
+                    success = is_name && is_point && is_item && is_type ;
+                    //console.log(success);
+                    if(success) {
                         $('.button.approve').addClass('loading');
                         var dataInfo = {
                             graphName: $('#graphName').val(),
@@ -1011,14 +1092,16 @@
                                     $('.small.modal').modal('hide')
                                     errorMsg_no_data("监控项 Modal");
                                 }
-                                success = true;
+                                return true;
                             },
                             error: function () {
                                 errorMsg_no_connect("监控项 Modal");
                             }
                         });
-                    }
-                    return  success;
+					}else {
+                        return  false;
+					}
+
                 }
             }).modal('show')
         });
@@ -1120,107 +1203,146 @@
     function editGraph(id) {
         var host_id = $("#host_id").text();
         var item_id = id.substring(1);
-        var item_name = "";
-        var point_id = "";
-        var point_name = "";
-        var graph_name = "";
-        var graph_type = "";
-        var graph_value = "";
-        var value_type = "";
-        $.ajax({
-            type: "get",
-            url: "/hostgraphs/get_itemgraph?item_id="+item_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    var graph_data = result.data;
-                    item_name = graph_data.item_name;
-                    point_id = graph_data.point_id;
-                    point_name = graph_data.point_name;
-                    graph_name = graph_data.graph_name;
-                    graph_type = graph_data.graph_type;
-                    graph_value = graph_data.graph_value;
-                    value_type = graph_data.value_type;
+        //用于赋值
+        var item_name = "",
+			point_id = "",
+			point_name = "",
+			graph_name = "",
+			graph_type = "",
+			graph_value = "",
+			value_type = "";
+		//用于校验
+        var success = true;
+        var is_name = true,
+            is_type = true;
 
-                    dropdownType(value_type);
-                    //初始化
-                    $("#graphName").val(graph_name);
-                    $(".dropdown.points select").dropdown("set value", point_id);
-                    $(".dropdown.points select").dropdown("set text", point_name);
-                    $(".dropdown.items select").dropdown("set value", value_type + "_" + item_id);
-                    $(".dropdown.items select").dropdown("set text", item_name);
-                    $(".dropdown.type select").dropdown("set value", graph_type);
-                    $(".dropdown.type select").dropdown("set text", graph_value);
+        $('.small.modal').modal({
+            closable  : false,
+            onShow: function() {
+                $.ajax({
+                    type: "get",
+                    url: "/hostgraphs/get_itemgraph?item_id="+item_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var graph_data = result.data;
+                            item_name = graph_data.item_name;
+                            point_id = graph_data.point_id;
+                            point_name = graph_data.point_name;
+                            graph_name = graph_data.graph_name;
+                            graph_type = graph_data.graph_type;
+                            graph_value = graph_data.graph_value;
+                            value_type = graph_data.value_type;
 
-                    $(".dropdown.points select").dropdown("remove active");
-                    $(".dropdown.items select").dropdown("remove active");
-                    $(".dropdown.type select")
-                        .dropdown({
-                            onChange: function(value, text, $selectedItem) {
-                                graph_type = value;
-                                $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
-                            }
-                        });
-                    $('.small.modal').modal({
-                        closable  : false,
-                        onApprove: function () {
-                            //"提交后校验item:" + $("#i"+ item_id).length
+                            dropdownType(value_type);
+                            //初始化
+                            $("#graphName").val(graph_name);
+                            $(".dropdown.points select").dropdown("set value", point_id);
+                            $(".dropdown.points select").dropdown("set text", point_name);
+                            $(".dropdown.items select").dropdown("set value", value_type + "_" + item_id);
+                            $(".dropdown.items select").dropdown("set text", item_name);
+                            $(".dropdown.type select").dropdown("set value", graph_type);
+                            $(".dropdown.type select").dropdown("set text", graph_value);
 
-                            if(item_id == "") {
-                                $('#graphItems').addClass('error')
-                                //("必填项--监控项");
-                                return false;
-                            }else if($('#graphName').val() == "") {
-                                $('#graphTitle').addClass('error')
-                                //"必填项--名称"
-                                return false;
-                            }else if(graph_type == "") {
-                                $('#graphType').addClass('error')
-                                //("必填项--图形类型");
-                                return false;
-                            }else {
-                                $('.button.approve').addClass('loading');
-                                var dataInfo = {
-                                    graphName: $('#graphName').val(),
-                                    graphType: graph_type,
-                                    hostId: host_id,
-                                    itemId: item_id
-                                };
+                            $(".dropdown.points.selection").addClass('disabled');
+                            $(".dropdown.items.selection").addClass('disabled');
 
-                                $.ajax({
-                                    type: "post",
-                                    url: "/hostgraphs/update_graph",
-                                    data: JSON.stringify(dataInfo),
-                                    dataType: "json",
-                                    contentType : 'application/json',
-                                    success: function (result) {
-                                        if(result.success) {
-                                            $('.button.approve').removeClass('loading');
-                                            hostgraphs(result);
-                                            $('.small.modal').modal('hide');
-                                        } else {
-                                            $('.button.approve').removeClass('loading');
-                                            $('.small.modal').modal('hide');
-                                            errorMsg_no_data("监控项 Modal");
+                            $(".dropdown.type").dropdown({
+                                    onChange: function(value, text, $selectedItem) {
+                                        graph_type = value;
+                                        if (graph_type === '') {
+                                            $('#graphType').addClass('error');
+                                            is_type = false;
+                                            console.log('type empty');
+                                        }else {
+                                            $('#graphType').removeClass('error');
+                                            is_type = true;
+                                            console.log('type ok');
                                         }
-                                    },
-                                    error: function () {
-                                        errorMsg_no_connect("监控项 Modal");
+                                        $("#chart_icon").html("<i class='massive "+value+" chart icon'></i>");
                                     }
                                 });
 
-                            }
+                            $('#graphName').on('blur',function() {
+                                //("提交后校验item:" + $("#i"+ item_id).length);
+                                if ($('#graphName').val() === '') {
+                                    $('#graphTitle').addClass('error');
+                                    is_name = false;
+                                    console.log('name empty');
+                                }else {
+                                    $('#graphTitle').removeClass('error');
+                                    is_name = true;
+                                    console.log('name ok');
+                                }
+							});
+
                         }
-                    }).modal('show');
-                }
-                else {
-                    errorMsg_no_data("监控项 Chart");
-                }
+                        else {
+                            errorMsg_no_data("监控项 Chart");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控项 Chart");
+                    }
+                });
             },
-            error: function () {
-                errorMsg_no_connect("监控项 Chart");
+            onApprove: function () {
+
+                if ($('#graphName').val() === '') {
+                    $('#graphTitle').addClass('error');
+                    is_name = false;
+                    console.log('name empty');
+                }else {
+                    $('#graphTitle').removeClass('error');
+                    is_name = true;
+                    console.log('name ok');
+                }
+                if (graph_type === '') {
+                    $('#graphType').addClass('error');
+                    is_type = false;
+                    console.log('type empty');
+                }else {
+                    $('#graphType').removeClass('error');
+                    is_type = true;console.log('type ok');
+                }
+                success = is_name && is_type ;
+                if(success) {
+                    $('.button.approve').addClass('loading');
+                    var dataInfo = {
+                        graphName: $('#graphName').val(),
+                        graphType: graph_type,
+                        hostId: host_id,
+                        itemId: item_id
+                    };
+
+                    $.ajax({
+                        type: "post",
+                        url: "/hostgraphs/update_graph",
+                        data: JSON.stringify(dataInfo),
+                        dataType: "json",
+                        contentType : 'application/json',
+                        success: function (result) {
+                            if(result.success) {
+                                $('.button.approve').removeClass('loading');
+                                hostgraphs(result);
+                                $('.small.modal').modal('hide');
+                            } else {
+                                $('.button.approve').removeClass('loading');
+                                $('.small.modal').modal('hide');
+                                errorMsg_no_data("监控项 Modal");
+                            }
+                            return true;
+                        },
+                        error: function () {
+                            errorMsg_no_connect("监控项 Modal");
+                        }
+                    });
+                }else {
+                    return false;
+                }
             }
-        });
+        }).modal('show');
+
 
     }
     //删除图形 function
