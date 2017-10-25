@@ -422,7 +422,7 @@
 
                 $('a.point-detail').parent().popup({
                     onShow: function (module) {
-                        $(module).parent().css("background-color","#E0E0E0");
+
                         var point_id = $(module).find('a').attr('id');
                         $.ajax({
                             type: "get",
@@ -432,7 +432,7 @@
                                 if(result.success) {
                                     var Color = ['red', 'yellow', 'green'];
                                     var data = result.data;
-                                    console.log(data)
+
                                     var item_datas=data.item_datas;
                                     var str_item_datas = '';
                                     var myColor = '';
@@ -482,7 +482,7 @@
 
                     },
                     onHidden: function (module) {
-                        $(module).parent().css("background-color","#fff");
+
                         $("#point_name").html("名称：");
                         $("#point_state").html("状态：&nbsp&nbsp");
                         $("#item_datas").html("");
@@ -490,14 +490,14 @@
                     popup: '#point-pop',
                     inline: true,
                     hoverable  : true,
-                    position   : 'bottom ',
+                    position   : 'top center',
                     delay: {
-                        show: 1500,
-                        hide: 100
+                        show: 1000,
+                        hide: 500
                     }
 				});
 
-               /* $('a.point-detail').on('click',function(){
+                $('a.point-detail').on('click',function(){
                     var point_id = this.id;
                     $('.tab_points.menu .item').tab('change tab', 'Summary');
                     $("#rowData").empty();
@@ -579,7 +579,7 @@
                                         });
                                     $('.dropdown.itemsTab')
                                         .dropdown({
-											/!*useLabels: false,*!/
+											/*useLabels: false,*/
                                             onChange: function(value, text, $selectedItem) {
                                                 $('#data-dimmer').addClass('active');
                                                 var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
@@ -630,7 +630,7 @@
                                 }
                             }
                         });
-                });*/
+                });
             },
             "createdRow": function (row, data, dataIndex) {
                 var hashCode = location.hash;
