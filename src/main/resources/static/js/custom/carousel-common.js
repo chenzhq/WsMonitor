@@ -1054,7 +1054,7 @@ function getSelectByString($_target,$_default, data) {
         str +="<div class='item' data-value='"+data[i]+"'  >"+data[i]+"</div> ";
     }
     $_target.html(str);
-    //默认选择第一个
+    //默认选择最后一个
     $_default.dropdown('set text',data[data.length-1]);
     $_default.dropdown('set value',data[data.length-1]);
 }
@@ -1071,8 +1071,8 @@ function getSelectByObject($_target,$_default, data) {
     }
     $_target.html(str);
     //默认选择第一个
-    $_default.dropdown('set text',data[data.length-1].name);
-    $_default.dropdown('set value',data[data.length-1].type);
+    $_default.dropdown('set text',data[0].name);
+    $_default.dropdown('set value',data[0].type);
 }
 
 //渲染 下拉框 通用方法  data 为数组对象的方法

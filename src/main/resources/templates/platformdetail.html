@@ -350,6 +350,9 @@
 					<div class="ui tab fixedHeight no-padding report" data-tab="platformReport">
 						<div class="ui styled fluid accordion report" id="hostAccordion">
 						</div>
+						<div id="platform-dimmer" class="ui inverted dimmer">
+							<div class="ui text loader">正在加载</div>
+						</div>
 					</div>
 				</div>
 				<!--监控点详情弹出框-->
@@ -1067,6 +1070,7 @@
 
             //加载业务图形报告
             function hostAccordion(platform_id) {
+                //$('#platform-dimmer').addClass('active');
                 $.ajax({
                     type: "get",
                     url: "/platformdetail/get_hosts?platform_id="+platform_id,
@@ -1075,6 +1079,7 @@
                         if(result.success) {
                             var host_data = result.data;
                             gethostAccordion(host_data);
+                            //$('#platform-dimmer').removeClass('active');
                         }
                         else {
                             errorMsg_no_data("图形报告 Accordion");
@@ -1372,16 +1377,18 @@
                                 //item 校验
                                 if (item_id === '') {
                                     $('#graphItems').addClass('error');
+                                    $('#item_label').css('display','none');
                                     is_item = false;
                                     //console.log('item empty');
                                 }else if ($("#g" + item_id).length > 0) {
                                     //校验判断 页面上是否已经存在相同监控项的图形了
-                                    alert("已添加过该监控项图形。。。");
+                                    $('#item_label').css('display','block');
                                     $('#graphItems').addClass('error');
                                     is_item = false;
                                     //console.log('item exist');
                                 }else {
                                     $('#graphItems').removeClass('error');
+                                    $('#item_label').css('display','none');
                                     is_item = true;
                                     //console.log('item ok');
                                 }
@@ -1421,16 +1428,18 @@
                         //item 校验
                         if (item_id === '') {
                             $('#graphItems').addClass('error');
+                            $('#item_label').css('display','none');
                             is_item = false;
                             //console.log('item empty');
                         }else if ($("#g" + item_id).length > 0) {
                             //校验判断 页面上是否已经存在相同监控项的图形了
-                            alert("已存在图形监控项。。。");
+                            $('#item_label').css('display','block');
                             $('#graphItems').addClass('error');
                             is_item = false;
                             //console.log('item exist');
                         }else {
                             $('#graphItems').removeClass('error');
+                            $('#item_label').css('display','none');
                             is_item = true;
                             //console.log('item ok');
                         }

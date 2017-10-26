@@ -650,6 +650,11 @@ z                    </div>
                                             if(result.success) {
                                                 var data=result.data;
                                                 getSelectByObject($('#viewtype_menu'),$('#viewtype_select'),data);
+                                                //处理未实现的苹果树选项
+                                                console.log('appletree',$('#viewtype_menu').find('[data-value="appletree"]'));
+                                                if($('#viewtype_menu').find('[data-value="appletree"]').length > 0) {
+                                                    $('#viewtype_menu').find('[data-value="appletree"]').addClass('disabled');
+                                                };
                                             }
                                             else {
                                                 errorMsg_no_data(result.message);
@@ -1365,13 +1370,14 @@ z                    </div>
                             var $_blocks = $('.gridster > ul').children('li');
 
                             $_blocks.each(function(index,element) {
+                                //console.log('li',element);
 
-                                element.children().first().nextAll().remove();
+                                $(element).children().first().nextAll().remove();
 
-                                element.append($('#block_temp').html());
+                                $(element).append($('#block_temp').html());
 
                                 // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
-                                drawBlock($(this),page_vo.config_data[index],page_vo.block_data[index],i,index);
+                                drawBlock($(this),page_vo.config_data[index],page_vo.block_data[index],0,index);
                             })
                         }
                         else {

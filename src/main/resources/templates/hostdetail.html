@@ -21,6 +21,18 @@
 			  th:href="@{css/jstree-default/style.min.css}">
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
+
+			#item_label {
+				display: none;
+				float: right;
+				margin: 20px auto;
+			}
+
+			#select_label {
+				display: none;
+				width: 100px;
+			}
+
 			.chart-style {
                 height: 160px;
             }
@@ -543,6 +555,9 @@
 										</div>
 										<div class="ui segment">
 											<div class="gridly" id="flag_true_content"></div>
+											<div id="custom-dimmer" class="ui inverted dimmer">
+												<div class="ui text loader">正在加载</div>
+											</div>
 										</div>
 									</div>
 									<div id="flag_false"></div>
@@ -688,7 +703,9 @@
 										<select class="ui dropdown items">
 											<option value="">请选择监控项</option>
 										</select>
+										<div class="ui left pointing red basic label" id="item_label" style="display: none;float: right;margin: 20px auto;">已添加过该监控项</div>
 									</div>
+
 									<div class="required inline field" id="graphType">
 										<label>图类别：</label>
 										<select class="ui dropdown type">
@@ -706,15 +723,16 @@
 					<!--设备树弹出框 start-->
 					<div class="ui tiny modal page" id="host_tree_modal">
 						<div class="header">
-							选择设备
+							<label>选择设备</label>
+							<div class="ui left pointing red basic label" id="select_label" >必须选择设备</div>
 						</div>
 						<i class="close icon"></i>
 						<div class="content" style="min-height: 200px">
 							<div id="host_tree"></div>
 						</div>
 						<div class="actions">
-							<div class="ui approve submit button">确认</div>
 							<div class="ui cancel button">取消</div>
+							<div class="ui green button approve">确认</div>
 						</div>
 					</div>
 				<!--Site Content-->
@@ -987,15 +1005,18 @@
 								//item 校验
                                 if (item_id === '') {
                                     $('#graphItems').addClass('error');
+                                    $('#item_label').css('display','none');
                                     is_item = false;
                                     //console.log('item empty');
                                 }else if ($("#i" + item_id).length > 0) {
                                     //校验判断 页面上是否已经存在相同监控项的图形了
-                                    alert("已添加过该监控项图形。。。");
+                                    $('#item_label').css('display','block');
+                                    $('#graphItems').addClass('error');
                                     is_item = false;
                                     //console.log('item exist');
                                 }else {
                                     $('#graphItems').removeClass('error');
+                                    $('#item_label').css('display','none');
                                     is_item = true;
                                     //console.log('item ok');
                                 }
@@ -1035,15 +1056,18 @@
                     //item 校验
                     if (item_id === '') {
                         $('#graphItems').addClass('error');
+                        $('#item_label').css('display','none');
                         is_item = false;
                         //console.log('item empty');
                     }else if ($("#i" + item_id).length > 0) {
                         //校验判断 页面上是否已经存在相同监控项的图形了
-                        alert("已存在图形监控项。。。");
+                        $('#item_label').css('display','block');
+                        $('#graphItems').addClass('error');
                         is_item = false;
                         //console.log('item exist');
                     }else {
                         $('#graphItems').removeClass('error');
+                        $('#item_label').css('display','none');
                         is_item = true;
                         //console.log('item ok');
                     }
@@ -1061,6 +1085,7 @@
                     success = is_name && is_point && is_item && is_type ;
                     //console.log(success);
                     if(success) {
+                        $('#custom-dimmer').addClass('active');
                         $('.button.approve').addClass('loading');
                         var dataInfo = {
                             graphName: $('#graphName').val(),
@@ -1094,6 +1119,9 @@
                         return  false;
 					}
 
+                },
+                onDeny : function(){
+
                 }
             }).modal('show')
         });
@@ -1101,30 +1129,60 @@
         $('#host_select_dropdown').dropdown({
             action: function (text, value) {
                 if (value === 'host') {
-                    var host_id ;
+
+                    var host_id,
+						tree_type;
+
                     var $host_tree;
+
+                    var is_host = false;
+
                     $('#host_tree_modal').modal({
                         closable  : false,
                         onShow:function(){
                             //获取设备选择树
                             $host_tree = $('#host_tree');
+                            var select_host = [$("#host_id").text()];
                             $host_tree.genHostTree({
                                 multi: false,
+                                initHosts: select_host,
                                 onChange:function(e,data){
+
                                     host_id = data.selected[0];
 
+                                    tree_type = $host_tree.jstree(true).get_type(host_id).split('-')[0];
+
+                                    if('host' === tree_type) {
+
+                                        is_host = true;
+                                        $('#select_label').css('display','none');
+
+                                    }else if('group' === tree_type) {
+
+                                        is_host = false;
+                                        $('#select_label').css('display','block');
+
+                                    }
                                 }
                             })
                         },
                         onApprove : function() {
-                            var tree_type = $host_tree.jstree(true).get_type(host_id).split('-')[0];
-                            //console.log('tree_type',data);
-                            if('host' === tree_type) {
+
+                            host_id = $host_tree.jstree(true).get_selected()[0];
+
+                            //console.log(host_id,is_host);
+
+                            if(typeof host_id === 'undefined') {
+                                is_host =false;
+                                $('#select_label').css('display','block');
+
+							}
+
+                            if(is_host) {
                                 window.location.href="hostDetail?host_id="+host_id;
-                            }else if('group' === tree_type) {
-                                alert('必须选择设备');
+							}else {
                                 return false;
-                            }
+							}
 
 						}
                     }).modal('show')
@@ -1198,7 +1256,7 @@
                                 });
 
                             $('#graphName').on('blur',function() {
-                                //("提交后校验item:" + $("#i"+ item_id).length);
+
                                 if ($('#graphName').val() === '') {
                                     $('#graphTitle').addClass('error');
                                     is_name = false;
@@ -1242,6 +1300,7 @@
                 success = is_name && is_type ;
                 if(success) {
                     $('.button.approve').addClass('loading');
+                    $('#custom-dimmer').addClass('active');
                     var dataInfo = {
                         graphName: $('#graphName').val(),
                         graphType: graph_type,
@@ -1275,7 +1334,7 @@
                     return false;
                 }
             }
-        }).modal('show');
+        }).modal('setting', 'closable', false).modal('show');
 
 
     }
@@ -1286,6 +1345,7 @@
         }
         var host_id = $("#host_id").text();
         var item_id = id.substring(1);
+        $('#custom-dimmer').addClass('active');
         $.ajax({
             type: "get",
             url: "/hostgraphs/delete_graph?item_id="+item_id+"&host_id="+host_id,
@@ -1308,6 +1368,7 @@
 	//页面加载完后加载监控项的图形
 	function loadHostGraph() {
         var host_id = $("#host_id").text();
+        $('#custom-dimmer').addClass('active');
         $.ajax({
             type: "get",
             url: "/hostgraphs?host_id="+host_id,
@@ -1392,7 +1453,7 @@
                 case "gauge":
 					option = {
 						 title: {
-						 text: title},
+						 },
 						 tooltip : {
 							 formatter: "{a} <br/>{b} : {c}%"
 							 },
@@ -1510,6 +1571,7 @@
                     };
             }
             myChart.setOption(option);
+            $('#custom-dimmer').removeClass('active');
         }
         $('.gridly').gridly({
             base: 60, // px

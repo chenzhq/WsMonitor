@@ -25,10 +25,6 @@ $(function(){
                         var tableData = $("#tableData").DataTable({
                             "orderFixed": [ 0, 'desc' ],
                             "paging": false,
-                            ajax: {
-                                url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
-                                dataSrc: 'data'
-                            },
                             "columnDefs": [ {
                                 "targets": [ 3 ],
                                 "visible": false } ] ,
@@ -72,6 +68,25 @@ $(function(){
                                 },
                             ],
                         });
+                        //加载数据
+                        $.ajax({
+                            type: 'get',
+                            url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
+                            dataType: 'json',
+                            success: function (result) {
+                                if(result.success) {
+                                    var table_data = result.data;
+                                    tableData.clear().rows.add(table_data).draw();
+                                }
+                                else {
+                                    errorMsg_no_data(result.message);
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect('');
+                            }
+                        })
+
                         dropdownitemsTab(point_id,item_id);
                         $('.dropdown.stateTab')
                             .dropdown({

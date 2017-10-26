@@ -534,8 +534,12 @@ public class ItemServiceImpl implements ItemService {
             if(highPoint != null) {
                 highPointValue =ThresholdUtils.getTransformValue(highPoint).entrySet().iterator().next().getValue();
             }
-            //状态转换
-            if(warningPointValue != null || highPointValue != null) {
+            //状态转换 存在阀值 且 valuetype 为 0（float） 和 3( number )
+            if(
+                    (warningPointValue != null || highPointValue != null) &&
+                    (ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value == Integer.parseInt(itemDTO.getValueType()) ||
+                     ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value == Integer.parseInt(itemDTO.getValueType())
+                    )) {
                 state = StatusConverter.getStatusByThresholdValue(Float.parseFloat(historyDTO.getValue()),warningPointValue,highPointValue,symbol);
             }else{
                 state = StatusEnum.OK.getName();

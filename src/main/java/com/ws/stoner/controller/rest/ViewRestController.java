@@ -233,7 +233,7 @@ public class ViewRestController {
                 editViewForm.getHostIds());
         boolean success =  viewService.updateStateView(stateView,editViewForm.getOldName());
         if(success) {
-            return RestResultGenerator.genResult(getViewNameList(editViewForm.getType()), REST_UPDATE_SUCCESS).toString();
+            return getViewNameList(editViewForm.getType());
         }else {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
@@ -256,7 +256,7 @@ public class ViewRestController {
         boolean success =  viewService.updateProblemsView(problemsView,editViewForm.getOldName());
         if(success) {
 
-            return RestResultGenerator.genResult(getViewNameList(editViewForm.getType()), REST_UPDATE_SUCCESS).toString();
+            return getViewNameList(editViewForm.getType());
         }else {
             return RestResultGenerator.genErrorResult(ResponseErrorEnum.SERVICE_HANDLE_ERROR).toString();
         }
