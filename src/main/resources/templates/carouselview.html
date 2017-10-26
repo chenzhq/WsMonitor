@@ -28,7 +28,7 @@
         <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
         <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
         <style type="text/css">
-            .textoverflow{
+            .text-hidden{
                 overflow: hidden; /*自动隐藏文字*/
                 text-overflow: ellipsis;/*文字隐藏后添加省略号*/
                 white-space: nowrap;/*强制不换行*/
@@ -1455,9 +1455,15 @@ z                    </div>
                 {
                     var state = '<i class="green circle icon"></i>';
                     if (i==0){
-                        str +="<div class='item textoverflow active' data-tooltip='"+data[i].point_name+"' id='"+data[i].point_id+"' >"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                            str += "<div class='item text-hidden active' id='"+data[i].point_id+"'";
                     }else {
-                        str +="<div class='item textoverflow' data-tooltip='"+data[i].point_name+"' id='"+data[i].point_id+"' >"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                        str += "<div class='item text-hidden' id='"+data[i].point_id+"'";
+                    }
+                    if(strlen(data[i].point_name) > 20)
+                    {
+                        str += " title='"+data[i].point_name+"'>"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                    }else{
+                        str += ">"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
                     }
                 }
                 $('#pointsMenu').html('');
@@ -1529,10 +1535,16 @@ z                    </div>
                 var str = '';
                 for (var i = 0; i < data.length; i++) {
                     var state = '<i class="green square icon"></i>';
-                    if (i == 0) {
-                        str += "<div class='item textoverflow active' id='" + data[i].item_id + "' data-type='" + data[i].value_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
-                    } else {
-                        str += "<div class='item textoverflow' id='" + data[i].item_id + "' data-type='" + data[i].value_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
+                    if (i==0){
+                        str += "<div class='item text-hidden active' id='"+data[i].item_id+"' data-type='" + data[i].value_type + "'";
+                    }else {
+                        str += "<div class='item text-hidden' id='"+data[i].item_id+"' data-type='" + data[i].value_type + "'";
+                    }
+                    if(strlen(data[i].item_name) > 20)
+                    {
+                        str += " title='"+data[i].item_name+"'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
+                    }else{
+                        str += ">" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
                     }
                     $("#itemsMenu").html(str);
                 }
@@ -1574,9 +1586,9 @@ z                    </div>
                 {
                     var state = '<i class="green square icon"></i>';
                     if (i==0){
-                        str +="<div class='item textoverflow active' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
+                        str +="<div class='item text-hidden active' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
                     }else {
-                        str +="<div class='item textoverflow' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
+                        str +="<div class='item text-hidden' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
                     }
                 }
                 $("#typeMenu").html('');

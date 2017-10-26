@@ -18,7 +18,7 @@
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
-			.textoverflow{
+			.text-hidden{
 				overflow: hidden; /*自动隐藏文字*/
 				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
 				white-space: nowrap;/*强制不换行*/
@@ -607,7 +607,7 @@
                             var data = result.data;
                             gethostsMenu(data);
                             //加载监控点列表
-                            var host_id = $("#hostsMenu").children(".item.textoverflow.active").attr("id");
+                            var host_id = $("#hostsMenu").children(".item.text-hidden.active").attr("id");
                             pointsMenu(host_id);
                             $('#hostsMenu a').on('click',function () {
                                 $('#hostsMenu a').removeClass('active');
@@ -638,9 +638,15 @@
                         var state = 'red';
                     }
                     if (i==0){
-                        str +="<a class='"+state+" item textoverflow active' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
+                        str += "<a class='item text-hidden active' id='"+data[i].host_id+"'";
                     }else {
-                        str +="<a class='"+state+" item textoverflow' id='"+data[i].host_id+"' >"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
+                        str += "<a class='item text-hidden' id='"+data[i].host_id+"'";
+                    }
+                    if(strlen(data[i].host_name) > 20)
+                    {
+                        str += " title='"+data[i].host_name+"'>"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
+                    }else{
+                        str += ">"+data[i].host_name+"<i class='"+state+" desktop icon'></i></a> ";
                     }
                 }
                 $("#hostsMenu").html(str);
@@ -657,7 +663,7 @@
                             var data = result.data;
                             getpointsMenu(data);
                             //加载监控项列表
-                            var point_id = $("#pointsMenu").children(".item.textoverflow.active").attr("id");
+                            var point_id = $("#pointsMenu").children(".item.text-hidden.active").attr("id");
                             itemsMenu(point_id);
                             //itemsMenu(data[0].point_id);
                             $('#pointsMenu a').on('click',function () {
@@ -689,9 +695,15 @@
                         var state = 'red';
                     }
                     if (i==0){
-                        str +="<a class='"+state+" item textoverflow active' id='"+data[i].point_id+"' >"+data[i].point_name+"<i class='"+state+" circle icon'></i></a> ";
+                        str += "<a class='item text-hidden active' id='"+data[i].point_id+"'";
                     }else {
-                        str +="<a class='"+state+" item textoverflow' id='"+data[i].point_id+"' >"+data[i].point_name+"<i class='"+state+" circle icon'></i></a> ";
+                        str += "<a class='item text-hidden' id='"+data[i].point_id+"'";
+                    }
+                    if(strlen(data[i].point_name) > 20)
+                    {
+                        str += " title='"+data[i].point_name+"'>"+data[i].point_name+"<i class='"+state+" circle icon'></i></a> ";
+                    }else{
+                        str += ">"+data[i].point_name+"<i class='"+state+" circle icon'></i></a> ";
                     }
                 }
                 $("#pointsMenu").html(str);

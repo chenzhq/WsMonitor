@@ -521,24 +521,6 @@
 									</div>
 								</div>
 							</div>
-							<!--<div class="ui special popup" style="height: 260px;width: 260px;overflow:auto;z-index:20">
-								<div class="ui relaxed divided list">
-									<div class="item">
-										<div class="header" id="point_name"></div>
-									</div>
-									<div class="item">
-										<div class="header" id="point_state"></div>
-									</div>
-									<div class="item">
-										<p class="header">监控项：
-										<div class="description">
-											<table id="item_datas" class="ui very basic compact collapsing celled fixed single line table" style="width: 220px">
-											</table>
-										</div>
-										</p>
-									</div>
-								</div>
-							</div>-->
 							<div class="row" style="padding-top:0px; min-height : 220px;">
 								<div class="column">
 								</div>
@@ -1115,74 +1097,6 @@
                 }
             }).modal('show')
         });
-
-        //加载监控点悬浮框
-        /*$('#pointButton .button').hover(
-            function() {
-                var point_id=this.id.substring(1);
-                $.ajax({
-                    type: "get",
-                    url: "/brief/point?point_id="+point_id,
-                    dataType: "json",
-                    success: function (result) {
-                        if(result.success) {
-                            var Color = ['red', 'yellow', 'green'];
-                            var data = result.data;
-                            var item_datas=data.item_datas;
-                            var str_item_datas = '';
-                            var myColor = '';
-                            for(var i=0; i<item_datas.length; i++){
-                                if (item_datas[i].with_triggers == true) {
-                                    if (item_datas[i].state == "严重") {
-                                        myColor = Color[0]
-                                    }
-                                    if (item_datas[i].state == "警告") {
-                                        myColor = Color[1]
-                                    }
-                                    if (item_datas[i].state == "正常") {
-                                        myColor = Color[2]
-                                    }
-                                }else {
-                                    myColor = ''
-                                }
-                                if(strlen(item_datas[i].item_name) > 16)
-                                {
-                                    var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
-                                }else {
-                                    var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
-                                }
-                                if(strlen(item_datas[i].value) > 16)
-                                {
-                                    var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header text-hidden'>" +item_datas[i].value+"</span></td>"
-                                }else {
-                                    var item_value= "<td><span class='ui "+myColor+" header text-hidden'>" +item_datas[i].value+"</span></td>"
-                                }
-                                str_item_datas +="<tr>"+item_name+item_value+"</tr>";
-                            }
-
-                            if (data.state == "正常"){ myColor = Color[2] }
-                            if (data.state == "严重"){ myColor = Color[0] }
-                            if (data.state == "警告"){ myColor = Color[1] }
-                            $("#point_name").html("名称："+data.point_name);
-                            $("#point_state").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
-                            $("#item_datas").html(str_item_datas);
-                        } else {
-                            errorMsg_no_data("监控项 Button");
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("监控点 Button");
-                    }
-                })
-            }).popup({
-            popup: '.special.popup',
-            inline: true,
-            hoverable  : true,
-            delay: {
-                show: 800,
-                hide: 300
-            }
-        });*/
         //选择设备下拉框
         $('#host_select_dropdown').dropdown({
             action: function (text, value) {
