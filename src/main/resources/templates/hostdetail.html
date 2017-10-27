@@ -64,9 +64,6 @@
 				white-space: nowrap;/*强制不换行*/
 				width: 10em;/*不允许出现半汉字截断*/
 			}
-			.ui.fixed.sticky + p {
-				margin-top: 39px;
-			}
             #hostConfiguration .ui.tab.segment {
                 height: 180px;
                 /*原生tab 有个下边距*/
@@ -305,9 +302,6 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui sticky" style="position:fixed;top:72px;height: 43px;left: 330px;!important;background-color: yellow">
-						<i class="reply icon"></i>
-					</div>
 					<div class="ui grid">
 						<div class="eight wide column">
 							<div class="header item">
@@ -668,7 +662,7 @@
 					</div>
 
 					<!--modal-->
-					<div th:fragment="graph_conf_page" class="ui small modal">
+					<div th:fragment="graph_conf_page" class="ui small modal" id="graphConfModal">
 						<i class="close icon"></i>
 						<div class="header">
 							添加监控项图形
@@ -924,18 +918,12 @@
 
 	//页面加载完之后加载js
 	$(function() {
+	    //初始化下拉框
+
         //加载监控项的图形
         loadHostGraph();
-       //初始化黏贴固定
-        $('.ui.sticky')
-            .sticky()
-        ;
-
         //点击添加监控项
         $('a.addItems').on('click', function (e) {
-
-            $('.ui.dropdown').dropdown();
-
             var host_id = $('#host_id').text();
 
             //用于赋值
@@ -949,7 +937,7 @@
                 is_item = true,
                 is_type = true;
 
-            $('.small.modal').modal({
+            $('#graphConfModal').modal({
                 closable: false,
 				onShow:function() {
 
@@ -982,65 +970,65 @@
 					});
 
                     $('.dropdown.points').dropdown({
-                            onChange: function (value, text, $selectedItem) {
-                                point_id = value;
-								//point 校验
-                                if (point_id === '') {
-                                    $('#graphPoints').addClass('error');
-                                    is_point = false;
-                                    //console.log('point empty');
-                                }else {
-                                    $('#graphPoints').removeClass('error');
-                                    is_point = true;
-                                    //console.log('point ok');
-                                }
-                                $(".dropdown.items select").dropdown('clear');
-                                dropdownItems(value);
-                            }
-                        });
+						onChange: function (value, text, $selectedItem) {
+							point_id = value;
+							//point 校验
+							if (point_id === '') {
+								$('#graphPoints').addClass('error');
+								is_point = false;
+								//console.log('point empty');
+							}else {
+								$('#graphPoints').removeClass('error');
+								is_point = true;
+								//console.log('point ok');
+							}
+							$(".dropdown.items select").dropdown('clear');
+							dropdownItems(value);
+						}
+					});
 
                     $('.dropdown.items').dropdown({
-                            onChange: function (value, text, $selectedItem) {
-                                item_id = value.split("_")[1];
-								//item 校验
-                                if (item_id === '') {
-                                    $('#graphItems').addClass('error');
-                                    $('#item_label').css('display','none');
-                                    is_item = false;
-                                    //console.log('item empty');
-                                }else if ($("#i" + item_id).length > 0) {
-                                    //校验判断 页面上是否已经存在相同监控项的图形了
-                                    $('#item_label').css('display','block');
-                                    $('#graphItems').addClass('error');
-                                    is_item = false;
-                                    //console.log('item exist');
-                                }else {
-                                    $('#graphItems').removeClass('error');
-                                    $('#item_label').css('display','none');
-                                    is_item = true;
-                                    //console.log('item ok');
-                                }
-                                $(".dropdown.type select").dropdown('clear');
-                                dropdownType(value.split("_")[0]);
-                            }
-                        });
+						onChange: function (value, text, $selectedItem) {
+							item_id = value.split("_")[1];
+							//item 校验
+							if (item_id === '') {
+								$('#graphItems').addClass('error');
+								$('#item_label').css('display','none');
+								is_item = false;
+								//console.log('item empty');
+							}else if ($("#i" + item_id).length > 0) {
+								//校验判断 页面上是否已经存在相同监控项的图形了
+								$('#item_label').css('display','block');
+								$('#graphItems').addClass('error');
+								is_item = false;
+								//console.log('item exist');
+							}else {
+								$('#graphItems').removeClass('error');
+								$('#item_label').css('display','none');
+								is_item = true;
+								//console.log('item ok');
+							}
+							$(".dropdown.type select").dropdown('clear');
+							dropdownType(value.split("_")[0]);
+						}
+					});
 
                     $('.dropdown.type').dropdown({
-                            onChange: function (value, text, $selectedItem) {
-                                graph_type = value;
-								//type 校验
-                                if (graph_type === '') {
-                                    $('#graphType').addClass('error');
-                                    is_type = false;
-                                    //console.log('type empty');
-                                }else {
-                                    $('#graphType').removeClass('error');
-                                    is_type = true;
-                                    //console.log('type ok');
-                                }
-                                $("#chart_icon").html("<i class='massive " + value + " chart icon'></i>");
-                            }
-                        });
+						onChange: function (value, text, $selectedItem) {
+							graph_type = value;
+							//type 校验
+							if (graph_type === '') {
+								$('#graphType').addClass('error');
+								is_type = false;
+								//console.log('type empty');
+							}else {
+								$('#graphType').removeClass('error');
+								is_type = true;
+								//console.log('type ok');
+							}
+							$("#chart_icon").html("<i class='massive " + value + " chart icon'></i>");
+						}
+					});
 				},
                 onApprove: function () {
 					//point 校验
@@ -1103,10 +1091,10 @@
                                 if (result.success) {
                                     $('.button.approve').removeClass('loading')
                                     hostgraphs(result);
-                                    $('.small.modal').modal('hide');
+                                    $('#graphConfModal').modal('hide');
                                 } else {
                                     $('.button.approve').removeClass('loading')
-                                    $('.small.modal').modal('hide')
+                                    $('#graphConfModal').modal('hide')
                                     errorMsg_no_data("监控项 Modal");
                                 }
                                 return true;
@@ -1118,23 +1106,16 @@
 					}else {
                         return  false;
 					}
-
                 },
-                onDeny : function(){
-
-                }
             }).modal('show')
         });
         //选择设备下拉框
         $('#host_select_dropdown').dropdown({
             action: function (text, value) {
                 if (value === 'host') {
-
                     var host_id,
 						tree_type;
-
                     var $host_tree;
-
                     var is_host = false;
 
                     $('#host_tree_modal').modal({
@@ -1167,23 +1148,17 @@
                             })
                         },
                         onApprove : function() {
-
                             host_id = $host_tree.jstree(true).get_selected()[0];
-
                             //console.log(host_id,is_host);
-
                             if(typeof host_id === 'undefined') {
                                 is_host =false;
                                 $('#select_label').css('display','block');
-
 							}
-
                             if(is_host) {
                                 window.location.href="hostDetail?host_id="+host_id;
 							}else {
                                 return false;
 							}
-
 						}
                     }).modal('show')
                 }
@@ -1208,7 +1183,7 @@
         var is_name = true,
             is_type = true;
 
-        $('.small.modal').modal({
+        $('#graphConfModal').modal({
             closable  : false,
             onShow: function() {
                 $.ajax({
@@ -1318,10 +1293,10 @@
                             if(result.success) {
                                 $('.button.approve').removeClass('loading');
                                 hostgraphs(result);
-                                $('.small.modal').modal('hide');
+                                $('#graphConfModal').modal('hide');
                             } else {
                                 $('.button.approve').removeClass('loading');
-                                $('.small.modal').modal('hide');
+                                $('#graphConfModal').modal('hide');
                                 errorMsg_no_data("监控项 Modal");
                             }
                             return true;

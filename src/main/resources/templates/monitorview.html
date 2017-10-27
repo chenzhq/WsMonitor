@@ -301,15 +301,14 @@
             </div>
         </div>
          <!--删除页面弹出框 start-->
-        <div class="ui tiny modal delete">
+        <div class="ui tiny modal"  id="delete_modal">
             <div class="ui icon header">
                 <i class="trash icon"></i>
-                确定删除本页面吗？
+                确定删除吗？
             </div>
             <div class="actions">
-
-                <div class="ui approve submit button" data-tooltip="提示：该操作无法恢复！" data-inverted="">确认</div>
                 <div class="ui cancel button">取消</div>
+                <div class="ui approve submit red button" data-tooltip="该操作无法恢复！">确认</div>
             </div>
         </div>
     </div>
@@ -567,7 +566,7 @@
             $("button.deletepage").on("click",function(){
                 var type=$("#viewtype_select").dropdown("get value");
                 var name=$("#viewpage_select").dropdown("get text");
-                $(".ui.modal.delete").modal({
+                $("#delete_modal").modal({
                     onApprove: function () {
                         if (name == "默认页面") {
                             alert("默认页面不能删除！")
