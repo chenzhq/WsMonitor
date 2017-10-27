@@ -14,6 +14,8 @@
 		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
+		<link rel="stylesheet" href="../static/css/normalize.css"
+			  th:href="@{css/normalize.css}">
 		<link rel="stylesheet" href="../static/css/ion.rangeSlider.css"
 			  th:href="@{css/ion.rangeSlider.css}">
 		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinNice.css"
@@ -519,18 +521,34 @@
             begin_time.setFullYear(end_time.getFullYear() - 1);
             begin_time.setMonth(end_time.getMonth() + 9);
 		}
+		//一个月
+		var select_time = new Date(end_time);
+        if(end_time.getMonth() != 1) {
+            select_time.setMonth(end_time.getMonth() - 1);
+        }else {
+            select_time.setFullYear(end_time.getFullYear() - 1);
+            select_time.setMonth(12);
+        }
+		var select_format = select_time.Format("MM-dd hh:mm");
+        var select_index = 0;
 
         var begin_second = begin_time.getTime();
         var end_second = end_time.getTime();
+
         var time_arr = [];
         var vo_arr = [];
         var s = begin_second;
+        var index=0;
         while(s <= end_second) {
             var dura_date = new Date();
             dura_date.setTime(s);
             time_arr.push(dura_date.Format("yyyy-MM-dd hh:mm:ss"));
             vo_arr.push(dura_date.Format("MM-dd hh:mm"));
+            if(select_format === dura_date.Format("MM-dd hh:mm")) {
+                select_index = index;
+			}
             s += 3600 * 1000;
+            index++;
 		}
 		time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
         vo_arr.push(now.Format("MM-dd hh:mm"));
@@ -539,14 +557,15 @@
         $('#time_filter').ionRangeSlider({
             type: "double",
 //			grid:true,
-            from: vo_arr[0],
+            from: select_index,
             //TODO 最好使用返回的问题数中的最大值
-            to: vo_arr[time_arr.length-1],
+            to: vo_arr.length-1,
             values:vo_arr,
             onStart: function (data) {
                 var begin_time = time_arr[data.from];
                 var end_time = time_arr[data.to];
                 $('#table-dimmer').addClass('active');
+
                 //获取历史问题记录
                 $.ajax({
                     type: "get",

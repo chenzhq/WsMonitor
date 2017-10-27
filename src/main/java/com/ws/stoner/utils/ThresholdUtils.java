@@ -61,16 +61,16 @@ public class ThresholdUtils {
     public static String getThresholdSymbol(String expression) {
         //expression='{16252}>1000'  expression='{16252}>200M'
         String symbol = "";
-        if(expression.indexOf(">") != -1 && expression.indexOf(">=") == -1) {
-            // '>'
-            symbol = ">";
-        }else if(expression.indexOf("<") != -1 && expression.indexOf("<=") == -1) {
-            // '<'
-            symbol = "<";
-        }else if(expression.indexOf("<>") != -1) {
+        if(expression.indexOf("<>") != -1) {
             // '<>'
             symbol = "<>";
-        }else if(expression.indexOf("=") != -1 && expression.indexOf("<=") == -1 && expression.indexOf(">=") == -1) {
+        }else if(expression.indexOf("<") != -1 || expression.indexOf("<=") != -1) {
+            // '<'
+            symbol = "<";
+        }else if(expression.indexOf(">") != -1 || expression.indexOf(">=") != -1) {
+            // '>'
+            symbol = ">";
+        } else if(expression.indexOf("=") != -1 && expression.indexOf("<=") == -1 && expression.indexOf(">=") == -1) {
             // '='
             symbol = "=";
         }

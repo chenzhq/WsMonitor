@@ -289,14 +289,9 @@
                                 <div class="ui tag label">
                                     共<span th:text="${stateViewVO.pointStateNum.totalNum}"></span>个监测点
                                 </div>
-                                <div class="ui label">
-                                    <i class="red circle icon"></i> 23
-                                </div>
-                                <div class="ui label">
-                                    <i class="yellow circle icon"></i> 23
-                                </div>
-                                <div class="ui label">
-                                    <i class="green circle icon"></i> 23
+                                <div class="ui label" th:each="stateNum:${stateViewVO.hostStateNum.stateNum}" >
+									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' circle icon'"></i>
+									<span th:text="${stateNum.value}"></span>
                                 </div>
                             </div>
                             <span>&nbsp&nbsp&nbsp&nbsp</span>
@@ -304,40 +299,14 @@
                                 <div class="ui tag label">
                                     共<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备
                                 </div>
-                                <div class="ui label">
-                                    <i class="red desktop icon"></i> 23
+                                <div class="ui label" th:each="stateNum:${stateViewVO.hostStateNum.stateNum}">
+									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' desktop icon'"></i>
+									<span th:text="${stateNum.value}"></span>
                                 </div>
-                                <div class="ui label">
-                                    <i class="yellow desktop icon"></i> 23
-                                </div>
-                                <div class="ui label">
-                                    <i class="green desktop icon"></i> 23
-                                </div>
+
                             </div>
 
-							<!--<div class="ui basic buttons">
-								<button class="ui button" data-shuffle><i class="green desktop icon"></i>122</button>
-								<button class="ui button" data-sortAsc><i class="red desktop icon"></i>18</button>
-								<button class="ui button" data-sortDesc><i class="yellow desktop icon"></i>35</button>
-								<button class="ui button" data-shuffle>共<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备</button>
-							</div>
-							<div class="ui basic buttons">
-								<button class="ui button" data-shuffle><i class="green circle icon"></i>342</button>
-								<button class="ui button" data-sortAsc><i class="red circle icon"></i>12</button>
-								<button class="ui button" data-sortDesc><i class="yellow circle icon"></i>34</button>
-								<button class="ui button" data-shuffle></button>
-							</div>-->
 						</div>
-						<!--<div class="six wide column right aligned">
-							<select id="ui_dropdown" class="ui dropdown">
-								<option value="">选择类型</option>
-								<option>组</option>
-								<option>服务器</option>
-								<option>数据库</option>
-								<option>网络设备</option>
-								<option>监控点</option>
-							</select>
-						</div>-->
 					</div>
 					<div class="ui segment"  style=" min-height : 487px;">
 						<div id="host_table_dimmer" class="ui inverted dimmer">
@@ -353,6 +322,7 @@
                 <!--监控点详情弹出框-->
                 <div  th:replace="hostdetail::point_detail_page" class="ui large modal"></div>
 		</div>
+	</div>
 	</div>
 </div>
 <!--modal-->
@@ -569,137 +539,7 @@
 
                 $('a.point-detail').on('click',function(){
                     var point_id = this.id;
-                    $('.tab_points.menu .item').tab('change tab', 'Summary');
-                    $("#rowData").empty();
-                    $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
-                    $("#pointDetailArea").text(point_id);
-                    tabSummary(point_id);
-                    $('.ui.large.modal').modal('show');
-                    $('.tab_points.menu .item')
-                        .tab({
-                            'onFirstLoad': function (path) {
-                                if (path === 'Report') {
-                                    tabReport( $('.top.attached.label').attr("data-id") ,40);
-                                }
-                                if (path === 'Data') {
-                                    var point_id = $("#pointDetailArea").text();
-                                    var item_id = $("#pointDetailFirstItem").text() ;
-                                    var tableData = $("#tableData").DataTable({
-                                        "orderFixed": [ 0, 'desc' ],
-                                        "paging": false,
-                                        ajax: {
-                                            url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
-                                            dataSrc: 'data'
-                                        },
-                                        "columnDefs": [ {
-                                            "targets": [ 3 ],
-                                            "visible": false } ] ,
-                                        columns: [
-                                            //item_id
-                                            {
-                                                "data": "last_time",
-                                                "width": "30%",
-                                                "title": "最新时间",
-                                            },
-                                            {
-                                                "data": null,
-                                                "width": "10%",
-                                                "title": "状态",
-                                                "orderable": false,
-                                                render: function (data, type, row, meta) {
-                                                    var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
-                                                    if (row.state == "正常") {
-                                                        var myColor = Color[0]
-                                                    }
-                                                    if (row.state == "严重") {
-                                                        var myColor = Color[1]
-                                                    }
-                                                    if (row.state == "警告") {
-                                                        var myColor = Color[2]
-                                                    }
-                                                    return '<i class="'+ myColor + ' square icon"></i>';
-                                                }
-                                            },
-                                            {
-                                                "data": "value",
-                                                "width": "30%",
-                                                "title": "值",
-                                                "orderable":false,
-                                            },
-                                            {
-                                                "data": "state",
-                                                "width": "30%",
-                                                "title": "状态",
-                                                "orderable":false,
-                                            },
-                                        ],
-                                    });
-                                    dropdownitemsTab(point_id,item_id);
-                                    $('.dropdown.stateTab')
-                                        .dropdown({
-                                            useLabels: false,
-                                            onChange: function(value, text, $selectedItem) {
-                                                if (text == '全部')
-                                                {
-                                                    tableData.search('').draw();
-                                                }else {
-                                                    tableData.search(text).draw();
-                                                }
-                                            }
-                                        });
-                                    $('.dropdown.itemsTab')
-                                        .dropdown({
-											/*useLabels: false,*/
-                                            onChange: function(value, text, $selectedItem) {
-                                                $('#data-dimmer').addClass('active');
-                                                var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
-                                                //tableData.ajax.url(url).load();
-                                                $.ajax({
-                                                    type: "get",
-                                                    url: url,
-                                                    dataType: 'json',
-                                                    success: function (result) {
-                                                        if (result.success) {
-                                                            tableData.clear().rows.add(result.data).draw()
-                                                            $('#data-dimmer').removeClass('active');
-                                                        } else {
-
-                                                        }
-                                                    },
-                                                    error: function (e) {
-
-                                                    }
-                                                })
-                                                $('.dropdown.stateTab').prop('selectedIndex', 0);
-                                            }
-                                        });
-                                    $('.ui.buttons.Time.Data .button').on('click', function() {
-                                        $('#data-dimmer').addClass('active');
-                                        $('.buttons.Time.Data .button').removeClass('active');
-                                        $(this).addClass('active');
-                                        var item_id = $('.dropdown.itemsTab').dropdown('get value');
-                                        var url=  "/pointdetail/get_datas?item_id="+item_id+"&time="+this.value;
-                                        //tableData.ajax.url(url).load();
-                                        $.ajax({
-                                            type: "get",
-                                            url: url,
-                                            dataType: 'json',
-                                            success: function (result) {
-                                                if (result.success) {
-                                                    tableData.clear().rows.add(result.data).draw()
-                                                    $('#data-dimmer').removeClass('active');
-                                                } else {
-
-                                                }
-                                            },
-                                            error: function (e) {
-
-                                            }
-                                        })
-                                    })
-                                }
-                            }
-                        });
+                    getItemsDetail(point_id);
                 });
             },
             "createdRow": function (row, data, dataIndex) {

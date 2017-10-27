@@ -310,10 +310,18 @@
 											</div>
 										</div>
 									</div>
+									<!-- 查询读条 -->
+									<div id="health-dimmer" class="ui inverted dimmer active">
+										<div class="ui text loader" style="text-align:center">正在加载</div>
+									</div>
 								</div>
 								<div class="ten wide column" style="padding-left: 0px;">
 									<div class="ui segment left aligned row1Height">
 										<div id="platform_graph" class="chartBar"></div>
+									</div>
+									<!-- 查询读条 -->
+									<div id="state-dimmer" class="ui inverted dimmer active">
+										<div class="ui text loader" style="text-align:center">正在加载</div>
 									</div>
 								</div>
 								<div class="sixteen wide column" style="padding-top: 0px;">
@@ -322,9 +330,17 @@
 											<div class="three wide column no-padding" style="">
 												<div class="ui fluid vertical menu row2Height" id="hostsMenu" style="">
 												</div>
+												<!-- 查询读条 -->
+												<div id="host-dimmer" class="ui inverted dimmer active">
+													<div class="ui text loader" style="text-align:center">正在加载</div>
+												</div>
 											</div>
 											<div class="three wide column no-padding">
 												<div class="ui fluid vertical menu row2Height" id="pointsMenu">
+												</div>
+												<!-- 查询读条 -->
+												<div id="point-dimmer" class="ui inverted dimmer active">
+													<div class="ui text loader" style="text-align:center">正在加载</div>
 												</div>
 											</div>
 											<div class="ten wide column no-padding">
@@ -344,6 +360,10 @@
 													</tbody>
 												</table>
 												</div>
+												<!-- 查询读条 -->
+												<div id="item-dimmer" class="ui inverted dimmer active">
+													<div class="ui text loader" style="text-align:center">正在加载</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -357,6 +377,10 @@
 								<div class="sixteen wide column">
 									<div class="ui segment">
 										<div id="tree_area"  class="sixteen wide column row3Height"></div>
+										<!-- 查询读条 -->
+										<div id="tree-dimmer" class="ui inverted dimmer active">
+											<div class="ui text loader" style="text-align:center">正在加载</div>
+										</div>
 									</div>
 								</div>
 								<div class="sixteen wide column" style="padding-top: 0px;">
@@ -371,9 +395,6 @@
 					</div>
 					<div class="ui tab fixedHeight no-padding report" data-tab="platformReport">
 						<div class="ui styled fluid accordion report" id="hostAccordion">
-						</div>
-						<div id="platform-dimmer" class="ui inverted dimmer">
-							<div class="ui text loader">正在加载</div>
 						</div>
 					</div>
 				</div>
@@ -532,6 +553,7 @@
                             var platform_data = result.data;
                             var health = platform_data.health.toFixed(2);
 							$("#health_value").text(health);
+                            $('#health-dimmer').removeClass('active');
 							if(0 <= health <= 60){var colorStatistic = "ui huge red statistic";}
                             else if(60 < health <= 80){var colorStatistic = "ui huge yellow  statistic";}
                             else if(80 < health <= 100){var colorStatistic = "ui huge green  statistic";}
@@ -603,6 +625,7 @@
                             };
                             //根据配置绘制图形
                             platform_chart.setOption(option);
+                            $('#state-dimmer').removeClass('active');
                         }
                         else {
                             errorMsg_no_data("业务平台基础数据获取 失败");
@@ -631,6 +654,7 @@
                         if(result.success) {
                             var data = result.data;
                             gethostsMenu(data);
+                            $('#host-dimmer').removeClass('active');
                             //加载监控点列表
                             var host_id = $("#hostsMenu").children(".item.text-hidden.active").attr("id");
                             pointsMenu(host_id);
@@ -687,6 +711,7 @@
                         if(result.success) {
                             var data = result.data;
                             getpointsMenu(data);
+                            $('#point-dimmer').removeClass('active');
                             //加载监控项列表
                             var point_id = $("#pointsMenu").children(".item.text-hidden.active").attr("id");
                             itemsMenu(point_id);
@@ -748,6 +773,7 @@
 							}else {
                                 $("#itemsTable").html("<td colspan='6'> 无数据</td>");
 							}
+                            $('#item-dimmer').removeClass('active');
                         }
                         else {
                             errorMsg_no_data("监控项列表 Menu");
@@ -798,137 +824,7 @@
                 //绑定 详情事件
 				$('#itemsMenu').find('a').on('click',function(){
                     var point_id = $('#pointsMenu .active').attr('id');
-                    $('.tab_points.menu .item').tab('change tab', 'Summary');
-                    $("#rowData").empty();
-                    $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
-                    $("#pointDetailArea").text(point_id);
-                    tabSummary(point_id);
-                    $('.large.modal').modal('show');
-                    $('.tab_points.menu .item')
-                        .tab({
-                            'onFirstLoad': function (path) {
-                                if (path === 'Report') {
-                                    tabReport( $('.top.attached.label').attr("data-id") ,40);
-                                }
-                                if (path === 'Data') {
-                                    var point_id = $("#pointDetailArea").text();
-                                    var item_id = $("#pointDetailFirstItem").text() ;
-                                    var tableData = $("#tableData").DataTable({
-                                        "orderFixed": [ 0, 'desc' ],
-                                        "paging": false,
-                                        ajax: {
-                                            url: '/pointdetail/get_datas?item_id='+item_id+'&time=40',
-                                            dataSrc: 'data'
-                                        },
-                                        "columnDefs": [ {
-                                            "targets": [ 3 ],
-                                            "visible": false } ] ,
-                                        columns: [
-                                            //item_id
-                                            {
-                                                "data": "last_time",
-                                                "width": "30%",
-                                                "title": "最新时间",
-                                            },
-                                            {
-                                                "data": null,
-                                                "width": "10%",
-                                                "title": "状态",
-                                                "orderable": false,
-                                                render: function (data, type, row, meta) {
-                                                    var Color = ['green', 'red', 'yellow', '#d2d2d2', '#2F4056'];
-                                                    if (row.state == "正常") {
-                                                        var myColor = Color[0]
-                                                    }
-                                                    if (row.state == "严重") {
-                                                        var myColor = Color[1]
-                                                    }
-                                                    if (row.state == "警告") {
-                                                        var myColor = Color[2]
-                                                    }
-                                                    return '<i class="'+ myColor + ' square icon"></i>';
-                                                }
-                                            },
-                                            {
-                                                "data": "value",
-                                                "width": "30%",
-                                                "title": "值",
-                                                "orderable":false,
-                                            },
-                                            {
-                                                "data": "state",
-                                                "width": "30%",
-                                                "title": "状态",
-                                                "orderable":false,
-                                            },
-                                        ],
-                                    });
-                                    dropdownitemsTab(point_id,item_id);
-                                    $('.dropdown.stateTab')
-                                        .dropdown({
-                                            useLabels: false,
-                                            onChange: function(value, text, $selectedItem) {
-                                                if (text == '全部')
-                                                {
-                                                    tableData.search('').draw();
-                                                }else {
-                                                    tableData.search(text).draw();
-                                                }
-                                            }
-                                        });
-                                    $('.dropdown.itemsTab')
-                                        .dropdown({
-											/*useLabels: false,*/
-                                            onChange: function(value, text, $selectedItem) {
-                                                $('#data-dimmer').addClass('active');
-                                                var url=  "/pointdetail/get_datas?item_id="+value+"&time=1";
-                                                //tableData.ajax.url(url).load();
-                                                $.ajax({
-                                                    type: "get",
-                                                    url: url,
-                                                    dataType: 'json',
-                                                    success: function (result) {
-                                                        if (result.success) {
-                                                            tableData.clear().rows.add(result.data).draw()
-                                                            $('#data-dimmer').removeClass('active');
-                                                        } else {
-
-                                                        }
-                                                    },
-                                                    error: function (e) {
-
-                                                    }
-                                                })
-                                                $('.dropdown.stateTab').prop('selectedIndex', 0);
-                                            }
-                                        });
-                                    $('.ui.buttons.Time.Data .button').on('click', function() {
-                                        $('#data-dimmer').addClass('active');
-                                        $('.buttons.Time.Data .button').removeClass('active');
-                                        $(this).addClass('active');
-                                        var item_id = $('.dropdown.itemsTab').dropdown('get value');
-                                        var url=  "/pointdetail/get_datas?item_id="+item_id+"&time="+this.value;
-                                        //tableData.ajax.url(url).load();
-                                        $.ajax({
-                                            type: "get",
-                                            url: url,
-                                            dataType: 'json',
-                                            success: function (result) {
-                                                if (result.success) {
-                                                    tableData.clear().rows.add(result.data).draw()
-                                                    $('#data-dimmer').removeClass('active');
-                                                } else {
-
-                                                }
-                                            },
-                                            error: function (e) {
-
-                                            }
-                                        })
-                                    })
-                                }
-                            }
-                        });
+                    getItemsDetail(point_id);
 				});
             }
 
@@ -1043,6 +939,7 @@
                     .shape('customNode');
                 tree.edge().shape('smooth');
                 tree.render();
+                $('#tree-dimmer').removeClass('active');
 				tree.on('dblclick', function(ev){
 					if (ev.item.get('model').type == "host"){
                         //写主机名称
@@ -1092,7 +989,6 @@
 
             //加载业务图形报告
             function hostAccordion(platform_id) {
-                //$('#platform-dimmer').addClass('active');
                 $.ajax({
                     type: "get",
                     url: "/platformdetail/get_hosts?platform_id="+platform_id,
@@ -1101,7 +997,6 @@
                         if(result.success) {
                             var host_data = result.data;
                             gethostAccordion(host_data);
-                            //$('#platform-dimmer').removeClass('active');
                         }
                         else {
                             errorMsg_no_data("图形报告 Accordion");
@@ -1118,13 +1013,18 @@
                 for(var i=0;i<data.length;i++)
                 {
                     str += "<div class='active title'>" +
-						     "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right;' >" +
-								"<i class='add icon'> </i>添加" +
-						     "</a>" +
-						     "<i class='dropdown icon'></i>"
-                              +data[i].host_name+"" +
+								 "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right;' >" +
+									"<i class='add icon'> </i>添加" +
+								 "</a>" +
+								 "<i class='dropdown icon'></i>"
+								  +data[i].host_name+"" +
 						    "</div>" +
-						    "<div class='active content'><div  id='g"+data[i].host_id+"' class='ui three column grid'></div></div>";
+						    "<div class='active content'>" +
+								"<div  id='g"+data[i].host_id+"' class='ui three column grid'></div>" +
+								"<div class='ui inverted dimmer active' name='platform-dimmer'>" +
+									"<div class='ui text loader'>正在加载</div>" +
+								"</div>" +
+							"</div>";
                     host_ids.push(data[i].host_id);
                 }
                 $("#hostAccordion").html(str);
@@ -1307,6 +1207,7 @@
                                         };
                                 }
                                 myChart.setOption(option);
+                                $("[name='platform-dimmer']").removeClass('active');
 							}
                         }
                         else {
