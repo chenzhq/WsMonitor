@@ -40,6 +40,10 @@
 				text-overflow: ellipsis;
 				white-space: nowrap;
 			}
+			#summaryInformation .ui.buttons {
+				/*原生buttons 有个下边距*/
+				margin-bottom: 0px;
+			}
 			#pointDetailModal .ui.tab.segment {
 				height: 450px;
 				width: 100%;
@@ -257,8 +261,8 @@
 					<div class="header item">
 						<h2><i class="bar large chart icon"></i>设备总览</h2>
 					</div>
-					<div class="ui grid">
-						<div class="five wide column" style="margin-top: 20px">
+					<div class="ui grid" id="summaryInformation">
+						<!--<div class="eight wide column" style="margin-top: 20px">
 							<h3 style="float: left;margin-bottom: 0px;margin-left: 15px">设备检测：</h3>
 							<p style="float: left">
 								<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备
@@ -269,18 +273,32 @@
 								</span>
 							</p>
 						</div>
-						<div class="five wide column" style="margin-top: 20px">
+						<div class="eight wide column" style="margin-top: 20px">
 							<h3 style="float: left;margin-bottom: 0px">监测点检测：</h3>
 							<p style="float: left">
-								<span th:text="${stateViewVO.pointStateNum.totalNum}"></span>个监测点
+
 								<span th:each="stateNum:${stateViewVO.pointStateNum.stateNum}">
 									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' circle icon'"></i>
 									<span th:text="${stateNum.value}"></span>
 									<span>&nbsp&nbsp&nbsp&nbsp</span>
 								</span>
 							</p>
+						</div>-->
+						<div class="sixteen wide column right aligned">
+							<div class="ui buttons">
+								<button class="ui button greenli" data-shuffle><i class="desktop icon"></i>122</button>
+								<button class="ui button redli" data-sortAsc><i class="desktop icon"></i>18</button>
+								<button class="ui button yellowli" data-sortDesc><i class="desktop icon"></i>35</button>
+								<button class="ui button greyli" data-shuffle>共<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备</button>
+							</div>
+							<div class="ui buttons">
+								<button class="ui button greenli" data-shuffle><i class="circle icon"></i>342</button>
+								<button class="ui button redli" data-sortAsc><i class="circle icon"></i>12</button>
+								<button class="ui button yellowli" data-sortDesc><i class="circle icon"></i>34</button>
+								<button class="ui button greyli" data-shuffle>共<span th:text="${stateViewVO.pointStateNum.totalNum}"></span>个监测点</button>
+							</div>
 						</div>
-						<div class="six wide column right aligned">
+						<!--<div class="six wide column right aligned">
 							<select id="ui_dropdown" class="ui dropdown">
 								<option value="">选择类型</option>
 								<option>组</option>
@@ -289,7 +307,7 @@
 								<option>网络设备</option>
 								<option>监控点</option>
 							</select>
-						</div>
+						</div>-->
 					</div>
 					<div class="ui segment"  style=" min-height : 487px;">
 						<div id="host_table_dimmer" class="ui inverted dimmer">
