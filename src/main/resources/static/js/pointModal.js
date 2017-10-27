@@ -386,6 +386,7 @@ function dropdownitemsTab(point_id,tableData){
                 //绑定item下拉框 onchange 事件
                 $('#itemdata_select').dropdown({
                     /*useLabels: false,*/
+                    placeholder:'请选择监控项',
                     onChange: function(value, text, $selectedItem) {
                         var time_value = $('.Time.Data').find('.active').val();
                         $('#data-dimmer').addClass('active');

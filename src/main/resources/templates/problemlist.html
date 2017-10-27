@@ -442,6 +442,7 @@
 		<script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
 		<script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
 		<script src="../static/js/custom/problem-table.js" th:src="@{js/custom/problem-table.js}"></script>
+		<script src="../static/js/custom/rangeSlider-time.js" th:src="@{js/custom/rangeSlider-time.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
@@ -508,115 +509,48 @@
 
     //显示时间控件
 	function showTimeCons(problemTable) {
-        var now = new Date();
-        var end_time = new Date(now);
-        end_time.setMinutes(0);
-        end_time.setSeconds(0);
-        end_time.setMilliseconds(0);
-        var begin_time = new Date(end_time);
-        //3表示三个月
-		if(end_time.getMonth() > 3) {
-            begin_time.setMonth(end_time.getMonth() - 3);
-		}else {
-            begin_time.setFullYear(end_time.getFullYear() - 1);
-            begin_time.setMonth(end_time.getMonth() + 9);
-		}
-		//一个月
-		var select_time = new Date(end_time);
-        if(end_time.getMonth() != 1) {
-            select_time.setMonth(end_time.getMonth() - 1);
-        }else {
-            select_time.setFullYear(end_time.getFullYear() - 1);
-            select_time.setMonth(12);
-        }
-		var select_format = select_time.Format("MM-dd hh:mm");
-        var select_index = 0;
 
-        var begin_second = begin_time.getTime();
-        var end_second = end_time.getTime();
-
-        var time_arr = [];
-        var vo_arr = [];
-        var s = begin_second;
-        var index=0;
-        while(s <= end_second) {
-            var dura_date = new Date();
-            dura_date.setTime(s);
-            time_arr.push(dura_date.Format("yyyy-MM-dd hh:mm:ss"));
-            vo_arr.push(dura_date.Format("MM-dd hh:mm"));
-            if(select_format === dura_date.Format("MM-dd hh:mm")) {
-                select_index = index;
-			}
-            s += 3600 * 1000;
-            index++;
-		}
-		time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
-        vo_arr.push(now.Format("MM-dd hh:mm"));
         $('#filter_content').css('display','block');
 
-        $('#time_filter').ionRangeSlider({
-            type: "double",
-//			grid:true,
-            from: select_index,
-            //TODO 最好使用返回的问题数中的最大值
-            to: vo_arr.length-1,
-            values:vo_arr,
-            onStart: function (data) {
+        var rangeOption = {
+
+            onStart: (data,time_arr) => {
                 var begin_time = time_arr[data.from];
                 var end_time = time_arr[data.to];
-                $('#table-dimmer').addClass('active');
+                loadHidtoryData(begin_time,end_time);
 
-                //获取历史问题记录
-                $.ajax({
-                    type: "get",
-                    url: '/problems/get_history?begin_time='+begin_time+'&end_time='+end_time,
-                    dataType: 'json',
-                    success: function (result) {
-                        if (result.success) {
-                            problemTable.clear().rows.add(result.data).draw();
-                            $('#table-dimmer').removeClass('active');
-                        } else {
-
-                        }
-                    },
-                    error: function (e) {
-
-                    }
-                });
-            },
-            onChange: function (data) {
-
-            },
-            onFinish: function (data) {
-
+			},
+			onFinish: (data,time_arr) => {
                 var begin_time = time_arr[data.from];
                 var end_time = time_arr[data.to];
-                $('#table-dimmer').addClass('active');
-                //获取历史问题记录
-                $.ajax({
-                    type: "get",
-                    url: '/problems/get_history?begin_time='+begin_time+'&end_time='+end_time,
-                    dataType: 'json',
-                    success: function (result) {
-                        if (result.success) {
-                            problemTable.clear().rows.add(result.data).draw();
-                            $('#table-dimmer').removeClass('active');
-                        } else {
+                loadHidtoryData(begin_time,end_time);
+			}
+		};
 
-                        }
-                    },
-                    error: function (e) {
+        slider = $('#time_filter').rangeSliderTime(rangeOption);
 
-                    }
-                });
+	}
+
+	//加载历史数据
+	function loadHidtoryData(begin_time,end_time) {
+        $('#table-dimmer').addClass('active');
+        //获取历史问题记录
+        $.ajax({
+            type: "get",
+            url: '/problems/get_history?begin_time='+begin_time+'&end_time='+end_time,
+            dataType: 'json',
+            success: function (result) {
+                if (result.success) {
+                    problemTable.clear().rows.add(result.data).draw();
+                    $('#table-dimmer').removeClass('active');
+                } else {
+
+                }
             },
-            onUpdate: function (data) {
+            error: function (e) {
 
             }
         });
-
-        slider = $('#time_filter').data("ionRangeSlider");
-
 	}
 
 

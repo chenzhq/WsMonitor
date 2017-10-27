@@ -1216,6 +1216,12 @@
                             $(".dropdown.type select").dropdown("set value", graph_type);
                             $(".dropdown.type select").dropdown("set text", graph_value);
 
+                            //初始化 清除样式
+                            $('#graphTitle').removeClass('error')
+                            $('#graphPoints').removeClass('error')
+                            $('#graphItems').removeClass('error')
+                            $('#graphType').removeClass('error')
+
                             $(".dropdown.points.selection").addClass('disabled');
                             $(".dropdown.items.selection").addClass('disabled');
 

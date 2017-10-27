@@ -277,8 +277,11 @@
 							<div class="ui segment left aligned detailconfirm">
 
 								<div id="problemChart" class="chartBar"></div>
-								<div id="filter_content" style="display: none;">
+								<div id="filter_content" style="display: block;">
 									<input type="text"  id="time_filter" name="time_filter" value=""/>
+								</div>
+								<div id="trigger-dimmer" class="ui inverted dimmer active">
+									<div class="ui text loader">正在加载</div>
 								</div>
 							</div>
 
@@ -288,6 +291,9 @@
 						<h3>历史记录</h3>
 						<table  id="problemsTable" class="ui compact very basic table center aligned">
 						</table>
+						<div id="table-dimmer" class="ui inverted dimmer active">
+							<div class="ui text loader">正在加载</div>
+						</div>
 					</div>
 				</div>
 
@@ -319,6 +325,7 @@
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 		<script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
 		<script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
+		<script src="../static/js/custom/rangeSlider-time.js" th:src="@{js/custom/rangeSlider-time.js}"></script>
 		<script type="text/javascript">
             var trigger_id = $("#trigger_id").text();
             //初始化三个月数据
@@ -372,6 +379,7 @@
 									]
 								}
 							);
+                            $('#trigger-dimmer').removeClass('active');
 
 
                         } else {
@@ -565,6 +573,7 @@
                     success: function (result) {
                         if (result.success) {
 							problemsTable.clear().rows.add(result.data).draw();
+                            $('#table-dimmer').removeClass('active');
                         } else {
 
                         }
@@ -577,7 +586,36 @@
 
             //显示时间控件
             function showTimeCons(problemsTable,problemChart) {
-                var now = new Date();
+
+                var rangeOption = {
+
+                    onStart: (data,time_arr) => {
+
+                        send_data.begin_time = time_arr[data.from];
+                        send_data.end_time = time_arr[data.to];
+                        //初始化图形
+                        getProblemchart(problemChart);
+
+                        //初始化列表
+                        getTableList(problemsTable)
+
+                    },
+                    onFinish: (data,time_arr) => {
+
+                        send_data.begin_time = time_arr[data.from];
+                        send_data.end_time = time_arr[data.to];
+                        //获取图形
+                        getProblemchart(problemChart);
+
+                        //获取列表
+                        getTableList(problemsTable)
+
+                    }
+                };
+
+                $('#time_filter').rangeSliderTime(rangeOption);
+
+                /*var now = new Date();
                 var end_time = new Date(now);
                 end_time.setMinutes(0);
                 end_time.setSeconds(0);
@@ -640,7 +678,7 @@
                     onUpdate: function (data) {
 
                     }
-                });
+                });*/
             }
 
 
