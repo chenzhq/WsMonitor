@@ -43,12 +43,12 @@
 				overflow:auto;
 				overflow-x:hidden
 			}
-			.modal-height{
+			/*.modal-height{
 				height: 450px;
 				width: 100%;
 				overflow:auto;
 				overflow-x:hidden
-			}
+			}*/
 			.chart-style{  height: 160px; }
 			.ui.styled.fluid.accordion.report{
 				height: 485px;
@@ -62,6 +62,28 @@
                 width: auto;
                 height: auto;
             }
+			#pointDetailModal .ui.tab.segment {
+				height: 450px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden;
+				/*原生tab 有个下边距*/
+				margin-bottom: 0px;
+			}
+			#pointDetailModal .ui.buttons {
+				/*原生buttons 有个下边距*/
+				margin-bottom: 0px;
+			}
+			#pointDetailModal table.dataTable.no-footer {
+				/*原生dataTable 下外边框颜色是#111*/
+				border-bottom: 1px solid #DDDDDD;
+			}
+			#pointDetailModal .ui.three.column.grid {
+				margin: -20px 0 0 0;
+			}
+			#pointDetailModal .ui.three.column.grid .column {
+				margin-bottom: 10px;
+			}
 		</style>
 	</th:block>
 </head>
@@ -314,7 +336,7 @@
 														<th width="33%">值</th>
 														<th width="7%">状态</th>
 														<th width="7%">权值</th>
-														<th width="20%">最新时间<a style="float: right"><i class='browser icon'></i>详情</a></th>
+														<th width="20%">最新时间<a  href="javascript:void(0);" style="float: right"><i class='browser icon'></i>详情</a></th>
 													</tr>
 													</thead>
 													<tbody id="itemsTable">
