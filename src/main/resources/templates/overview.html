@@ -40,8 +40,8 @@
 				text-overflow: ellipsis;
 				white-space: nowrap;
 			}
-			#summaryInformation .ui.buttons {
-				/*原生buttons 有个下边距*/
+			#summaryInformation .ui.labels ,.ui.labels .label {
+				/*原生label 有个下边距*/
 				margin-bottom: 0px;
 			}
 			#pointDetailModal .ui.tab.segment {
@@ -285,18 +285,48 @@
 							</p>
 						</div>-->
 						<div class="sixteen wide column right aligned">
-							<div class="ui buttons">
-								<button class="ui button greenli" data-shuffle><i class="desktop icon"></i>122</button>
-								<button class="ui button redli" data-sortAsc><i class="desktop icon"></i>18</button>
-								<button class="ui button yellowli" data-sortDesc><i class="desktop icon"></i>35</button>
-								<button class="ui button greyli" data-shuffle>共<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备</button>
+                            <div class="ui basic labels" style="float: right">
+                                <div class="ui tag label">
+                                    共<span th:text="${stateViewVO.pointStateNum.totalNum}"></span>个监测点
+                                </div>
+                                <div class="ui label">
+                                    <i class="red circle icon"></i> 23
+                                </div>
+                                <div class="ui label">
+                                    <i class="yellow circle icon"></i> 23
+                                </div>
+                                <div class="ui label">
+                                    <i class="green circle icon"></i> 23
+                                </div>
+                            </div>
+                            <span>&nbsp&nbsp&nbsp&nbsp</span>
+                            <div class="ui basic labels" style="float: right">
+                                <div class="ui tag label">
+                                    共<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备
+                                </div>
+                                <div class="ui label">
+                                    <i class="red desktop icon"></i> 23
+                                </div>
+                                <div class="ui label">
+                                    <i class="yellow desktop icon"></i> 23
+                                </div>
+                                <div class="ui label">
+                                    <i class="green desktop icon"></i> 23
+                                </div>
+                            </div>
+
+							<!--<div class="ui basic buttons">
+								<button class="ui button" data-shuffle><i class="green desktop icon"></i>122</button>
+								<button class="ui button" data-sortAsc><i class="red desktop icon"></i>18</button>
+								<button class="ui button" data-sortDesc><i class="yellow desktop icon"></i>35</button>
+								<button class="ui button" data-shuffle>共<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备</button>
 							</div>
-							<div class="ui buttons">
-								<button class="ui button greenli" data-shuffle><i class="circle icon"></i>342</button>
-								<button class="ui button redli" data-sortAsc><i class="circle icon"></i>12</button>
-								<button class="ui button yellowli" data-sortDesc><i class="circle icon"></i>34</button>
-								<button class="ui button greyli" data-shuffle>共<span th:text="${stateViewVO.pointStateNum.totalNum}"></span>个监测点</button>
-							</div>
+							<div class="ui basic buttons">
+								<button class="ui button" data-shuffle><i class="green circle icon"></i>342</button>
+								<button class="ui button" data-sortAsc><i class="red circle icon"></i>12</button>
+								<button class="ui button" data-sortDesc><i class="yellow circle icon"></i>34</button>
+								<button class="ui button" data-shuffle></button>
+							</div>-->
 						</div>
 						<!--<div class="six wide column right aligned">
 							<select id="ui_dropdown" class="ui dropdown">
