@@ -400,6 +400,9 @@
 					<div class="ui tab fixedHeight no-padding report" data-tab="platformReport">
 						<div class="ui styled fluid accordion report" id="hostAccordion">
 						</div>
+						<div class='ui inverted dimmer active' id='platform-dimmer'>
+							<div class='ui text loader'>正在加载</div>
+						</div>
 					</div>
 				</div>
 				<!--监控点详情弹出框-->
@@ -411,10 +414,10 @@
 			</div>
 				<!--modal end-->
 				<!--Site Content-->
-			</div>
 		</div>
-		<!--maincontent-->
 	</div>
+		<!--maincontent-->
+</div>
 
 <th:block th:replace="layout::bottom_script(~{::supple})">
 	<script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
@@ -456,7 +459,7 @@
             $('#hostAccordion').accordion({
                 exclusive:false,
                 selector: {
-                    trigger: '.title .dropdown.icon'
+                    trigger: '.trigger_icon'
                 }
             });
 
@@ -998,14 +1001,11 @@
 								 "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right;' >" +
 									"<i class='add icon'> </i>添加" +
 								 "</a>" +
-								 "<i class='dropdown icon'></i>"
-								  +data[i].host_name+"" +
+								 "<div class='trigger_icon'><i class='dropdown icon'></i>"
+								  +data[i].host_name+"</div>" +
 						    "</div>" +
 						    "<div class='active content'>" +
 								"<div  id='g"+data[i].host_id+"' class='ui three column grid'></div>" +
-								"<div class='ui inverted dimmer active' name='platform-dimmer'>" +
-									"<div class='ui text loader'>正在加载</div>" +
-								"</div>" +
 							"</div>";
                     host_ids.push(data[i].host_id);
                 }
@@ -1190,12 +1190,8 @@
                                             };
                                     }
                                     myChart.setOption(option);
-                                    $("[name='platform-dimmer']").removeClass('active');
                                 }
-							}else{
-                                $("[name='platform-dimmer']").removeClass('active');
 							}
-
                         }
                         else {
                             errorMsg_no_data("图形报告 Accordion");
@@ -1204,7 +1200,9 @@
                     error: function () {
                         errorMsg_no_connect("图形报告 Accordion");
                     }
-                });
+                }).done(function() {
+                    $('#platform-dimmer').removeClass('active');
+				});
 
             }
 

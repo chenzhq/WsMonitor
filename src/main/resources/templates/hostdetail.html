@@ -1382,7 +1382,9 @@
             error: function () {
                 errorMsg_no_connect("监控项 Chart");
             }
-        })
+        }).done(function() {
+            $('#custom-dimmer').removeClass('active');
+		});
 	}
 
 	//绘制设备详情中 监控项图形
@@ -1569,8 +1571,9 @@
                     };
             }
             myChart.setOption(option);
-            $('#custom-dimmer').removeClass('active');
+
         }
+
         $('.gridly').gridly({
             base: 60, // px
             gutter: 15, // px

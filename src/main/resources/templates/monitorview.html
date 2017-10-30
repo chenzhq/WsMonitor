@@ -719,6 +719,11 @@
                             if(data.length !== 0) {
                                 getselectViewpage(data);
 
+                            }else {
+                                $("#viewpage_select").dropdown("clear");
+                                $("#viewpage_menu").html('');
+                                $('#viewtype_select').removeClass('loading disabled');
+                                $('#viewpage_select').removeClass('loading disabled');
                             }
                         }
                         else {
