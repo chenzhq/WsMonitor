@@ -18,6 +18,10 @@
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
+			/*原生button 有个下外边距*/
+			.ui.modal .actions > .button {
+				margin-bottom: 0;
+			}
 			.chart-style {
 				height: 160px;
 			}

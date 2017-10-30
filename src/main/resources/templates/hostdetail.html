@@ -21,7 +21,10 @@
 			  th:href="@{css/jstree-default/style.min.css}">
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
-
+			/*原生button 有个下外边距*/
+			.ui.modal .actions > .button {
+				margin-bottom: 0;
+			}
 			#item_label {
 				display: none;
 				float: right;
@@ -734,6 +737,8 @@
 							<div class="ui green button approve">确认</div>
 						</div>
 					</div>
+					<!--删除弹出框-->
+					<div  th:replace="monitorview::delete_page"></div>
 				<!--Site Content-->
 			</div>
 		</div>
@@ -1326,29 +1331,36 @@
     }
     //删除图形 function
     function deleteGraph(id) {
-        if (!confirm("确定删除吗？")){
-            return false;
-        }
-        var host_id = $("#host_id").text();
-        var item_id = id.substring(1);
-        $('#custom-dimmer').addClass('active');
-        $.ajax({
-            type: "get",
-            url: "/hostgraphs/delete_graph?item_id="+item_id+"&host_id="+host_id,
-            dataType: "json",
-            success: function (result) {
-                if(result.success) {
-                    alert("删除成功~~~");
-                    hostgraphs(result);
-                }
-                else {
-                    alert("删除失败！！！");
-                }
-            },
-            error: function () {
-                errorMsg_no_connect("监控项 Chart");
+        $('#deleteModal').modal({
+            closable: false,
+            onApprove: function () {
+				var host_id = $("#host_id").text();
+				var item_id = id.substring(1);
+				$('#custom-dimmer').addClass('active');
+				$.ajax({
+					type: "get",
+					url: "/hostgraphs/delete_graph?item_id="+item_id+"&host_id="+host_id,
+					dataType: "json",
+					success: function (result) {
+						if(result.success) {
+                            /*无效
+                            $("#backDeleteModal").modal({
+                                inverted: true
+                            }).modal('show');
+                            setTimeout("$('#backDeleteModal').modal('hide');",800)*/
+							hostgraphs(result);
+						}
+						else {
+                            errorMsg_no_data(result.message);
+						}
+					},
+					error: function () {
+						errorMsg_no_connect("监控项 Chart");
+					}
+                });
             }
-        });
+        })
+        $('#deleteModal').modal('show');
     }
 
 	//页面加载完后加载监控项的图形

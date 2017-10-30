@@ -17,6 +17,12 @@
         <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
         <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
               th:href="@{css/jstree-default/style.min.css}">
+        <style type="text/css">
+            /*原生button 有个下外边距*/
+            .ui.modal .actions > .button {
+                margin-bottom: 0;
+            }
+        </style>
     </th:block>
 </head>
 <body>

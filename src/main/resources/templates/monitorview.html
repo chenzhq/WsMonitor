@@ -22,6 +22,10 @@
             .ui.table.dataTable thead th {
                 border-left: 0px;
             }
+            /*原生button 有个下外边距*/
+            .ui.modal .actions > .button {
+                margin-bottom: 0;
+            }
         </style>
     </th:block>
 </head>
@@ -296,12 +300,12 @@
                 </form>
             </div>
             <div class="actions">
-                <div class="ui approve submit button">确认</div>
                 <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
             </div>
         </div>
          <!--删除页面弹出框 start-->
-        <div class="ui tiny modal"  id="delete_modal">
+        <div th:fragment="delete_page" class="ui tiny modal"  id="deleteModal">
             <div class="ui icon header">
                 <i class="trash icon"></i>
                 确定删除吗？
@@ -309,6 +313,12 @@
             <div class="actions">
                 <div class="ui cancel button">取消</div>
                 <div class="ui approve submit red button" data-tooltip="该操作无法恢复！">确认</div>
+            </div>
+        </div>
+        <div class="ui mini modal"  id="backDeleteModal">
+            <div class="ui icon header">
+                <i class="green trash icon"></i>
+                删除成功
             </div>
         </div>
     </div>
@@ -566,7 +576,7 @@
             $("button.deletepage").on("click",function(){
                 var type=$("#viewtype_select").dropdown("get value");
                 var name=$("#viewpage_select").dropdown("get text");
-                $("#delete_modal").modal({
+                $("#deleteModal").modal({
                     onApprove: function () {
                         if (name == "默认页面") {
                             alert("默认页面不能删除！")
@@ -980,7 +990,10 @@
                     dataType: "json",
                     success: function (result) {
                         if (result.success) {
-                            selectViewpage(type);
+                            $("#backDeleteModal").modal({
+                                inverted: true
+                            }).modal('show');
+                            setTimeout("$('#backDeleteModal').modal('hide');selectViewpage(type);",800)
                         }
                         else {
                             errorMsg_no_data(result.message);

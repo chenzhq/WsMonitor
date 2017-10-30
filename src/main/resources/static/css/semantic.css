@@ -31415,6 +31415,26 @@ select.ui.dropdown {
 .ui.modal {
   font-size: 1rem;
 }
+ /* Mini */
+
+ .ui.mini.modal > .header:not(.ui) {
+   font-size: 1.0em;
+ }
+
+ /* Mini Modal Width */
+
+ @media only screen and (min-width: 1200px) {
+   .ui.mini.modal {
+     width: 120px;
+     margin: 0em 0em 0em -60px;
+   }
+ }
+ @media only screen and (min-width: 1920px) {
+   .ui.mini.modal {
+     width: 150px;
+     margin: 0em 0em 0em -60px;
+   }
+ }
  /* Tiny */
 
  .ui.tiny.modal > .header:not(.ui) {

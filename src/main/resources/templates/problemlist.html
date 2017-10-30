@@ -21,6 +21,10 @@
 		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinNice.css"
 			  th:href="@{css/ion.rangeSlider.skinNice.css}">
 		<style type="text/css">
+			/*原生button 有个下外边距*/
+			.ui.modal .actions > .button {
+				margin-bottom: 0;
+			}
 			.ui.table.dataTable thead th {
 				border-left: 0px;
 			}
@@ -322,8 +326,8 @@
 							</div>
 						</div>
 						<div class="actions">
-							<div class="ui approve submit button" id="submit_bnt">确认</div>
 							<div class="ui cancel button">取消</div>
+							<div class="ui green approve submit button" id="submit_bnt">确认</div>
 						</div>
 					</div>
                 </div>

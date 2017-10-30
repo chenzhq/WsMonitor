@@ -28,6 +28,10 @@
         <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
         <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
         <style type="text/css">
+            /*原生button 有个下外边距*/
+            .ui.modal .actions > .button {
+                margin-bottom: 0;
+            }
             .text-hidden{
                 overflow: hidden; /*自动隐藏文字*/
                 text-overflow: ellipsis;/*文字隐藏后添加省略号*/
@@ -327,8 +331,8 @@ z                    </div>
                 </form>
             </div>
             <div class="actions">
-                <div class="ui approve submit button">确认</div>
                 <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
             </div>
         </div>
         <!--添加展现页弹出框 start-->
@@ -348,8 +352,8 @@ z                    </div>
                 </form>
             </div>
             <div class="actions">
-                <div class="ui approve submit button">确认</div>
                 <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
             </div>
         </div>
         <!--添加展示点类型弹出框 start-->
@@ -401,8 +405,8 @@ z                    </div>
                 </form>
             </div>
             <div class="actions">
-                <div class="ui approve submit button">确认</div>
                 <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
             </div>
         </div>
         <!--添加展示项添加图表弹出框 start-->
@@ -437,8 +441,8 @@ z                    </div>
                 </form>
             </div>
             <div class="actions">
-                <div class="ui approve submit button">确认</div>
                 <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
             </div>
         </div>
         <!--添加展示项添加静态数据弹出框 start-->
@@ -488,23 +492,14 @@ z                    </div>
                 </form>
             </div>
             <div class="actions">
-                <div class="ui approve submit button">确认</div>
                 <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
             </div>
         </div>
         <!-- 静态表格编辑区 -->
         <div class="ui tiny modal page" id="stat_table"></div>
-        <!--删除页面弹出框 start-->
-        <div class="ui tiny modal delete" id="delete_modal">
-            <div class="ui icon header">
-                <i class="trash icon"></i>
-                确定删除本页面吗？
-            </div>
-            <div class="actions">
-                <div class="ui approve submit button" data-tooltip="提示：该操作无法恢复！" data-inverted="">确认</div>
-                <div class="ui cancel button">取消</div>
-            </div>
-        </div>
+        <!--删除弹出框-->
+        <div  th:replace="monitorview::delete_page"></div>
         <!-- 轮播展示配置弹出框 -->
         <div class="ui tiny modal full" id="full_config">
             <i class="close icon"></i>
@@ -565,8 +560,8 @@ z                    </div>
                 </form>
             </div>
             <div class="actions">
-                <div class="ui approve submit button">确认</div>
                 <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
             </div>
         </div>
     </div>
@@ -1129,7 +1124,8 @@ z                    </div>
             $('#deletepage_button').on('click',function(){
                 var group_name = $('#viewgroup_select').dropdown('get value');
                 var page_name = $('#viewpage_select').dropdown('get value');
-                $('#delete_modal').modal({
+                $('#deleteModal').modal({
+                    closable: false,
                     onApprove: function () {
                         //ajax,根据page_name删除此页面绘制展示区，刷新展示页下拉框，注意添加删除的刷新效果
                         $.ajax({
@@ -1138,7 +1134,11 @@ z                    </div>
                             dataType: 'json',
                             success: function (result) {
                                 if(result.success) {
-
+                                    /*无效
+                                     $("#backDeleteModal").modal({
+                                     inverted: true
+                                     }).modal('show');
+                                     setTimeout("$('#backDeleteModal').modal('hide');",800)*/
                                     getSelectPage($('#viewgroup_select').dropdown('get value'));
                                 }
                                 else {

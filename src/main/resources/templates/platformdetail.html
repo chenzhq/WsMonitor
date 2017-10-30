@@ -18,6 +18,10 @@
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
+			/*原生button 有个下外边距*/
+			.ui.modal .actions > .button {
+				margin-bottom: 0;
+			}
 			.text-hidden{
 				overflow: hidden; /*自动隐藏文字*/
 				text-overflow: ellipsis;/*文字隐藏后添加省略号*/
@@ -399,33 +403,11 @@
 					</div>
 				</div>
 				<!--监控点详情弹出框-->
-				<div  th:replace="hostdetail::point_detail_page" class="ui large modal">
-
-				</div>
+				<div  th:replace="hostdetail::point_detail_page"></div>
 				<!--图形报告弹出框-->
-				<div  th:replace="hostdetail::graph_conf_page" class="ui small modal">
-
-				</div>
+				<div  th:replace="hostdetail::graph_conf_page"></div>
 				<!--删除弹出框-->
-				<div class="ui basic modal" id="delete_modal">
-					<div class="ui icon header" id="delete_header">
-						<i class="trash icon"></i>
-						确定删除吗？
-					</div>
-					<div class="content" id="delete_content">
-						<p>提醒：删除后将不可退回。</p>
-					</div>
-					<div class="actions">
-						<div class="ui red ok inverted button">
-							<i class="remove icon"></i>
-							确认
-						</div>
-						<div class="ui green basic cancel inverted button">
-							<i class="checkmark icon"></i>
-							取消
-						</div>
-					</div>
-				</div>
+				<div  th:replace="monitorview::delete_page"></div>
 			</div>
 				<!--modal end-->
 				<!--Site Content-->
@@ -1569,28 +1551,24 @@
             //点击删除图形 function
             function delete_graph(id) {
                 var item_id = id.substring(1);
-                $('#delete_modal').modal({
+                $('#deleteModal').modal({
                     closable: false,
-                    duration:400,
-                    onShow: function () {
-                        $("#delete_header").html("<i class='trash icon'></i>业务图形报告："+$("#"+id).attr("data-name")+"，确定删除吗？")
-                    },
                     onApprove: function () {
-
                         $.ajax({
                             type: "get",
                             url: "/platformdetail/del_graph?item_id="+item_id,
                             dataType: "json",
                             success: function (result) {
                                 if(result.success) {
-									$("#delete_header").html("<i class='trash icon'></i>删除成功！");
-                                    $("#delete_content").html("");
-									hostAccordion(platform_id);
+                                    /*无效
+                                    $("#backDeleteModal").modal({
+                                        inverted: true
+                                    }).modal('show');
+                                    setTimeout("$('#backDeleteModal').modal('hide');",800)*/
+                                    hostAccordion(platform_id);
                                 }
                                 else {
-                                    alert("删除失败！")
-                                   	$("#delete_header").html("<i class='trash icon'></i>删除失败~~");
-                                    $("#delete_content").html("");
+                                    errorMsg_no_data(result.message);
                                 }
                             },
                             error: function () {
@@ -1599,10 +1577,8 @@
                         });
                     }
                 })
-                $('#delete_modal').modal('show');
-
+                $('#deleteModal').modal('show');
             }
-
 
      </script>
 	</th:block>
