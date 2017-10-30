@@ -283,14 +283,14 @@
                         <label style="padding-right: 28px;padding-left: 18px">页面名称</label>
                         <input type="text" id="page_name" placeholder="不能为空" style="width: 260px;">
                     </div>
-                    <div class="ui horizontal basic segments" style="border: none;box-shadow:0px 0px;margin-top: -10px;margin-bottom: -10px">
-                        <div class="ui basic segment " style="border: none">
+                    <div class="ui horizontal basic segments " style="border: none;box-shadow:0px 0px;margin-top: -10px;margin-bottom: -10px">
+                        <div class="ui basic segment" style="border: none">
                             <div class="required inline field" >
                                 <label>选择设备</label>
                             </div>
                         </div>
-                        <div class="ui basic segment" style="border: none;">
-                            <div class="ui segment left aligned" >
+                        <div class="ui basic segment" style="border: none;width: 250px;">
+                            <div class="ui segment left aligned" id="hostTreeTitle" >
                                 <div id="host_tree"></div>
                             </div>
                         </div>
@@ -316,7 +316,7 @@
             </div>
         </div>
         <div class="ui mini modal"  id="backDeleteModal">
-            <div class="ui icon header">
+            <div class="ui icon header" id="deleteMsg">
                 <i class="green trash icon"></i>
                 删除成功
             </div>
@@ -558,6 +558,7 @@
                 var type=$("#viewtype_select").dropdown("get value");
                 var name=$("#viewpage_select").dropdown("get text");
                 $("#name_field").removeClass("error");
+                $("#hostTreeTitle").removeClass(" negative message");
                 $("#modal_name").html("编辑页面【"+$("#viewtype_select").dropdown("get text")+"】")
                 $("#page_name").val(name);
                 if(name=="默认页面"){$("#name_field").addClass("disabled");}
@@ -567,6 +568,7 @@
             //添加页面弹出框
             $("button.addpage").on("click",function(){
                 $("#name_field").removeClass("error");
+                $("#hostTreeTitle").removeClass(" negative message");
                 $("#page_name").val("");
                 $("#modal_name").html("添加页面【"+$("#viewtype_select").dropdown("get text")+"】");
                 addpage();
@@ -579,7 +581,13 @@
                 $("#deleteModal").modal({
                     onApprove: function () {
                         if (name == "默认页面") {
-                            alert("默认页面不能删除！")
+                            $("#backDeleteModal").modal({
+                                inverted: true,
+                                onShow:function () {
+                                    $('#deleteMsg').html("<i class='red trash icon'></i>默认页面不能删除！")
+                                }
+                            }).modal('show');
+                            setTimeout("$('#backDeleteModal').modal('hide');",800)
                         } else {
                             deletepage(name, type);
                         }
@@ -781,7 +789,7 @@
                             return false;
                         }else {
                             if(hostIds.length==0) {
-                                alert("所选设备不能为空");
+                                $("#hostTreeTitle").addClass(" negative message");
                                 return false;
                             }else {
                                 var maxNum = 10;
@@ -901,6 +909,7 @@
                             multi: true,
                             initHosts: hostIds
                         })
+
                     },
                     onApprove: function () {
                         hostIds = $host_tree.jstree(true).get_bottom_checked()
@@ -912,7 +921,7 @@
                             return false;
                         }else {
                             if(hostIds.length==0) {
-                                alert("所选设备不能为空");
+                                $("#hostTreeTitle").addClass(" negative message");
                                 return false;
                             }else {
                                 var maxNum = 10;
