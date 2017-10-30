@@ -193,12 +193,20 @@ public class ProblemListVO {
     }
 
     //将BriefEventDTOS 转换成 ProblemListVOS 对象 list
-    public static List<ProblemListVO> transformVOSUseBriefEventDTO(List<BriefEventDTO> problemEventDTOS,List<BriefEventDTO> recoveryEventDTOS) {
+    public static List<ProblemListVO> transformVOSUseBriefEventDTO(List<BriefEventDTO> problemEventDTOS,List<BriefEventDTO> recoveryEventDTOS,List<BriefTriggerDTO> triggerDTOS) {
         List<ProblemListVO> problemListVOS = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
         for(BriefEventDTO problemEventDTO : problemEventDTOS) {
             ProblemListVO problemListVO = new ProblemListVO();
-            BriefTriggerDTO triggerDTO = problemEventDTO.getRelatedObject();
+            BriefTriggerDTO triggerDTO = null;
+            for(BriefTriggerDTO btd : triggerDTOS) {
+                if(problemEventDTO.getObjectId().equals(btd.getTriggerId())) {
+                    triggerDTO = btd;
+                }
+            }
+            if(triggerDTO == null) {
+                return null;
+            }
             //用于判断告警状态
             List<BriefAlertDTO> alertDTOS = new ArrayList<>();
             //开始赋值

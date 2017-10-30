@@ -83,7 +83,7 @@ public class EventServiceImpl implements EventService {
                 .setEventIds(eventIds)
                 .setSelectAcknowledges(BriefAcknowledgeDTO.PROPERTY_NAMES)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
-                .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                //.setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
                 .setSelectAlerts(BriefAlertDTO.PROPERTY_NAMES)
                 .setOutput(BriefEventDTO.PROPERTY_NAMES);
         return listEvent(eventGetRequest);
@@ -195,7 +195,7 @@ public class EventServiceImpl implements EventService {
         //获取 恢复事件集合
         List<BriefEventDTO> recoveryEventDTOS = getEventByEventId(recoveryEventIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
-        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS);
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS,triggerDTOS);
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }
@@ -597,7 +597,7 @@ public class EventServiceImpl implements EventService {
         //获取 恢复事件集合
         List<BriefEventDTO> recoveryEventDTOS = getEventByEventId(recoveryEventIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
-        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(resultEventDTOS,recoveryEventDTOS);
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(resultEventDTOS,recoveryEventDTOS,triggerDTOS);
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }

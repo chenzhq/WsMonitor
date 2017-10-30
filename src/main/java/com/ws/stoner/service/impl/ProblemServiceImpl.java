@@ -110,7 +110,7 @@ public class ProblemServiceImpl implements ProblemService {
         String endTime = String.valueOf(System.currentTimeMillis() / 1000 );
         List<BriefEventDTO> recoveryEventDTOS = eventService.getRecoveryEventsByTime(beginTime, endTime,triggerIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
-        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(eventDTOS,recoveryEventDTOS);
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(eventDTOS,recoveryEventDTOS,triggerDTOS);
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }
