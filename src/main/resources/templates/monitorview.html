@@ -223,8 +223,7 @@
                                 <i class="dropdown icon"></i>
                                 <div class="text">状态统计</div>
                                 <div class="menu" id="viewtype_menu">
-                                    <div class="disabled item" data-value="host">状态统计</div>
-                                    <div class="item" data-value="all">问题视图</div>
+
                                 </div>
                             </div>
                             <div id="viewpage_select" class="ui selection dropdown">
@@ -246,7 +245,7 @@
                     </div>
 
                     <div class="ui segment" id="statepie" style=" min-height : 470px;"  data-type="statepie">
-                        <h3>状态统计</h3>
+                        <!--<h3>状态统计</h3>-->
                         <div class="ui grid">
                             <div class="eight wide column">
                                 <div id="host_pie" style="height: 400px">
@@ -259,12 +258,12 @@
                         </div>
                     </div>
                     <div class="ui segment" id="problems" style=" min-height : 470px;">
-                        <h3>问题视图</h3>
+                        <!--<h3>问题视图</h3>-->
                         <table  id="problemsTable" class="ui compact basic table center aligned " width="100%">
                         </table>
                     </div>
                     <div class="ui segment" id="appletree" style=" min-height : 470px;">
-                        <h3>苹果树</h3>
+                        <!--<h3>苹果树</h3>-->
                     </div>
                 </div>
                 <!--Site Content-->
@@ -305,20 +304,22 @@
             </div>
         </div>
          <!--删除页面弹出框 start-->
-        <div th:fragment="delete_page" class="ui tiny modal"  id="deleteModal">
-            <div class="ui icon header">
-                <i class="trash icon"></i>
-                确定删除吗？
+        <div th:fragment="delete_page" >
+            <div  class="ui tiny modal"  id="deleteModal">
+                <div class="ui icon header">
+                    <i class="trash icon"></i>
+                    确定删除吗？
+                </div>
+                <div class="actions">
+                    <div class="ui cancel button">取消</div>
+                    <div class="ui approve submit red button" data-tooltip="该操作无法恢复！">确认</div>
+                </div>
             </div>
-            <div class="actions">
-                <div class="ui cancel button">取消</div>
-                <div class="ui approve submit red button" data-tooltip="该操作无法恢复！">确认</div>
-            </div>
-        </div>
-        <div class="ui mini modal"  id="backDeleteModal">
-            <div class="ui icon header" id="deleteMsg">
-                <i class="green trash icon"></i>
-                删除成功
+            <div class="ui mini modal"  id="backDeleteModal">
+                <div class="ui icon header" id="deleteMsg">
+                    <i class="green trash icon"></i>
+                    删除成功
+                </div>
             </div>
         </div>
     </div>
@@ -400,7 +401,7 @@
                     }
                 ]
             };
-            host_myChart.setOption(host_option);
+            //host_myChart.setOption(host_option);
             //监控点pie
             var point_myChart = echarts.init(document.getElementById('point_pie'));
             var point_option = {
@@ -464,7 +465,7 @@
                     }
                 ]
             }
-            point_myChart.setOption(point_option);
+            ///point_myChart.setOption(point_option);
 
             //定义问题列表
             var problems_Table = $("#problemsTable").DataTable({
@@ -580,17 +581,19 @@
                 var name=$("#viewpage_select").dropdown("get text");
                 $("#deleteModal").modal({
                     onApprove: function () {
-                        if (name == "默认页面") {
+                        if($('#viewpage_menu').children('.item').length > 1) {
+                            deletepage(name, type);
+                        }else {
+
                             $("#backDeleteModal").modal({
                                 inverted: true,
                                 onShow:function () {
-                                    $('#deleteMsg').html("<i class='red trash icon'></i>默认页面不能删除！")
+                                    $('#deleteMsg').html("<i class='red trash icon'></i>最后一个页面不能删除！")
                                 }
                             }).modal('show');
-                            setTimeout("$('#backDeleteModal').modal('hide');",800)
-                        } else {
-                            deletepage(name, type);
+                            setTimeout("$('#backDeleteModal').modal('hide');",2000)
                         }
+
                     }
                 }).modal('setting', 'closable', false).modal('show');
             });
@@ -629,7 +632,10 @@
                             success: function (result) {
                                 if(result.success) {
                                     var problems = result.data;
-                                    problems_Table.clear().rows.add(problems).draw();
+                                    if(problems.length !== 0) {
+                                        problems_Table.clear().rows.add(problems).draw();
+                                    }
+
                                 }
                                 else {
                                     errorMsg_no_data(result.message);
@@ -716,15 +722,7 @@
                     success: function (result) {
                         if(result.success) {
                             var data=result.data;
-                            if(data.length !== 0) {
-                                getselectViewpage(data);
-
-                            }else {
-                                $("#viewpage_select").dropdown("clear");
-                                $("#viewpage_menu").html('');
-                                $('#viewtype_select').removeClass('loading disabled');
-                                $('#viewpage_select').removeClass('loading disabled');
-                            }
+                            getselectViewpage(data);
                         }
                         else {
                             errorMsg_no_data(result.message);
@@ -828,8 +826,7 @@
                                     });
                                 }
                                 else if(type=="problems"){
-//                                        //$("#viewpage_select").dropdown('set text', name);
-//                                        problems_Table.ajax.url('/view/add_problems?hostIds='+hostIds+'&maxNum'+maxNum+'&name='+name+'&type='+type).load();
+//
                                     var send_data = {
                                         hostIds:hostIds,
                                         name:name,
@@ -845,6 +842,8 @@
                                             if(result.success) {
                                                 var data=result.data;
                                                 problems_Table.clear().rows.add(data).draw();
+                                                selectViewpage(type);
+                                                $("#viewpage_select").dropdown('set text', name);
                                             }
                                             else {
                                                 errorMsg_no_data(result.message);
@@ -1005,9 +1004,13 @@
                     success: function (result) {
                         if (result.success) {
                             $("#backDeleteModal").modal({
-                                inverted: true
+                                inverted: true,
+                                onShow:function () {
+                                    $('#deleteMsg').html(' <i class="green trash icon"></i>删除成功');
+                                }
                             }).modal('show');
-                            setTimeout("$('#backDeleteModal').modal('hide');selectViewpage(type);",800)
+                            setTimeout("$('#backDeleteModal').modal('hide');selectViewpage(type);",2000);
+
                         }
                         else {
                             errorMsg_no_data(result.message);
