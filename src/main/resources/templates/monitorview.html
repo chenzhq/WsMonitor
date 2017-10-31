@@ -581,7 +581,6 @@
                 var name=$("#viewpage_select").dropdown("get text");
                 $("#deleteModal").modal({
                     onApprove: function () {
-                        console.log($('#viewpage_menu').children('.item'));
                         if($('#viewpage_menu').children('.item').length > 1) {
                             deletepage(name, type);
                         }else {
