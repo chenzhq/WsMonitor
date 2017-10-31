@@ -1104,6 +1104,7 @@ z                    </div>
                                     if(result.success) {
                                         var data=result.data;
                                         getSelectPage($('#viewgroup_select').dropdown('get value'));
+
                                         $('#viewpage_select').dropdown('set value',send_data.newPageName);
                                         $('#viewpage_select').dropdown('set text',send_data.newPageName);
                                     }
@@ -1127,28 +1128,46 @@ z                    </div>
                 $('#deleteModal').modal({
                     closable: false,
                     onApprove: function () {
-                        //ajax,根据page_name删除此页面绘制展示区，刷新展示页下拉框，注意添加删除的刷新效果
-                        $.ajax({
-                            type: 'get',
-                            url: '/carousel/delete_page?group_name=' + group_name + '&page_name=' + page_name,
-                            dataType: 'json',
-                            success: function (result) {
-                                if(result.success) {
-                                    /*无效
-                                     $("#backDeleteModal").modal({
-                                     inverted: true
-                                     }).modal('show');
-                                     setTimeout("$('#backDeleteModal').modal('hide');",800)*/
-                                    getSelectPage($('#viewgroup_select').dropdown('get value'));
+
+                        console.log($('#viewpage_menu').children('.item').length);
+                        if($('#viewpage_menu').children('.item').length > 1) {
+                            //ajax,根据page_name删除此页面绘制展示区，刷新展示页下拉框，注意添加删除的刷新效果
+                            $.ajax({
+                                type: 'get',
+                                url: '/carousel/delete_page?group_name=' + group_name + '&page_name=' + page_name,
+                                dataType: 'json',
+                                success: function (result) {
+                                    if(result.success) {
+                                         $("#backDeleteModal").modal({
+                                         inverted: true,
+                                             onShow:function () {
+                                                 $('#deleteMsg').html(' <i class="green trash icon"></i>删除成功');
+                                             }
+                                         }).modal('show');
+                                         setTimeout("$('#backDeleteModal').modal('hide');",2000)
+                                        getSelectPage($('#viewgroup_select').dropdown('get value'));
+                                    }
+                                    else {
+                                        errorMsg_no_data(result.message);
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("展示页下拉框 Dropdown");
                                 }
-                                else {
-                                    errorMsg_no_data(result.message);
+                            })
+                        }else {
+                            console.log('不能删除');
+
+                            $("#backDeleteModal").modal({
+                                inverted: true,
+                                onShow:function () {
+                                    $('#deleteMsg').html("<i class='red trash icon'></i>最后一个页面不能删除！");
                                 }
-                            },
-                            error: function () {
-                                errorMsg_no_connect("展示页下拉框 Dropdown");
-                            }
-                        })
+                            }).modal('show');
+                            setTimeout("$('#backDeleteModal').modal('hide');",2000)
+
+                        }
+
 
                     }
                 }).modal('setting', 'closable', false).modal('show');
