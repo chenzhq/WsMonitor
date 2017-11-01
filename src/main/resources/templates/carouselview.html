@@ -1123,12 +1123,14 @@ z                    </div>
 
             //删除弹出框
             $('#deletepage_button').on('click',function(){
-                var group_name = $('#viewgroup_select').dropdown('get value');
-                var page_name = $('#viewpage_select').dropdown('get value');
-                $('#deleteModal').modal({
-                    closable: false,
-                    onApprove: function () {
-                        if($('#viewpage_menu').children('.item').length > 1) {
+
+                if($('#viewpage_menu').children('.item').length > 1) {
+
+                    var group_name = $('#viewgroup_select').dropdown('get value');
+                    var page_name = $('#viewpage_select').dropdown('get value');
+                    $('#deleteModal').modal({
+                        closable: false,
+                        onApprove: function () {
                             //ajax,根据page_name删除此页面绘制展示区，刷新展示页下拉框，注意添加删除的刷新效果
                             $.ajax({
                                 type: 'get',
@@ -1136,13 +1138,13 @@ z                    </div>
                                 dataType: 'json',
                                 success: function (result) {
                                     if(result.success) {
-                                         $("#backDeleteModal").modal({
-                                         inverted: true,
-                                             onShow:function () {
-                                                 $('#deleteMsg').html(' <i class="green trash icon"></i>删除成功');
-                                             }
-                                         }).modal('show');
-                                         setTimeout("$('#backDeleteModal').modal('hide');",2000)
+                                        $("#backDeleteModal").modal({
+                                            inverted: true,
+                                            onShow:function () {
+                                                $('#deleteMsg').html(' <i class="green trash icon"></i>删除成功');
+                                            }
+                                        }).modal('show');
+                                        setTimeout("$('#backDeleteModal').modal('hide');",2000)
                                         getSelectPage($('#viewgroup_select').dropdown('get value'));
                                     }
                                     else {
@@ -1153,21 +1155,19 @@ z                    </div>
                                     errorMsg_no_connect("展示页下拉框 Dropdown");
                                 }
                             })
-                        }else {
-
-                            $("#backDeleteModal").modal({
-                                inverted: true,
-                                onShow:function () {
-                                    $('#deleteMsg').html("<i class='red trash icon'></i>最后一个页面不能删除！");
-                                }
-                            }).modal('show');
-                            setTimeout("$('#backDeleteModal').modal('hide');",2000)
-
                         }
+                    }).modal('setting', 'closable', false).modal('show');
 
+                }else {
+                    $("#backDeleteModal").modal({
+                        inverted: true,
+                        onShow:function () {
+                            $('#deleteMsg').html("<i class='red trash icon'></i>最后一个页面不能删除！");
+                        }
+                    }).modal('show');
+                    setTimeout("$('#backDeleteModal').modal('hide');",2000)
+                }
 
-                    }
-                }).modal('setting', 'closable', false).modal('show');
             });
 
             //编辑弹出框

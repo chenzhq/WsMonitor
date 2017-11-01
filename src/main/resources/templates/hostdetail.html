@@ -949,6 +949,7 @@
 
             $('#graphConfModal').modal({
                 closable: false,
+                autofocus: false,
 				onShow:function() {
 
                     //初始化 清除样式
@@ -982,6 +983,7 @@
                     $('.dropdown.points').dropdown({
 						onChange: function (value, text, $selectedItem) {
 							point_id = value;
+							$('#graphPoints').find('.text').text(text.substr(0,25));
 							//point 校验
 							if (point_id === '') {
 								$('#graphPoints').addClass('error');
@@ -999,6 +1001,7 @@
 
                     $('.dropdown.items').dropdown({
 						onChange: function (value, text, $selectedItem) {
+                            $('#graphItems').find('.text').text(text.substr(0,25));
 							item_id = value.split("_")[1];
 							//item 校验
 							if (item_id === '') {

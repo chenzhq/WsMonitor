@@ -632,9 +632,13 @@
             },
 
             {
-                "data": "availability",
+                "data": null,
                 "width": "100px",
-                "title": "健康度"
+                "title": "健康度",
+                render: function (data, type, row) {
+                    var health = row.availability;
+                    return parseInt(health);
+                }
             },
             {
                 "data": "highNum",
