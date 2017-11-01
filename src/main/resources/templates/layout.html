@@ -28,10 +28,13 @@
 		</a>
 		<div class="ui accordion inverted">
             <a class="item" href="#" th:href="@{/dashboard}">
-                <i class="ion-speedometer titleIcon icon"></i> <span class="colhidden">仪表盘</span>
+                <i class="dashboard titleIcon icon"></i>
+				<span class="colhidden">仪表盘</span>
             </a>
 			<div class="title item" href="#">
-				<i class="ion-ios-world titleIcon  icon"></i>业务监控<i class="dropdown icon"></i>
+				<i class="anchor titleIcon icon"></i>
+				<!--<img src="../static/images/platform.png" th:src="@{images/platform.png}"/>-->
+				业务监控<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/platformlist}">业务列表</a>
@@ -39,21 +42,27 @@
 				<a class="item" href="#" th:href="@{/platformdetail}">业务详情</a>
 			</div>
 			<div class="title item">
-				<i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
+				<i class="server titleIcon icon"></i>
+				<!--<img src="../static/images/device.png" th:src="@{images/device.png}"/>-->
+				设备监控<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/overview}">设备总览</a>
                 <a class="item" href="#">设备详情</a>
 			</div>
 			<div class="title item" href="#">
-				<i class="ion-arrow-graph-up-right titleIcon icon"></i >视图展示<i class="dropdown icon"></i>
+				<i class="area chart titleIcon icon"></i >
+				<!--<img src="../static/images/view.png" th:src="@{images/view.png}"/>-->
+				视图展示<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/view}">监控视图</a>
 				<a class="item" href="#" th:href="@{/carousel}" >轮播视图</a>
 			</div>
 			<div class="title item">
-				<i class="ion-paintbrush titleIcon icon"></i>问题管理<i class="dropdown icon"></i>
+				<i class="alarm titleIcon icon"></i>
+				<!--<img src="../static/images/alarm.png" th:src="@{images/alarm.png}"/>-->
+				问题管理<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
@@ -66,7 +75,7 @@
 
 		<div class="ui dropdown item displaynone scrolling">
             <span>仪表盘</span>
-            <i class="ion-speedometer icon"></i>
+            <i class="dashboard icon"></i>
 			<div class="menu">
                 <a class="item" href="#" th:href="@{/dashboard}">仪表盘</a>
 			</div>
@@ -74,7 +83,7 @@
 
 		<div class="ui dropdown item displaynone scrolling">
 			<span>业务概览</span>
-			<i class="ion-ios-world icon"></i>
+			<i class="anchor icon"></i>
 			<div class="menu">
 				<div class="header">
 					业务概览
@@ -88,7 +97,7 @@
 
 		<div class="ui dropdown item displaynone scrolling">
 			<span>设备监控</span>
-			<i class="ion-mouse icon"></i>
+			<i class="server icon"></i>
 			<div class="menu">
 				<div class="header">
 					设备监控
@@ -101,7 +110,7 @@
 
 		<div class="ui dropdown item displaynone scrolling">
 			<span>视图展示</span>
-			<i class="ion-arrow-graph-up-right icon"></i>
+			<i class="area chart icon"></i>
 			<div class="menu">
 				<div class="header">视图展示</div>
 				<div class="ui divider"></div>
@@ -112,7 +121,7 @@
 
 		<div class="ui dropdown item displaynone scrolling">
             <span>问题管理</span>
-			<i class="ion-paintbrush icon"></i>
+			<i class="alarm icon"></i>
 			<div class="menu">
 				<div class="header">问题管理</div>
 				<div class="ui divider"></div>
