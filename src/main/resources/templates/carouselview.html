@@ -271,7 +271,7 @@
                     </div>
                     <div class="ui segment" style=" min-height : 520px;" id="content">
                         <div class="ui grid">
-                            <div class="sixteen wide column" style="padding-top: 0px">
+                            <div id="gri_area" class="sixteen wide column" style="padding-top: 0px">
                                 <div class="gridster">
                                     <ul>
 
@@ -1254,6 +1254,8 @@ z                    </div>
                 var layoutDataList = [];
                 var configDataList = [];
                 var layout_json = gridster.serialize();
+
+                console.log('layout',layout_json);
 
                 $.each(layout_json,function(i,value){
                     layoutDataList.push({
