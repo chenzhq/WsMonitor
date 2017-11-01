@@ -577,25 +577,29 @@
 
             //删除页面弹出框
             $("button.deletepage").on("click",function(){
-                var type=$("#viewtype_select").dropdown("get value");
-                var name=$("#viewpage_select").dropdown("get text");
-                $("#deleteModal").modal({
-                    onApprove: function () {
-                        if($('#viewpage_menu').children('.item').length > 1) {
+
+                if($('#viewpage_menu').children('.item').length > 1) {
+
+                    var type=$("#viewtype_select").dropdown("get value");
+                    var name=$("#viewpage_select").dropdown("get text");
+                    $("#deleteModal").modal({
+                        onApprove: function () {
+
                             deletepage(name, type);
-                        }else {
 
-                            $("#backDeleteModal").modal({
-                                inverted: true,
-                                onShow:function () {
-                                    $('#deleteMsg').html("<i class='red trash icon'></i>最后一个页面不能删除！")
-                                }
-                            }).modal('show');
-                            setTimeout("$('#backDeleteModal').modal('hide');",2000)
                         }
+                    }).modal('setting', 'closable', false).modal('show');
 
-                    }
-                }).modal('setting', 'closable', false).modal('show');
+                }else {
+                    $("#backDeleteModal").modal({
+                        inverted: true,
+                        onShow:function () {
+                            $('#deleteMsg').html("<i class='red trash icon'></i>最后一个页面不能删除！")
+                        }
+                    }).modal('show');
+                    setTimeout("$('#backDeleteModal').modal('hide');",2000)
+                }
+
             });
 
             function drawPage(type,name) {

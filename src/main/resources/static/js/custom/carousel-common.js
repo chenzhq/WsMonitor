@@ -202,10 +202,15 @@ var graph_resize = [];
 
 //绘制页面 轮播配置使用
 function drawPage($_gridster,page_vo) {
+
+    var w = document.getElementById('gri_area').clientWidth;
+    console.log('w',(w - 100) / 40);
+    var _widget = parseInt((w - 100) / 40);
+
     gridster = $_gridster.gridster({
         //widget_selector: 'li',
         widget_margins: [5, 5],                       //margin大小
-        widget_base_dimensions: [25, 25],             //网格粒度
+        widget_base_dimensions: [_widget, _widget],             //网格粒度
         avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
         max_cols: 50,                             //最多创建多少列，null表示没有限制
         max_rows: 50,                             //最多创建多少横，null表示没有限制

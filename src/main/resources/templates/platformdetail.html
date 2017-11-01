@@ -1226,6 +1226,7 @@
 
                 $('.small.modal').modal({
                     closable  : false,
+                    autofocus: false,
 					onShow: function() {
 
                         //初始化 清除样式
@@ -1262,6 +1263,7 @@
 
                         $('.dropdown.points').dropdown({
                             onChange: function(value, text, $selectedItem) {
+                                $('#graphPoints').find('.text').text(text.substr(0,25));
                                 point_id = value;
                                 //point 校验
                                 if (point_id === '') {
@@ -1280,6 +1282,7 @@
 
                         $('.dropdown.items').dropdown({
                             onChange: function(value, text, $selectedItem) {
+                                $('#graphItems').find('.text').text(text.substr(0,25));
                                 item_id = value.split("_")[1];
                                 //console.log('item_id',item_id);
                                 //item 校验

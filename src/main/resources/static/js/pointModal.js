@@ -99,6 +99,10 @@ function getItemsDetail(point_id) {
                         tableData.clear();
                     }
 
+                    $('#itemdata_select').dropdown({
+
+                    });
+
                     dropdownitemsTab(point_id,tableData);
 
 
@@ -377,7 +381,7 @@ function dropdownitemsTab(point_id,tableData){
                     }
                     $("#itemdata_menu").html(str);
                     $("#itemdata_select").dropdown('set value',data[0].item_id);
-                    $("#itemdata_select").dropdown('set text',data[0].item_name);
+                    $("#itemdata_select").dropdown('set text',data[0].item_name.substr(0,25));
                 }else {
                     $("#itemdata_menu").html(str);
                     $("#itemdata_select").dropdown('clear');
@@ -385,8 +389,7 @@ function dropdownitemsTab(point_id,tableData){
                 }
                 //绑定item下拉框 onchange 事件
                 $('#itemdata_select').dropdown({
-                    /*useLabels: false,*/
-                    placeholder:'请选择监控项',
+
                     onChange: function(value, text, $selectedItem) {
                         var time_value = $('.Time.Data').find('.active').val();
                         $('#data-dimmer').addClass('active');
@@ -401,6 +404,8 @@ function dropdownitemsTab(point_id,tableData){
                                     if (result.success) {
                                         tableData.clear().rows.add(result.data).draw()
                                         $('#data-dimmer').removeClass('active');
+                                        $("#itemdata_select").dropdown('set text',text.substr(0,25));
+
                                     } else {
 
                                     }

@@ -208,10 +208,10 @@
 				<!--Site Content-->
 				<div class="sixteen wide column">
 					<div class="header item">
-						<h2><i class="bar large chart icon"></i>业务列表</h2>
+						<h2><i class="bar large chart icon"></i>业务方块</h2>
 					</div>
 					<div class="ui three column grid block_row1" >
-						<div class="column">
+						<!--<div class="column">
 							<div class="ui segment">
 								<div class="ui green borderless fluid inverted two item menu">
 									<a class="fitted item">
@@ -227,17 +227,12 @@
 								</div>
 								<div id="platformBar" style="height:150px;"></div>
 							</div>
-						</div>
-						<div class="column">
-							<div class="ui segment" style="height:222px;">
-								图二
-							</div>
-						</div>
-						<div class="column">
-							<div class="ui segment" style="height:222px;">
-								图三
-							</div>
-						</div>
+						</div>-->
+
+					</div>
+					<!-- 查询读条 -->
+					<div id="block-dimmer" class="ui inverted dimmer active">
+						<div class="ui text loader" style="text-align:center">正在加载</div>
 					</div>
 				</div>
 				<!--Site Content-->
@@ -277,7 +272,7 @@
 									"<div class='column'> " +
 									  "<div class='ui segment'> " +
                                    		 " <div class='ui  borderless fluid two item menu'> " +
-                                    		"<a class='active fitted item'> " + blocks[i].platform_name + "  </a> " +
+                                    		"<a class='active fitted item' id='detail_" + blocks[i].platform_id + "' href='/platformdetail#"+ blocks[i].platform_id + '_' + blocks[i].platform_name  +"'> " + blocks[i].platform_name + "  </a> " +
                                     		" <div class='active red fitted item'> " +
                                    			    " <div class='ui active fluid indicating progress' data-percent='" + blocks[i].health + "' data-total='100' id='health_" + blocks[i].platform_id + "' style='width:160px;margin-bottom: 0px;padding-bottom: 0px'> " +
 													" <div class='bar'> " +
@@ -290,6 +285,7 @@
                                       "</div> " +
 									" </div> " ;
 								$(".ui.three.column.grid").append(block_str);
+
 								//绘制健康度进度条
                                 $("#health_"+ blocks[i].platform_id ).progress({
                                     label: 'ratio',
@@ -365,6 +361,7 @@
                                 myChart.setOption(option);
 
 							}
+							$('#block-dimmer').removeClass('active');
 
                         }
                         else {
