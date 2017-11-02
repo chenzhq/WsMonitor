@@ -302,12 +302,12 @@
                 <div th:fragment="carousel_block" class="ui grid" display="none" id="block_temp">
                     <div
                             class="eight wide column no-padding"
-                            style="float: left;width: 70%;height:20px">
+                            style="float: left;width: 60%;height:20px">
                         <h3 class="block_title"></h3>
                     </div>
                     <div
                             class="eight wide column right aligned no-padding block_edit"
-                            style="float: right;width: 30%;height:20px;line-height:20px">
+                            style="float: right;width: 40%;height:20px;line-height:20px">
 
                     </div>
                     <div class="sixteen wide column no-padding block_content" style="width: 100%;height: 80%;margin-top: 25px" >
@@ -600,6 +600,51 @@ z                    </div>
         <script src="../static/js/custom-editable.js" th:src="@{js/custom-editable.js}"></script>
         <script  type="text/javascript">
 
+            //定义 gridster 全局变量
+            var gridster;
+            var w = document.getElementById('gri_area').clientWidth;
+
+            var _widget = parseInt((w - 170) / 40);
+            console.log('w',_widget);
+            var gri_opt = {
+                //widget_selector: 'li',
+                widget_margins: [5, 5],                       //margin大小
+                widget_base_dimensions: [_widget, _widget],             //网格粒度
+                avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+                max_cols: 40,                             //最多创建多少列，null表示没有限制
+                max_rows: 40,                             //最多创建多少横，null表示没有限制
+                min_cols: 1,                                //至少创建多少列
+                min_rows: 1,                               //至少创建多少横
+                //max_size_x: true,
+                max_size_x:40,
+                resize: {
+                    enabled: true,
+                    max_size:[40,40],
+                    start: function(e, ui, $widget) {
+
+                    },
+                    resize: function(e, ui, $widget) {
+
+                        /*console.log('$widget',$widget.attr('data-row')+ ' ' + $widget.attr('data-col')+ ' ' + $widget.attr('data-sizex')+ ' ' +$widget.attr('data-sizey'));*/
+
+                    },
+                    stop: function(e, ui, $widget) {
+
+                        // 自适应
+                        var chart_id = $widget.find('.block_content').children().eq(0).attr('id');
+                        if('graph' === chart_id.split('_')[0]) {
+
+                            $(window).trigger("resize");
+
+                        }else if('problems' === chart_id.split('_')[0]) {
+
+
+                        }
+
+                    }
+                },
+
+            }
 
             //初始化组下拉框
             getSelectGroup();
@@ -1189,8 +1234,11 @@ z                    </div>
 
                     $('#editpage_button').html('<i class="edit icon"></i>编辑');
 
+                    //gri_opt.resize.enabled = false;
+
                     drawPage($('.gridster > ul'),stat_page_vo);
-                    //getPage($('#viewgroup_select').dropdown('get value'),$('#viewpage_select').dropdown('get value'))
+
+                    //gridster.resizable();
 
                     $('#viewgroup_select').removeClass('disabled');
                     $('#viewpage_select').removeClass('disabled');
@@ -1213,10 +1261,16 @@ z                    </div>
 
                     $('#editpage_button').html('<i class="delete icon"></i>取消');
 
+                    //gri_opt.resize.enabled = true;
+
                     drawPage($('.gridster > ul'),page_vo);
+
+                    //gridster.resizable();
 
                     // 给所有块 添加 编辑按钮
                     addBlockiCons($('.gridster > ul').children('li'));
+
+                    console.log('edit gridster',gridster);
 
                     gridster.enable();
 
@@ -1307,7 +1361,11 @@ z                    </div>
                             page_vo = result.data;
                             stat_page_vo = result.data;
 
+                            //gri_opt.resize.enabled = false;
+
                             drawPage($('.gridster > ul'),page_vo);
+
+                            //gridster.disable_resize();
                             $('#table-dimmer').removeClass('active');
 
                         } else {
@@ -1370,7 +1428,11 @@ z                    </div>
                             page_vo = result.data;
                             stat_page_vo = result.data;
                             //console.log('page_vo',page_vo);
+
+                            //gri_opt.resize.enabled = false;
                             drawPage($('.gridster > ul'),page_vo);
+
+                            gridster.resizable();
                             $('#table-dimmer').removeClass('active');
                         }
                         else {
