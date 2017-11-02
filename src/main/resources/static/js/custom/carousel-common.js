@@ -194,58 +194,15 @@ $.fn.carProTable = function () {
     return problemTable;
 
 }
-
-//定义 gridster 全局变量
-var gridster;
 //用于设置自适应的展示项
 var graph_resize = [];
 
 //绘制页面 轮播配置使用
 function drawPage($_gridster,page_vo) {
 
-    var w = document.getElementById('gri_area').clientWidth;
-
-    var _widget = parseInt((w - 170) / 40);
-    console.log('w',_widget);
-
-    gridster = $_gridster.gridster({
-        //widget_selector: 'li',
-        widget_margins: [5, 5],                       //margin大小
-        widget_base_dimensions: [_widget, _widget],             //网格粒度
-        avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
-        max_cols: 40,                             //最多创建多少列，null表示没有限制
-        max_rows: 40,                             //最多创建多少横，null表示没有限制
-        min_cols: 1,                                //至少创建多少列
-        min_rows: 1,                               //至少创建多少横
-        //max_size_x: true,
-        max_size_x:40,
-        resize: {
-            enabled: true,
-            max_size:[40,40],
-            start: function(e, ui, $widget) {
-
-            },
-            resize: function(e, ui, $widget) {
-
-            },
-            stop: function(e, ui, $widget) {
-
-                // 自适应
-                var chart_id = $widget.find('.block_content').children().eq(0).attr('id');
-                if('graph' === chart_id.split('_')[0]) {
-
-                    $(window).trigger("resize");
-
-                }else if('problems' === chart_id.split('_')[0]) {
-
-
-                }
-
-            }
-        },
-
-    }).data('gridster');
-
+    //console.log('gri_opt',gri_opt);
+    gridster = $_gridster.gridster(gri_opt).data('gridster');
+    //console.log('draw gridster',gridster);
     gridster.disable();
     var layout_arr = page_vo.layout_data;
     var config_arr = page_vo.config_data;
