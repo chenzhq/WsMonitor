@@ -12,7 +12,22 @@
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-
+	<style type="text/css">
+		.icon-symbol {
+			width: 2em; height: 2em;
+			vertical-align: 0;
+			fill: currentColor;
+			overflow: hidden;
+			margin: -1em 0.6em -0.5em 0;
+		}
+		.icon-symbol-scrolling {
+			width: 2em; height: 2em;
+			vertical-align: 0;
+			fill: currentColor;
+			overflow: hidden;
+			margin: -1em 0 -0.5em 0;
+		}
+	</style>
 	<th:block th:replace="${links}"></th:block>
 </head>
 <body>
@@ -32,8 +47,9 @@
 				<span class="colhidden">仪表盘</span>
             </a>
 			<div class="title item" href="#">
-				<i class="anchor titleIcon icon"></i>
-				<!--<img src="../static/images/platform.png" th:src="@{images/platform.png}"/>-->
+				<svg class="icon-symbol" aria-hidden="true">
+					<use xlink:href="#icon-yewupingtaijiankong"></use>
+				</svg>
 				业务监控<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
@@ -43,7 +59,6 @@
 			</div>
 			<div class="title item">
 				<i class="server titleIcon icon"></i>
-				<!--<img src="../static/images/device.png" th:src="@{images/device.png}"/>-->
 				设备监控<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
@@ -51,8 +66,9 @@
                 <a class="item" href="#">设备详情</a>
 			</div>
 			<div class="title item" href="#">
-				<i class="area chart titleIcon icon"></i >
-				<!--<img src="../static/images/view.png" th:src="@{images/view.png}"/>-->
+				<svg class="icon-symbol" aria-hidden="true">
+					<use xlink:href="#icon-ic_view_carousel_px"></use>
+				</svg>
 				视图展示<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
@@ -61,12 +77,10 @@
 			</div>
 			<div class="title item">
 				<i class="alarm titleIcon icon"></i>
-				<!--<img src="../static/images/alarm.png" th:src="@{images/alarm.png}"/>-->
 				问题管理<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
-				<!--<a class="item" href="#" th:href="@{/problemlist}">问题详情</a>-->
 				<a class="item" href="#" th:href="@{/calendar}">告警日历</a>
 			</div>
 			<div class="content">
@@ -83,7 +97,9 @@
 
 		<div class="ui dropdown item displaynone scrolling">
 			<span>业务概览</span>
-			<i class="anchor icon"></i>
+			<svg class="icon-symbol-scrolling" aria-hidden="true">
+				<use xlink:href="#icon-yewupingtaijiankong"></use>
+			</svg>
 			<div class="menu">
 				<div class="header">
 					业务概览
@@ -110,7 +126,9 @@
 
 		<div class="ui dropdown item displaynone scrolling">
 			<span>视图展示</span>
-			<i class="area chart icon"></i>
+			<svg class="icon-symbol-scrolling" aria-hidden="true">
+				<use xlink:href="#icon-ic_view_carousel_px"></use>
+			</svg>
 			<div class="menu">
 				<div class="header">视图展示</div>
 				<div class="ui divider"></div>
@@ -126,7 +144,6 @@
 				<div class="header">问题管理</div>
 				<div class="ui divider"></div>
                 <a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
-                <!--<a class="item" href="#" th:href="@{/problemlist}">问题详情</a>-->
                 <a class="item" href="#" th:href="@{/calendar}">告警日历</a>
 			</div>
 		</div>
@@ -213,7 +230,7 @@
 	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
 	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
-
+	<script src="../iconfont.js" th:src="@{js/iconfont.js}"></script>
     <th:block th:replace="${scripts}"></th:block>
 </th:block>
 </body>

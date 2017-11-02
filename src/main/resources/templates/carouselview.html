@@ -27,6 +27,7 @@
         <link href="../static/css/jsgrid-theme.css" rel="stylesheet" th:href="@{css/jsgrid-theme.css}"/>
         <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
         <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
+        <script src="../iconfont.js" th:src="@{js/iconfont.js}"></script>
         <style type="text/css">
             /*原生button 有个下外边距*/
             .ui.modal .actions > .button {
@@ -51,6 +52,13 @@
                 width: 100%;
                 overflow:auto;
                 overflow-x:hidden
+            }
+            .icon-symbol {
+                width: 2em; height: 2em;
+                vertical-align: 0;
+                fill: currentColor;
+                overflow: hidden;
+                margin: -1em 0.6em -0.5em 0;
             }
         </style>
     </th:block>
@@ -238,7 +246,11 @@
                 <!--Site Content-->
                 <div class="sixteen wide column">
                     <div class="header item">
-                        <h2><i class="large record icon"></i>轮播视图</h2>
+                        <h2><!--<i class="large record icon"></i>-->
+                            <svg class="icon-symbol" aria-hidden="true">
+                                <use xlink:href="#icon-ic_view_carousel_px"></use>
+                            </svg>
+                            轮播视图</h2>
                     </div>
                     <div class="ui grid">
                         <div class="seven wide column"  style="padding-bottom: 0px">
