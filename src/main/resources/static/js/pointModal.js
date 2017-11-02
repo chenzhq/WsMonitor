@@ -207,39 +207,6 @@ function tabSummary(point_id) {
 //获取监控点详情 图形报告 标签页数据
 function tabReport(point_id,days) {
     $('#chart-dimmer').addClass('active');
-    var areaoption = {
-        title: {
-            text: ""
-        },
-        tooltip: {
-            trigger: 'axis',
-            position: function (pt) {
-                return [pt[0], '10%'];
-            }
-        },
-        legend: {
-            data:[]
-        },
-        grid: {
-            left: '3%',
-            right: '3%',
-            bottom: '0%',
-            top:'5%',
-            containLabel: true
-        },
-        xAxis: {
-            data: {}
-        },
-        yAxis: {
-        },
-        series: [{
-            name: '',
-            type: '',
-            areaStyle: {normal: {}},
-            data: {},
-            color: []
-        }]
-    };
     var option = {
         title: {
             text: ""
@@ -318,30 +285,44 @@ function tabReport(point_id,days) {
                     option.series[0].type = data[i].graph_type;
                     option.series[0].data = data[i].data;
                     option.series[0].color[0] = myColor;
-                    //面积图存
-                    areaoption.xAxis.data = data[i].data_time;
-                    areaoption.series[0].name = data[i].graph_name;
-                    areaoption.series[0].type = data[i].graph_type;
-                    areaoption.series[0].data = data[i].data;
-                    areaoption.series[0].color[0] = myColor;
                     echarts.init(document.getElementById(id)).setOption(option);
                 }
-                $('.ui.buttons.Type.Report .button').on('click', function() {
 
-                    $('.buttons.Type.Report .button').removeClass('active');
+                $('#typeReport').find('.button').on('click', function() {
+
+                    var type = this.value;
+
+                    $('#typeReport').find('.button').removeClass('active');
                     $(this).addClass('active');
-                    option.series[0].type = this.value;
-                    if (this.value == "area")
-                    {
-                        $("div#chartReport .chart-style").each(function(){
-                            echarts.init(document.getElementById(this.id)).setOption(areaoption);
+
+                    if(type === 'area') {
+                        $('#chartReport').find('.chart-style').each(function(i,value){
+
+                            var graph_chart = echarts.init(document.getElementById(this.id));
+                            var _option = graph_chart.getOption();
+
+                            _option.series[0].areaStyle = {normal: {}};
+                            _option.series[0].type = 'line';
+                            graph_chart.setOption(_option);
+
+
                         })
                     }else {
-                        option.series[0].areaStyle = "";
-                        $("div#chartReport .chart-style").each(function(){
-                            echarts.init(document.getElementById(this.id)).setOption(option);
+                        $('#chartReport').find('.chart-style').each(function(i,value){
+
+                            var graph_chart = echarts.init(document.getElementById(this.id));
+                            var _option = graph_chart.getOption();
+                            _option.series[0].areaStyle = '';
+                            _option.series[0].type = type;
+                            graph_chart.setOption(_option);
+
+
                         })
                     }
+
+
+
+
 
                 })
 
