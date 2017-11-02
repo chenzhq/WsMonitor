@@ -87,7 +87,7 @@
 <div id="carousel">
     <div class="section" >
         <!-- data-th- 即 th: -->
-        <div class="slide" th:each="page:${pages}">
+        <div class="slide" th:each="page:${pages}" style="overflow: auto">
             <div class="gridster" th:data-name="${page.pageName}" id="page-"
                  th:attrappend="id=${pageStat.index}">
                 <ul>
@@ -112,8 +112,8 @@
     var h = document.documentElement.clientHeight
         || document.body.clientHeight;
 
-    //粒度 300 为 margin，40 为默认 40 row
-    var widget_size = parseInt((w - 100) / 40);
+    //粒度 100 为 margin，40 为默认 40 row
+    var widget_size = parseInt((w - 170) / 40);
     console.log('widget_size',widget_size);
 
     var grids = [];
@@ -127,6 +127,8 @@
             widget_margins: [5, 5],                       //margin大小
             widget_base_dimensions: [widget_size, widget_size],            //网格
             avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+            max_cols: 40,                             //最多创建多少列，null表示没有限制
+            max_rows: 40,                             //最多创建多少横，null表示没有限制
 
 
         }).data('gridster');
