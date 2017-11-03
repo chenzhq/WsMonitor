@@ -67,6 +67,9 @@
 				white-space: nowrap;/*强制不换行*/
 				width: 10em;/*不允许出现半汉字截断*/
 			}
+			#hostTree  .ui.buttons {
+				margin-bottom: 0px;
+			}
             #hostConfiguration .ui.tab.segment {
                 height: 180px;
                 /*原生tab 有个下边距*/
@@ -312,7 +315,7 @@
 							</div>
 							<span style="display: none" id="host_id" th:text="${hostDetailVO.hostId}">10110</span>
 						</div>
-						<div class="eight wide column right aligned">
+						<div class="eight wide column right aligned" id="hostTree">
 							<div class="ui buttons" th:class="${hostDetailVO.state}=='正常' ? 'ui green buttons' : (${hostDetailVO.state}=='警告' ? 'ui yellow buttons' : 'ui red buttons')  "  >
 								<div class="ui button" th:text="${hostDetailVO.hostName}">保存</div>
 								<div class="ui floating dropdown icon button" id="host_select_dropdown">

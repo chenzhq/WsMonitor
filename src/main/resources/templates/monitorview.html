@@ -26,6 +26,12 @@
             .ui.modal .actions > .button {
                 margin-bottom: 0;
             }
+            /*原生dropdown 边距宽*/
+            .ui.selection.dropdown {
+                padding-top: 0.6em;
+                max-height: 2.4em;
+                min-height: 2.4em
+            }
         </style>
     </th:block>
 </head>
@@ -217,7 +223,7 @@
                     <div class="header item">
                         <h2><i class="large photo icon"></i>监控视图</h2>
                     </div>
-                    <div class="ui grid">
+                    <div class="ui grid" style="padding-top:1rem">
                         <div class="eight wide column"  style="padding-bottom: 0px">
                             <div id="viewtype_select" class="ui selection dropdown">
                                 <i class="dropdown icon"></i>
