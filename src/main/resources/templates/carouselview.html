@@ -357,16 +357,13 @@ z                    </div>
         <div class="ui tiny modal page" id="page_modal">
             <i class="close icon"></i>
             <div class="header">所属【展示组】的页面</div>
-            <div class="ui content  center aligned basic segment">
+            <div class="ui content center aligned basic segment">
                 <form class="ui form">
                     <div class="required inline field " id="page_name_field">
                         <label>名称</label>
                         <input type="text" placeholder="不能为空" id="page_name">
+                        <div class="ui left pointing red basic label" id="item_label" style="float: right;">未修改</div>
                     </div>
-                    <!--<div class="inline field">
-                        <label>描述</label>
-                        <textarea></textarea>
-                    </div>-->
                 </form>
             </div>
             <div class="actions">
@@ -394,7 +391,7 @@ z                    </div>
             </div>
             <div class="ui content  center aligned basic segment no-padding">
                 <form class="ui form">
-                    <div class="required inline field">
+                    <div class="required inline field" id="viewTitle">
                         <label>名&nbsp&nbsp&nbsp&nbsp称</label>
                         <input type="text" id="view_name" placeholder="不能为空" style="width: 168px;">
                     </div>
@@ -435,7 +432,7 @@ z                    </div>
             </div>
             <div class="ui content left aligned basic segment no-padding">
                 <form class="ui form" style="padding-left: 10px;padding-right: 10px">
-                    <div class="required inline field">
+                    <div class="required inline field" id="graphTitle">
                         <label>名&nbsp&nbsp&nbsp&nbsp称</label>
                         <input type="text" id="graph_name" placeholder="不能为空" style="width: 168px;">
                     </div>
@@ -460,7 +457,7 @@ z                    </div>
             </div>
             <div class="actions">
                 <div class="ui cancel button">取消</div>
-                <div class="ui green approve submit button">确认</div>
+                <div class="ui green approve submit button disabled">确认</div>
             </div>
         </div>
         <!--添加展示项添加静态数据弹出框 start-->
@@ -471,7 +468,7 @@ z                    </div>
             </div>
             <div class="ui content  center aligned basic segment no-padding">
                 <form class="ui form">
-                    <div class="required inline field">
+                    <div class="required inline field" id="chartTitle">
                         <label>名&nbsp&nbsp&nbsp&nbsp称</label>
                         <input type="text" id="chart_name" placeholder="不能为空" style="width: 168px;">
                     </div>
@@ -527,7 +524,7 @@ z                    </div>
             <div class="ui content  center aligned basic segment no-padding">
                 <form class="ui form">
                     <div class="required inline field">
-                        <label>轮播组</label>
+                        <label>轮&nbsp&nbsp播&nbsp&nbsp&nbsp组</label>
                         <div class="ui selection dropdown" id="group_select">
                             <!--<input type="hidden" name="hosts">-->
                             <i class="dropdown icon"></i>
@@ -537,7 +534,7 @@ z                    </div>
                             </div>
                         </div>
                     </div>
-                    <div class="required inline field ">
+                    <div class="required inline field" id="scrollTitle">
                         <label>滚动频率</label>
                         <div class="ui selection dropdown" id="scroll_select">
                             <!--<input type="hidden" name="hosts">-->
@@ -556,7 +553,7 @@ z                    </div>
                             </div>
                         </div>
                     </div>
-                    <div class="required inline field ">
+                    <div class="required inline field" id="refreshTitle">
                         <label>刷新频率</label>
                         <div class="ui selection dropdown" id="refresh_select">
                             <!--<input type="hidden" name="hosts">-->
@@ -699,7 +696,7 @@ z                    </div>
                                 onShow:function(){
                                     //清空表单
                                     $('#view_name').val('');
-
+                                    $('#viewTitle').removeClass('error')
                                     $.ajax({
                                         type: "get",
                                         url: "/viewtype/get_list",
@@ -726,7 +723,7 @@ z                    </div>
                                 onApprove : function() {
                                     var block_name  = $('#view_name').val();
                                     if('' === block_name) {
-                                        alert('展示项名称不能为空');
+                                        $('#viewTitle').addClass('error');
                                         return false;
                                     }
                                     var config_info = {
@@ -780,11 +777,12 @@ z                    </div>
 
                                     //清空表单
                                     $('#graph_name').val('');
+                                    $('#graphTitle').removeClass('error');
                                     //清空选择树 待完成
                                     $('#pointsMenu').html('');
                                     $('#itemsMenu').html('');
                                     $('#typeMenu').html('');
-
+                                    $('#point_graph_modal .approve.submit.button').addClass('disabled');
                                     //获取设备选择树
                                     var host_id ;
                                     var $host_tree = $('#host_tree');
@@ -799,7 +797,7 @@ z                    </div>
                                 onApprove : function() {
                                     var block_name  = $('#graph_name').val();
                                     if('' === block_name) {
-                                        alert('展示项名称不能为空');
+                                        $('#graphTitle').addClass('error');
                                         return false;
                                     }
                                     var config_info = {
@@ -853,6 +851,7 @@ z                    </div>
 
                                     //清空并激活各个组件
                                     $('#chart_name').val('');
+                                    $('#chartTitle').removeClass('error');
                                     $('#charttype_select').removeClass('disabled');
                                     $('#chartname_select').removeClass('disabled');
                                     $('#row_table').attr("disabled",false);
@@ -879,7 +878,7 @@ z                    </div>
                                 onApprove : function() {
                                     var block_name  = $('#chart_name').val();
                                     if('' === block_name) {
-                                        alert('展示项名称不能为空');
+                                        $('#chartTitle').addClass('error');
                                         return false;
                                     }
                                     if($('#charttype_select').dropdown('get value')=='table')
@@ -1049,6 +1048,8 @@ z                    </div>
             $('button.carouselpage').on('click',function(){
                 $('#full_config').modal({
                     onShow:function(){
+                        $('#scrollTitle').removeClass('error');
+                        $('#refreshTitle').removeClass('error');
                         $.ajax({
                             type: 'get',
                             url: '/carousel/get_groups',
@@ -1074,15 +1075,15 @@ z                    </div>
                         var scroll_timestring = $('#scroll_select').dropdown('get text');
                         var refresh_time = $('#refresh_select').dropdown('get value');
                         var refresh_timestring = $('#refresh_select').dropdown('get text');
-
                         if('' === scroll_time) {
-                            alert('滚动时间必须选择');
+                            $('#scrollTitle').addClass('error');
                             return false;
                         }
                         if('' === refresh_time) {
-                            alert('刷新时间必须选择');
+                            $('#refreshTitle').addClass('error');
                             return false;
                         }
+
                         window.location.href = '/carouselfull?' +
                             'group_name=' + group_name +
                             '&scroll_time=' + scroll_time +
@@ -1098,6 +1099,7 @@ z                    </div>
             //添加弹出框
             $('#addpage_button').on('click',function(){
                 $('#page_name').val('');
+                $('#item_label').css('display','none');
                 $('#page_name_field').removeClass('error');
                 $('#page_modal').modal({
                     onApprove: function () {
@@ -1124,7 +1126,7 @@ z                    </div>
                                         getSelectPage($('#viewgroup_select').dropdown('get value'));
                                     }
                                     else {
-                                        alert(result.message);
+                                        errorMsg_no_data(result.message);
                                     }
                                 },
                                 error: function () {
@@ -1141,18 +1143,22 @@ z                    </div>
                 var old_page_name = $('#viewpage_select').dropdown('get value');
                 $('#page_name').val(old_page_name);
                 $('#page_name_field').removeClass('error');
+                $('#item_label').css('display','none');
                 $('#page_modal').modal({
                     onApprove: function () {
                         if ($('#page_name').val()=='') {
                             $('#page_name_field').addClass('error');
                             return false;
                         } else if($('#page_name').val() === old_page_name) {
-                            alert('名称没有被修改');
                             $('#page_name_field').addClass('error');
+                            $('#item_label').css('display','block');
                             return false;
                         }else {
                             //ajax,修改此页面绘制展示区，刷新展示页下拉框
-                            var send_data = {
+                            var
+
+
+                                send_data = {
                                 groupName:$('#viewgroup_select').dropdown('get value'),
                                 newPageName:$('#page_name').val(),
                                 oldPageName:old_page_name
@@ -1581,7 +1587,7 @@ z                    </div>
                     url: "/hostgraphs/get_items?point_id="+point_id,
                     dataType: "json",
                     success: function (result) {
-                        if(result.success && result.data.length > 0) {
+                        if(result.success) {
                             var value_type;
                             var data = result.data;
                             getitemsMenu(data);
@@ -1597,37 +1603,23 @@ z                    </div>
                                     }
                                 }
                             }
-                            //console.log('type',value_type);
-                            if(value_type == '0' || value_type == '3' || value_type == '%') {
-
-                                if(value_type == '%') {
-                                    value_type = '%25';
-                                }
-                                typeMenu(value_type,type);
-                            }else {
-
-                                alert('该监控项不适合图形展示');
+                            if(value_type == '%') {
+                                value_type = '%25';
                             }
+                            typeMenu(value_type,type);
                             $('#itemsMenu > div.item').on('click',function () {
                                 var value_type = $(this).attr('data-type');
                                 var item_id = $(this).attr('id');
-                                if(value_type == '0' || value_type == '3' || value_type == '%') {
-
-                                    $('#itemsMenu div.item').removeClass('active');
-                                    $(this).addClass('active');
-                                    if(value_type == '%') {
-                                        value_type = '%25';
-                                    }
-                                    typeMenu(value_type);
-                                }else {
-
-                                    alert('该监控项不适合图形展示');
+                                $('#itemsMenu div.item').removeClass('active');
+                                $(this).addClass('active');
+                                if(value_type == '%') {
+                                    value_type = '%25';
                                 }
-
+                                typeMenu(value_type);
                             })
                         }
                         else {
-                            alert('该监控点无监控项');
+                                errorMsg_no_data(result.message);
                         }
                     },
                     error: function () {
@@ -1637,66 +1629,82 @@ z                    </div>
             }
             function getitemsMenu(data) {
                 var str = '';
-                for (var i = 0; i < data.length; i++) {
-                    var state = '<i class="green square icon"></i>';
-                    if (i==0){
-                        str += "<div class='item text-hidden active' id='"+data[i].item_id+"' data-type='" + data[i].value_type + "'";
-                    }else {
-                        str += "<div class='item text-hidden' id='"+data[i].item_id+"' data-type='" + data[i].value_type + "'";
+                if(data.length === 0){
+                    //该监控点无监控项
+                    $('#itemsMenu').html('');
+                    $("#typeMenu").html('');
+                    $('#point_graph_modal .approve.submit.button').addClass('disabled');
+                }else {
+                    for (var i = 0; i < data.length; i++) {
+                        var state = '<i class="green square icon"></i>';
+                        if (i==0){
+                            str += "<div class='item text-hidden active' id='"+data[i].item_id+"' data-type='" + data[i].value_type + "'";
+                        }else {
+                            str += "<div class='item text-hidden' id='"+data[i].item_id+"' data-type='" + data[i].value_type + "'";
+                        }
+                        if(strlen(data[i].item_name) > 20)
+                        {
+                            str += " title='"+data[i].item_name+"'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
+                        }else{
+                            str += ">" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
+                        }
+                        $("#itemsMenu").html(str);
                     }
-                    if(strlen(data[i].item_name) > 20)
-                    {
-                        str += " title='"+data[i].item_name+"'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
-                    }else{
-                        str += ">" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
-                    }
-                    $("#itemsMenu").html(str);
                 }
             }
 
             //加载图形类型列表
             function typeMenu(value_type,type) {
+                if(value_type == '0' || value_type == '3' || value_type == '%' || value_type == '%25') {
+                    $.ajax({
+                        type: "get",
+                        url: "/hostgraphs/get_graphs?value_type="+value_type,
+                        dataType: "json",
+                        success: function (result) {
+                            if(result.success) {
+                                var data = result.data;
+                                gettypeMenu(data);
+                                if (typeof type !== 'undefined') {
+                                    $('#typeMenu div.item').removeClass('active');
+                                    $('[data-type="' + type + '"]').addClass('active');
+                                }
+                                $('#typeMenu > div.item').on('click', function () {
 
-                $.ajax({
-                    type: "get",
-                    url: "/hostgraphs/get_graphs?value_type="+value_type,
-                    dataType: "json",
-                    success: function (result) {
-                        if(result.success) {
-                            var data = result.data;
-                            gettypeMenu(data);
-                            if(typeof type !== 'undefined') {
-                                $('#typeMenu div.item').removeClass('active');
-                                $('[data-type="' + type +'"]').addClass('active');
+                                    $('#typeMenu div.item').removeClass('active');
+                                    $(this).addClass('active');
+                                })
                             }
-                            $('#typeMenu > div.item').on('click',function () {
-
-                                $('#typeMenu div.item').removeClass('active');
-                                $(this).addClass('active');
-                            })
+                            else {
+                                errorMsg_no_data(result.message);
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("图形类型列表 Menu");
                         }
-                        else {
-                            errorMsg_no_data(result.message);
-                        }
-                    },
-                    error: function () {
-                        errorMsg_no_connect("图形类型列表 Menu");
-                    }
-                })
+                    })
+                } else {
+                    $("#typeMenu").html('');
+                    $('#point_graph_modal .approve.submit.button').addClass('disabled');
+                }
             }
             function gettypeMenu(data) {
                 var str = '';
-                for(var i=0;i<data.length;i++)
-                {
-                    var state = '<i class="green square icon"></i>';
-                    if (i==0){
-                        str +="<div class='item text-hidden active' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
-                    }else {
-                        str +="<div class='item text-hidden' data-type='"+data[i].graph_type+"'>"+state+"<div class='content'><div class='header'>"+data[i].graph_name+"</div></div></div>";
+                if(data.length === 0){
+                    $("#typeMenu").html('');
+                    $('#point_graph_modal .approve.submit.button').addClass('disabled');
+                }else {
+                    for (var i = 0; i < data.length; i++) {
+                        var state = '<i class="green square icon"></i>';
+                        if (i == 0) {
+                            str += "<div class='item text-hidden active' data-type='" + data[i].graph_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].graph_name + "</div></div></div>";
+                        } else {
+                            str += "<div class='item text-hidden' data-type='" + data[i].graph_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].graph_name + "</div></div></div>";
+                        }
                     }
+                    $("#typeMenu").html('');
+                    $("#typeMenu").html(str);
+                    $('#point_graph_modal .approve.submit.button').removeClass('disabled');
                 }
-                $("#typeMenu").html('');
-                $("#typeMenu").html(str);
             }
         </script>
     </th:block>
