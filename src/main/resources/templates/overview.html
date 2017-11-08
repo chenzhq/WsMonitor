@@ -631,7 +631,9 @@
 								'<a class="item move" > 移动</a>' +
 								'<a class="item edit" > 编辑</a>' +
 								'<a class="item delete"> 删除</a></div>';
-                        }else {
+                        } else if (row.type === '监控点') {
+                            return '';
+                        } else {
                             return '<div class="ui secondary menu"><a class="right item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
                         }
                     }
