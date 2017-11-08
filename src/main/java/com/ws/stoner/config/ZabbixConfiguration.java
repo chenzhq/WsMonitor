@@ -1,6 +1,7 @@
 package com.ws.stoner.config;
 
 import com.ws.bix4j.ZApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -13,8 +14,8 @@ import org.springframework.web.context.WebApplicationContext;
 @Configuration
 public class ZabbixConfiguration {
 
-//    84.20.17.140:8088
-    private final static String URL = "http://172.17.0.3/api_jsonrpc.php";
+    @Value("${zabbix.ip}")
+    private String URL;
 
     @Bean
     @Scope(value = WebApplicationContext.SCOPE_SESSION,
