@@ -14,7 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class ZabbixConfiguration {
 
 //    84.20.17.140:8088
-    private final static String URL = "http://172.17.0.3/api_jsonrpc.php";
+    private final static String URL = "http://145.170.23.28/api_jsonrpc.php";
 
     @Bean
     @Scope(value = WebApplicationContext.SCOPE_SESSION,
