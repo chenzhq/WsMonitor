@@ -272,7 +272,7 @@ public class GraphServiceImpl implements GraphService {
      */
     @Override
     public PlatformTreeVO getPlatTreeByPlatformId(String platformId) throws ServiceException {
-        String context_url = BaseConsts.URL_CONTEXT + "/images/";
+        String context_url = "/images/";
         List<String> platformIds = new ArrayList<>();
         platformIds.add(platformId);
         //判断mongodb中是否有业务平台数据，没有，则初始化
@@ -409,7 +409,7 @@ public class GraphServiceImpl implements GraphService {
      */
     @Override
     public List<PlatformTreeVO> initPlatTree() throws ServiceException {
-        String context_url = BaseConsts.URL_CONTEXT + "/images/";
+        String context_url = "/images/";
         List<BriefPlatformDTO> allPlatformDTOS = platformService.listAllPlatform();
         List<PlatformTreeVO> platformTreeVOS = new ArrayList<>();
         for(BriefPlatformDTO platformDTO : allPlatformDTOS) {
