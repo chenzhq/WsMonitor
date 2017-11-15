@@ -271,10 +271,14 @@ function tabReport(point_id,days) {
                     if(strlen(title) > 30)
                     {
                         name = "<div class='fourteen wide column no-padding' data-tooltip='"+title+"'>"+
-                            "<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>";
+                            "<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>"+
+                            "<div class='two wide column no-padding right aligned'>"+
+                            "<i class='zoom icon' id='z" + data[i].item_id + "p" + point_id + "' onclick='zoom_graph(this.id)'></i></div>";
                     }else {
                         name = "<div class='fourteen wide column no-padding'>"+
-                            "<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>";
+                            "<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>"+
+                            "<div class='two wide column no-padding right aligned'>"+
+                            "<i class='zoom icon' id='z" + data[i].item_id + "p" + point_id + "' onclick='zoom_graph(this.id)'></i></div>";
                     }
                     str ="<div class='column'><div class='ui grid'>"+ name+
                     "<div class='sixteen wide column no-padding'>"+

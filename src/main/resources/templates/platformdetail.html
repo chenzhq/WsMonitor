@@ -16,7 +16,7 @@
 		<script th:src="@{js/g6.js}"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
+		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
 		<style type="text/css">
 			/*原生button 有个下外边距*/
 			.ui.modal .actions > .button {
@@ -403,6 +403,31 @@
 						<div class='ui inverted dimmer active' id='platform-dimmer'>
 							<div class='ui text loader'>正在加载</div>
 						</div>
+					</div>
+				</div>
+				<!--放大监控项图形弹出框-->
+				<div class="ui small modal" id="zoomModal">
+					<i class="close icon"></i>
+					<div class="header">
+						监控项详情
+					</div>
+					<div class="image content" style="padding-left: 150px;">
+						<div class="ui grid">
+							<div class="sixteen wide column" id="pointZoom">
+								111
+							</div>
+							<h3>
+								<i class="tag icon"></i>
+								历史数据
+							</h3>
+							<table id="problem_table"
+								   class="ui compact celled table center aligned " width="100%">
+							</table>
+						</div>
+					</div>
+					<div class="actions">
+						<div class="ui button deny">取消</div>
+						<div class="ui green button approve">确认</div>
 					</div>
 				</div>
 				<!--监控点详情弹出框-->
@@ -1047,6 +1072,7 @@
                                         "<div class='eight wide column'>"+
                                         "<h3>"+title+"</h3></div>"+
                                         "<div class='eight wide column right aligned'>"+
+                                        "<i class='zoom icon' id='z" + graph_data[i].item_id + "' onclick='zoom_graph(this.id)'></i>"+
                                         "<i class='edit icon' id='e" + graph_data[i].item_id + "' onclick='edit_graph(this.id)'></i>"+
                                         "<i class='delete icon' id='d" + graph_data[i].item_id + "' data-name='"+title+"' onclick='delete_graph(this.id)'></i></div>"+
                                         "<div class='sixteen wide column'>"+
@@ -1581,6 +1607,116 @@
                 $('#deleteModal').modal('show');
             }
 
+            //点击放大图形 function
+            function zoom_graph(id)
+			{
+                var item_id = id.substring(id.indexOf("z")+1,id.indexOf("p"));
+                var point_id = id.substring(id.indexOf("p")+1);
+                var days = 30;
+                $('#zoomModal').modal({
+                    closable: false,
+                    onShow: function () {
+                        var option = {
+                            title: {
+                                text: ""
+                            },
+                            tooltip: {
+                                trigger: 'axis',
+                                position: function (pt) {
+                                    return [pt[0], '10%'];
+                                }
+                            },
+                            legend: {
+                                data:[]
+                            },
+                            grid: {
+                                left: '3%',
+                                right: '3%',
+                                bottom: '0%',
+                                top:'5%',
+                                containLabel: true
+                            },
+                            xAxis: {
+                                data: {}
+                            },
+                            yAxis: {
+                                max:''
+                            },
+                            series: [{
+                                name: '',
+                                type: '',
+                                data: {},
+                                color: [],
+                                areaStyle:{}
+                            }]
+                        };
+                        $.ajax({
+                            type: "get",
+                            url: "/pointdetail/get_graphs?point_id=" + point_id + "&time="+days,
+                            dataType: "json",
+                            success: function (result) {
+                                if(result.success) {
+                                    var data = result.data;
+                                    var str = '';
+                                    $("#pointZoom").empty();
+                                    for (var i=0; i<data.length; i++){
+                                        if(data[i].item_id == item_id){
+											var zoomId="zoom"+data[i].item_id;
+											var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+											if (data[i].state == "正常"){ var myColor = Color[0] }
+											if (data[i].state == "严重"){ var myColor = Color[1] }
+											if (data[i].state == "警告"){ var myColor = Color[2] }
+											if(data[i].units == "%"){
+												option.yAxis.max = 100;
+											}else {
+												option.yAxis.max = null;
+											}
+											var title = "";
+											var name = "";
+											if(data[i].units == "") {
+												title = data[i].item_name;
+											}else {
+												title = data[i].item_name + "(" + data[i].units +")";
+											}
+											if(strlen(title) > 70)
+											{
+												name = "<div class='fourteen wide column no-padding' data-tooltip='"+title+"'>"+
+													"<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>";
+											}else {
+												name = "<div class='fourteen wide column no-padding'>"+
+													"<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>";
+											}
+											str ="<div class='column'><div class='ui grid'>"+ name+
+												"<div class='sixteen wide column no-padding'>"+
+												"<div id='"+zoomId+"' class='chart-style'></div></div></div></div>";
+											alert(str)
+											$("#pointZoom").append(str);
+											option.xAxis.data = data[i].data_time;
+											option.series[0].name = data[i].graph_name;
+											/*option.series[0].type = data[i].graph_type;*/
+                                            option.series[0].type = 'line';
+											option.series[0].data = data[i].data;
+											option.series[0].color[0] = myColor;
+											echarts.init(document.getElementById(id)).setOption(option);
+
+
+                                        }
+                                    }
+                                }
+                                else {
+                                    errorMsg_no_data("监控点 Tab");
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("监控点 Tab");
+                            }
+                        });
+                    },
+                    onApprove: function () {
+                    }
+				})
+				$('#zoomModal').modal('show');
+			}
      </script>
 	</th:block>
 </th:block>
