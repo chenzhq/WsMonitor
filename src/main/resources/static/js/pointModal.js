@@ -16,7 +16,7 @@ function getItemsDetail(point_id) {
     $("#rowData").append("<table id='tableData' class='ui compact celled table center aligned'> </table>");
     $("#pointDetailArea").text(point_id);
     tabSummary(point_id);
-    $('.large.modal').modal('show');
+    $('#pointDetailModal').modal('show');
     $('.tab_points.menu .item')
         .tab({
             'onFirstLoad': function (path) {
@@ -319,15 +319,8 @@ function tabReport(point_id,days) {
                             _option.series[0].areaStyle = '';
                             _option.series[0].type = type;
                             graph_chart.setOption(_option);
-
-
                         })
                     }
-
-
-
-
-
                 })
 
                 $('#chart-dimmer').removeClass('active');

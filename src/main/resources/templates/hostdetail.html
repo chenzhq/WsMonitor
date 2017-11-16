@@ -569,7 +569,8 @@
 
 					<!--监控点详情页-->
 
-					<div th:fragment="point_detail_page" class="ui large modal" id="pointDetailModal">
+					<div th:fragment="point_detail_page" class="ui large coupled modal" id="pointDetailModal">
+						<div class="ui dimmer" id="pointDimmer"></div>
 						<span style="display:none" id="pointDetailArea"></span>
 						<span style="display:none" id="pointDetailFirstItem"></span>
 						<i class="close icon"></i>
