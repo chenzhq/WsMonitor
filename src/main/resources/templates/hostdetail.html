@@ -113,6 +113,20 @@
             #pointDetailModal .ui.three.column.grid .column {
                 margin-bottom: 10px;
             }
+			.chart-zoom{
+				height: 180px;
+				width: 700px;
+			}
+			#itemZoom {
+				height: 200px;
+				width: 100%;
+			}
+			#tableZoom {
+				height: 200px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden
+			}
 		</style>
 	</th:block>
 
@@ -677,7 +691,7 @@
 					<div th:fragment="graph_conf_page" class="ui small modal" id="graphConfModal">
 						<i class="close icon"></i>
 						<div class="header">
-							添加监控项图形
+							监控项图形
 						</div>
 						<div class="image content" style="padding-left: 150px;">
 							<div class="ui left floated image">
@@ -743,6 +757,8 @@
 					</div>
 					<!--删除弹出框-->
 					<div  th:replace="monitorview::delete_page"></div>
+				<!--放大监控项图形弹出框-->
+				<div  th:replace="platformdetail::item_detail_page"></div>
 				<!--Site Content-->
 			</div>
 		</div>
@@ -758,9 +774,10 @@
 	<th:block th:fragment="specialScript">
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
-		<script src="../static/js/pointModal.js" th:src="@{js/pointModal.js}"></script>
+		<script src="../static/js/custom/pointModal.js" th:src="@{js/pointModal.js}"></script>
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 		<script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
+		<script src="../static/js/custom/item-modal.js" th:src="@{js/custom/item-modal.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">

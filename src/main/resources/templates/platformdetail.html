@@ -417,7 +417,7 @@
 					</div>
 				</div>
 				<!--放大监控项图形弹出框-->
-				<div class="ui small coupled modal" id="zoomModal">
+				<div th:fragment="item_detail_page" class="ui small coupled modal" id="zoomModal">
 					<i class="close icon" onclick="zoom_close()"></i>
 					<div class="header">
 						监控项详情
@@ -468,9 +468,9 @@
 
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
-		<script src="../static/js/pointModal.js" th:src="@{js/pointModal.js}"></script>
+		<script src="../static/js/custom/pointModal.js" th:src="@{js/pointModal.js}"></script>
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
-
+		<script src="../static/js/custom/item-modal.js" th:src="@{js/custom/item-modal.js}"></script>
 		<script type="text/javascript">
 
 			var platform_id ;
@@ -1264,7 +1264,7 @@
                     is_item = true,
                     is_type = true;
 
-                $('.small.modal').modal({
+                $('#graphConfModal').modal({
                     closable  : false,
                     autofocus: false,
 					onShow: function() {
@@ -1461,7 +1461,7 @@
                 var is_name = true,
                     is_type = true;
 
-                $('.small.modal').modal({
+                $('#graphConfModal').modal({
                     closable  : false,
 					onShow: function() {
                         $.ajax({
@@ -1621,145 +1621,6 @@
                 $('#deleteModal').modal('show');
             }
 
-           /* $('#zoomModal')
-                .modal('attach events', '#pointDetailModal .button', 'show')
-            ;*/
-            //点击放大图形 function
-            function zoom_graph(id)
-			{
-                var item_id = id.substring(id.indexOf("z")+1,id.indexOf("p"));
-                var point_id = id.substring(id.indexOf("p")+1);
-                var days = 30;
-				   	var option = {
-						title: {
-							text: ""
-						},
-						tooltip: {
-							trigger: 'axis',
-							position: function (pt) {
-								return [pt[0], '10%'];
-							}
-						},
-						dataZoom: [
-							{
-								show: true,
-								start: 0,
-								end: 100
-							}
-						],
-						legend: {
-							data:[]
-						},
-						grid: {
-							left: '3%',
-							right: '3%',
-							bottom: '20%',
-							top:'5%',
-							containLabel: true
-						},
-						xAxis: {
-							data: {}
-						},
-						yAxis: {
-							max:''
-						},
-						series: [{
-							name: '',
-							type: '',
-							data: {},
-							color: [],
-							areaStyle:{}
-						}]
-					};
-				$.ajax({
-					type: "get",
-					url: "/pointdetail/get_graphs?point_id=" + point_id + "&time="+days,
-					dataType: "json",
-					success: function (result) {
-						if(result.success) {
-							var data = result.data;
-							var str = '';
-							$("#itemZoom").empty();
-							$("#itemHistory").empty();
-							for (var i=0; i<data.length; i++){
-								if(data[i].item_id == item_id){
-									var zoomId="zoom"+data[i].item_id;
-									var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
-									if (data[i].state == "正常"){ var myColor = Color[0] }
-									if (data[i].state == "严重"){ var myColor = Color[1] }
-									if (data[i].state == "警告"){ var myColor = Color[2] }
-									if(data[i].units == "%"){
-										option.yAxis.max = 100;
-									}else {
-										option.yAxis.max = null;
-									}
-									var title = "";
-									var name = "";
-									if(data[i].units == "") {
-										title = data[i].item_name;
-									}else {
-										title = data[i].item_name + "(" + data[i].units +")";
-									}
-									if(strlen(title) > 100)
-									{
-										name = "<div class='sixteen wide column no-padding' data-tooltip='"+title+"'>"+
-											"<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>";
-									}else {
-										name = "<div class='sixteen wide column no-padding'>"+
-											"<h3 class='text-hidden'>&nbsp&nbsp&nbsp"+title+"</h3></div>";
-									}
-									str ="<div class='column'><div class='ui grid'>"+ name+
-										"<div class='sixteen wide column no-padding'>"+
-										"<div id='"+zoomId+"' class='chart-zoom'></div></div></div></div>";
-									$("#itemZoom").append(str);
-									option.xAxis.data = data[i].data_time;
-									option.series[0].name = data[i].graph_name;
-									/!*option.series[0].type = data[i].graph_type;*!/
-									option.series[0].type = 'line';
-									option.series[0].data = data[i].data;
-									option.series[0].color[0] = myColor;
-									echarts.init(document.getElementById(zoomId)).setOption(option);
-									var str_table;
-									var time_history = data[i].data_time;
-									var data_history = data[i].data;
-									if(time_history.length > 0){
-
-										for (var j=0; j<time_history.length; j++) {
-											str_table += "<tr><td>"+time_history[j]+"</td><td>"+data_history[j]+"</td></tr>"
-										}
-									}else {
-										str_table = "<tr> <td colspan='2'>无数据</td> </tr>"
-									}
-									$("#itemHistory").append(str_table);
-								}
-							}
-						}
-						else {
-							errorMsg_no_data("监控点 Tab");
-						}
-					},
-					error: function () {
-						errorMsg_no_connect("监控点 Tab");
-					}
-				});
-                $('#pointDimmer').addClass('active');
-                // initialize all modals
-                $('.coupled.modal')
-                    .modal({
-                        allowMultiple: true
-                    })
-                ;
-                $('#zoomModal').modal('setting', 'closable', false).modal('show');
-				/*alert($('#zoomModal').modal('is active'))
-                    .modal({
-                        onApprove    : function(){
-
-                        }
-                    })*/
-			}
-            function zoom_close() {
-                $('#pointDimmer').removeClass('active');
-            }
      </script>
 	</th:block>
 </th:block>
