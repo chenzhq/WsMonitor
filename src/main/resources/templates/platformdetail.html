@@ -363,10 +363,10 @@
 												<table class="ui fixed single line compact table row2_3Height center aligned">
 													<thead>
 													<tr>
-														<th width="33%">名称</th>
-														<th width="33%">值</th>
-														<th width="7%">状态</th>
-														<th width="7%">权值</th>
+														<th width="35%" class="left aligned">名称</th>
+														<th width="25%" class="left aligned">值</th>
+														<th width="10%">状态</th>
+														<th width="10%">权值</th>
 														<th width="20%">最新时间<a  href="javascript:void(0);" style="float: right"><i class='browser icon'></i>详情</a></th>
 													</tr>
 													</thead>
@@ -474,6 +474,8 @@
 		<script type="text/javascript">
 
 			var platform_id ;
+            var host_ids;
+
             //初始化业务平台下拉框
             selectPlaltform();
 
@@ -506,7 +508,7 @@
             $('.secondary.pointing.menu .item')
                 .tab({
                     'onFirstLoad': function (path) {
-                        if (path === 'platformTree') {
+                        /*if (path === 'platformTree') {
                             //加载业务树
                             platformTree(platform_id);
 
@@ -515,7 +517,7 @@
                             //加载业务图形报告
                             hostAccordion(platform_id);
 
-                        }
+                        }*/
                     }
                 });
 
@@ -824,16 +826,18 @@
                         var state = '<i class="red square icon" ></i>';
                     }
                     //判断超出字符长度，浮动显示
-                    if (strlen(data[i].item_name) > 40) {
-                        str_item_name = "<td title='"+data[i].item_name +"'>" +data[i].item_name +"</td>";
+                    str_item_name = "<td class='left aligned' title='"+data[i].item_name +"'>" +data[i].item_name +"</td>";
+                    str_value = "<td class='left aligned' title='"+data[i].value +"'> " +data[i].value+"</td>";
+                    /*if (strlen(data[i].item_name) > 40) {
+                        str_item_name = "<td class='left aligned' title='"+data[i].item_name +"'>" +data[i].item_name +"</td>";
 					}else {
-                        str_item_name = "<td>" +data[i].item_name +"</td>";
+                        str_item_name = "<td class='left aligned'>" +data[i].item_name +"</td>";
 					}
                     if (strlen(data[i].value) > 40) {
-                        str_value = "<td title='"+data[i].value +"'> " +data[i].value+"</td>";
+                        str_value = "<td class='left aligned' title='"+data[i].value +"'> " +data[i].value+"</td>";
                     }else {
-                        str_value = "<td> " +data[i].value+"</td>";
-					}
+                        str_value = "<td class='left aligned'> " +data[i].value+"</td>";
+					}*/
                     str +="<tr id='"+data[i].item_id+"' >"
 						+ str_item_name
 						+str_value
@@ -1033,21 +1037,21 @@
             }
             function gethostAccordion(data) {
                 var str = '';
-                var host_ids = new Array();
+                host_ids = new Array();
                 for(var i=0;i<data.length;i++)
                 {
                     str += "<div class='active title'>" +
 								 "<a class='header item addItems' id='i"+ data[i].host_id +"' style='float:right;' >" +
 									"<i class='add icon'> </i>添加" +
 								 "</a>" +
-								 "<div class='trigger_icon'><i class='dropdown icon'></i>"
-								  +data[i].host_name+"</div>" +
+								 "<div class='trigger_icon'><i class='dropdown icon'></i>"+data[i].host_name+"</div>" +
 						    "</div>" +
 						    "<div class='active content'>" +
 								"<div  id='g"+data[i].host_id+"' class='ui three column grid'></div>" +
 							"</div>";
                     host_ids.push(data[i].host_id);
                 }
+                $("#hostAccordion").html('');
                 $("#hostAccordion").html(str);
                 //给添加绑定事件
                 $("#hostAccordion").find('.addItems').on('click',function() {
@@ -1151,87 +1155,86 @@
                                                             }},
                                                         data: [{value: graph_data[i].datas.length===0 ? 0 : graph_data[i].datas[graph_data[i].datas.length-1].toFixed(2), name: ''}]
 
-                                                    }
-                                                ]
-                                            };
-                                            break;
-                                        case "area":
-                                            option = {
-                                                title: {
-                                                    text: '',
+                                                }
+                                            ]
+                                        };
+                                        break;
+                                    case "area":
+                                        option = {
+                                            title: {
+                                                text: '',
+                                            },
+                                            tooltip: {
+                                                trigger: 'axis',
+                                                position: function (pt) {
+                                                    return [pt[0], '10%'];
+                                                }
+                                            },
+                                            legend: {
+                                                data:[]
+                                            },
+                                            grid: {
+                                                left: '2%',
+                                                right: '2%',
+                                                bottom: '2%',
+                                                top:'5%',
+                                                containLabel: true
+                                            },
+                                            xAxis: {
+                                                data: graph_data[i].data_time
+                                            },
+                                            yAxis: {
+                                                max: ymax,
+                                            },
+                                            series: [{
+                                                name: graph_data[i].item_name,
+                                                type: 'line',
+                                                data: graph_data[i].datas,
+                                                areaStyle: {
+                                                    normal: { }
                                                 },
-                                                tooltip: {
-                                                    trigger: 'axis',
-                                                    position: function (pt) {
-                                                        return [pt[0], '10%'];
-                                                    }
-                                                },
-                                                legend: {
-                                                    data:[]
-                                                },
-                                                grid: {
-                                                    left: '2%',
-                                                    right: '2%',
-                                                    bottom: '2%',
-                                                    top:'5%',
-                                                    containLabel: true
-                                                },
-                                                xAxis: {
-                                                    data: graph_data[i].data_time
-                                                },
-                                                yAxis: {
-                                                    max: ymax,
-                                                },
-                                                series: [{
-                                                    name: graph_data[i].item_name,
-                                                    type: 'line',
-                                                    data: graph_data[i].datas,
-                                                    areaStyle: {
-                                                        normal: { }
-                                                    },
-                                                    color: [myColor]
-                                                }]
-                                            };
-                                            break;
-                                        default:
-                                            option = {
-                                                title: {
-                                                    text: '',
-                                                },
-                                                tooltip: {
-                                                    trigger: 'axis',
-                                                    position: function (pt) {
-                                                        return [pt[0], '10%'];
-                                                    }
-                                                },
-                                                legend: {
-                                                    data:[]
-                                                },
-                                                grid: {
-                                                    left: '2%',
-                                                    right: '2%',
-                                                    bottom: '2%',
-                                                    top:'5%',
-                                                    containLabel: true
-                                                },
-                                                xAxis: {
-                                                    data: graph_data[i].data_time
-                                                },
-                                                yAxis: {
-                                                    max: ymax,
-                                                    splitLine:{show: false},
-                                                },
-                                                series: [{
-                                                    name: graph_data[i].item_name,
-                                                    type: graph_data[i].graph_type,
-                                                    data: graph_data[i].datas,
-                                                    color: [myColor],
-                                                }]
-                                            };
-                                    }
-                                    myChart.setOption(option);
+                                                color: [myColor]
+                                            }]
+                                        };
+                                        break;
+                                    default:
+                                        option = {
+                                            title: {
+                                                text: '',
+                                            },
+                                            tooltip: {
+                                                trigger: 'axis',
+                                                position: function (pt) {
+                                                    return [pt[0], '10%'];
+                                                }
+                                            },
+                                            legend: {
+                                                data:[]
+                                            },
+                                            grid: {
+                                                left: '2%',
+                                                right: '2%',
+                                                bottom: '2%',
+                                                top:'5%',
+                                                containLabel: true
+                                            },
+                                            xAxis: {
+                                                data: graph_data[i].data_time
+                                            },
+                                            yAxis: {
+                                                max: ymax,
+                                                splitLine:{show: false},
+                                            },
+                                            series: [{
+                                                name: graph_data[i].item_name,
+                                                type: graph_data[i].graph_type,
+                                                data: graph_data[i].datas,
+                                                color: [myColor],
+                                            }]
+                                        };
                                 }
-							}
+                                myChart.setOption(option);
+                            }
                         }
                         else {
                             errorMsg_no_data("图形报告 Accordion");
@@ -1249,7 +1252,7 @@
             //点击添加业务图形报告
             function add_graphs(id) {
 
-                $('.ui.dropdown').dropdown();
+                //$('.ui.dropdown').dropdown();
 
                 var host_id = id.substring(1);
 
@@ -1303,7 +1306,7 @@
 
                         $('.dropdown.points').dropdown({
                             onChange: function(value, text, $selectedItem) {
-                                $('#graphPoints').find('.text').text(text.substr(0,25));
+                                $('#graphPoints').find('.text').text(text.substr(0,20));
                                 point_id = value;
                                 //point 校验
                                 if (point_id === '') {
@@ -1322,7 +1325,7 @@
 
                         $('.dropdown.items').dropdown({
                             onChange: function(value, text, $selectedItem) {
-                                $('#graphItems').find('.text').text(text.substr(0,25));
+                                $('#graphItems').find('.text').text(text.substr(0,20));
                                 item_id = value.split("_")[1];
                                 //console.log('item_id',item_id);
                                 //item 校验
@@ -1425,7 +1428,8 @@
                                 success: function (result) {
                                     if(result.success) {
                                         $('.button.approve').removeClass('loading');
-                                        hostAccordion(platform_id);
+                                        //获取图形
+                                        getitemsAccordion(host_ids);
                                         return true;
                                     } else {
                                         $('.button.approve').removeClass('loading')
@@ -1568,7 +1572,8 @@
                                 success: function (result) {
                                     if(result.success) {
                                         $('.button.approve').removeClass('loading');
-                                        hostAccordion(platform_id);
+                                        //获取图形
+                                        getitemsAccordion(host_ids);
                                         return true;
                                     } else {
                                         $('.button.approve').removeClass('loading');
@@ -1606,7 +1611,8 @@
                                         inverted: true
                                     }).modal('show');
                                     setTimeout("$('#backDeleteModal').modal('hide');",800)*/
-                                    hostAccordion(platform_id);
+                                    //获取图形
+                                    getitemsAccordion(host_ids);
                                 }
                                 else {
                                     errorMsg_no_data(result.message);

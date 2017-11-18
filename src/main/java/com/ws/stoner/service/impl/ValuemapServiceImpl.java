@@ -8,6 +8,7 @@ import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefValuemapDTO;
+import com.ws.stoner.model.view.itemvalue.ItemValueUnit;
 import com.ws.stoner.service.ValuemapService;
 import com.ws.stoner.utils.ThresholdUtils;
 import org.slf4j.Logger;
@@ -115,11 +116,11 @@ public class ValuemapServiceImpl implements ValuemapService{
             value = getNewValueById(valuemapId,valueInfo);
         }else {
             //不存在映射值，交给值转换工具 ThresholdUtils 处理
-            Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(valueInfo,unitsInfo);
+            ItemValueUnit valueUnits = ThresholdUtils.transformValueUnits(valueInfo,unitsInfo);
             if("UPTIME".equals(unitsInfo.toUpperCase()) || "S".equals(unitsInfo.toUpperCase())) {
-                value = valueUnits.entrySet().iterator().next().getValue();
+                value = valueUnits.getValue();
             }else {
-                value = valueUnits.entrySet().iterator().next().getValue()+valueUnits.entrySet().iterator().next().getKey();
+                value = valueUnits.getValue() + " " + valueUnits.getUnits();
             }
         }
         return value;

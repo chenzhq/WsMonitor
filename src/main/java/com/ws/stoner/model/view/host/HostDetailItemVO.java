@@ -2,8 +2,12 @@ package com.ws.stoner.model.view.host;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.dto.BriefTriggerDTO;
+import com.ws.stoner.utils.ThresholdUtils;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by zkf on 2017/7/12.
@@ -168,5 +172,24 @@ public class HostDetailItemVO {
     public HostDetailItemVO setWithTriggers(boolean withTriggers) {
         this.withTriggers = withTriggers;
         return this;
+    }
+
+    static public HostDetailItemVO setThresholdValueForItemVO(HostDetailItemVO itemVO, String itemDTOId, List<BriefTriggerDTO> triggerDTOS ) throws ServiceException {
+        itemVO.setWithTriggers(true);
+        //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
+        for(BriefTriggerDTO triggerDTO : triggerDTOS) {
+            String expression = triggerDTO.getExpression();
+            String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
+            if(itemIdInfo.equals(itemDTOId)) {
+                if(triggerDTO.getPriority() == 2) {
+                    // priority为2:警告阀值取expression的逻辑比较符号后面数据；
+                    itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
+                }else if(triggerDTO.getPriority() == 4) {
+                    // priority为4:严重阀值取expression的逻辑比较符号后面数据；
+                    itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
+                }
+            }
+        }
+        return itemVO;
     }
 }

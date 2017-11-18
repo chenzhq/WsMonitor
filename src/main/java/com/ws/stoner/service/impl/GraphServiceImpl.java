@@ -125,7 +125,7 @@ public class GraphServiceImpl implements GraphService {
 
             //阀值赋值：highPoint,warningPoint
             if(itemIds.contains(itemDTO.getItemId())) {
-                itemVO = ThresholdUtils.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
+                itemVO = HostDetailItemVO.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
             }else {
                 itemVO.setWithTriggers(false);
             }
@@ -161,7 +161,7 @@ public class GraphServiceImpl implements GraphService {
                 HostDetailItemVO itemVO = new HostDetailItemVO();
                 //阀值赋值：highPoint,warningPoint
                 if(itemIds.contains(itemDTO.getItemId())) {
-                    itemVO = ThresholdUtils.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
+                    itemVO = HostDetailItemVO.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
                 }else {
                     itemVO.setWithTriggers(false);
                 }
