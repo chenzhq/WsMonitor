@@ -294,7 +294,7 @@
                                 <div class="ui tag label">
                                     共<span th:text="${stateViewVO.pointStateNum.totalNum}"></span>个监测点
                                 </div>
-                                <div class="ui label" th:each="stateNum:${stateViewVO.hostStateNum.stateNum}" >
+                                <div class="ui label" th:each="stateNum:${stateViewVO.pointStateNum.stateNum}" >
 									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' circle icon'"></i>
 									<span th:text="${stateNum.value}"></span>
                                 </div>
