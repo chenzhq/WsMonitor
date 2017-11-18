@@ -54,9 +54,9 @@ public class ItemTimeData extends BlockVO{
         List<String> dataTime = new ArrayList<>();
         //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
         for(BriefHistoryDTO historyDTO : historyDTOS) {
-            Map<String,String> valueUnits = ThresholdUtils.transformGraphValue(historyDTO.getValue(),units);
-            timeData.setUnits(valueUnits.entrySet().iterator().next().getKey());
-            data.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
+            ItemValueUnit valueUnits = ThresholdUtils.transformGraphValue(historyDTO.getValue(),units);
+            timeData.setUnits(valueUnits.getUnits());
+            data.add(Float.parseFloat(valueUnits.getValue()));
             String dataTimeString = historyDTO.getLastTime().format(formatter);
             dataTime.add(dataTimeString);
         }

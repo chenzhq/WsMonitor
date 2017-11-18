@@ -185,8 +185,8 @@ function tabSummary(point_id) {
                     }
                     else {
                     }
-                    str +=" <tr id='"+data.item_datas[i].item_id+"' class='"+mytrColor+" tr' ><td>"
-                        + data.item_datas[i].item_name +"</td><td>"
+                    str +=" <tr id='"+data.item_datas[i].item_id+"' class='"+mytrColor+" tr' ><td class='left aligned'>"
+                        + data.item_datas[i].item_name +"</td><td class='left aligned' title='"+data.item_datas[i].value+"'>"
                         + data.item_datas[i].value +"</td><td>"
                         + data.item_datas[i].warning_point +"</td><td>"
                         + data.item_datas[i].high_point +"</td><td>"

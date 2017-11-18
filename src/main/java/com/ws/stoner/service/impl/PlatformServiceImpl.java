@@ -505,6 +505,7 @@ public class PlatformServiceImpl implements PlatformService {
         }
         List<PlatDetailItemVO> itemVOS = new ArrayList<>();
         for(BriefItemDTO itemDTO :itemDTOS) {
+            Integer valueType = Integer.parseInt(itemDTO.getValueType());
             //withTriggers
             boolean withTriggers ;
             if(itemIdsWithTriggers.contains(itemDTO.getItemId())) {
@@ -519,9 +520,13 @@ public class PlatformServiceImpl implements PlatformService {
             }else {
                 weight = 0;
             }
-            //value
-            String value = valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits());
-
+            String value;
+            if(valueType == ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value || valueType == ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value) {
+                //value
+                value = valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits());
+            }else {
+                value = itemDTO.getLastValue();
+            }
             PlatDetailItemVO itemVO = new PlatDetailItemVO(
                     itemDTO.getItemId(),
                     itemDTO.getName(),

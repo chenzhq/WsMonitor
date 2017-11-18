@@ -346,9 +346,12 @@ public class PointSerivceImpl implements PointSerivce {
     @Override
     public List<BriefPointDTO> getPointsByHostIds(List<String> hostIds) throws ServiceException {
         ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefPointDTO.PROPERTY_NAMES[1]);
         appRequest.getParams()
                 .setHostIds(hostIds)
-                .setOutput(BriefPointDTO.PROPERTY_NAMES);
+                .setOutput(BriefPointDTO.PROPERTY_NAMES)
+                .setSortField(sort);
         List<BriefPointDTO> points = listPoint(appRequest);
         return points;
     }

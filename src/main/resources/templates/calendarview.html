@@ -31,7 +31,7 @@
                 margin-bottom: 0;
             }
             .chartBar {
-                height: 200px;
+                height: 300px;
             }
             .ui.segment.block_row2{
                 min-height: 300px;
@@ -393,10 +393,12 @@
                         }
                     },
                     calendar: [{
+
                         top: 60,
                         bottom: 20,
                         left: 'center',
                         range: ["2017-01-01", "2017-07-01"],
+                        cellSize:[30,30],
                         splitLine: {
                             show: true,
                             lineStyle: {
@@ -426,7 +428,7 @@
                             coordinateSystem: 'calendar',
                             data: [],
                             symbolSize: function (val) {
-                                return val[1];
+                                return val[1] ;
                             },
                             itemStyle: {
                                 normal: {
@@ -440,7 +442,7 @@
                             coordinateSystem: 'calendar',
                             data: [],
                             symbolSize: function (val) {
-                                return val[1];
+                                return val[1] ;
                             },
                             showEffectOn: 'render',
                             rippleEffect: {
@@ -493,11 +495,39 @@
                     series: [
                         {
                             name: '所有问题',
-                            data: data.data
+                            type: 'scatter',
+                            coordinateSystem: 'calendar',
+                            data: data.data,
+                            symbolSize: function (val) {
+                                return val[1]/5;
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: '#ddb926'
+                                }
+                            }
                         },
                         {
+                            data: getLightData(data.data),
                             name: '当前问题',
-                            data: getLightData(data.data)
+                            type: 'effectScatter',
+                            coordinateSystem: 'calendar',
+                            symbolSize: function (val) {
+                                return val[1]/5;
+                            },
+                            showEffectOn: 'render',
+                            rippleEffect: {
+                                brushType: 'stroke'
+                            },
+                            hoverAnimation: true,
+                            itemStyle: {
+                                normal: {
+                                    color: '#f46244',
+                                    shadowBlur: 10,
+                                    shadowColor: '#333'
+                                }
+                            },
+                            zlevel: 1
                         }
                     ]
                 })

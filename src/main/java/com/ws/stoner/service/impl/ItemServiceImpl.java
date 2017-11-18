@@ -16,6 +16,7 @@ import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.view.host.HostDetailPointItemVO;
 import com.ws.stoner.model.view.host.HostDetailPointVO;
 import com.ws.stoner.model.view.itemvalue.ItemConfigVO;
+import com.ws.stoner.model.view.itemvalue.ItemValueUnit;
 import com.ws.stoner.service.HistoryService;
 import com.ws.stoner.service.ItemService;
 import com.ws.stoner.service.TriggerService;
@@ -108,11 +109,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<BriefItemDTO> getItemsByItemIds(List<String> itemIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setItemIds(itemIds)
                 .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
-                .setOutput(BriefItemDTO.PROPERTY_NAMES);
+                .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
     }
@@ -127,11 +131,14 @@ public class ItemServiceImpl implements ItemService {
     public List<BriefItemDTO> getValueItemsByHostIds(List<String> hostIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         Map<String,Object> itemFilter = new HashMap<>();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemFilter.put("value_type", new String[]{String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value),String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value)});
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setHostIds(hostIds)
                 .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort)
                 .setFilter(itemFilter);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
@@ -147,11 +154,14 @@ public class ItemServiceImpl implements ItemService {
     public List<BriefItemDTO> getValueItemsByPointIds(List<String> pointIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         Map<String,Object> itemFilter = new HashMap<>();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemFilter.put("value_type",  new String[]{String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value),String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value)});
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setApplicationIds(pointIds)
                 .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort)
                 .setFilter(itemFilter);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
@@ -167,11 +177,14 @@ public class ItemServiceImpl implements ItemService {
     public List<BriefItemDTO> getValueItemsByItemIds(List<String> itemIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
         Map<String,Object> itemFilter = new HashMap<>();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemFilter.put("value_type",  new String[]{String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value),String.valueOf(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value)});
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setItemIds(itemIds)
                 .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort)
                 .setFilter(itemFilter);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
@@ -187,11 +200,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<BriefItemDTO> getItemsByPointIds(List<String> pointIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setApplicationIds(pointIds)
                 .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
-                .setOutput(BriefItemDTO.PROPERTY_NAMES);
+                .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort );
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
     }
@@ -205,11 +221,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<BriefItemDTO> getItemsWithTriggersByPlatfromIds(List<String> platformIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setGroupIds(platformIds)
                 .setWithTriggers(true)
-                .setOutput(BriefItemDTO.PROPERTY_NAMES);
+                .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
     }
@@ -223,11 +242,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<BriefItemDTO> getItemsWithTriggersByHostIds(List<String> hostIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setHostIds(hostIds)
                 .setWithTriggers(true)
-                .setOutput(BriefItemDTO.PROPERTY_NAMES);
+                .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
     }
@@ -241,12 +263,15 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<BriefItemDTO> getItemsWithTriggersByPointIds(List<String> pointIds) throws ServiceException {
         ItemGetRequest itemGetRequest = new ItemGetRequest();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemGetRequest.getParams()
                 .setMonitored(true)
                 .setApplicationIds(pointIds)
                 .setWithTriggers(true)
                 .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
-                .setOutput(BriefItemDTO.PROPERTY_NAMES);
+                .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;
     }
@@ -358,11 +383,16 @@ public class ItemServiceImpl implements ItemService {
         List<HostDetailPointItemVO> itemVOS = new ArrayList<>();
         HostDetailPointVO pointVO = new HostDetailPointVO();
         for(BriefItemDTO itemDTO :itemDTOS) {
+            Integer valueType = Integer.parseInt(itemDTO.getValueType());
             HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
-            //值转换
-            itemVO.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits()));
+            if(valueType == ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value || valueType == ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value) {
+                //值转换
+                itemVO.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits()));
+            }else {
+                itemVO.setValue(itemDTO.getLastValue());
+            }
             itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             //withTriggers
@@ -410,11 +440,17 @@ public class ItemServiceImpl implements ItemService {
         HostDetailPointVO pointVO = new HostDetailPointVO();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         for(BriefItemDTO itemDTO :itemDTOS) {
+            Integer valueType = Integer.parseInt(itemDTO.getValueType());
             HostDetailPointItemVO itemVO = new HostDetailPointItemVO();
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setName(itemDTO.getName());
-            //值转换
-            itemVO.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits()));
+            if(valueType == ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value || valueType == ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value) {
+                //值转换
+                itemVO.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits()));
+            }else {
+                itemVO.setValue(itemDTO.getLastValue());
+            }
+
             itemVO.setUnits(itemDTO.getUnits());
             itemVO.setState(StatusConverter.StatusTransform(itemDTO.getCustomState()));
             if(itemDTO.getLastTime() != null) {
@@ -506,19 +542,26 @@ public class ItemServiceImpl implements ItemService {
         //step4:循环 historyDTOS 赋值 HostDetailPointItemVO 组装成VOS
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<HostDetailPointItemVO> itemHistoryDatas = new ArrayList<>();
+        Integer valueType = Integer.parseInt(itemDTO.getValueType());
         for(BriefHistoryDTO historyDTO : historyDTOS) {
             HostDetailPointItemVO itemHistoryData = new HostDetailPointItemVO();
             itemHistoryData.setItemId(itemDTO.getItemId());
             itemHistoryData.setName(itemDTO.getName());
-            Map<String,String> valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),itemDTO.getUnits());
-            itemHistoryData.setUnits(valueUnits.entrySet().iterator().next().getKey());
-            //值转换   时序数据值映射 存在大量访问 api 问题，响应时间太长 先注释掉
-            //itemHistoryData.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),historyDTO.getValue(),itemDTO.getUnits()));
-            if("UPTIME".equals(itemDTO.getUnits().toUpperCase()) || "S".equals(itemDTO.getUnits().toUpperCase())) {
-                itemHistoryData.setValue(valueUnits.entrySet().iterator().next().getValue());
+            if(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value == valueType || ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value == valueType ) {
+                ItemValueUnit valueUnits = ThresholdUtils.transformValueUnits(historyDTO.getValue(),itemDTO.getUnits());
+                itemHistoryData.setUnits(valueUnits.getUnits());
+                //值转换   时序数据值映射 存在大量访问 api 问题，响应时间太长 先注释掉
+                //itemHistoryData.setValue(valuemapService.getTransformValue(itemDTO.getValuemapId(),historyDTO.getValue(),itemDTO.getUnits()));
+                if("UPTIME".equals(itemDTO.getUnits().toUpperCase()) || "S".equals(itemDTO.getUnits().toUpperCase())) {
+                    itemHistoryData.setValue(valueUnits.getValue());
+                }else {
+                    itemHistoryData.setValue(valueUnits.getValue()+valueUnits.getUnits());
+                }
             }else {
-                itemHistoryData.setValue(valueUnits.entrySet().iterator().next().getValue()+valueUnits.entrySet().iterator().next().getKey());
+                itemHistoryData.setUnits(itemDTO.getUnits());
+                itemHistoryData.setValue(historyDTO.getValue());
             }
+
             itemHistoryData.setLastTime(historyDTO.getLastTime().format(formatter));
             itemHistoryData.setWithTriggers(withTrigger);
             itemHistoryData.setWarningPoint(warningPoint);
