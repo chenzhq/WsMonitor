@@ -12,9 +12,9 @@ import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
-import com.ws.stoner.model.view.HostDetailInterfaceVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
-import com.ws.stoner.model.view.HostDetailVO;
+import com.ws.stoner.model.view.host.HostDetailInterfaceVO;
+import com.ws.stoner.model.view.host.HostDetailPointVO;
+import com.ws.stoner.model.view.host.HostDetailVO;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.utils.StatusConverter;
@@ -167,6 +167,51 @@ public class HostServiceImpl implements HostService {
                 .setCountOutput(true);
         int hostOkNum = countHost(hostGetRequest);
         return hostOkNum;
+    }
+
+    /**
+     * 根据指定的hostIds 统计 警告主机数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countWarningHostByHostIds(List<String> hostIds) throws ServiceException {
+        //step1:根据custom_state 和 custom_available_state字段联合判断是否是问题主机
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String,Object> hostFilter = new HashMap<>();
+        hostFilter.put("custom_state", ZApiParameter.OBJECT_STATE.CUSTOM_STATE_WARNING.value);
+        hostFilter.put("custom_available_state",ZApiParameter.HOST_AVAILABLE_STATE.CUSTOM_AVAILABLE_STATE_OK.value);
+        hostGetRequest.getParams()
+                .setMonitoredHosts(true)
+                .setHostIds(hostIds)
+                .setFilter(hostFilter)
+                .setCountOutput(true);
+        int hostWarningNum = countHost(hostGetRequest);
+        return hostWarningNum;
+    }
+
+    /**
+     * 根据指定的hostIds 统计 严重主机数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public int countHighHostByHostIds(List<String> hostIds) throws ServiceException {
+        //step1:根据custom_state 和 custom_available_state字段联合判断是否是严重主机
+        HostGetRequest hostGetRequest = new HostGetRequest();
+        Map<String,Object> hostFilter = new HashMap<>();
+        hostFilter.put("custom_state", ZApiParameter.OBJECT_STATE.CUSTOM_STATE_HIGHT.value);
+        hostFilter.put("custom_available_state",ZApiParameter.HOST_AVAILABLE_STATE.CUSTOM_AVAILABLE_STATE_PROBLEM.value);
+        hostGetRequest.getParams()
+                .setMonitoredHosts(true)
+                .setHostIds(hostIds)
+                .setFilter(hostFilter)
+                .setSearchByAny(true)
+                .setCountOutput(true);
+        int hostHighNum = countHost(hostGetRequest);
+        return hostHighNum;
     }
 
 /*
@@ -330,39 +375,6 @@ public class HostServiceImpl implements HostService {
             }
         }
         return hostDetailVO;
-    }
-
-    /**
-     * 根据 BriefHostDTO hostDTO 组装 设备接口信息的 InterfaceVO
-     * @return
-     * @throws ServiceException
-     */
-    @Override
-    public HostDetailInterfaceVO getHostInterfaceByHostDTO(BriefHostDTO hostDTO) throws ServiceException {
-        HostDetailInterfaceVO interfaceVO = new HostDetailInterfaceVO();
-        // interfaces[interfaceid,dns ,hostid ,ip ,type],
-        List<BriefHostInterfaceDTO> interfaces = hostDTO.getInterfaces();
-        interfaceVO.setHostId(hostDTO.getHostId());
-        for(BriefHostInterfaceDTO interfaceDTO : interfaces) {
-            if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.AGENT.value).equals(interfaceDTO.getType())) {
-                interfaceVO.setAgentDNS(interfaceDTO.getDns());
-                interfaceVO.setAgentIp(interfaceDTO.getIp());
-                interfaceVO.setAgentPort(interfaceDTO.getPort());
-            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.SNMP.value).equals(interfaceDTO.getType())) {
-                interfaceVO.setSNMPDNS(interfaceDTO.getDns());
-                interfaceVO.setSNMPIp(interfaceDTO.getIp());
-                interfaceVO.setSNMPPort(interfaceDTO.getPort());
-            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.IPMI.value).equals(interfaceDTO.getType())) {
-                interfaceVO.setIPMIDNS(interfaceDTO.getDns());
-                interfaceVO.setIPMIIp(interfaceDTO.getIp());
-                interfaceVO.setIPMIPort(interfaceDTO.getPort());
-            }else if(String.valueOf(ZApiParameter.HOST_INTERFACE_TYPE.JMX.value).equals(interfaceDTO.getType())) {
-                interfaceVO.setJMXDNS(interfaceDTO.getDns());
-                interfaceVO.setJMXIp(interfaceDTO.getIp());
-                interfaceVO.setJMXPort(interfaceDTO.getPort());
-            }
-        }
-        return interfaceVO;
     }
 
     /**

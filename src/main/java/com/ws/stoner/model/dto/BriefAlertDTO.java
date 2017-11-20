@@ -1,7 +1,6 @@
 package com.ws.stoner.model.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.ws.stoner.model.view.ProblemListVO;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

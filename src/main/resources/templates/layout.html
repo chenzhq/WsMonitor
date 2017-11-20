@@ -8,11 +8,26 @@
 	<link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
 	<link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
 	<link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" th:href="@{css/datatables.min.css}">
 	<link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
 	<link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
 	<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
-
+	<style type="text/css">
+		.icon-symbol {
+			width: 2em; height: 2em;
+			vertical-align: 0;
+			fill: currentColor;
+			overflow: hidden;
+			margin: -1em 0.6em -0.5em 0;
+		}
+		.icon-symbol-scrolling {
+			width: 2em; height: 2em;
+			vertical-align: 0;
+			fill: currentColor;
+			overflow: hidden;
+			margin: -1em 0 -0.5em 0;
+		}
+	</style>
 	<th:block th:replace="${links}"></th:block>
 </head>
 <body>
@@ -28,10 +43,14 @@
 		</a>
 		<div class="ui accordion inverted">
             <a class="item" href="#" th:href="@{/dashboard}">
-                <i class="ion-speedometer titleIcon icon"></i> <span class="colhidden">仪表盘</span>
+                <i class="dashboard titleIcon icon"></i>
+				<span class="colhidden">仪表盘</span>
             </a>
 			<div class="title item" href="#">
-				<i class="ion-ios-world titleIcon  icon"></i>业务监控<i class="dropdown icon"></i>
+				<svg class="icon-symbol" aria-hidden="true">
+					<use xlink:href="#icon-yewupingtaijiankong"></use>
+				</svg>
+				业务监控<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/platformlist}">业务列表</a>
@@ -39,27 +58,30 @@
 				<a class="item" href="#" th:href="@{/platformdetail}">业务详情</a>
 			</div>
 			<div class="title item">
-				<i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
+				<i class="server titleIcon icon"></i>
+				设备监控<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/overview}">设备总览</a>
-                <!--<a class="item" href="#">设备详情</a>-->
+                <a class="item" href="#">设备详情</a>
 			</div>
 			<div class="title item" href="#">
-				<i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+				<svg class="icon-symbol" aria-hidden="true">
+					<use xlink:href="#icon-ic_view_carousel_px"></use>
+				</svg>
+				视图展示<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
+				<a class="item" href="#" th:href="@{/view}">监控视图</a>
+				<a class="item" href="#" th:href="@{/carousel}" >轮播视图</a>
 			</div>
 			<div class="title item">
-				<i class="ion-paintbrush titleIcon icon"></i>问题管理<i class="dropdown icon"></i>
+				<i class="alarm titleIcon icon"></i>
+				问题管理<i class="dropdown icon"></i>
 			</div>
 			<div class="content">
 				<a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
-				<a class="item" href="#" th:href="@{/problemlist}">问题详情</a>
 				<a class="item" href="#" th:href="@{/calendar}">告警日历</a>
-			</div>
-			<div class="title item" href="#">
-				<i class="ion-briefcase titleIcon icon"></i>报表统计
 			</div>
 			<div class="content">
 			</div>
@@ -67,7 +89,7 @@
 
 		<div class="ui dropdown item displaynone scrolling">
             <span>仪表盘</span>
-            <i class="ion-speedometer icon"></i>
+            <i class="dashboard icon"></i>
 			<div class="menu">
                 <a class="item" href="#" th:href="@{/dashboard}">仪表盘</a>
 			</div>
@@ -75,7 +97,9 @@
 
 		<div class="ui dropdown item displaynone scrolling">
 			<span>业务概览</span>
-			<i class="ion-ios-world icon"></i>
+			<svg class="icon-symbol-scrolling" aria-hidden="true">
+				<use xlink:href="#icon-yewupingtaijiankong"></use>
+			</svg>
 			<div class="menu">
 				<div class="header">
 					业务概览
@@ -89,47 +113,40 @@
 
 		<div class="ui dropdown item displaynone scrolling">
 			<span>设备监控</span>
-			<i class="ion-mouse icon"></i>
+			<i class="server icon"></i>
 			<div class="menu">
 				<div class="header">
 					设备监控
 				</div>
 				<div class="ui divider"></div>
                 <a class="item" href="#" th:href="@{/overview}">设备总览</a>
+				<a class="item" href="#">设备详情</a>
 			</div>
 		</div>
 
 		<div class="ui dropdown item displaynone scrolling">
 			<span>视图展示</span>
-			<i class="ion-arrow-graph-up-right icon"></i>
+			<svg class="icon-symbol-scrolling" aria-hidden="true">
+				<use xlink:href="#icon-ic_view_carousel_px"></use>
+			</svg>
 			<div class="menu">
-				<div class="header">
-					视图展示
-				</div>
+				<div class="header">视图展示</div>
+				<div class="ui divider"></div>
+				<a class="item" href="#" th:href="@{/view}">监控视图</a>
+				<a class="item" href="#" th:href="@{/carousel}">轮播视图</a>
 			</div>
 		</div>
 
 		<div class="ui dropdown item displaynone scrolling">
             <span>问题管理</span>
-			<i class="ion-paintbrush icon"></i>
+			<i class="alarm icon"></i>
 			<div class="menu">
-				<div class="header">
-
-				</div>
+				<div class="header">问题管理</div>
 				<div class="ui divider"></div>
                 <a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
-                <a class="item" href="#" th:href="@{/problemlist}">问题详情</a>
                 <a class="item" href="#" th:href="@{/calendar}">告警日历</a>
 			</div>
 		</div>
-
-		<div class="ui dropdown item displaynone scrolling">
-			<span>报表统计</span>
-			<a href="error.html">
-				<i class="ion-briefcase icon"></i>
-			</a>
-		</div>
-
 		<div class="ui divider"></div>
 
 	</div>
@@ -150,7 +167,7 @@
 					</div>
 				</div>
 				<div class="right menu colhidden">
-					<div class="ui dropdown item labeled icon">
+					<!--<div class="ui dropdown item labeled icon">
 						<i class="bell icon"></i>   告警
 						<div class="ui red label mini circular">6</div>
 						<div class="menu" >
@@ -181,10 +198,10 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div>-->
 					<div class="ui dropdown item">
-                        <img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/0.jpg}"
-                             alt="label-image"/>
+						<img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/鲸鱼.png}"
+							 alt="label-image"/>
 						<div class="menu">
 							<a class="item" href="#" th:text="${session.userInfo.name}">whstone</a>
 							<a class="item" href="mail.html" th:href="@{/logout}">注销</a>
@@ -213,7 +230,7 @@
 	<script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
 	<script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
 	<script src="../static/js/main.js" th:src="@{js/main.js}"></script>
-
+	<script src="../iconfont.js" th:src="@{js/iconfont.js}"></script>
     <th:block th:replace="${scripts}"></th:block>
 </th:block>
 </body>

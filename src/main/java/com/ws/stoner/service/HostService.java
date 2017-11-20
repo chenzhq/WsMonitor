@@ -2,9 +2,9 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
-import com.ws.stoner.model.view.HostDetailInterfaceVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
-import com.ws.stoner.model.view.HostDetailVO;
+import com.ws.stoner.model.view.host.HostDetailInterfaceVO;
+import com.ws.stoner.model.view.host.HostDetailPointVO;
+import com.ws.stoner.model.view.host.HostDetailVO;
 
 import java.util.List;
 
@@ -56,6 +56,22 @@ public interface HostService {
      * @throws ServiceException
      */
     int countOkHost() throws ServiceException;
+
+    /**
+     * 根据指定的hostIds 统计 警告主机数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    int countWarningHostByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
+     * 根据指定的hostIds 统计 严重主机数量
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    int countHighHostByHostIds(List<String> hostIds) throws ServiceException;
 
     /*
      *list 数据获取的方法
@@ -116,13 +132,6 @@ public interface HostService {
      * @throws ServiceException
      */
     HostDetailVO getHostDetailByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
-
-    /**
-     * 根据 BriefHostDTO hostDTO 组装 设备接口信息的 InterfaceVO
-     * @return
-     * @throws ServiceException
-     */
-    HostDetailInterfaceVO getHostInterfaceByHostDTO(BriefHostDTO hostDTO) throws ServiceException;
 
     /**
      * 根据 BriefHostDTO hostDTO 组装 设备下所有监控点状态信息 的 pointVO

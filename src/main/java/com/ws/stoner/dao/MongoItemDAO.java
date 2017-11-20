@@ -1,7 +1,7 @@
 package com.ws.stoner.dao;
 
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.item.Item;
 
 import java.util.List;
 

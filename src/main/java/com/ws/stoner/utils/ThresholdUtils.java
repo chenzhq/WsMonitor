@@ -1,8 +1,10 @@
 package com.ws.stoner.utils;
 
+import com.ws.bix4j.access.item.Item;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefTriggerDTO;
-import com.ws.stoner.model.view.HostDetailItemVO;
+import com.ws.stoner.model.view.host.HostDetailItemVO;
+import com.ws.stoner.model.view.itemvalue.ItemValueUnit;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -61,16 +63,16 @@ public class ThresholdUtils {
     public static String getThresholdSymbol(String expression) {
         //expression='{16252}>1000'  expression='{16252}>200M'
         String symbol = "";
-        if(expression.indexOf(">") != -1 && expression.indexOf(">=") == -1) {
-            // '>'
-            symbol = ">";
-        }else if(expression.indexOf("<") != -1 && expression.indexOf("<=") == -1) {
-            // '<'
-            symbol = "<";
-        }else if(expression.indexOf("<>") != -1) {
+        if(expression.indexOf("<>") != -1) {
             // '<>'
             symbol = "<>";
-        }else if(expression.indexOf("=") != -1 && expression.indexOf("<=") == -1 && expression.indexOf(">=") == -1) {
+        }else if(expression.indexOf("<") != -1 || expression.indexOf("<=") != -1) {
+            // '<'
+            symbol = "<";
+        }else if(expression.indexOf(">") != -1 || expression.indexOf(">=") != -1) {
+            // '>'
+            symbol = ">";
+        } else if(expression.indexOf("=") != -1 && expression.indexOf("<=") == -1 && expression.indexOf(">=") == -1) {
             // '='
             symbol = "=";
         }
@@ -110,8 +112,8 @@ public class ThresholdUtils {
     }
 
     //单位转换 返回转换后的带单位的数值 map<单位，值>  20 *1024 B  ==>>  20 kB  适用于文本展示数值
-    public static Map<String,String> transformValueUnits(String valueInfo,String units) {
-        Map<String, String> valueUnits = new HashMap<>();
+    public static ItemValueUnit transformValueUnits(String valueInfo, String units) {
+        ItemValueUnit valueUnits = null;
         String multiple = "";
         String UpUnits = units.toUpperCase();
         if("B".equals(UpUnits) || "BPS".equals(UpUnits) || "BYTE".equals(UpUnits)) {
@@ -132,12 +134,19 @@ public class ThresholdUtils {
                     }
                 }
             }
-            valueUnits.put(multiple+units.toUpperCase(),String.valueOf(new DecimalFormat("#0.00").format(value)));
+            valueUnits = new ItemValueUnit(
+                    new DecimalFormat("#0.00").format(value),
+                    multiple+units.toUpperCase()
+            );
+
         }else if("UPTIME".equals(UpUnits) || "S".equals(UpUnits)) {
             if(Float.parseFloat(valueInfo.trim()) < 0.001) {
-                valueUnits.put(units,"< 1 毫秒");
+                valueUnits = new ItemValueUnit("< 1 毫秒",units);
             }else if(Float.parseFloat(valueInfo.trim()) < 1) {
-                valueUnits.put(units,Float.parseFloat(valueInfo.trim()) * 1000 + "毫秒");
+                valueUnits = new ItemValueUnit(
+                        Float.parseFloat(valueInfo.trim()) * 1000 + "毫秒",
+                        units
+                );
             }else if(Float.parseFloat(valueInfo.trim()) >= 1) {
                 Long sec = Long.parseLong(valueInfo.trim());
                 int days = (int) (sec / (24 * 3600));
@@ -147,50 +156,35 @@ public class ThresholdUtils {
                 timeStringBuilder.append(days == 0 ? "" : days + "天");
                 timeStringBuilder.append(hours == 0 ? "" : hours + "小时");
                 timeStringBuilder.append(minute == 0 ? "" : minute + "分钟");
-                valueUnits.put(units,timeStringBuilder.toString());
+                valueUnits = new ItemValueUnit(timeStringBuilder.toString(),units);
+
             }
         }else if("UNIXTIME".equals(UpUnits)) {
             //未处理解析
-            valueUnits.put(units,valueInfo);
+            valueUnits = new ItemValueUnit(valueInfo,units);
         }else if("%".equals(UpUnits)) {
-            valueUnits.put(units,String.valueOf(new DecimalFormat("#0.00").format(Float.parseFloat(valueInfo.trim()))));
+            valueUnits = new ItemValueUnit(
+                    String.valueOf(new DecimalFormat("#0.00").format(Float.parseFloat(valueInfo.trim()))),
+                    units
+            );
         }else {
-            valueUnits.put(units,valueInfo);
+
+            valueUnits = new ItemValueUnit(valueInfo,units);
         }
         return valueUnits;
     }
 
-
-    public static Map<String, String> transformGraphValue(String valueInfo,String units) {
+    //获取转换的图形数据
+    public static ItemValueUnit transformGraphValue(String valueInfo,String units) {
         String upUnits = units.toUpperCase();
-        Map<String,String> valueUnits;
+        ItemValueUnit valueUnits;
         if("B".equals(upUnits) || "BPS".equals(upUnits) || "BYTE".equals(upUnits)) {
             valueUnits = ThresholdUtils.transformValueUnits(valueInfo,units);
         }else {
             //图形中非 （B） 流量数据 还未做处理
-            valueUnits = new HashMap<>();
-            valueUnits.put(units,valueInfo);
+            valueUnits = new ItemValueUnit(valueInfo,units);
         }
        return valueUnits;
-    }
-
-    static public HostDetailItemVO setThresholdValueForItemVO(HostDetailItemVO itemVO, String itemDTOId, List<BriefTriggerDTO> triggerDTOS ) throws ServiceException {
-        itemVO.setWithTriggers(true);
-        //循环triggerDTOS，筛选出属于该itemDTO的触发器，取List<String> expression,priority  ,
-        for(BriefTriggerDTO triggerDTO : triggerDTOS) {
-            String expression = triggerDTO.getExpression();
-            String itemIdInfo = triggerDTO.getItems().get(0).getItemId();
-            if(itemIdInfo.equals(itemDTOId)) {
-                if(triggerDTO.getPriority() == 2) {
-                    // priority为2:警告阀值取expression的逻辑比较符号后面数据；
-                    itemVO.setWarningPoint(ThresholdUtils.getThresholdValue(expression));
-                }else if(triggerDTO.getPriority() == 4) {
-                    // priority为4:严重阀值取expression的逻辑比较符号后面数据；
-                    itemVO.setHighPoint(ThresholdUtils.getThresholdValue(expression));
-                }
-            }
-        }
-        return itemVO;
     }
 
 }

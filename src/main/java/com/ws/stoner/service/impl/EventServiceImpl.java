@@ -11,9 +11,8 @@ import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.query.CalendarFormQuery;
-import com.ws.stoner.model.view.*;
+import com.ws.stoner.model.view.problem.*;
 import com.ws.stoner.service.*;
-import com.ws.stoner.utils.AlertStatusConverter;
 import com.ws.stoner.utils.BaseUtils;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
@@ -84,7 +83,7 @@ public class EventServiceImpl implements EventService {
                 .setEventIds(eventIds)
                 .setSelectAcknowledges(BriefAcknowledgeDTO.PROPERTY_NAMES)
                 .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
-                .setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
+                //.setSelectRelatedObject(BriefTriggerDTO.PROPERTY_NAMES)
                 .setSelectAlerts(BriefAlertDTO.PROPERTY_NAMES)
                 .setOutput(BriefEventDTO.PROPERTY_NAMES);
         return listEvent(eventGetRequest);
@@ -196,7 +195,7 @@ public class EventServiceImpl implements EventService {
         //获取 恢复事件集合
         List<BriefEventDTO> recoveryEventDTOS = getEventByEventId(recoveryEventIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
-        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS);
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(problemEventDTOS,recoveryEventDTOS,triggerDTOS);
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }
@@ -259,7 +258,7 @@ public class EventServiceImpl implements EventService {
         if(triggerDTO.getManualClose().equals(ZApiParameter.TRIGGER_MANUAL_CLOSE.NO.value)) {
             //如果不可关闭
             checkboxVO.setCheckboxEnable(false);
-            checkboxVO.setDisableMessage("问题不可关闭");
+            checkboxVO.setDisableMessage("该问题不可关闭，必须设置该触发器问题能够关闭");
             return checkboxVO;
         }
         //step3:Login User类型：Super Admin OR 所属用户群组 对 Trigger所属主机的主机群组 有读写权限（3）
@@ -281,7 +280,7 @@ public class EventServiceImpl implements EventService {
             }
             //循环结束还未返回方法，则无权限
             checkboxVO.setCheckboxEnable(false);
-            checkboxVO.setDisableMessage("无权限");
+            checkboxVO.setDisableMessage("当前用户无权限关闭此问题");
             return checkboxVO;
         }else {
             //Super Admin
@@ -331,79 +330,47 @@ public class EventServiceImpl implements EventService {
      * @throws ServiceException
      */
     @Override
-    public  List<ProblemDetailListVO> getDetailListByTriggerId(String triggerId, String beginTime,String endTime ) throws ServiceException {
+    public  List<ProblemDetailListVO> getDetailListByTriggerId(String triggerId, String beginTime, String endTime ) throws ServiceException {
         LocalDateTime localBeginTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(beginTime)), ZoneId.systemDefault());
         LocalDateTime localEndTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(Long.parseLong(endTime)), ZoneId.systemDefault());
         List<ProblemDetailListVO> problemDetailListVOS = new ArrayList<>();
         List<String> triggerIds = new ArrayList<>();
         triggerIds.add(triggerId);
-        //获取最新的event
-        BriefEventDTO lastEventDTO = triggerService.getTriggersByTriggerIds(triggerIds).get(0).getLastEvent();
         List<BriefEventDTO> eventDTOS = getAllEventsByTime(beginTime,endTime,triggerIds);
         if(eventDTOS.size() == 0) {
             return null;
         }
+
         //处理第一条 事件
         BriefEventDTO firstDTO = eventDTOS.get(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
         ProblemDetailListVO firstListVO = new ProblemDetailListVO();
-        if(firstDTO.equals(lastEventDTO)) {
-            //第一条是最新事件
-            firstListVO.setEventId(firstDTO.getEventId());
-            firstListVO.setBeginTime(firstDTO.getClock().format(formatter));
-            firstListVO.setDurationString(firstDTO.getClock(), LocalDateTime.now());
-            if(firstDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
-                //该触发器的最新状态为问题
-                firstListVO.setStatus("问题");
-                //确认
-                if(firstDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
-                    firstListVO.setAcknowledged("是");
-                }else {
-                    firstListVO.setAcknowledged("否");
-                }
-                List<BriefAlertDTO> firstDTOAlerts = firstDTO.getAlerts();
-                //问题和恢复的告警,告警数
-                Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(firstDTOAlerts);
-                firstListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-                firstListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+        firstListVO.setEventId(firstDTO.getEventId());
+        firstListVO.setBeginTime(firstDTO.getClock().format(formatter));
+        firstListVO.setDurationString(firstDTO.getClock(), localEndTime);
+        if(firstDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+            //第一条事件为问题
+            firstListVO.setStatus("问题");
+            //确认
+            if(firstDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
+                firstListVO.setAcknowledged("是");
             }else {
-                //该触发器的最新状态为正常
-                firstListVO.setStatus("正常");
-                //确认
-                firstListVO.setAcknowledged("无");
-                firstListVO.setAlertNum(0);
-                firstListVO.setAlertState("无");
+                firstListVO.setAcknowledged("否");
             }
+            //问题的告警,告警数
+            List<BriefAlertDTO> firstDTOAlerts = firstDTO.getAlerts();
+            AlertBriefVO alertBriefVO = AlertBriefVO.transformByAlertDTOS(firstDTOAlerts);
+            firstListVO.setAlertNum(alertBriefVO.getAlertNum());
+            firstListVO.setAlertState(alertBriefVO.getAlertState());
         }else {
-            //第一条不是最新事件
-            firstListVO.setEventId(firstDTO.getEventId());
-            firstListVO.setBeginTime(firstDTO.getClock().format(formatter));
-            firstListVO.setEndTime(localEndTime.format(formatter));
-            firstListVO.setDurationString(firstDTO.getClock(),localEndTime);
-            if(firstDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
-                //且还是问题事件
-                firstListVO.setStatus("问题(已恢复)");
-                firstListVO.setRecoveryEventid(firstDTO.getrEventid());
-                //确认
-                if(firstDTO.getAcknowledged().equals(ZApiParameter.ACKNOWLEDGE_ACTION.ACKNOWLEDGED.value)) {
-                    firstListVO.setAcknowledged("是");
-                }else {
-                    firstListVO.setAcknowledged("否");
-                }
-                List<BriefAlertDTO> firstDTOAlerts = firstDTO.getAlerts();
-                //问题和恢复的告警,告警数
-                Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(firstDTOAlerts);
-                firstListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-                firstListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
-            }else {
-                //正常事件
-                firstListVO.setStatus("正常");
-                //确认
-                firstListVO.setAcknowledged("无");
-                firstListVO.setAlertNum(0);
-                firstListVO.setAlertState("无");
-            }
+            //第一条事件正常
+            firstListVO.setStatus("正常");
+            //确认
+            firstListVO.setAcknowledged("无");
+            firstListVO.setAlertNum(0);
+            firstListVO.setAlertState("无");
         }
+
         //添加第一个元素
         problemDetailListVOS.add(firstListVO);
         //定义上一个 DetailTime 用于指定 结束时间和持续时间
@@ -432,11 +399,19 @@ public class EventServiceImpl implements EventService {
                     }else {
                         currentVO.setAcknowledged("否");
                     }
+                    //问题告警
                     List<BriefAlertDTO> alertDTOS = eventDTO.getAlerts();
-                    //问题和恢复的告警,告警数
-                    Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
-                    currentVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-                    currentVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+                    //恢复告警
+                    for(BriefEventDTO event : eventDTOS) {
+                        if(eventDTO.getrEventid().equals(event.getEventId())) {
+                            //找到 eventDTO 的恢复event，取恢复告警
+                            alertDTOS.addAll(event.getAlerts());
+                        }
+                    }
+                    //处理得到问题和恢复告警的 状态和数量
+                    AlertBriefVO alertBriefVO = AlertBriefVO.transformByAlertDTOS(alertDTOS);
+                    currentVO.setAlertNum(alertBriefVO.getAlertNum());
+                    currentVO.setAlertState(alertBriefVO.getAlertState());
                 }else {
                     // eventDTO 状态为正常
                     currentVO.setStatus("正常");
@@ -457,7 +432,7 @@ public class EventServiceImpl implements EventService {
         if(endEventDTO.getValue().equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
             endListVO.setStatus("正常");
             //确认
-            endListVO.setAcknowledged("无");
+            endListVO.setAcknowledged("");
             endListVO.setAlertNum(0);
             endListVO.setAlertState("无");
         }else {
@@ -473,9 +448,9 @@ public class EventServiceImpl implements EventService {
             endListVO.setStatus("问题(已恢复)");
             List<BriefAlertDTO> alertDTOS = endEventDTO.getAlerts();
             //问题和恢复的告警,告警数
-            Map<String,Integer> alertMap = AlertStatusConverter.getMassageByAlertStatus(alertDTOS);
-            endListVO.setAlertNum(alertMap.entrySet().iterator().next().getValue());
-            endListVO.setAlertState(alertMap.entrySet().iterator().next().getKey());
+            AlertBriefVO alertBriefVO = AlertBriefVO.transformByAlertDTOS(alertDTOS);
+            endListVO.setAlertNum(alertBriefVO.getAlertNum());
+            endListVO.setAlertState(alertBriefVO.getAlertState());
         }
         problemDetailListVOS.add(endListVO);
         return problemDetailListVOS;
@@ -622,7 +597,7 @@ public class EventServiceImpl implements EventService {
         //获取 恢复事件集合
         List<BriefEventDTO> recoveryEventDTOS = getEventByEventId(recoveryEventIds);
         //将 BriefProblemDTO 转换成 ProblemListVO
-        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(resultEventDTOS,recoveryEventDTOS);
+        List<ProblemListVO> problemListVOS = ProblemListVO.transformVOSUseBriefEventDTO(resultEventDTOS,recoveryEventDTOS,triggerDTOS);
         //时间排序
         return ProblemListVO.getSortListByProblemTime(problemListVOS);
     }

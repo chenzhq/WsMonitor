@@ -1,13 +1,13 @@
 package com.ws.stoner.service;
 
 
-import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.bean.ItemDO;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.item.Item;
 import com.ws.stoner.model.dto.BriefItemDTO;
-import com.ws.stoner.model.view.HostDetailPointItemVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
+import com.ws.stoner.model.view.host.HostDetailPointItemVO;
+import com.ws.stoner.model.view.host.HostDetailPointVO;
+import com.ws.stoner.model.view.itemvalue.ItemConfigVO;
 
 import java.util.List;
 
@@ -166,4 +166,12 @@ item 在 mongodb下的业务方法
      * @throws ServiceException
      */
     List<HostDetailPointItemVO> getItemDatasByItemId (String itemId, int time) throws ServiceException;
+
+    /**
+     * 根据itemid 获取 归属的 hostid 和 pointid
+     * @param itemId
+     * @return
+     * @throws ServiceException
+     */
+    ItemConfigVO getItemConfigByItemId(String itemId) throws ServiceException;
 }

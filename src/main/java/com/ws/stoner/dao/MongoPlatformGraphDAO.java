@@ -1,7 +1,7 @@
 package com.ws.stoner.dao;
 
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.model.DO.mongo.PlatformGraph;
+import com.ws.stoner.model.DO.mongo.platform.PlatformGraph;
 
 import java.util.List;
 

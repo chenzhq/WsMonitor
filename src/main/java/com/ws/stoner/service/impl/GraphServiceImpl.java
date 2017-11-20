@@ -9,10 +9,20 @@ import com.ws.stoner.dao.MongoPlatformGraphDAO;
 import com.ws.stoner.dao.MongoPlatformTreeDAO;
 import com.ws.stoner.exception.DAOException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.*;
+import com.ws.stoner.model.DO.mongo.item.GraphType;
+import com.ws.stoner.model.DO.mongo.item.Item;
+import com.ws.stoner.model.DO.mongo.platform.PlatformGraph;
+import com.ws.stoner.model.DO.mongo.platform.PlatformTree;
+import com.ws.stoner.model.DO.mongo.platform.PlatformTreeManager;
 import com.ws.stoner.model.dto.*;
 import com.ws.stoner.model.query.CalendarFormQuery;
-import com.ws.stoner.model.view.*;
+import com.ws.stoner.model.view.host.HostDetailItemGraphVO;
+import com.ws.stoner.model.view.host.HostDetailItemVO;
+import com.ws.stoner.model.view.itemvalue.ItemTimeData;
+import com.ws.stoner.model.view.platform.PlatformGraphVO;
+import com.ws.stoner.model.view.platform.PlatformTreeVO;
+import com.ws.stoner.model.view.problem.CalendarDayVO;
+import com.ws.stoner.model.view.problem.CalendarVO;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
@@ -115,7 +125,7 @@ public class GraphServiceImpl implements GraphService {
 
             //阀值赋值：highPoint,warningPoint
             if(itemIds.contains(itemDTO.getItemId())) {
-                itemVO = ThresholdUtils.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
+                itemVO = HostDetailItemVO.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
             }else {
                 itemVO.setWithTriggers(false);
             }
@@ -151,7 +161,7 @@ public class GraphServiceImpl implements GraphService {
                 HostDetailItemVO itemVO = new HostDetailItemVO();
                 //阀值赋值：highPoint,warningPoint
                 if(itemIds.contains(itemDTO.getItemId())) {
-                    itemVO = ThresholdUtils.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
+                    itemVO = HostDetailItemVO.setThresholdValueForItemVO( itemVO, itemDTO.getItemId(), triggerDTOS );
                 }else {
                     itemVO.setWithTriggers(false);
                 }
@@ -172,10 +182,10 @@ public class GraphServiceImpl implements GraphService {
             List<BriefHistoryDTO> historyDTOS = historyService.getHistoryByItemId(itemVO.getItemId(),itemVO.getValueType(),1);
             Collections.reverse(historyDTOS);
             //将历史线性数据转换成图形对应数据
-            Map<String ,Object> historyDatasMap = transformHistoryDatas(historyDTOS,itemVO.getUnits());
-            itemVO.setData((Float[])historyDatasMap.get("datas"));
-            itemVO.setDataTime((String[])historyDatasMap.get("dataTime"));
-            itemVO.setUnits((String)historyDatasMap.get("units"));
+            ItemTimeData timeData = ItemTimeData.transformByHistoryDTOS(historyDTOS,itemVO.getUnits());
+            itemVO.setData(timeData.getData());
+            itemVO.setDataTime(timeData.getDataTime());
+            itemVO.setUnits(timeData.getUnits());
         }
         return itemVOS;
     }
@@ -246,10 +256,10 @@ public class GraphServiceImpl implements GraphService {
             }
             Collections.reverse(historyDTOS);
             //将历史线性数据转换成图形对应数据
-            Map<String ,Object> historyDatasMap = transformHistoryDatas(historyDTOS,itemVO.getUnits());
-            itemVO.setData((Float[])historyDatasMap.get("datas"));
-            itemVO.setDataTime((String[])historyDatasMap.get("dataTime"));
-            itemVO.setUnits((String)historyDatasMap.get("units"));
+            ItemTimeData timeData = ItemTimeData.transformByHistoryDTOS(historyDTOS,itemVO.getUnits());
+            itemVO.setData(timeData.getData());
+            itemVO.setDataTime(timeData.getDataTime());
+            itemVO.setUnits(timeData.getUnits());
         }
         return itemVOS;
     }
@@ -262,7 +272,7 @@ public class GraphServiceImpl implements GraphService {
      */
     @Override
     public PlatformTreeVO getPlatTreeByPlatformId(String platformId) throws ServiceException {
-        String context_url = BaseConsts.URL_CONTEXT + "/images/";
+        String context_url = "/images/";
         List<String> platformIds = new ArrayList<>();
         platformIds.add(platformId);
         //判断mongodb中是否有业务平台数据，没有，则初始化
@@ -399,7 +409,7 @@ public class GraphServiceImpl implements GraphService {
      */
     @Override
     public List<PlatformTreeVO> initPlatTree() throws ServiceException {
-        String context_url = BaseConsts.URL_CONTEXT + "/images/";
+        String context_url = "/images/";
         List<BriefPlatformDTO> allPlatformDTOS = platformService.listAllPlatform();
         List<PlatformTreeVO> platformTreeVOS = new ArrayList<>();
         for(BriefPlatformDTO platformDTO : allPlatformDTOS) {
@@ -606,11 +616,12 @@ public class GraphServiceImpl implements GraphService {
                     //降序 转 升序 时间轴
                     Collections.reverse(historyDTOS);
                     //将历史线性数据转换成图形对应数据
-                    Map<String ,Object> historyDatasMap = transformHistoryDatas(historyDTOS,itemDTO.getUnits());
-                    platformGraphVO.setDatas((Float[])historyDatasMap.get("datas"));
-                    platformGraphVO.setDataTime((String[])historyDatasMap.get("dataTime"));
-                    platformGraphVO.setUnits((String)historyDatasMap.get("units"));
+                    ItemTimeData timeData = ItemTimeData.transformByHistoryDTOS(historyDTOS,itemDTO.getUnits());
+                    platformGraphVO.setDatas(timeData.getData());
+                    platformGraphVO.setDataTime(timeData.getDataTime());
+                    platformGraphVO.setUnits(timeData.getUnits());
                     platformGraphVOS.add(platformGraphVO);
+
                 }
             }
         }
@@ -652,10 +663,10 @@ public class GraphServiceImpl implements GraphService {
                    //降序 转 升序 时间轴
                    Collections.reverse(historyDTOS);
                    //将历史线性数据转换成图形对应数据
-                   Map<String ,Object> historyDatasMap = transformHistoryDatas(historyDTOS,itemDTO.getUnits());
-                   platformGraphVO.setDatas((Float[])historyDatasMap.get("datas"));
-                   platformGraphVO.setDataTime((String[])historyDatasMap.get("dataTime"));
-                   platformGraphVO.setUnits((String)historyDatasMap.get("units"));
+                   ItemTimeData timeData = ItemTimeData.transformByHistoryDTOS(historyDTOS,itemDTO.getUnits());
+                   platformGraphVO.setDatas(timeData.getData());
+                   platformGraphVO.setDataTime(timeData.getDataTime());
+                   platformGraphVO.setUnits(timeData.getUnits());
                    platformGraphVOS.add(platformGraphVO);
                }
            }
@@ -804,31 +815,6 @@ public class GraphServiceImpl implements GraphService {
         CalendarVO calendarVO = new CalendarVO(title,range,datas);
         return calendarVO;
     }
-
-    /**
-     * 注意返回的map 的key有三个 "units",  "datas",  "dataTime"
-     * @param historyDTOS 需要转换的历史数据
-     * @param units
-     * @return
-     */
-    private Map<String,Object> transformHistoryDatas(List<BriefHistoryDTO> historyDTOS,String units) {
-        Map<String,Object> historyDatasMap = new HashMap<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss");
-        List<Float> datas = new ArrayList<>();
-        List<String> dataTime = new ArrayList<>();
-        //赋值 取list BriefHistory的 valueList 给 date，lastTimeList 给 data_time，
-        for(BriefHistoryDTO historyDTO : historyDTOS) {
-            Map<String,String> valueUnits = ThresholdUtils.transformGraphValue(historyDTO.getValue(),units);
-            historyDatasMap.put("units",valueUnits.entrySet().iterator().next().getKey());
-            datas.add(Float.parseFloat(valueUnits.entrySet().iterator().next().getValue()));
-            String dataTimeString = historyDTO.getLastTime().format(formatter);
-            dataTime.add(dataTimeString);
-        }
-        historyDatasMap.put("datas",datas.toArray(new Float[0]));
-        historyDatasMap.put("dataTime",dataTime.toArray(new String[0]));
-        return historyDatasMap;
-    }
-
 
     /**
      *

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>全屏轮播</title>
+    <script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
+    <script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+    <link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+    <link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+    <script src="../static/js/jquery.fullpage.min.js" th:src="@{js/jquery.fullpage.min.js}"></script>
+    <script src="../static/js/jquery.easings.min.js" th:src="@{js/jquery.easings.min.js}"></script>
+
+    <link rel="stylesheet" href="../static/css/jquery.fullpage.min.css" th:href="@{css/jquery.fullpage.min.css}">
+    <script src="../static/js/jquery.gridster.js" th:src="@{js/jquery.gridster.js}"></script>
+    <link rel="stylesheet" href="../static/css/jquery.gridster.css" th:href="@{css/jquery.gridster.css}">
+    <script src="../static/js/analogClock.js" th:src="@{js/analogClock.js}"></script>
+    <script src="../static/js/moment.min.js" th:src="@{js/moment.min.js}"></script>
+    <link rel="stylesheet" type="text/css" href="../static/css/num-clock.css" th:href="@{css/num-clock.css}" />
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" th:href="@{css/normalize.css}" />
+    <script src="../static/js/custom/carousel-common.js" th:src="@{js/custom/carousel-common.js}"></script>
+    <script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+    <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+
+    <link href="../static/css/jsgrid.css" rel="stylesheet" th:href="@{css/jsgrid.css}"/>
+    <link href="../static/css/jsgrid-theme.css" rel="stylesheet" th:href="@{css/jsgrid-theme.css}"/>
+    <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
+    <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
+    <script src="../static/js/db.js" th:src="@{js/db.js}"></script>
+    <script src="../static/js/mindmup-editabletable.js" th:src="@{js/mindmup-editabletable.js}"></script>
+    <script src="../static/js/custom-editable.js" th:src="@{js/custom-editable.js}"></script>
+    <style>
+        header {
+
+        }
+        #side{
+            position: fixed; left: 0px; top: 0;; z-index: 10;
+            height: 33px; width: 100%;
+            background-color: #767676;
+            color: #E5E5E5;
+        }
+        .ui.grid.side{ margin-left: 5px;margin-right: 5px }
+        .nine.wide.column.side{ margin-top: 5px }
+        .three.wide.column.side{ padding-top: 20px }
+        .two.wide.column.side{ padding-top: 20px }
+        #carousel{
+            margin-top: 20px;
+        }
+
+        .gridster > ul > li {
+            background-color: #EFF6EC;
+            list-style-type:none;
+        }
+
+        .gridster > div > ul {
+            width: 1366px ;
+            height: 100% ;
+        }
+    </style>
+</head>
+<body>
+<div id="side">
+    <div class="ui grid side">
+        <div class="nine wide column side">
+            <div class="header item">
+                <h3 id="page_title">页面标题</h3>
+                <h2 id="group_title" style="display:none;" th:text="${groupName}">组标题</h2>
+            </div>
+        </div>
+        <div class="three wide column side">
+            刷新时间：
+            <span style="display: none" th:text="${refreshTime}" id="refresh_time"></span>
+            <span th:text="${refreshTimeString}"></span>
+        </div>
+        <div class="two wide column side">
+            滚动频率：
+            <span style="display: none" th:text="${scrollTime}" id="scroll_time"></span>
+            <span th:text="${scrollTimeString}"></span>
+        </div>
+        <div class="two wide column right aligned">
+            <button id="exit" class="tiny  ui secondary button">退出</button>
+        </div>
+    </div>
+    <div th:replace="carouselview::carousel_block"></div>
+</div>
+
+<div id="carousel">
+    <div class="section" >
+        <!-- data-th- 即 th: -->
+        <div class="slide" th:each="page:${pages}" style="overflow: auto">
+            <div class="gridster" th:data-name="${page.pageName}" id="page-"
+                 th:attrappend="id=${pageStat.index}">
+                <ul>
+                    <li th:each="block:${page.layoutDataList}"
+                        th:data-row="${block.row}"
+                        th:data-col="${block.col}"
+                        th:data-sizex="${block.xSize}"
+                        th:data-sizey="${block.ySize}"
+                    ></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 刷新读条 -->
+<div id="table-dimmer" class="ui inverted dimmer">
+    <div class="ui text loader" style="text-align:center">正在刷新</div>
+</div>
+<script>
+    var w = document.documentElement.clientWidth
+        || document.body.clientWidth;
+    var h = document.documentElement.clientHeight
+        || document.body.clientHeight;
+
+    //粒度 100 为 margin，40 为默认 40 row
+    var widget_size = parseInt((w - 170) / 40);
+    console.log('widget_size',widget_size);
+
+    var grids = [];
+    var grid_length = $('.gridster').length;
+    for (var i = 0; i < grid_length; ++i) {
+        grids[i] = $('.gridster').eq(i).find('ul').eq(0).gridster({
+
+            // TODO: 补充其它配置
+            namespace: '#page-' + i,
+            widget_selector: 'li',
+            widget_margins: [5, 5],                       //margin大小
+            widget_base_dimensions: [widget_size, widget_size],            //网格
+            avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+            max_cols: 40,                             //最多创建多少列，null表示没有限制
+            max_rows: 40,                             //最多创建多少横，null表示没有限制
+
+
+        }).data('gridster');
+        grids[i].disable();
+    }
+
+    // 根据情况选择是否在进入此页面时调用全屏方法
+    fullScreen();
+
+    // TODO: 首次加载 只加载第一个和第二个页面
+    var group_name = $('#group_title').text();
+    var first_page_name = $('#carousel').find('.gridster').eq(0).attr('data-name');
+    var second_page_name = $('#carousel').find('.gridster').eq(1).attr('data-name');
+    refreshPage(group_name,first_page_name,0);
+    refreshPage(group_name,second_page_name,1);
+
+
+    // 标记是否正在刷新
+    var refreshing = false;
+    $('#carousel').fullpage({
+        continuousHorizontal:true,   //左右无缝循环
+        loopHorizontal:true,         //支持左右循环
+        slidesNavigation:false,      //slides导航
+        controlArrows: false,        //左右切换箭头显示
+        verticalCentered:false,      //section不居中显示
+        css3:false,
+        easing: 'easeOutCirc',     //滚动样式
+        easingcss3: 'linear',
+        afterSlideLoad: function (anchorLink, index, slideAnchor, slideIndex) {
+            var current_name = $('#carousel').find('.gridster').eq(slideIndex).attr('data-name');
+
+            $('#page_title').html(current_name);
+            if (refreshing) {
+                refreshing = false;
+                // TODO: 刷新上一个页面 index-1
+                var pages = $('#carousel').find('.gridster').length;
+                //获取参数值
+                var pre_index = slideIndex==0 ? pages-1 : index-1;
+                var pre_group_name = $('#group_title').text();
+                var pre_page_name = $('#carousel').find('.gridster').eq(pre_index).attr('data-name');
+
+                refreshPage(pre_group_name,pre_page_name,pre_index);
+            }
+        },
+        afterRender:function () {
+
+            var first_name = $('#carousel').find('.gridster').eq(0).attr('data-name');
+            $('#page_title').html(first_name);
+
+            var scroll_time = $('#scroll_time').text();
+            var refresh_time = $('#refresh_time').text();
+            console.log(scroll_time,refresh_time);
+            //左右滚动频率
+            setInterval(function(){
+                $.fn.fullpage.moveSlideRight();
+
+            }, scroll_time);
+
+            // 设置刷新频率
+            setInterval(function () {
+                refreshing = true;
+                refresh();
+
+            }, refresh_time);
+
+        }
+    });
+
+
+    function refresh() {
+        var group_name = $('#group_title').text();
+        var pages = $('#carousel').find('.gridster').length;
+        var current_index = $('.active').index();
+        for (var i = current_index + 1; i < pages; ++i) {
+            // TODO: 从下一个页面 依次调用刷新API 参数为第i个页面的data-name
+            var page_name = $('#carousel').find('.gridster').eq(i).attr('data-name');
+            refreshPage(group_name,page_name,i);
+        }
+        for (var j = 0; j < current_index; ++j) {
+            // TODO: 从第0个页面 依次调用刷新API 参数为第j个页面的data-name
+            var page_name = $('#carousel').find('.gridster').eq(j).attr('data-name');
+            refreshPage(group_name,page_name,j);
+        }
+    }
+
+    $('#exit').on('click', function () {
+        exitFullScreen();
+        window.location.href = '/carousel';
+    })
+
+    //刷新页面 index 表示当前是第几个页面
+    function refreshPage(group_name,page_name,index) {
+        $.ajax({
+            type: 'get',
+            url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,
+            dataType: 'json',
+            success: function (result) {
+                if(result.success) {
+                    var page_vo = result.data;
+                    //绘制每一个展示项
+                    var config_data = page_vo.config_data;
+                    var block_data = page_vo.block_data;
+                    var $_gridster = $('.gridster').eq(index).find('ul').eq(0);
+
+                    //画 页 page
+                    $.each(config_data, function (i,value) {
+                        // 画 项 block
+                        var $_block = $_gridster.children('li').eq(i);
+
+                        //清空 li 子元素
+                        $_block.children().remove();
+
+                        //给展示项添加模板
+                        $_block.append($('#block_temp').html());
+
+                        drawBlock($_block,config_data[i],block_data[i],index,i);
+                    });
+
+                }
+                else {
+                    errorMsg_no_connect("页面刷新失败");
+                }
+            },
+            error: function () {
+                errorMsg_no_connect("页面刷新失败");
+            }
+        })
+    }
+
+    // 全屏
+    function fullScreen() {
+        var el = document.documentElement;
+        var rfs = el.requestFullScreen || el.webkitRequestFullScreen ||
+            el.mozRequestFullScreen || el.msRequestFullScreen;
+        if (typeof rfs != "undefined" && rfs) {
+            rfs.call(el);
+        } else if (typeof window.ActiveXObject != "undefined") {
+            //for IE，这里其实就是模拟了按下键盘的F11，使浏览器全屏
+            var wscript = new ActiveXObject("WScript.Shell");
+            if (wscript != null) {
+                wscript.SendKeys("{F11}");
+            }
+        }
+    }
+
+    // 退出全屏
+    function exitFullScreen() {
+        var el = document;
+        var cfs = el.cancelFullScreen || el.webkitCancelFullScreen ||
+            el.mozCancelFullScreen || el.exitFullScreen;
+        if (typeof cfs != "undefined" && cfs) {
+            cfs.call(el);
+        } else if (typeof window.ActiveXObject != "undefined") {
+            //for IE，这里和fullScreen相同，模拟按下F11键退出全屏
+            var wscript = new ActiveXObject("WScript.Shell");
+            if (wscript != null) {
+                wscript.SendKeys("{F11}");
+            }
+        }
+    }
+</script>
+</body>
+</html>

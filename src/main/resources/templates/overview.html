@@ -15,10 +15,60 @@
 		<link rel="stylesheet" href="../static/css/jquery.treegrid.css" th:href="@{css/jquery.treegrid.css}">
 		<link rel="stylesheet" href="../static/css/jstree-default/style.min.css" th:href="@{css/jstree-default/style.min.css}">
 		<script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
+		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
+			/*原生button 有个下外边距*/
+			.ui.modal .actions > .button {
+				margin-bottom: 0;
+			}
+			.chart-style {
+				height: 160px;
+			}
 			.ui.table.dataTable thead th {
-				border-left: 0px;
+				border-left: 0;
+			}
+			/*原生a 颜色是蓝色*/
+			a{ color: rgba(0, 0, 0, 0.87); }
+			#pointPop{
+				height: 260px;
+				width: 260px;
+				overflow-y:auto;
+				overflow-x:hidden;
+				z-index:20;
+				background-color: #E0E0E0
+			}
+			#pointName{
+				width: 220px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+			#summaryInformation .ui.labels ,.ui.labels .label {
+				/*原生label 有个下边距*/
+				margin-bottom: 0px;
+			}
+			#pointDetailModal .ui.tab.segment {
+				height: 450px;
+				width: 100%;
+				overflow:auto;
+				overflow-x:hidden;
+				/*原生tab 有个下边距*/
+				margin-bottom: 0px;
+			}
+			#pointDetailModal .ui.buttons {
+				/*原生buttons 有个下边距*/
+				margin-bottom: 0px;
+			}
+			#pointDetailModal table.dataTable.no-footer {
+				/*原生dataTable 下外边框颜色是#111*/
+				border-bottom: 1px solid #DDDDDD;
+			}
+			#pointDetailModal .ui.three.column.grid {
+				margin: -20px 0 0 0;
+			}
+			#pointDetailModal .ui.three.column.grid .column {
+				margin-bottom: 10px;
 			}
 		</style>
 	</th:block>
@@ -212,44 +262,76 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
-					<div class="ui secondary menu" style="margin-top:-10px;margin-bottom: -10px">
-						<a class="header item">
-							<h3><i class="bar large chart icon"></i>检测总数：</h3>
-						</a>
-						<a class="item">
-							<p>36个设备的222个监测点。
-								<i class="red circle icon"></i>  30
-								<i class="yellow circle icon"></i>  50
-								<i class="green circle icon"></i>  122
-								<i class="grey circle icon"></i>  20
+					<div class="header item">
+						<h2><i class="large list layout icon"></i>
+							设备总览</h2>
+					</div>
+					<div class="ui grid" id="summaryInformation">
+						<!--<div class="eight wide column" style="margin-top: 20px">
+							<h3 style="float: left;margin-bottom: 0px;margin-left: 15px">设备检测：</h3>
+							<p style="float: left">
+								<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备
+								<span th:each="stateNum:${stateViewVO.hostStateNum.stateNum}">
+									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' desktop icon'"></i>
+									<span th:text="${stateNum.value}"></span>
+									<span>&nbsp&nbsp&nbsp&nbsp</span>
+								</span>
 							</p>
-						</a>
-						<a class="right item">
-							类型：
-							<select id="ui_dropdown" class="ui dropdown">
-								<option value="">选择类型</option>
-								<option>组</option>
-								<option>服务器</option>
-								<option>数据库</option>
-								<option>网络设备</option>
-								<option>监控点</option>
-							</select>
-						</a>
+						</div>
+						<div class="eight wide column" style="margin-top: 20px">
+							<h3 style="float: left;margin-bottom: 0px">监测点检测：</h3>
+							<p style="float: left">
+
+								<span th:each="stateNum:${stateViewVO.pointStateNum.stateNum}">
+									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' circle icon'"></i>
+									<span th:text="${stateNum.value}"></span>
+									<span>&nbsp&nbsp&nbsp&nbsp</span>
+								</span>
+							</p>
+						</div>-->
+						<div class="sixteen wide column right aligned">
+                            <div class="ui basic labels" style="float: right">
+                                <div class="ui tag label">
+                                    共<span th:text="${stateViewVO.pointStateNum.totalNum}"></span>个监测点
+                                </div>
+                                <div class="ui label" th:each="stateNum:${stateViewVO.pointStateNum.stateNum}" >
+									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' circle icon'"></i>
+									<span th:text="${stateNum.value}"></span>
+                                </div>
+                            </div>
+                            <span>&nbsp&nbsp&nbsp&nbsp</span>
+                            <div class="ui basic labels" style="float: right">
+                                <div class="ui tag label">
+                                    共<span th:text="${stateViewVO.hostStateNum.totalNum}"></span>台设备
+                                </div>
+                                <div class="ui label" th:each="stateNum:${stateViewVO.hostStateNum.stateNum}">
+									<i th:class="${(stateNum.name=='严重' ? 'red' : (stateNum.name=='警告' ? 'yellow' : 'green') )} + ' desktop icon'"></i>
+									<span th:text="${stateNum.value}"></span>
+                                </div>
+
+                            </div>
+
+						</div>
 					</div>
 					<div class="ui segment"  style=" min-height : 487px;">
 						<div id="host_table_dimmer" class="ui inverted dimmer">
 							<div class="ui text loader">加载</div>
 						</div>
-						<table  id="host_table" class="tree ui compact very basic table center aligned " width="100%">
+						<span id="select_host" style="display: none" th:text="${hostId}"></span>
+						<table  id="host_table" class="tree ui compact very basic fixed single line table center aligned " width="100%">
 						</table>
 					</div>
+
+					<!--</div>-->
 				</div>
-			</div>
+                <!--监控点详情弹出框-->
+                <div  th:replace="hostdetail::point_detail_page" class="ui large modal"></div>
 		</div>
+	</div>
 	</div>
 </div>
 <!--modal-->
-<div id="new_modal" class="ui small modal">
+<div id="new_modal" class="ui tiny modal">
 	<i class="close icon"></i>
 	<div class="content">
 		<div class="ui form">
@@ -265,7 +347,7 @@
 	</div>
 </div>
 
-<div id="edit_modal" class="ui small modal">
+<div id="edit_modal" class="ui tiny modal">
 	<i class="close icon"></i>
 	<div class="content">
 		<div class="ui form">
@@ -281,7 +363,7 @@
 	</div>
 </div>
 
-<div id="move_modal" class="ui small modal">
+<div id="move_modal" class="ui tiny modal">
 	<i class="close icon"></i>
 	<div class="inline fields content">
 		<div id="group_tree"></div>
@@ -292,11 +374,30 @@
 	</div>
 </div>
 
-
 <div id="del-pop" class="ui custom popup transition hidden">
 	<div class="description">是否删除该分组？</div>
 	<i class="mini checkmark negative icon "></i>
 
+</div>
+
+
+<div id="pointPop" class="ui special popup">
+	<div class="ui relaxed divided list">
+		<div class="item">
+			<div class="header" id="pointName"></div>
+		</div>
+		<div class="item">
+			<div class="header" id="pointState"></div>
+		</div>
+		<div class="item">
+			<p class="header">监控项：
+			<div class="description">
+				<table id="itemData" class="ui very basic compact collapsing celled fixed single line table" style="width: 220px">
+				</table>
+			</div>
+			</p>
+		</div>
+	</div>
 </div>
 <th:block th:replace="layout::bottom_script(~{::specialScript})">
 	<script src="../static/js/js.cookie.js"></script>
@@ -308,11 +409,14 @@
 		<script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
 		<script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
+		<script src="../static/js/custom/pointModal.js" th:src="@{js/pointModal.js}"></script>
+		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
     $(document).ready(function() {
         var host_table = $("#host_table").DataTable({
+            "autoWidth": false,
             "paging": false,
             "ordering": false,
             "initComplete": function () {
@@ -362,9 +466,95 @@
                     on: 'click'
                 })
 
+                $('a.point-detail').parent().popup({
+                    onShow: function (module) {
 
+                        var point_id = $(module).find('a').attr('id');
+                        $.ajax({
+                            type: "get",
+                            url: "/brief/point?point_id="+point_id,
+                            dataType: "json",
+                            success: function (result) {
+                                if(result.success) {
+                                    var Color = ['red', 'yellow', 'green'];
+                                    var data = result.data;
+
+                                    var item_datas=data.item_datas;
+                                    var str_item_datas = '';
+                                    var myColor = '';
+                                    for(var i=0; i<item_datas.length; i++){
+                                        if (item_datas[i].with_triggers == true) {
+                                            if (item_datas[i].state == "严重") {
+                                                myColor = Color[0]
+                                            }
+                                            if (item_datas[i].state == "警告") {
+                                                myColor = Color[1]
+                                            }
+                                            if (item_datas[i].state == "正常") {
+                                                myColor = Color[2]
+                                            }
+                                        }else {
+                                            myColor = ''
+                                        }
+                                        if(strlen(item_datas[i].item_name) > 30)
+                                        {
+                                            var item_name = "<td title="+item_datas[i].item_name+"><span>"+item_datas[i].item_name+"</span></td>"
+                                        }else {
+                                            var item_name = "<td><span>"+item_datas[i].item_name+"</span></td>"
+                                        }
+                                        if(strlen(item_datas[i].value) > 15)
+                                        {
+                                            var item_value= "<td title="+item_datas[i].value+"><span class='ui "+myColor+" header'>" +item_datas[i].value+"</span></td>"
+                                        }else {
+                                            var item_value= "<td><span class='ui "+myColor+" header'>" +item_datas[i].value+"</span></td>"
+                                        }
+                                        str_item_datas +="<tr>"+item_name+item_value+"</tr>";
+                                    }
+
+                                    if (data.state == "正常"){ myColor = Color[2] }
+                                    if (data.state == "严重"){ myColor = Color[0] }
+                                    if (data.state == "警告"){ myColor = Color[1] }
+                                    $("#pointName").html("名称："+data.point_name);
+                                    $("#pointState").html("状态：&nbsp&nbsp<div class='ui mini "+myColor+" horizontal label' style='margin-bottom: 0'>"+data.state+"</div>");
+                                    $("#itemData").html(str_item_datas);
+                                } else {
+                                    errorMsg_no_data("监控项 Pop");
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("监控点 Pop");
+                            }
+                        })
+
+                    },
+                    onHidden: function (module) {
+                        $("#pointName").html("名称：");
+                        $("#pointState").html("状态：&nbsp&nbsp");
+                        $("#itemData").html("");
+                    },
+                    popup: '#pointPop',
+                    inline: true,
+                    hoverable  : true,
+                    position   : 'top center',
+                    delay: {
+                        show: 1000,
+                        hide: 500
+                    }
+				});
+
+                $('a.point-detail').on('click',function(){
+                    var point_id = this.id;
+                    getItemsDetail(point_id);
+                });
             },
             "createdRow": function (row, data, dataIndex) {
+                var hashCode = location.hash;
+
+                //选中
+                if(hashCode.substr(1) === data.cid) {
+					$(row).css('background-color','#CCFFFF');
+                    // TODO:选中tr设置展开显示
+				}
                 if (data.pid== null) {
                     var tmp='treegrid-'+ data.cid;
                 } else {
@@ -383,25 +573,25 @@
             columns: [
                 {
                     "data": null,
-                    "width": "20%",
+                    "width": "50%",
                     "title": "名称",
                     render: function(data, type, row, meta) {
                         if (data.state === "正常") {
                             if (row.type === '组') {
                                 return '<i class="green folder icon"></i>' + row.name;
                             } else if(row.type === '监控点') {
-                                return '<i class="green circle icon"></i>' + row.name;
+                                return '<a href="javascript:void(0)" class="point-detail" id="'+ row.cid.substr(1)+'" data-position="right center"><i class="green circle icon"></i>' + row.name+'</a>';
                             } else {
-                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'">' +
 									'<i class="green desktop icon"></i>' + row.name + '</a>';
                             }
                         } else if (data.state === "严重") {
                             if (row.type === '组') {
                                 return '<i class="red folder icon"></i>' + row.name;
                             } else if(row.type === '监控点') {
-                                return '<i class="red circle icon"></i>' + row.name;
+                                return '<a href="javascript:void(0)" class="point-detail" id="'+ row.cid.substr(1)+'" data-position="right center"><i class="red circle icon"></i>' + row.name+'</span>';
                             } else {
-                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'">' +
 									'<i class="red desktop icon"></i>' + row.name + '</a>';
 							}
 
@@ -409,9 +599,9 @@
                             if (row.type === '组') {
                                 return '<i class="yellow folder icon"></i>' + row.name;
                             } else if(row.type === '监控点') {
-                                return '<i class="yellow circle icon"></i>' + row.name;
+                                return '<a href="javascript:void(0)" class="point-detail" id="'+ row.cid.substr(1)+'" data-position="right center"><i class="yellow circle icon"></i>' + row.name+'</span>';
                             } else {
-                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'" style="color: rgba(0, 0, 0, 0.87);">' +
+                                return '<a href="hostDetail?host_id=' + row.cid.substr(1) +'">' +
                                     '<i class="yellow desktop icon"></i>' + row.name + '</a>';
                             }
 
@@ -428,7 +618,7 @@
                 },
                 {
                     "data": null,
-                    "width": "20%",
+                    "width": "30%",
                     "title": "操作",
                     render: function(data, type, row, meta) {
                         if (row.type === "组") {
@@ -441,7 +631,9 @@
 								'<a class="item move" > 移动</a>' +
 								'<a class="item edit" > 编辑</a>' +
 								'<a class="item delete"> 删除</a></div>';
-                        }else {
+                        } else if (row.type === '监控点') {
+                            return '';
+                        } else {
                             return '<div class="ui secondary menu"><a class="right item move" id="'+row.pid+'_'+row.cid+'"> 移动</a><a class="item edit" id="'+row.cid+'"> 编辑</a></div>';
                         }
                     }
@@ -453,6 +645,7 @@
         $("#ui_dropdown").change(function(){
             var tmp=$("#ui_dropdown").val()
             host_table.search(tmp).draw();
+            //host_table.search("组"+" "+tmp).draw();
         });
 
         //点击新建事件
@@ -681,7 +874,6 @@
                 }
             }).modal('show')
         });
-
     });
 
 </script>

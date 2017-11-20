@@ -4,9 +4,8 @@ import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefAcknowledgeDTO;
 import com.ws.stoner.model.dto.BriefEventDTO;
 import com.ws.stoner.model.query.CalendarFormQuery;
-import com.ws.stoner.model.view.*;
+import com.ws.stoner.model.view.problem.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -65,7 +64,7 @@ public interface EventService {
      * @return
      * @throws ServiceException
      */
-    List<ProblemListVO> getHistoryProblemsByTime(String beginTime,String endTime) throws ServiceException;
+    List<ProblemListVO> getHistoryProblemsByTime(String beginTime, String endTime) throws ServiceException;
 
     /**
      * 根据指定的 eventid 获取 问题列表中 确认记录 pop
@@ -82,7 +81,7 @@ public interface EventService {
      * @return
      * @throws ServiceException
      */
-    AcknowledgeCheckboxVO getCheckboxVOByEventId(String eventId,String userId) throws ServiceException;
+    AcknowledgeCheckboxVO getCheckboxVOByEventId(String eventId, String userId) throws ServiceException;
 
     /**
      * 根据 acknowledgeDTO 执行确认动作
@@ -101,7 +100,7 @@ public interface EventService {
      * @return
      * @throws ServiceException
      */
-    List<ProblemDetailListVO> getDetailListByTriggerId(String triggerId, String beginTime,String endTime ) throws ServiceException;
+    List<ProblemDetailListVO> getDetailListByTriggerId(String triggerId, String beginTime, String endTime ) throws ServiceException;
 
     /**
      * 根据指定的 triggerId 时间段 获取 问题详情中 时序图形 数据 ProblemGraphVO list
@@ -111,7 +110,7 @@ public interface EventService {
      * @return
      * @throws ServiceException
      */
-    List<ProblemGraphVO> getGraphProblemByTriggerId(String triggerId, String beginTime,String endTime ) throws ServiceException;
+    List<ProblemGraphVO> getGraphProblemByTriggerId(String triggerId, String beginTime, String endTime ) throws ServiceException;
 
     /**
      * 根据 eventId 组装 事件详情弹出框 事件细节信息 EventDetailVO

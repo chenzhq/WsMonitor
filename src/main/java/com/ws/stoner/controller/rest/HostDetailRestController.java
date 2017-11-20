@@ -3,10 +3,10 @@ package com.ws.stoner.controller.rest;
 import com.ws.stoner.constant.GraphTypeEnum;
 import com.ws.stoner.constant.ResponseErrorEnum;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.DO.mongo.Item;
+import com.ws.stoner.model.DO.mongo.item.Item;
 import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefItemDTO;
-import com.ws.stoner.model.view.*;
+import com.ws.stoner.model.view.host.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.RestResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,19 @@ public class HostDetailRestController {
     private GraphService graphService;
 
 
+
+    /**
+     * hostinterface 获取
+     * @return
+     */
+    @RequestMapping(value = "hostdetail/get_interface", method = RequestMethod.GET)
+    public String getHostInterfaces(@RequestParam("host_id") String hostId) throws ServiceException {
+        List<String> hostIds = new ArrayList<>();
+        hostIds.add(hostId);
+        BriefHostDTO hostDTO = hostService.getHostsByHostIds(hostIds).get(0);
+        HostDetailInterfaceVO interfaceVO = HostDetailInterfaceVO.transforByHostDTO(hostDTO);
+        return RestResultGenerator.genResult(interfaceVO, REST_RESPONSE_SUCCESS).toString();
+    }
     /**
      * 监控点悬浮框
      * @return
@@ -90,7 +103,7 @@ public class HostDetailRestController {
             HostDetailItemVO itemVO = new HostDetailItemVO();
             itemVO.setItemId(itemDTO.getItemId());
             itemVO.setItemName(itemDTO.getName());
-            // 如何单位是 % ，采用value_type = % 的图形列表
+            // 如果单位是 % ，采用value_type = % 的图形列表
             if("%".equals(itemDTO.getUnits())) {
                 itemVO.setValueType(itemDTO.getUnits());
             }else {

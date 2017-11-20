@@ -2,9 +2,9 @@ package com.ws.stoner.controller;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
-import com.ws.stoner.model.view.HostDetailInterfaceVO;
-import com.ws.stoner.model.view.HostDetailPointVO;
-import com.ws.stoner.model.view.HostDetailVO;
+import com.ws.stoner.model.view.host.HostDetailInterfaceVO;
+import com.ws.stoner.model.view.host.HostDetailPointVO;
+import com.ws.stoner.model.view.host.HostDetailVO;
 import com.ws.stoner.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,11 +33,9 @@ public class HostDetailController {
         BriefHostDTO hostDTO = hostService.getHostsByHostIds(hostIds).get(0);
         //新建DetailHostVO对象,ItemVO对象 List,PointVO对象list,InterfaceVO对象
         HostDetailVO hostDetailVO = hostService.getHostDetailByHostDTO(hostDTO);
-        HostDetailInterfaceVO interfaceVO = hostService.getHostInterfaceByHostDTO(hostDTO);
         List<HostDetailPointVO> pointVOS = hostService.getPointsByHostDTO(hostDTO);
         ModelAndView mav = new ModelAndView("hostdetail");
         mav.addObject("hostDetailVO", hostDetailVO );
-        mav.addObject("interfaceVO", interfaceVO );
         mav.addObject("pointVOS", pointVOS );
         return mav;
     }

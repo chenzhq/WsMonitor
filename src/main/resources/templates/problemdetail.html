@@ -18,8 +18,8 @@
 		<script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
 		<link rel="stylesheet" href="../static/css/ion.rangeSlider.css"
 			  th:href="@{css/ion.rangeSlider.css}">
-		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinFlat.css"
-			  th:href="@{css/ion.rangeSlider.skinFlat.css}">
+		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinNice.css"
+			  th:href="@{css/ion.rangeSlider.skinNice.css}">
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			.ui.table.dataTable thead th {
@@ -226,8 +226,12 @@
 			<div class="ui equal width left aligned padded grid stackable">
 				<!--Site Content-->
 				<div class="sixteen wide column">
+					<a href="javascript:history.go(-1)" style="float: right"><i class="share icon" ></i>返回上一页</a>
 					<div class="header item">
-						<h2><i class="bar large chart icon"></i>问题详情</h2>
+						<h2>
+							<i class="large newspaper icon"></i>问题详情
+						</h2>
+						<!--<i class="share icon" style="float: right"></i>-->
 					</div>
 					<div class="ui grid" style="padding-top: 10px">
 						<div class="six wide column row1Height">
@@ -271,9 +275,13 @@
 						</div>
 						<div class="ten wide column row1Height" style="padding-left: 0px">
 							<div class="ui segment left aligned detailconfirm">
+
 								<div id="problemChart" class="chartBar"></div>
-								<div id="filter_content" style="display: none;">
-									<input type="text" id="time_filter" name="time_filter" value=""/>
+								<div id="filter_content" style="display: block;">
+									<input type="text"  id="time_filter" name="time_filter" value=""/>
+								</div>
+								<div id="trigger-dimmer" class="ui inverted dimmer active">
+									<div class="ui text loader">正在加载</div>
 								</div>
 							</div>
 
@@ -283,6 +291,9 @@
 						<h3>历史记录</h3>
 						<table  id="problemsTable" class="ui compact very basic table center aligned">
 						</table>
+						<div id="table-dimmer" class="ui inverted dimmer active">
+							<div class="ui text loader">正在加载</div>
+						</div>
 					</div>
 				</div>
 
@@ -314,6 +325,7 @@
 		<script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
 		<script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
 		<script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
+		<script src="../static/js/custom/rangeSlider-time.js" th:src="@{js/custom/rangeSlider-time.js}"></script>
 		<script type="text/javascript">
             var trigger_id = $("#trigger_id").text();
             //初始化三个月数据
@@ -322,14 +334,13 @@
                 begin_time : "",
                 end_time : ""
             }
-            console.log("send_data",send_data);
+
             //页面加载完加载基础数据
 			$(function() {
 				//初始化表格
                 var problemTable = initProblemTable();
 				//初始化图形
                 var problemChart = drawProblemChart();
-
                 //获取数据
                 showTimeCons(problemTable,problemChart);
 
@@ -368,6 +379,7 @@
 									]
 								}
 							);
+                            $('#trigger-dimmer').removeClass('active');
 
 
                         } else {
@@ -459,24 +471,13 @@
                 };
                 //根据配置绘制图形
                 problemChart.setOption(option);
-                /*//点击每个节点，获取时间段
-                problemChart.on('click', function (params) {
-                    var calendar =params.data;
-                    console.log(calendar.value)
-					var starttime=new Date(calendar.value[0])
-					if(calendar.value[1]!=0){
-                        var endtime=new Date(calendar.value[1])
-					}else {
-                        var endtime="无";
-					}
-					alert("开始时间:"+starttime+"结束时间:"+endtime)
-                });*/
                 return problemChart;
             }
 
 			//初始当前问题列表 无数据
 			function initProblemTable() {
                 var problemsTable = $("#problemsTable").DataTable({
+					"searching":true,
                     "iDisplayLength" : 5,
                     "ordering":false,
                     "createdRow": function (row, data, dataIndex) {
@@ -563,7 +564,7 @@
 
 			//获取带有数据的表格
 			function getTableList(problemsTable) {
-                console.log("list-send-data",send_data);
+
                 $.ajax({
                     type: "get",
                     url: '/problem/detail_list',
@@ -572,6 +573,7 @@
                     success: function (result) {
                         if (result.success) {
 							problemsTable.clear().rows.add(result.data).draw();
+                            $('#table-dimmer').removeClass('active');
                         } else {
 
                         }
@@ -584,7 +586,36 @@
 
             //显示时间控件
             function showTimeCons(problemsTable,problemChart) {
-                var now = new Date();
+
+                var rangeOption = {
+
+                    onStart: (data,time_arr) => {
+
+                        send_data.begin_time = time_arr[data.from];
+                        send_data.end_time = time_arr[data.to];
+                        //初始化图形
+                        getProblemchart(problemChart);
+
+                        //初始化列表
+                        getTableList(problemsTable)
+
+                    },
+                    onFinish: (data,time_arr) => {
+
+                        send_data.begin_time = time_arr[data.from];
+                        send_data.end_time = time_arr[data.to];
+                        //获取图形
+                        getProblemchart(problemChart);
+
+                        //获取列表
+                        getTableList(problemsTable)
+
+                    }
+                };
+
+                $('#time_filter').rangeSliderTime(rangeOption);
+
+                /*var now = new Date();
                 var end_time = new Date(now);
                 end_time.setMinutes(0);
                 end_time.setSeconds(0);
@@ -600,8 +631,7 @@
 
                 var begin_second = begin_time.getTime();
                 var end_second = end_time.getTime();
-				/*      console.log("begin_second",begin_second);
-				 console.log("end_second",end_second);*/
+
                 var time_arr = [];
                 var vo_arr = [];
                 var s = begin_second;
@@ -614,8 +644,7 @@
                 }
                 time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
                 vo_arr.push(now.Format("MM-dd hh:mm"));
-                console.log("time_arr",time_arr);
-                console.log("vo_arr",vo_arr);
+
                 $('#filter_content').css('display','block');
                 $('#time_filter').ionRangeSlider({
                     type: "double",
@@ -634,11 +663,10 @@
                         getTableList(problemsTable)
                     },
                     onChange: function (data) {
-//                        console.log(data);
+
                     },
                     onFinish: function (data) {
-//                console.log("begin",time_arr[data.from]);
-//                console.log("end",time_arr[data.to]);
+//
                         send_data.begin_time = time_arr[data.from];
                         send_data.end_time = time_arr[data.to];
                         //获取图形
@@ -648,10 +676,11 @@
                         getTableList(problemsTable)
                     },
                     onUpdate: function (data) {
-//                        console.log(data);
+
                     }
-                });
+                });*/
             }
+
 
 		</script>
 	</th:block>

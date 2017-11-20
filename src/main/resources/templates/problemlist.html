@@ -14,11 +14,17 @@
 		<link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
 		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<script src="../static/js/ion.rangeSlider.js" th:src="@{js/ion.rangeSlider.js}"></script>
+		<link rel="stylesheet" href="../static/css/normalize.css"
+			  th:href="@{css/normalize.css}">
 		<link rel="stylesheet" href="../static/css/ion.rangeSlider.css"
 			  th:href="@{css/ion.rangeSlider.css}">
-		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinFlat.css"
-			  th:href="@{css/ion.rangeSlider.skinFlat.css}">
+		<link rel="stylesheet" href="../static/css/ion.rangeSlider.skinNice.css"
+			  th:href="@{css/ion.rangeSlider.skinNice.css}">
 		<style type="text/css">
+			/*原生button 有个下外边距*/
+			.ui.modal .actions > .button {
+				margin-bottom: 0;
+			}
 			.ui.table.dataTable thead th {
 				border-left: 0px;
 			}
@@ -34,17 +40,32 @@
 				max-height:160px;
 				margin-bottom: 10px;
 			}
+			/*问题详情modle固定高度*/
 			.ui.segment.detailconfirm{
 				height: 232px;overflow-y:auto;overflow-x:hidden
 			}
 			.ui.segment.detailalarmed{
-				height: 180px;overflow-y:auto;overflow-x:hidden
+				min-height: 130px;
+			}
+			#alertMenu{
+				height: 137px;overflow-y:auto;overflow-x:hidden
+			}
+			#alertmessage{
+				height: 40px;overflow-y:auto;overflow-x:hidden
 			}
 			#filter_content {
 				width: 80%;
 				margin-left:100px;
 			}
-		</style>
+			/*原生label 有个下外边距*/
+			.ui .label {
+				margin-bottom: 0;
+			}
+			.ui.segment {
+			/* margin: 1rem 0em
+			 */
+			}
+</style>
 	</th:block>
 </head>
 <body>
@@ -237,7 +258,7 @@
 				<!--Site Content-->
 				<div class="sixteen wide column">
                     <div class="header item">
-                        <h2><i class="bar large chart icon"></i>问题列表</h2>
+                        <h2><i class="large browser icon"></i>问题列表</h2>
                     </div>
 					<div class="ui grid">
                         <div class="eight wide column">
@@ -256,31 +277,32 @@
 
 					<div class="ui segment"  style=" min-height : 500px;">
 						<div class="sixteen wide column">
-								<table  id="problemsTable" class="ui compact basic table center aligned " width="100%">
+								<table  id="problems_table" class="ui compact basic table center aligned " width="100%">
 								</table>
+								<!-- 查询读条 -->
+								<div id="table-dimmer" class="ui inverted dimmer">
+									<div class="ui text loader">正在查询</div>
+								</div>
 						</div>
 					</div>
 				</div>
-				<!--已告警提示框 start-->
-				<div id="alert_pop">
-				</div>
-
-				<!--确认记录提示框 start-->
-				<div id="acknowledge_pop">
+				<div id="alert_popup"></div>
+				<div id="ack_popup"></div>
 
 				</div>
 				<div th:fragment="problem_acknowledge_page">
 
 					<!--确认记录弹出框 start-->
-					<div class="ui small modal confirm">
+					<div class="ui small modal confirm" id="ack_modal">
 						<div class="content">
 							<div class="ui form">
 								<div class="required inline field" id="text_field">
 									<input type="hidden" id="acknowledge_eventid">
-									<input type="text" id="acknowledge_message" placeholder="不能为空">
+									<textarea rows="2" id="acknowledge_message" placeholder="不能为空"></textarea>
+									<!--<input type="text" id="acknowledge_message" placeholder="不能为空">-->
 								</div>
-								<div id="acknowledge_history">
-									<table class="ui celled striped compact single line table center aligned">
+								<div id="acknowledge_history" class="ui segment no-padding detailconfirm">
+									<table class="ui very basic very compact table center aligned">
 										<thead>
 										<tr>
 											<th class="four wide">时间</th>
@@ -295,17 +317,17 @@
 										</tbody>
 									</table>
 								</div>
-								<div class="required inline field" id="text_checkbox">
+								<div class="required inline field" id="text_checkbox"  data-position="top left">
 									<div class="ui checkbox">
-										<input id="acknowledge_checkbox" type="checkbox" tabindex="0" class="hidden">
+										<input id="acknowledge_checkbox" type="checkbox" tabindex="0" >
 										<label  id="label_checkbox">关闭问题</label>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="actions">
-							<div id="submit_bnt" class="ui approve submit button">确认</div>
 							<div class="ui cancel button">取消</div>
+							<div class="ui green approve submit button" id="submit_bnt">确认</div>
 						</div>
 					</div>
                 </div>
@@ -313,6 +335,12 @@
 					<!--事件详情弹出框 start-->
 					<div class="ui big modal detail">
 						<div class="content">
+
+							<h2 >
+								<i class="list layout icon"></i>
+								<span id="event_title"></span>
+							</h2>
+
 							<div class="sixteen wide column">
 								<div class="ui grid">
 									<div class="eight wide column">
@@ -344,10 +372,10 @@
 												<table class="ui very basic compact fixed single line table center aligned">
 													<thead>
 													<tr>
-														<th class="four wide">时间</th>
-														<th class="four wide">用户</th>
-														<th class="four wide">消息</th>
-														<th class="four wide">用户动作</th>
+														<th width="31%">时间</th>
+														<th width="15%">用户</th>
+														<th width="39%">消息</th>
+														<th width="15%">用户动作</th>
 													</tr></thead>
 													<tbody id="acknowledgeModal">
 													<tr>
@@ -366,23 +394,32 @@
 												</h4>
 											</div>
 											<div class="ui segment detailalarmed">
-												<table class="ui very basic compact fixed single line table center aligned">
-													<thead>
-													<tr>
-														<th class="one wide">步骤</th>
-														<th class="three wide">时间</th>
-														<th class="two wide">接收者</th>
-														<th class="one wide">方式</th>
-														<th class="four wide">主题</th>
-														<th class="four wide">信息</th>
-														<th class="one wide" title="状态(重试次数)">状态(重试次数)</th>
-													</tr></thead>
-													<tbody id="alertDetailModal">
-													<tr>
-														<td colspan="7">无历史确认记录</td>
-													</tr>
-													</tbody>
-												</table>
+												<div  id="nullDetailModal">无数据</div>
+												<div class="ui grid"  id="alertDetailModal">
+													<div class="four wide column no-padding">
+														<div class="ui fluid vertical menu " id="alertMenu">
+														</div>
+													</div>
+													<div class="twelve wide column no-padding">
+														<div class="ui fluid card" >
+															<div class="content">
+																<div class="header">主题:<span id="subject"></span></div>
+																<div class="meta">
+																	<span class="right floated time"><span id="status"></span></span>
+																	<span class="category">步骤:<span id="esc_step"></span> </span>
+																</div>
+																<div class="description" id="alertmessage">
+																	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="message"></span>
+																</div>
+															</div>
+															<div class="extra content">
+																<div class="right floated author">
+																	<i class="user icon"></i> <span id="sendto"></span>(<span id="alert_type"></span>)
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -408,216 +445,114 @@
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
 		<script src="../static/js/custom/problem-common.js" th:src="@{js/custom/problem-common.js}"></script>
 		<script src="../static/js/custom/pop-alert.js" th:src="@{js/custom/pop-alert.js}"></script>
+		<script src="../static/js/custom/problem-table.js" th:src="@{js/custom/problem-table.js}"></script>
+		<script src="../static/js/custom/rangeSlider-time.js" th:src="@{js/custom/rangeSlider-time.js}"></script>
 	</th:block>
 </th:block>
 <script type="text/javascript">
+	//time filter
+    var slider ;
+
+    var problemTable = $('#problems_table').problemTable();
     //页面加载完加载表格数据
     $(function() {
-        //初始问题列表
-        var problems_Table = $("#problemsTable").DataTable({
-            "iDisplayLength" : 10,
-            order: [0, 'desc'],
-            "createdRow": function (row, rowData) {
-                $('td', row).eq(1).addClass('left aligned');
-                $('td', row).eq(2).addClass('left aligned');
-                if (rowData.problem_state === '问题') {
-                    if (rowData.priority_state === '警告') {
-                        row.classList.add("warning")
-                    } else if (rowData.priority_state === '严重') {
-                        row.classList.add("negative")
-                    } else {
-                    }
-                }
-            },
-            "drawCallback": function () {//初始化后回调
-				//事件详情 modal 框
-				$("a.problem_time").on("click",function(){
-				   var event_id = $(this).attr("data-id");
-                    eventDetailModal(event_id);
-				});
-
-				//确认事件 modal 框
-                $("a.AcknowledgeCol").on("click",function(){
-                    var event_id = $(this).attr("data-id");
-                    getAcknowledgeModal(event_id);
-				})
-				//告警pop
-                popAlert($("a.alertCol"), $("#alert_pop"));
-
-                //确认记录pop
-                popAck($("a.AcknowledgeCol"), $("#acknowledge_pop"));
-
-            },
-            ajax: {
-                url: '/problems/get_current',
-                dataSrc: 'data'
-            },
-            columns: [
-                {
-                    "data": "problem_time",
-                    "width": "15%",
-                    "title": "发生时间",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        return '<a  href="javascript:void(0)" class="problem_time" data-id="'+ row.problem_eventid +'">' + row.problem_time + '</a>';
-                    }
-                },
-                {
-                    "data": "host_name",
-                    "width": "10%",
-                    "title": "设备",
-                    "orderable": false,
-                },
-                {
-                    "data": null,
-                    "width": "25%",
-                    "title": "问题",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        return '<a href="problemdetail?trigger_id=' + row.trigger_id + '">' + row.description + '</a>';
-                    }
-                },
-                {
-                    "data": "priority_state",
-                    "width": "5%",
-                    "title": "严重性",
-                    "orderable": false
-
-                },
-                {
-                    "data": 'problem_state',
-                    "width": "15%",
-                    "title": "状态",
-                    "orderable": false,
-                    render: function (data, type, row, meta) {
-//                                console.log('render 状态', arguments)
-                        if (row.problem_state !== "问题") {
-                            return '<div class="ui mini green label" style="margin-bottom: 0px" data-tooltip="恢复时间：' + row.recover_time + '" >' + row.problem_state + '</div>';
-                        } else {
-                            return '<div class="ui mini red label" style="margin-bottom: 0px">' + row.problem_state + '</div>';
-                        }
-                    }
-
-                },
-//                {
-//                    "data": "recover_time",
-//                    "width": "10%",
-//                    "title": "恢复时间",
-//                    "orderable": false,
-//                    render: function(data, type, row, meta) {
-//                        return '<a  href="javascript:void(0)" class="problem_time" data-id="'+ row.problem_eventid +'">' + row.recover_time + '</a>';
-//                    }
-//                },
-                {
-                    "data": "duration_string",
-                    "width": "10%",
-                    "title": "持续时间",
-                    "orderable": false
-                },
-                {
-                    "data": null,
-                    "width": "15%",
-                    "title": "告警状态",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        if(row.alert_state == "未告警") {
-                            //无悬浮事件
-                            return row.alert_state ;
-                        }else {
-                            //有悬浮事件
-                            return '<a href="javascript:void(0)" data-id="'+ row.problem_eventid +'" class="alertCol" >' + row.alert_state + '(' + row.alert_num + ')</a>';
-                        }
-                    }
-                },
-                {
-                    "data": null,
-                    "width": "5%",
-                    "title": "确认",
-                    "orderable": false,
-                    render: function(data, type, row, meta) {
-                        return '<a href="javascript:void(0)" data-id="'+ row.problem_eventid +'" class="AcknowledgeCol">' + row.acknowledged + '</a>';
-                    }
-                }
-            ],
-        });
-
         //点击问题 teb 切换
         $('#problemsMenu button').on('click',function () {
             $('#problemsMenu button').removeClass('active');
             $(this).addClass('active');
             if(this.value == "currentProblems"){
                 $('#filter_content').css('display','none');
-                problems_Table.ajax.url('/problems/get_current').load();
+                $('#table-dimmer').addClass('active');
+                slider && slider.destroy();
+                //获取当前问题
+                $.ajax({
+                    type: "get",
+                    url: '/problems/get_current',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            problemTable.clear().rows.add(result.data).draw();
+                            $('#table-dimmer').removeClass('active');
+                        } else {
+
+                        }
+                    },
+                    error: function (e) {
+
+                    }
+                });
             }else if(this.value == "recentProblems"){
                 $('#filter_content').css('display','none');
-                problems_Table.ajax.url('/problems/get_last').load();
+                $('#table-dimmer').addClass('active');
+                slider && slider.destroy();
+                //获取最近问题
+                $.ajax({
+                    type: "get",
+                    url: '/problems/get_last',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.success) {
+                            problemTable.clear().rows.add(result.data).draw();
+                            $('#table-dimmer').removeClass('active');
+                        } else {
+
+                        }
+                    },
+                    error: function (e) {
+
+                    }
+                });
             }else if(this.value == "historicalRecord"){
-                showTimeCons(problems_Table);
+
+                showTimeCons(problemTable);
+
             }
         });
-
 
     })
 
     //显示时间控件
-	function showTimeCons(problems_Table) {
-        var now = new Date();
-        var end_time = new Date(now);
-        end_time.setMinutes(0);
-        end_time.setSeconds(0);
-        end_time.setMilliseconds(0);
-        var begin_time = new Date(end_time);
-        //3表示三个月
-		if(end_time.getMonth() > 3) {
-            begin_time.setMonth(end_time.getMonth() - 3);
-		}else {
-            begin_time.setFullYear(end_time.getFullYear() - 1);
-            begin_time.setMonth(end_time.getMonth() + 9);
-		}
+	function showTimeCons(problemTable) {
 
-        var begin_second = begin_time.getTime();
-        var end_second = end_time.getTime();
-  /*      console.log("begin_second",begin_second);
-        console.log("end_second",end_second);*/
-        var time_arr = [];
-        var vo_arr = [];
-        var s = begin_second;
-        while(s <= end_second) {
-            var dura_date = new Date();
-            dura_date.setTime(s);
-            time_arr.push(dura_date.Format("yyyy-MM-dd hh:mm:ss"));
-            vo_arr.push(dura_date.Format("MM-dd hh:mm"));
-            s += 3600 * 1000;
-		}
-		time_arr.push(now.Format("yyyy-MM-dd hh:mm:ss"));
-        vo_arr.push(now.Format("MM-dd hh:mm"));
-		console.log("time_arr",time_arr);
-        console.log("vo_arr",vo_arr);
         $('#filter_content').css('display','block');
-        $('#time_filter').ionRangeSlider({
-            type: "double",
-//			grid:true,
-            from: vo_arr[0],
-            //TODO 最好使用返回的问题数中的最大值
-            to: vo_arr[time_arr.length-1],
-            values:vo_arr,
-            onStart: function (data) {
+
+        var rangeOption = {
+
+            onStart: (data,time_arr) => {
                 var begin_time = time_arr[data.from];
                 var end_time = time_arr[data.to];
-                problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
-            },
-            onChange: function (data) {
-//                        console.log(data);
-            },
-            onFinish: function (data) {
-//                console.log("begin",time_arr[data.from]);
-//                console.log("end",time_arr[data.to]);
+                loadHidtoryData(begin_time,end_time);
+
+			},
+			onFinish: (data,time_arr) => {
                 var begin_time = time_arr[data.from];
                 var end_time = time_arr[data.to];
-                problems_Table.ajax.url('/problems/get_history?begin_time='+begin_time+'&end_time='+end_time).load();
+                loadHidtoryData(begin_time,end_time);
+			}
+		};
+
+        slider = $('#time_filter').rangeSliderTime(rangeOption);
+
+	}
+
+	//加载历史数据
+	function loadHidtoryData(begin_time,end_time) {
+        $('#table-dimmer').addClass('active');
+        //获取历史问题记录
+        $.ajax({
+            type: "get",
+            url: '/problems/get_history?begin_time='+begin_time+'&end_time='+end_time,
+            dataType: 'json',
+            success: function (result) {
+                if (result.success) {
+                    problemTable.clear().rows.add(result.data).draw();
+                    $('#table-dimmer').removeClass('active');
+                } else {
+
+                }
             },
-            onUpdate: function (data) {
-//                        console.log(data);
+            error: function (e) {
+
             }
         });
 	}

@@ -2,15 +2,15 @@ package com.ws.stoner.service.impl;
 
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
-import com.ws.bix4j.access.host.HostGetRequest;
 import com.ws.bix4j.access.hostgroup.HostGroupGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
+import com.ws.stoner.constant.BaseConsts;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.*;
-import com.ws.stoner.model.view.*;
+import com.ws.stoner.model.view.platform.*;
 import com.ws.stoner.service.*;
 import com.ws.stoner.utils.BaseUtils;
 import com.ws.stoner.utils.StatusConverter;
@@ -505,6 +505,7 @@ public class PlatformServiceImpl implements PlatformService {
         }
         List<PlatDetailItemVO> itemVOS = new ArrayList<>();
         for(BriefItemDTO itemDTO :itemDTOS) {
+            Integer valueType = Integer.parseInt(itemDTO.getValueType());
             //withTriggers
             boolean withTriggers ;
             if(itemIdsWithTriggers.contains(itemDTO.getItemId())) {
@@ -519,14 +520,19 @@ public class PlatformServiceImpl implements PlatformService {
             }else {
                 weight = 0;
             }
-            //value
-            String value = valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits());
-
+            String value;
+            if(valueType == ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value || valueType == ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value) {
+                //value
+                value = valuemapService.getTransformValue(itemDTO.getValuemapId(),itemDTO.getLastValue(),itemDTO.getUnits());
+            }else {
+                value = itemDTO.getLastValue();
+            }
             PlatDetailItemVO itemVO = new PlatDetailItemVO(
                     itemDTO.getItemId(),
                     itemDTO.getName(),
                     StatusConverter.StatusTransform(itemDTO.getCustomState()),
                     value,
+                    itemDTO.getLastTime()==null ? "" :itemDTO.getLastTime().format(BaseConsts.TIME_FORMATTER),
                     withTriggers,
                     weight
             );

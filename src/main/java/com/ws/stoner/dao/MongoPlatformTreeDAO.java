@@ -1,8 +1,8 @@
 package com.ws.stoner.dao;
 
 import com.ws.stoner.exception.DAOException;
-import com.ws.stoner.model.DO.mongo.PlatformTree;
-import com.ws.stoner.model.DO.mongo.PlatformTreeManager;
+import com.ws.stoner.model.DO.mongo.platform.PlatformTree;
+import com.ws.stoner.model.DO.mongo.platform.PlatformTreeManager;
 
 import java.util.List;
 

@@ -17,6 +17,12 @@
         <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
         <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
               th:href="@{css/jstree-default/style.min.css}">
+        <style type="text/css">
+            /*原生button 有个下外边距*/
+            .ui.modal .actions > .button {
+                margin-bottom: 0;
+            }
+        </style>
     </th:block>
 </head>
 <body>
@@ -205,14 +211,14 @@
                 <!--Site Content-->
                 <div class="sixteen wide column">
                     <div class="header item">
-                        <h2><i class="bar large chart icon"></i>业务列表</h2>
+                        <h2><i class="large browser icon"></i>业务列表</h2>
                     </div>
                     <div class="ui segment" style=" min-height : 487px;">
                         <table class="ui compact  very basic table center aligned">
                             <thead>
                             <tr>
-                                <th width="25%">名称</th>
-                                <th width="10%">状态</th>
+                                <th width="28%">名称</th>
+                                <th width="7%" data-tooltip="当业务平台下有任意一个设备为警告/严重状态时，该平台则为警告/严重状态。" data-inverted="">状态<i class="help circle icon"></i></th>
                                 <th width="15%">健康度（%）</th>
                                 <th width="10%">严重设备数量</th>
                                 <th width="10%">警告设备数量</th>
@@ -227,7 +233,7 @@
                                     <input text="hidden" th:id="${platformListVO.platformId}"/>
                                     OA
                                 </td>
-                                <td><i class="red square icon" th:class="${platformListVO.state} == '正常' ?
+                                <td  th:data-tooltip="${platformListVO.state}" data-position="right center"><i class="red square icon" th:class="${platformListVO.state} == '正常' ?
                                     'green square icon' :
                                         (${platformListVO.state} =='警告' ?
                                         'yellow square icon' : 'red square icon') "></i></td>
@@ -241,7 +247,7 @@
                                     <ul class="ui horizontal relaxed list">
                                         <a class="manage_btn item" data-th-pfid="${platformListVO.platformId}"
                                            href="#">管理</a>
-                                        <a class="item" href="">>></a>
+                                        <a class="item" th:href="@{'/platformdetail#'+ ${platformListVO.platformId} + '_' + ${platformListVO.platformName}}"  >>></a>
                                     </ul>
 
 

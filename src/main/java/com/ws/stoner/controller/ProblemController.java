@@ -1,7 +1,7 @@
 package com.ws.stoner.controller;
 
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.view.ProblemDetailVO;
+import com.ws.stoner.model.view.problem.ProblemDetailVO;
 import com.ws.stoner.service.TriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<head th:replace="layout::common_head(~{::title}, ~{::supplement})">
+    <meta charset="UTF-8">
+    <title>轮播视图</title>
+    <script src="../static/js/jquery-3.2.1.min.js" th:src="@{js/jquery-3.2.1.min.js}"></script>
+    <script src="../static/js/semantic.js" th:src="@{js/semantic.js}"></script>
+    <link rel="stylesheet" href="../static/css/semantic.css" th:href="@{/css/semantic.css}"/>
+    <link rel="stylesheet" href="../static/css/icon.css" th:href="@{css/icon.css}"/>
+    <link href="../static/css/ionicons.min.css" rel="stylesheet" th:href="@{css/ionicons.min.css}"/>
+    <link href="../static/css/main.css" rel="stylesheet" th:href="@{css/main.css}"/>
+    <link href="../static/css/pace.css" rel="stylesheet" th:href="@{css/pace.css}"/>
+    <link href="../static/css/lobibox.css" rel="stylesheet" th:href="@{css/lobibox.css}"/>
+    <th:block th:fragment="supplement">
+        <!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=3"></script>-->
+        <script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
+        <script src="../static/js/jstree.min.js" th:src="@{js/jstree.min.js}"></script>
+        <script src="../static/js/analogClock.js" th:src="@{js/analogClock.js}"></script>
+        <link rel="stylesheet" type="text/css" href="css/normalize.css" th:href="@{css/normalize.css}" />
+        <link rel="stylesheet" href="../static/css/jstree-default/style.min.css"
+              th:href="@{css/jstree-default/style.min.css}">
+        <link rel="stylesheet" type="text/css" href="../static/css/jquery.gridster.css"
+              th:href="@{css/jquery.gridster.css}">
+        <script src="../static/js/jquery.gridster.js" th:src="@{js/jquery.gridster.js}" type="text/javascript" charset="utf-8"></script>
+        <link href="../static/css/jsgrid.css" rel="stylesheet" th:href="@{css/jsgrid.css}"/>
+        <link href="../static/css/jsgrid-theme.css" rel="stylesheet" th:href="@{css/jsgrid-theme.css}"/>
+        <link href="../static/css/index.css" rel="stylesheet" th:href="@{css/index.css}"/>
+        <script src="../static/js/jsgrid.js" th:src="@{js/jsgrid.js}"></script>
+        <script src="../iconfont.js" th:src="@{js/iconfont.js}"></script>
+        <style type="text/css">
+            /*原生button 有个下外边距*/
+            .ui.modal .actions > .button {
+                margin-bottom: 0;
+            }
+            /*原生dropdown 边距宽*/
+            .ui.selection.dropdown {
+                padding-top: 0.6em;
+                max-height: 2.4em;
+                min-height: 2.4em;
+            }
+            .text-hidden{
+                overflow: hidden; /*自动隐藏文字*/
+                text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+                white-space: nowrap;/*强制不换行*/
+            }
+            .gridster > ul > li {
+                overflow: hidden;
+                border:1px dashed #613030
+            }
+            .clock{
+                width: 400px;
+                margin: 30px auto;
+            }
+            .detail { padding-top: 10px;padding-right: 5px;margin-left: 5px }
+            #point_graph_modal .column{
+                height: 220px;
+                width: 100%;
+                overflow:auto;
+                overflow-x:hidden
+            }
+            .icon-symbol {
+                width: 2em; height: 2em;
+                vertical-align: 0;
+                fill: currentColor;
+                overflow: hidden;
+                margin: -1em 0.6em -0.5em 0;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<!--header start-->
+<div id="contextWrap">
+    <!--sidebar-->
+    <div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey"
+         th:replace="layout::left_menu">
+        <a class="item logo" href="#">
+        </a>
+        <div class="ui accordion inverted">
+            <div class="title item">
+                <i class="ion-speedometer titleIcon icon"></i>仪表盘
+            </div>
+            <div class="content">
+                <a class="item" href="#" th:href="@{/dashboard}">仪表盘</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-ios-world titleIcon  icon"></i>业务概览
+            </div>
+            <div class="content">
+            </div>
+            <div class="title item">
+                <i class="ion-mouse titleIcon icon"></i>设备监控<i class="dropdown icon"></i>
+            </div>
+            <div class="content">
+                <a class="item" href="#" th:href="@{/overview}">设备总览</a>
+                <a class="item" href="#">设备详情</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-arrow-graph-up-right titleIcon icon"></i>视图展示
+            </div>
+            <div class="content">
+            </div>
+            <div class="title item">
+                <i class="ion-paintbrush titleIcon icon"></i>告警展示<i class="dropdown icon"></i>
+            </div>
+            <div class="content">
+                <a class="item" href="#">告警日历</a>
+                <a class="item" href="#">告警列表</a>
+            </div>
+            <div class="title item" href="#">
+                <i class="ion-briefcase titleIcon icon"></i>报表统计
+            </div>
+            <div class="content">
+            </div>
+        </div>
+
+        <div class="ui dropdown item displaynone scrolling">
+            <span>仪表盘1</span>
+            <i class="ion-speedometer icon"></i>
+            <div class="menu">
+                <div class="header">
+                    仪表盘1
+                </div>
+            </div>
+        </div>
+
+        <div class="ui dropdown item displaynone scrolling">
+            <span>业务概览</span>
+            <i class="ion-ios-world icon"></i>
+            <div class="menu">
+                <div class="header">
+                    业务概览
+                </div>
+            </div>
+        </div>
+
+        <div class="ui dropdown item displaynone scrolling">
+            <span>设备监控</span>
+            <i class="ion-mouse icon"></i>
+            <div class="menu">
+                <div class="header">
+                    设备监控
+                </div>
+                <div class="ui divider"></div>
+                <a class="item" href="tab.html">设备总览</a>
+                <a class="item" href="table.html">设备详情</a>
+            </div>
+        </div>
+
+        <div class="ui dropdown item displaynone scrolling">
+            <span>视图展示</span>
+            <i class="ion-arrow-graph-up-right icon"></i>
+            <div class="menu">
+                <div class="header">
+                    视图展示
+                </div>
+            </div>
+        </div>
+
+        <div class="ui dropdown item displaynone scrolling">
+            <span>告警展示</span>
+            <i class="ion-paintbrush icon"></i>
+            <div class="menu">
+                <div class="header">
+                    告警展示
+                </div>
+                <div class="ui divider"></div>
+                <a class="item" href="error.html">告警日历</a>
+                <a class="item" href="error.html">告警列表</a>
+            </div>
+        </div>
+
+        <div class="ui dropdown item displaynone scrolling">
+            <span>报表统计</span>
+            <a href="error.html">
+                <i class="ion-briefcase icon"></i>
+            </a>
+        </div>
+
+        <div class="ui divider"></div>
+
+    </div>
+
+    <!--sidebar-->
+
+    <div class="pusher">
+        <!--navbar-->
+        <div class="navslide navwrap" th:replace="layout::top_nav">
+            <div class="ui menu icon borderless grid" data-color="inverted white">
+                <a class="item labeled openbtn">
+                    <i class="ion-navicon-round big icon"></i>
+                </a>
+                <div class="item ui colhidden">
+                    <div class="ui icon input">
+                        <input type="text" placeholder="Search...">
+                        <i class="search icon"></i>
+                    </div>
+                </div>
+                <div class="right menu colhidden">
+                    <div class="ui dropdown item labeled icon">
+                        <i class="bell icon"></i> 告警
+                        <div class="ui red label mini circular">6</div>
+                        <div class="menu">
+                            <div class="header">
+                                紧急告警
+                            </div>
+                            <div class="item">
+                                告警信息1……
+                                <div class="ui teal left pointing label">1</div>
+                            </div>
+                            <div class="item">
+                                告警信息2……
+                                <div class="ui label">51</div>
+                            </div>
+                            <div class="item">
+                                告警信息3……
+                                <div class="ui label">1</div>
+                            </div>
+                            <div class="header">
+                                严重告警
+                            </div>
+                            <div class="item">
+                                <i class="dropdown icon"></i>
+                                <span class="text">更多</span>
+                                <div class="menu">
+                                    <div class="item">告警信息……</div>
+                                    <div class="item">告警信息……</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui dropdown item">
+                        <img class="ui mini circular image" src="../static/images/0.jpg" th:src="@{images/0.jpg}"
+                             alt="label-image"/>
+                        <div class="menu">
+                            <a class="item" href="#" th:text="${session.userInfo.name}">whstone</a>
+                            <a class="item" href="mail.html" th:href="@{/logout}">注销</a>
+                        </div>
+                    </div>
+                    <a class="item labeled rightsidebar computer only">
+                        <i class="ion-wrench large icon"></i>工具
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        <!--navbar-->
+        <!--maincontent-->
+        <div class="mainWrap navslide">
+            <div class="ui equal width left aligned padded grid stackable">
+                <!--Site Content-->
+                <div class="sixteen wide column">
+                    <div class="header item">
+                        <h2><!--<i class="large record icon"></i>-->
+                            <svg class="icon-symbol" aria-hidden="true">
+                                <use xlink:href="#icon-ic_view_carousel_px"></use>
+                            </svg>
+                            轮播视图</h2>
+                    </div>
+                    <div class="ui grid" style="padding-top:1rem">
+                        <div class="seven wide column"  style="padding-bottom: 0px">
+                            <div id="viewgroup_select" class="ui selection dropdown">
+                                <i class="dropdown icon"></i>
+                                <div class="text text-hidden" style="width: 140px;"></div>
+                                <div class="menu" id="viewgroup_menu">
+
+                                </div>
+                            </div>
+                            <div id="viewpage_select" class="ui selection dropdown">
+                                <!--<input type="hidden" name="hosts">-->
+                                <i class="dropdown icon"></i>
+                                <div class="text text-hidden" style="width: 140px;"></div>
+                                <div class="menu"  id="viewpage_menu">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="nine wide column right aligned"  style="padding-bottom: 0px">
+                            <button class="ui basic button" id="addpage_button"><i class="add icon"></i> 添加</button>
+                            <button class="ui basic button" id="writepage_button"><i class="write icon"></i> 修改</button>
+                            <button class="ui basic button" id="deletepage_button"><i class="delete icon"></i> 删除</button>
+                            <button class="ui blue button" id="editpage_button"><i class="edit icon"></i> 编辑</button>
+                            <button class="ui blue button" id="refreshpage_button"><i class="refresh icon"></i> 刷新</button>
+                            <button class="ui blue button" id="savepage_button"><i class="save  icon"></i> 保存</button>
+
+                            <button class="ui secondary  button carouselpage" id="carousel_button"><i class="record icon"></i> 轮播</button>
+                        </div>
+                    </div>
+                    <div class="ui segment" style=" min-height : 520px;" id="content">
+                        <div class="ui grid">
+                            <div id="gri_area" class="sixteen wide column" style="padding-top: 0px">
+                                <div class="gridster">
+                                    <ul>
+
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- 查询读条 -->
+                            <div id="table-dimmer" class="ui inverted dimmer">
+                                <div class="ui text loader" style="text-align:center">正在刷新</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 展示项模板 -->
+                <div th:fragment="carousel_block" class="ui grid" display="none" id="block_temp">
+                    <div
+                            class="eight wide column no-padding"
+                            style="float: left;width: 60%;height:20px">
+                        <h3 class="block_title"></h3>
+                    </div>
+                    <div
+                            class="eight wide column right aligned no-padding block_edit"
+                            style="float: right;width: 40%;height:20px;line-height:20px">
+
+                    </div>
+                    <div class="sixteen wide column no-padding block_content" style="width: 100%;height: 80%;margin-top: 25px" >
+                        <!-- 块内容 -->
+                    </div>
+                    <div class="ui inverted dimmer">
+                        <div class="ui text loader" style="text-align:center">正在刷新</div>
+                    </div>
+                </div>
+                <!--Site Content-->
+            </div>
+        </div>
+        <!--maincontent-->
+        <!--添加展示组弹出框 start-->
+        <div class="ui tiny modal page" id="group_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加展示组
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field ">
+                        <label>名称</label>
+z                    </div>
+                    <div class="required inline field">
+                        <label>刷新</label>
+                        <input type="text" placeholder="刷新频率（分钟）">
+                    </div>
+                    <div class="required inline field">
+                        <label>描述</label>
+                        <input type="text" placeholder="不能为空">
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
+            </div>
+        </div>
+        <!--添加展现页弹出框 start-->
+        <div class="ui tiny modal page" id="page_modal">
+            <i class="close icon"></i>
+            <div class="header">所属【展示组】的页面</div>
+            <div class="ui content center aligned basic segment">
+                <form class="ui form">
+                    <div class="required inline field " id="page_name_field">
+                        <label>名称</label>
+                        <input type="text" placeholder="不能为空" id="page_name">
+                        <div class="ui left pointing red basic label" id="item_label" style="float: right;">未修改</div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
+            </div>
+        </div>
+        <!--添加展示点类型弹出框 start-->
+        <div class="ui tiny modal page" id="point_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                选择轮播类型
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <div class="ui vertical buttons" id="block_button">
+
+                </div>
+            </div>
+        </div>
+        <!--添加展示项添加视图弹出框 start-->
+        <div class="ui tiny modal page" id="point_view_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加视图
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field" id="viewTitle">
+                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
+                        <input type="text" id="view_name" placeholder="不能为空" style="width: 168px;">
+                    </div>
+                    <div class="required inline field ">
+                        <label>视图类型</label>
+                        <div class="ui selection dropdown" id="viewtype_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text text-hidden" style="width: 140px;"></div>
+                            <div class="menu" id="viewtype_menu">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field ">
+                        <label>视图名称</label>
+                        <div class="ui selection dropdown" id="viewname_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text text-hidden" style="width: 140px;"></div>
+                            <div class="menu" id="viewname_menu" >
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
+            </div>
+        </div>
+        <!--添加展示项添加图表弹出框 start-->
+        <div class="ui small modal page" id="point_graph_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加监控项图表
+            </div>
+            <div class="ui content left aligned basic segment no-padding">
+                <form class="ui form" style="padding-left: 10px;padding-right: 10px">
+                    <div class="required inline field" id="graphTitle">
+                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
+                        <input type="text" id="graph_name" placeholder="不能为空" style="width: 168px;">
+                    </div>
+                    <div class="ui celled grid">
+                        <div class="five wide column no-padding">
+                            <div class="required inline field">
+                                <label>选择设备</label>
+                                <div id="host_tree"></div>
+                            </div>
+                        </div>
+                        <div class="four wide column no-padding">
+                            <div class="ui middle aligned selection list" id="pointsMenu"></div>
+                        </div>
+                        <div class="four wide column no-padding">
+                            <div class="ui middle aligned selection list" id="itemsMenu"></div>
+                        </div>
+                        <div class="three wide column no-padding">
+                            <div class="ui middle aligned selection list" id="typeMenu"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button disabled">确认</div>
+            </div>
+        </div>
+        <!--添加展示项添加静态数据弹出框 start-->
+        <div class="ui tiny modal page" id="point_chart_modal">
+            <i class="close icon"></i>
+            <div class="header">
+                添加静态数据
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field" id="chartTitle">
+                        <label>名&nbsp&nbsp&nbsp&nbsp称</label>
+                        <input type="text" id="chart_name" placeholder="不能为空" style="width: 168px;">
+                    </div>
+                    <div class="required inline field">
+                        <label>图&nbsp&nbsp&nbsp&nbsp形</label>
+                        <div class="ui selection dropdown" id="charttype_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text text-hidden" style="width: 140px;"></div>
+                            <div class="menu" id="charttype_menu" >
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field" id="clock_type" display="block">
+                        <label>类&nbsp&nbsp&nbsp&nbsp型</label>
+                        <div class="ui selection dropdown" id="chartname_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text text-hidden" style="width: 140px;"></div>
+                            <div class="menu" id="chartname_menu">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field" id="table_type" display="block">
+                        <div class="ui label no-padding">
+                            <input type="text" id="row_table"  style="width: 80px;">
+                            <div class="detail">行</div>
+                        </div>
+                        <div class="ui label no-padding">
+                            <input type="text" id="column_table"  style="width: 80px;">
+                            <div class="detail">列</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
+            </div>
+        </div>
+        <!-- 静态表格编辑区 -->
+        <div class="ui tiny modal page" id="stat_table"></div>
+        <!--删除弹出框-->
+        <div  th:replace="monitorview::delete_page"></div>
+        <!-- 轮播展示配置弹出框 -->
+        <div class="ui tiny modal full" id="full_config">
+            <i class="close icon"></i>
+            <div class="header">
+                轮播频率配置
+            </div>
+            <div class="ui content  center aligned basic segment no-padding">
+                <form class="ui form">
+                    <div class="required inline field">
+                        <label>轮&nbsp&nbsp播&nbsp&nbsp&nbsp组</label>
+                        <div class="ui selection dropdown" id="group_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="text text-hidden" style="width: 140px;"></div>
+                            <div class="menu" id="group_menu">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field" id="scrollTitle">
+                        <label>滚动频率</label>
+                        <div class="ui selection dropdown" id="scroll_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="default text text-hidden" style="width: 140px;"></div>
+                            <div class="menu" id="scroll_menu">
+                                <div class="item" data-value="10000" >10s</div>
+                                <div class="item" data-value="30000" >30s</div>
+                                <div class="item" data-value="60000" >1分钟</div>
+                                <div class="item" data-value="180000" >3分钟</div>
+                                <div class="item" data-value="300000" >5分钟</div>
+                                <div class="item" data-value="480000" >8分钟</div>
+                                <div class="item" data-value="600000" >10分钟</div>
+                                <div class="item" data-value="900000" >15分钟</div>
+                                <div class="item" data-value="1800000" >30分钟</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="required inline field" id="refreshTitle">
+                        <label>刷新频率</label>
+                        <div class="ui selection dropdown" id="refresh_select">
+                            <!--<input type="hidden" name="hosts">-->
+                            <i class="dropdown icon"></i>
+                            <div class="default text text-hidden" style="width: 140px;"></div>
+                            <div class="menu" id="refresh_menu" >
+                                <div class="item" data-value="10000" >10s</div>
+                                <div class="item" data-value="30000" >30s</div>
+                                <div class="item" data-value="60000" >1分钟</div>
+                                <div class="item" data-value="180000" >3分钟</div>
+                                <div class="item" data-value="300000" >5分钟</div>
+                                <div class="item" data-value="480000" >8分钟</div>
+                                <div class="item" data-value="600000" >10分钟</div>
+                                <div class="item" data-value="900000" >15分钟</div>
+                                <div class="item" data-value="1800000" >30分钟</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions">
+                <div class="ui cancel button">取消</div>
+                <div class="ui green approve submit button">确认</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="layout::bottom_script(~{::specialScript})">
+    <script src="../static/js/js.cookie.js" th:src="@{js/js.cookie.js}"></script>
+    <script src="../static/js/jquery.nicescroll.min.js" th:src="@{js/jquery.nicescroll.min.js}"></script>
+    <script data-pace-options='{ "ajax": false }' src="../static/js/pace.js" th:src="@{js/pace.js}"></script>
+    <script src="../static/js/main.js" th:src="@{js/main.js}"></script>
+    <th:block th:fragment="specialScript">
+        <script src="../static/js/jquery.dataTables.js" th:src="@{js/jquery.dataTables.js}"></script>
+        <script src="../static/js/custom-datatable.js" th:src="@{js/custom-datatable.js}"></script>
+        <script src="../static/js/assistantTool.js" th:src="@{js/assistantTool.js}"></script>
+        <script src="../static/js/custom/choose-hosts.js" th:src="@{js/custom/choose-hosts.js}"></script>
+        <script src="../static/js/custom/carousel-common.js" th:src="@{js/custom/carousel-common.js}"></script>
+        <script src="../static/js/custom/carousel-table.js" th:src="@{js/custom/carousel-table.js}"></script>
+
+        <script src="../static/js/moment.min.js" th:src="@{js/moment.min.js}"></script>
+        <link rel="stylesheet" type="text/css" href="../static/css/num-clock.css" th:href="@{css/num-clock.css}" />
+
+        <script src="../static/js/db.js" th:src="@{js/db.js}"></script>
+        <script src="../static/js/mindmup-editabletable.js" th:src="@{js/mindmup-editabletable.js}"></script>
+        <script src="../static/js/custom-editable.js" th:src="@{js/custom-editable.js}"></script>
+        <script  type="text/javascript">
+
+            //定义 gridster 全局变量
+            var gridster;
+            var w = document.getElementById('gri_area').clientWidth;
+
+            var _widget = parseInt((w - 170) / 40);
+            console.log('w',_widget);
+            var gri_opt = {
+                //widget_selector: 'li',
+                widget_margins: [5, 5],                       //margin大小
+                widget_base_dimensions: [_widget, _widget],             //网格粒度
+                avoid_overlapped_widgets: true,  //不允许widgets加载的时候重叠
+                max_cols: 40,                             //最多创建多少列，null表示没有限制
+                max_rows: 40,                             //最多创建多少横，null表示没有限制
+                min_cols: 1,                                //至少创建多少列
+                min_rows: 1,                               //至少创建多少横
+                //max_size_x: true,
+                max_size_x:40,
+                resize: {
+                    enabled: true,
+                    max_size:[40,40],
+                    start: function(e, ui, $widget) {
+
+                    },
+                    resize: function(e, ui, $widget) {
+
+                        /*console.log('$widget',$widget.attr('data-row')+ ' ' + $widget.attr('data-col')+ ' ' + $widget.attr('data-sizex')+ ' ' +$widget.attr('data-sizey'));*/
+
+                    },
+                    stop: function(e, ui, $widget) {
+
+                        // 自适应
+                        var chart_id = $widget.find('.block_content').children().eq(0).attr('id');
+                        if('graph' === chart_id.split('_')[0]) {
+
+                            $(window).trigger("resize");
+
+                        }else if('problems' === chart_id.split('_')[0]) {
+
+
+                        }
+
+                    }
+                },
+
+            }
+
+            //初始化组下拉框
+            getSelectGroup();
+
+
+            //单个展示页面对象
+            var page_vo = {
+                group_name:'',
+                page_name:'',
+                layout_data:[],
+                config_data:[],
+                block_data:[]
+            };
+            var stat_page_vo;
+            //配置页对象
+            var viewPage ;
+            var layout_info = {
+                col:1,
+                row:1,
+                size_x:4,
+                size_y:2
+            }
+
+            //各个图形的默认 block 大小
+            var block_default_size = [
+                {size_x:17,size_y:7},  //状态视图 0
+                {size_x:36,size_y:10},  //问题视图 1
+                {size_x:9,size_y:6},  //图表控件 非仪表盘 2
+                {size_x:7,size_y:7},  //钟表样式 3
+                {size_x:10,size_y:6},  //数字样式 4
+                {size_x:10,size_y:6},  //静态表格 5
+                {size_x:6,size_y:6},  //仪表盘 6
+            ];
+
+            //加载展示项编辑框
+            $.ajax({
+                type: 'get',
+                url: '/carouseltype/get_list',
+                dataType: 'json',
+                success: function (result) {
+                    if(result.success) {
+                        getButtonByObject($('#block_button'),result.data);
+                        //绑定事件 视图配置框
+                        $('#view').on('click',function(){
+                            $('#point_view_modal').modal({
+                                onShow:function(){
+                                    //清空表单
+                                    $('#view_name').val('');
+                                    $('#viewTitle').removeClass('error')
+                                    $.ajax({
+                                        type: "get",
+                                        url: "/viewtype/get_list",
+                                        dataType: "json",
+                                        success: function (result) {
+                                            if(result.success) {
+                                                var data=result.data;
+                                                getSelectByObject($('#viewtype_menu'),$('#viewtype_select'),data);
+                                                //处理未实现的苹果树选项
+                                                console.log('appletree',$('#viewtype_menu').find('[data-value="appletree"]'));
+                                                if($('#viewtype_menu').find('[data-value="appletree"]').length > 0) {
+                                                    $('#viewtype_menu').find('[data-value="appletree"]').addClass('disabled');
+                                                };
+                                            }
+                                            else {
+                                                errorMsg_no_data(result.message);
+                                            }
+                                        },
+                                        error: function () {
+                                            errorMsg_no_connect("视图类型下拉框 Dropdown");
+                                        }
+                                    })
+                                },
+                                onApprove : function() {
+                                    var block_name  = $('#view_name').val();
+                                    if('' === block_name) {
+                                        $('#viewTitle').addClass('error');
+                                        return false;
+                                    }
+                                    var config_info = {
+                                        block_name: block_name,
+                                        block_type: 'view',
+                                        graph_type: $('#viewtype_select').dropdown('get value'),
+                                        contents: $('#viewname_select').dropdown('get text')
+                                    }
+                                    $.ajax({
+                                        type: "get",
+                                        url: "/carousel/get_block",
+                                        data:config_info,
+                                        dataType: "json",
+                                        contentType:'application/json;charset=UTF-8',
+                                        success: function (result) {
+                                            if (result.success) {
+
+                                                var block_info = result.data;
+                                                //添加 config_info 和 block_info 到page_vo 对象中
+                                                page_vo.config_data.push(config_info);
+                                                page_vo.block_data.push(block_info);
+
+                                                if(config_info.graph_type === 'statepie') {
+
+                                                    //默认  状态视图 block大小
+                                                    addBlockWidget(block_default_size[0].size_x,block_default_size[0].size_y);
+
+                                                }else if(config_info.graph_type === 'problems') {
+
+                                                    //默认  问题列表 block大小
+                                                    addBlockWidget(block_default_size[1].size_x,block_default_size[1].size_y);
+
+                                                }
+
+                                            } else {
+                                                errorMsg_no_connect("获取展示项数据失败");
+                                            }
+                                        },
+                                        error: function () {
+                                            errorMsg_no_connect("获取展示项数据失败");
+                                        }
+                                    });
+                                }
+                            }).modal('show')
+                        })
+
+                        //绑定事件 图形配置框
+                        $('#graph').on('click',function(){
+                            $('#point_graph_modal').modal({
+                                onShow:function(){
+
+                                    //清空表单
+                                    $('#graph_name').val('');
+                                    $('#graphTitle').removeClass('error');
+                                    //清空选择树 待完成
+                                    $('#pointsMenu').html('');
+                                    $('#itemsMenu').html('');
+                                    $('#typeMenu').html('');
+                                    $('#point_graph_modal .approve.submit.button').addClass('disabled');
+                                    //获取设备选择树
+                                    var host_id ;
+                                    var $host_tree = $('#host_tree');
+                                    $host_tree.genHostTree({
+                                        multi: false,
+                                        onChange:function(e,data){
+                                            host_id = data.selected[0];
+                                            pointsMenu(host_id);
+                                        }
+                                    })
+                                },
+                                onApprove : function() {
+                                    var block_name  = $('#graph_name').val();
+                                    if('' === block_name) {
+                                        $('#graphTitle').addClass('error');
+                                        return false;
+                                    }
+                                    var config_info = {
+                                        block_name: block_name,
+                                        block_type: 'graph',
+                                        graph_type: $('#typeMenu .active').attr('data-type'),
+                                        contents: $('#itemsMenu .active').attr('id')
+                                    }
+                                    $.ajax({
+                                        type: "get",
+                                        url: "/carousel/get_block",
+                                        data:config_info,
+                                        dataType: "json",
+                                        contentType:'application/json;charset=UTF-8',
+                                        success: function (result) {
+                                            if (result.success) {
+
+                                                var block_info = result.data;
+                                                //添加 config_info 和 block_info 到page_vo 对象中
+                                                page_vo.config_data.push(config_info);
+
+                                                page_vo.block_data.push(block_info);
+                                                if(config_info.graph_type === 'gauge') {
+
+                                                    //默认  仪表盘 block大小
+                                                    addBlockWidget(block_default_size[6].size_x,block_default_size[6].size_y);
+
+                                                }else {
+
+                                                    //默认  非仪表盘 block大小
+                                                    addBlockWidget(block_default_size[2].size_x,block_default_size[2].size_y);
+
+                                                }
+
+                                            } else {
+                                                errorMsg_no_connect("获取展示项数据失败");
+                                            }
+                                        },
+                                        error: function () {
+                                            errorMsg_no_connect("获取展示项数据失败");
+                                        }
+                                    });
+                                }
+                            }).modal('show')
+                        })
+
+                        //绑定事件 控件配置框
+                        $('#chart').on('click',function(){
+                            $('#point_chart_modal').modal({
+                                onShow:function(){
+
+                                    //清空并激活各个组件
+                                    $('#chart_name').val('');
+                                    $('#chartTitle').removeClass('error');
+                                    $('#charttype_select').removeClass('disabled');
+                                    $('#chartname_select').removeClass('disabled');
+                                    $('#row_table').attr("disabled",false);
+                                    $('#column_table').attr("disabled",false);
+
+                                    $.ajax({
+                                        type: "get",
+                                        url: "/charttype/get_list",
+                                        dataType: "json",
+                                        success: function (result) {
+                                            if(result.success) {
+                                                var data=result.data;
+                                                getSelectByObject($('#charttype_menu'),$('#charttype_select'),data);
+                                            }
+                                            else {
+                                                errorMsg_no_data(result.message);
+                                            }
+                                        },
+                                        error: function () {
+                                            errorMsg_no_connect("chart类型下拉框 Dropdown");
+                                        }
+                                    })
+                                },
+                                onApprove : function() {
+                                    var block_name  = $('#chart_name').val();
+                                    if('' === block_name) {
+                                        $('#chartTitle').addClass('error');
+                                        return false;
+                                    }
+                                    if($('#charttype_select').dropdown('get value')=='table')
+                                    {
+
+                                        // TODO 接入到静态表格编辑框部分
+                                        var stat_tab_opt = {
+                                            cols: $('#column_table').val(),
+                                            rows: $('#row_table').val(),
+                                            modalId: 'stat_table',
+                                            onApprove: function (result) {
+                                                // TODO: 补充其它逻辑
+                                                var config_info = {
+                                                    block_name: $('#chart_name').val(),
+                                                    block_type: 'chart',
+                                                    graph_type: $('#charttype_select').dropdown('get value'),
+                                                    contents: result
+                                                }
+                                                $.ajax({
+                                                    type: "get",
+                                                    url: "/carousel/get_block",
+                                                    data: config_info,
+                                                    dataType: "json",
+                                                    contentType: 'application/json;charset=UTF-8',
+                                                    success: function (result) {
+                                                        if (result.success) {
+
+                                                            var block_info = result.data;
+
+                                                            //添加 config_info 和 block_info 到page_vo 对象中
+                                                            page_vo.config_data.push(config_info);
+
+                                                            page_vo.block_data.push(block_info);
+
+                                                            //默认  静态表格 block大小
+                                                            addBlockWidget(block_default_size[5].size_x,block_default_size[5].size_y);
+                                                        } else {
+                                                            errorMsg_no_connect("获取展示项数据失败");
+                                                        }
+                                                    },
+                                                    error: function () {
+                                                        errorMsg_no_connect("获取展示项数据失败");
+                                                    }
+                                                });
+                                            }
+                                        }
+
+                                        genTableBlock(stat_tab_opt);
+
+                                        return true;
+
+                                    }else if($('#charttype_select').dropdown('get value')=='clock') {
+                                        var config_info = {
+                                            block_name: block_name,
+                                            block_type: 'chart',
+                                            graph_type: $('#charttype_select').dropdown('get value'),
+                                            contents: $('#chartname_select').dropdown('get value')
+                                        }
+                                        $.ajax({
+                                            type: "get",
+                                            url: "/carousel/get_block",
+                                            data: config_info,
+                                            dataType: "json",
+                                            contentType: 'application/json;charset=UTF-8',
+                                            success: function (result) {
+                                                if (result.success) {
+
+                                                    var block_info = result.data;
+                                                    //添加 config_info 和 block_info 到page_vo 对象中
+                                                    page_vo.config_data.push(config_info);
+
+                                                    page_vo.block_data.push(block_info);
+                                                    if('clock-clock' === config_info.contents) {
+                                                        //默认  钟表 block大小
+                                                        addBlockWidget(block_default_size[3].size_x,block_default_size[3].size_y);
+
+                                                    }else if('number-clock' === config_info.contents) {
+                                                        //默认  钟表 block大小
+                                                        addBlockWidget(block_default_size[4].size_x,block_default_size[4].size_y);
+
+                                                    }else {
+
+                                                    }
+
+                                                    return true;
+                                                } else {
+                                                    errorMsg_no_connect("获取展示项数据失败");
+                                                }
+                                            },
+                                            error: function () {
+                                                errorMsg_no_connect("获取展示项数据失败");
+                                            }
+                                        });
+                                    }
+                                }
+                            }).modal('show')
+                        })
+
+                    } else {
+                        errorMsg_no_connect("轮播类型 Dropdown");
+                    }
+                },
+                error: function () {
+                    errorMsg_no_connect("轮播类型 Dropdown");
+                }
+            })
+
+            //禁止保存按钮
+            $("#savepage_button").attr('disabled',true);
+
+            //初始化组下拉框
+            function getSelectGroup() {
+                $.ajax({
+                    type: 'get',
+                    url: '/carousel/get_groups',
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            var data=result.data;
+
+                            $('#viewpage_select').dropdown({
+                                onChange: function() {
+                                    var page_name = $('#viewpage_select').dropdown('get value');
+                                    var group_name = $('#viewgroup_select').dropdown('get value');
+                                    if('' != page_name){
+                                        getPage(group_name,page_name);
+                                    }
+                                }
+                            })
+
+                            getSelectByString($('#viewgroup_menu'),$('#viewgroup_select'),data);
+                            var group_name = $('#viewgroup_select').dropdown('get value');
+                            getSelectPage(group_name);
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("展示组下拉框 Dropdown");
+                    }
+                })
+            }
+
+            //初始化展示页下拉框
+            function getSelectPage(group_name) {
+                $.ajax({
+                    type: 'get',
+                    url: '/carousel/get_pages?group_name=' + group_name,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            var data=result.data;
+                            getSelectByString($('#viewpage_menu'),$('#viewpage_select'),data);
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("展示页下拉框 Dropdown");
+                    }
+                })
+            }
+
+            //轮播 按钮
+            $('button.carouselpage').on('click',function(){
+                $('#full_config').modal({
+                    onShow:function(){
+                        $('#scrollTitle').removeClass('error');
+                        $('#refreshTitle').removeClass('error');
+                        $.ajax({
+                            type: 'get',
+                            url: '/carousel/get_groups',
+                            dataType: 'json',
+                            success: function (result) {
+                                if(result.success) {
+                                    var data=result.data;
+                                    getSelectByString($('#group_menu'),$('#group_select'),data);
+                                }
+                                else {
+                                    errorMsg_no_data(result.message);
+                                }
+                            },
+                            error: function () {
+                                errorMsg_no_connect("展示组下拉框 Dropdown");
+                            }
+                        })
+                    },
+                    onApprove:function(){
+                        //获取参数
+                        var group_name = $('#group_select').dropdown('get value');
+                        var scroll_time = $('#scroll_select').dropdown('get value');
+                        var scroll_timestring = $('#scroll_select').dropdown('get text');
+                        var refresh_time = $('#refresh_select').dropdown('get value');
+                        var refresh_timestring = $('#refresh_select').dropdown('get text');
+                        if('' === scroll_time) {
+                            $('#scrollTitle').addClass('error');
+                            return false;
+                        }
+                        if('' === refresh_time) {
+                            $('#refreshTitle').addClass('error');
+                            return false;
+                        }
+
+                        window.location.href = '/carouselfull?' +
+                            'group_name=' + group_name +
+                            '&scroll_time=' + scroll_time +
+                            '&scroll_timestring=' + scroll_timestring +
+                            '&refresh_time=' + refresh_time +
+                            '&refresh_timestring=' + refresh_timestring;
+                        return true;
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+
+            });
+
+            //添加弹出框
+            $('#addpage_button').on('click',function(){
+                $('#page_name').val('');
+                $('#item_label').css('display','none');
+                $('#page_name_field').removeClass('error');
+                $('#page_modal').modal({
+                    onApprove: function () {
+                        if ($('#page_name').val()=='') {
+                            $('#page_name_field').addClass('error');
+                            return false;
+                        } else {
+                            //ajax,添加此页面绘制展示区，刷新展示页下拉框，注意判断重名
+                            var send_data = {
+                                groupName:$('#viewgroup_select').dropdown('get value'),
+                                pageName:$('#page_name').val()
+                            };
+
+                            $.ajax({
+                                type: 'post',
+                                url: '/carousel/add_page',
+                                data: JSON.stringify(send_data),
+                                dataType: 'json',
+                                contentType:'application/json;charset=UTF-8',
+                                success: function (result) {
+                                    if(result.success) {
+                                        var data=result.data;
+                                        //console.log('page_vo',data);
+                                        getSelectPage($('#viewgroup_select').dropdown('get value'));
+                                    }
+                                    else {
+                                        errorMsg_no_data(result.message);
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("添加展示页错误 Dropdown");
+                                }
+                            })
+                        }
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+            });
+
+            //修改弹出框
+            $('#writepage_button').on('click',function(){
+                var old_page_name = $('#viewpage_select').dropdown('get value');
+                $('#page_name').val(old_page_name);
+                $('#page_name_field').removeClass('error');
+                $('#item_label').css('display','none');
+                $('#page_modal').modal({
+                    onApprove: function () {
+                        if ($('#page_name').val()=='') {
+                            $('#page_name_field').addClass('error');
+                            return false;
+                        } else if($('#page_name').val() === old_page_name) {
+                            $('#page_name_field').addClass('error');
+                            $('#item_label').css('display','block');
+                            return false;
+                        }else {
+                            //ajax,修改此页面绘制展示区，刷新展示页下拉框
+                            var
+
+
+                                send_data = {
+                                groupName:$('#viewgroup_select').dropdown('get value'),
+                                newPageName:$('#page_name').val(),
+                                oldPageName:old_page_name
+                            };
+                            $.ajax({
+                                type: 'post',
+                                url: '/carousel/update_page',
+                                data:JSON.stringify(send_data),
+                                dataType: 'json',
+                                contentType:'application/json;charset=UTF-8',
+                                success: function (result) {
+                                    if(result.success) {
+                                        var data=result.data;
+                                        getSelectPage($('#viewgroup_select').dropdown('get value'));
+
+                                        $('#viewpage_select').dropdown('set value',send_data.newPageName);
+                                        $('#viewpage_select').dropdown('set text',send_data.newPageName);
+                                    }
+                                    else {
+                                        errorMsg_no_connect("修改展示页 Dropdown");
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("修改展示页 Dropdown");
+                                }
+                            })
+                        }
+                    }
+                }).modal('setting', 'closable', false).modal('show');
+            });
+
+            //删除弹出框
+            $('#deletepage_button').on('click',function(){
+
+                if($('#viewpage_menu').children('.item').length > 1) {
+
+                    var group_name = $('#viewgroup_select').dropdown('get value');
+                    var page_name = $('#viewpage_select').dropdown('get value');
+                    $('#deleteModal').modal({
+                        closable: false,
+                        onApprove: function () {
+                            //ajax,根据page_name删除此页面绘制展示区，刷新展示页下拉框，注意添加删除的刷新效果
+                            $.ajax({
+                                type: 'get',
+                                url: '/carousel/delete_page?group_name=' + group_name + '&page_name=' + page_name,
+                                dataType: 'json',
+                                success: function (result) {
+                                    if(result.success) {
+                                        $("#backDeleteModal").modal({
+                                            inverted: true,
+                                            onShow:function () {
+                                                $('#deleteMsg').html(' <i class="green trash icon"></i>删除成功');
+                                            }
+                                        }).modal('show');
+                                        setTimeout("$('#backDeleteModal').modal('hide');",2000)
+                                        getSelectPage($('#viewgroup_select').dropdown('get value'));
+                                    }
+                                    else {
+                                        errorMsg_no_data(result.message);
+                                    }
+                                },
+                                error: function () {
+                                    errorMsg_no_connect("展示页下拉框 Dropdown");
+                                }
+                            })
+                        }
+                    }).modal('setting', 'closable', false).modal('show');
+
+                }else {
+                    $("#backDeleteModal").modal({
+                        inverted: true,
+                        onShow:function () {
+                            $('#deleteMsg').html("<i class='red trash icon'></i>最后一个页面不能删除！");
+                        }
+                    }).modal('show');
+                    setTimeout("$('#backDeleteModal').modal('hide');",2000)
+                }
+
+            });
+
+            //编辑弹出框
+            $("#editpage_button").on("click",function(){
+
+                if($('#editpage_button').text().trim() === '取消') {
+
+                    $('#editpage_button').html('<i class="edit icon"></i>编辑');
+
+                    //gri_opt.resize.enabled = false;
+
+                    drawPage($('.gridster > ul'),stat_page_vo);
+
+                    //gridster.resizable();
+
+                    $('#viewgroup_select').removeClass('disabled');
+                    $('#viewpage_select').removeClass('disabled');
+
+                    $("#savepage_button").attr('disabled',true);
+
+                    $('#addpage_button').attr('disabled',false);
+
+                    $('#writepage_button').attr('disabled',false);
+
+                    $('#deletepage_button').attr('disabled',false);
+
+                    $('#refreshpage_button').attr('disabled',false);
+
+                    $('#carousel_button').attr('disabled',false);
+
+                    $(".gridster > ul > li").css("background-color","#FFF");
+
+                }else if($("#editpage_button").text().trim() === '编辑') {
+
+                    $('#editpage_button').html('<i class="delete icon"></i>取消');
+
+                    //gri_opt.resize.enabled = true;
+
+                    drawPage($('.gridster > ul'),page_vo);
+
+                    //gridster.resizable();
+
+                    // 给所有块 添加 编辑按钮
+                    addBlockiCons($('.gridster > ul').children('li'));
+
+                    console.log('edit gridster',gridster);
+
+                    gridster.enable();
+
+                    //添加 编辑 li
+                    addBlockButton(gridster);
+
+                $('#viewgroup_select').addClass('disabled');
+                $('#viewpage_select').addClass('disabled');
+
+                    $("#savepage_button").attr('disabled',false);
+
+                    $('#addpage_button').attr('disabled',true);
+
+                    $('#writepage_button').attr('disabled',true);
+
+                    $('#deletepage_button').attr('disabled',true);
+
+                    $('#refreshpage_button').attr('disabled',true);
+
+                    $('#carousel_button').attr('disabled',true);
+
+                    $(".gridster > ul > li").css("background-color","#EFF6EC");
+                }
+
+            });
+
+            //刷新弹出框
+            $("#refreshpage_button").on("click",function(){
+
+                var page_name = $('#viewpage_select').dropdown('get value');
+                var group_name = $('#viewgroup_select').dropdown('get value');
+                if('' != page_name){
+                    //getPage(group_name,page_name);
+                    refreshPage(group_name,page_name);
+                }
+
+            });
+
+            //保存页面弹出框
+            $("#savepage_button").on("click",function(){
+
+                //去除掉add li
+                var layout_json_old = gridster.serialize();
+
+                gridster.remove_widget( $('#add_widget'));
+
+                var layoutDataList = [];
+                var configDataList = [];
+                var layout_json = gridster.serialize();
+
+                console.log('layout',layout_json);
+
+                $.each(layout_json,function(i,value){
+                    layoutDataList.push({
+                        xSize: value.size_x,
+                        ySize: value.size_y,
+                        col: value.col,
+                        row: value.row
+                    })
+                })
+                $.each(page_vo.config_data,function(i,value) {
+                    if(null !== value) {
+                        configDataList.push({
+                            blockName: page_vo.config_data[i].block_name,
+                            blockType: page_vo.config_data[i].block_type,
+                            graphType: page_vo.config_data[i].graph_type,
+                            contents: page_vo.config_data[i].contents
+                        })
+                    }
+                })
+                viewPage = {
+                    groupName :$('#viewgroup_select').dropdown('get value'),
+                    pageName :$('#viewpage_select').dropdown('get value'),
+                    layoutDataList :layoutDataList,
+                    configDataList :configDataList
+                }
+
+                $('#table-dimmer').addClass('active');
+                $.ajax({
+                    type: "post",
+                    url: "/carousel/save_page",
+                    data:JSON.stringify(viewPage),
+                    dataType: "json",
+                    contentType:'application/json;charset=UTF-8',
+                    success: function (result) {
+                        if (result.success) {
+
+                            page_vo = result.data;
+                            stat_page_vo = result.data;
+
+                            //gri_opt.resize.enabled = false;
+
+                            drawPage($('.gridster > ul'),page_vo);
+
+                            //gridster.disable_resize();
+                            $('#table-dimmer').removeClass('active');
+
+                        } else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("添加状态视图 add");
+                    }
+                });
+
+                $('#savepage_button').attr('disabled',true);
+
+                $('#addpage_button').attr('disabled',false);
+
+                $('#writepage_button').attr('disabled',false);
+
+                $('#deletepage_button').attr('disabled',false);
+
+                $('#carousel_button').attr('disabled',false);
+
+                $('#viewgroup_select').removeClass('disabled');
+                $('#viewpage_select').removeClass('disabled');
+
+                $('#editpage_button').html('<i class="edit icon"></i>编辑');
+
+            });
+
+            $('#viewtype_select').dropdown({
+                onChange:function(value){
+
+                    getSelectViewName(value);
+                }
+            })
+
+            $('#charttype_select').dropdown({
+                onChange:function(value){
+
+                    if(value === 'clock') {
+                        $('#clock_type').css('display','block');
+                        $('#table_type').css('display','none');
+                        getSelectClock();
+                    }else if(value === 'table') {
+                        $('#clock_type').css('display','none');
+                        $('#table_type').css('display','block');
+                    }
+
+                }
+            })
+
+            //获取 page 并 draw
+            function getPage(group_name,page_name) {
+                $('#table-dimmer').addClass('active');
+                $.ajax({
+                    type: 'get',
+                    url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            page_vo = result.data;
+                            stat_page_vo = result.data;
+                            //console.log('page_vo',page_vo);
+
+                            //gri_opt.resize.enabled = false;
+                            drawPage($('.gridster > ul'),page_vo);
+
+                            gridster.resizable();
+                            $('#table-dimmer').removeClass('active');
+                        }
+                        else {
+                            errorMsg_no_connect("获取页面失败");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("获取页面失败");
+                    }
+                })
+            }
+
+            //获取 page 并 refresh
+            function refreshPage(group_name,page_name) {
+                $('#table-dimmer').addClass('active');
+                $.ajax({
+                    type: 'get',
+                    url: '/carousel/get_data?page_name=' + page_name + '&group_name=' + group_name,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result.success) {
+                            page_vo = result.data;
+
+                            $('#table-dimmer').removeClass('active');
+
+                            //不改变布局结构 刷新所有 block 数据
+                            var $_blocks = $('.gridster > ul').children('li');
+
+                            $_blocks.each(function(index,element) {
+                                //console.log('li',element);
+
+                                $(element).children().first().nextAll().remove();
+
+                                $(element).append($('#block_temp').html());
+
+                                // 画 项 block  0 表示第 0 页，这里不关心第几页，所以可随意取值
+                                drawBlock($(this),page_vo.config_data[index],page_vo.block_data[index],0,index);
+                            })
+                        }
+                        else {
+                            errorMsg_no_connect("页面刷新失败");
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("页面刷新失败");
+                    }
+                })
+            }
+
+            function getSelectViewName(type) {
+                $.ajax({
+                    type: "get",
+                    url: "/view/get_names?type="+type,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data=result.data;
+                            if(data.length !== 0) {
+                                getSelectByObject($('#viewname_menu'),$('#viewname_select'), data);
+                            }
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("视图页面下拉框 Dropdown");
+                    }
+                })
+            }
+
+            function getSelectClock() {
+                var str = '';
+                str += "<div class='item' data-value='clock-clock'  >时钟样式</div> " +
+                    "<div class='item' data-value='number-clock'  >数字样式</div>";
+                $('#chartname_menu').html(str);
+                //默认值
+                $('#chartname_select').dropdown('set value','clock-clock');
+                $('#chartname_select').dropdown('set text','时钟样式');
+
+            }
+
+            //加载监控点列表
+            function pointsMenu(host_id,point_id,item_id,type) {
+                $.ajax({
+                    type: "get",
+                    url: "/hostgraphs/get_points?host_id="+host_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var data = result.data;
+                            getpointsMenu(data);
+                            if(typeof point_id === 'undefined') {
+                                itemsMenu(data[0].point_id);
+                            }else {
+                                $('#pointsMenu div.item').removeClass('active');
+                                $('#'+point_id).addClass('active');
+                                itemsMenu(point_id,item_id,type);
+                            }
+                            $('#pointsMenu > div').on('click',function () {
+                                $('#pointsMenu div').removeClass('active');
+                                $(this).addClass('active');
+                                itemsMenu(this.id);
+                            })
+                        }
+                        else {
+                            errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控点列表 Menu");
+                    }
+                })
+            }
+            function getpointsMenu(data) {
+                var str = '';
+                for(var i=0;i<data.length;i++)
+                {
+                    var state = '<i class="green circle icon"></i>';
+                    if (i==0){
+                            str += "<div class='item text-hidden active' id='"+data[i].point_id+"'";
+                    }else {
+                        str += "<div class='item text-hidden' id='"+data[i].point_id+"'";
+                    }
+                    if(strlen(data[i].point_name) > 20)
+                    {
+                        str += " title='"+data[i].point_name+"'>"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                    }else{
+                        str += ">"+state+"<div class='content'><div class='header'>"+data[i].point_name+"</div></div></div>";
+                    }
+                }
+                $('#pointsMenu').html('');
+                $("#pointsMenu").html(str);
+            }
+
+            //加载监控项列表
+            function itemsMenu(point_id,item_id,type) {
+                $.ajax({
+                    type: "get",
+                    url: "/hostgraphs/get_items?point_id="+point_id,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result.success) {
+                            var value_type;
+                            var data = result.data;
+                            getitemsMenu(data);
+
+                            if(typeof item_id === 'undefined') {
+                                value_type = data[0].value_type;
+                            }else {
+                                $('#itemsMenu div.item').removeClass('active');
+                                $('#'+item_id).addClass('active');
+                                for(var i = 0; i < data.length; i++) {
+                                    if(item_id === data[i].item_id) {
+                                        value_type = data[i].value_type;
+                                    }
+                                }
+                            }
+                            if(value_type == '%') {
+                                value_type = '%25';
+                            }
+                            typeMenu(value_type,type);
+                            $('#itemsMenu > div.item').on('click',function () {
+                                var value_type = $(this).attr('data-type');
+                                var item_id = $(this).attr('id');
+                                $('#itemsMenu div.item').removeClass('active');
+                                $(this).addClass('active');
+                                if(value_type == '%') {
+                                    value_type = '%25';
+                                }
+                                typeMenu(value_type);
+                            })
+                        }
+                        else {
+                                errorMsg_no_data(result.message);
+                        }
+                    },
+                    error: function () {
+                        errorMsg_no_connect("监控项列表 Menu");
+                    }
+                })
+            }
+            function getitemsMenu(data) {
+                var str = '';
+                if(data.length === 0){
+                    //该监控点无监控项
+                    $('#itemsMenu').html('');
+                    $("#typeMenu").html('');
+                    $('#point_graph_modal .approve.submit.button').addClass('disabled');
+                }else {
+                    for (var i = 0; i < data.length; i++) {
+                        var state = '<i class="green square icon"></i>';
+                        if (i==0){
+                            str += "<div class='item text-hidden active' id='"+data[i].item_id+"' data-type='" + data[i].value_type + "'";
+                        }else {
+                            str += "<div class='item text-hidden' id='"+data[i].item_id+"' data-type='" + data[i].value_type + "'";
+                        }
+                        if(strlen(data[i].item_name) > 20)
+                        {
+                            str += " title='"+data[i].item_name+"'>" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
+                        }else{
+                            str += ">" + state + "<div class='content'><div class='header'>" + data[i].item_name + "</div></div></div>";
+                        }
+                        $("#itemsMenu").html(str);
+                    }
+                }
+            }
+
+            //加载图形类型列表
+            function typeMenu(value_type,type) {
+                if(value_type == '0' || value_type == '3' || value_type == '%' || value_type == '%25') {
+                    $.ajax({
+                        type: "get",
+                        url: "/hostgraphs/get_graphs?value_type="+value_type,
+                        dataType: "json",
+                        success: function (result) {
+                            if(result.success) {
+                                var data = result.data;
+                                gettypeMenu(data);
+                                if (typeof type !== 'undefined') {
+                                    $('#typeMenu div.item').removeClass('active');
+                                    $('[data-type="' + type + '"]').addClass('active');
+                                }
+                                $('#typeMenu > div.item').on('click', function () {
+
+                                    $('#typeMenu div.item').removeClass('active');
+                                    $(this).addClass('active');
+                                })
+                            }
+                            else {
+                                errorMsg_no_data(result.message);
+                            }
+                        },
+                        error: function () {
+                            errorMsg_no_connect("图形类型列表 Menu");
+                        }
+                    })
+                } else {
+                    $("#typeMenu").html('');
+                    $('#point_graph_modal .approve.submit.button').addClass('disabled');
+                }
+            }
+            function gettypeMenu(data) {
+                var str = '';
+                if(data.length === 0){
+                    $("#typeMenu").html('');
+                    $('#point_graph_modal .approve.submit.button').addClass('disabled');
+                }else {
+                    for (var i = 0; i < data.length; i++) {
+                        var state = '<i class="green square icon"></i>';
+                        if (i == 0) {
+                            str += "<div class='item text-hidden active' data-type='" + data[i].graph_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].graph_name + "</div></div></div>";
+                        } else {
+                            str += "<div class='item text-hidden' data-type='" + data[i].graph_type + "'>" + state + "<div class='content'><div class='header'>" + data[i].graph_name + "</div></div></div>";
+                        }
+                    }
+                    $("#typeMenu").html('');
+                    $("#typeMenu").html(str);
+                    $('#point_graph_modal .approve.submit.button').removeClass('disabled');
+                }
+            }
+        </script>
+    </th:block>
+</th:block>
+
+</body>
+</html>
