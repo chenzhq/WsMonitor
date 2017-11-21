@@ -16,7 +16,7 @@
 		<script th:src="@{js/g6.js}"></script>
 		<script src="../static/js/echarts.min.js" th:src="@{js/echarts.min.js}"></script>
 		<script src="../static/js/notifications.js" th:src="@{js/notifications.js}"></script>
-		<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>
+		<!--<script src="http://rapapi.org/rap.plugin.js?projectId=19544&mode=0"></script>-->
 		<style type="text/css">
 			/*原生button 有个下外边距*/
 			.ui.modal .actions > .button {
@@ -50,7 +50,8 @@
 				overflow:auto;
 				overflow-x:hidden
 			}
-			.chart-style{  height: 160px; }
+			.chart-style{  height: 160px;
+				width: 350px; }
 			.chart-zoom{
 				height: 180px;
 				width: 700px;
@@ -1063,6 +1064,7 @@
             }
             //获取并绘制业务平台图形数据
             function getitemsAccordion(host_ids) {
+			    console.log('host_ids',host_ids);
                 $.ajax({
                     type: "post",
                     url:"/platformdetail/get_graphs",
@@ -1072,88 +1074,91 @@
                     success: function (result) {
                         if(result.success) {
                             var graph_data = result.data;
-                            if(graph_data.length !== 0) {
-                                $.each(host_ids,function(n,value) {
-                                    $("#g"+value).html('');
-                                });
-                                //循环绘制图形
-                                for(var i=0;i<graph_data.length;i++) {
-                                    var title = "";
-                                    if(graph_data[i].units == "") {
-                                        title = graph_data[i].graph_name;
-                                    }else {
-                                        title =graph_data[i].graph_name + "(" + graph_data[i].units +")";
-                                    }
-                                    //append 图形定位
-                                    var id = "g" + graph_data[i].item_id;
-                                    var str_graph ="<div class='column'><div class='ui grid'>"+
-                                        "<div class='eight wide column'>"+
-                                        "<h3>"+title+"</h3></div>"+
-                                        "<div class='eight wide column right aligned'>"+
-                                        "<i class='zoom icon' id='z" + graph_data[i].item_id +"' onclick='zoom_graph(this.id)'></i>"+
-                                        "<i class='edit icon' id='e" + graph_data[i].item_id + "' onclick='edit_graph(this.id)'></i>"+
-                                        "<i class='delete icon' id='d" + graph_data[i].item_id + "' data-name='"+title+"' onclick='delete_graph(this.id)'></i></div>"+
-                                        "<div class='sixteen wide column'>"+
-                                        "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
-                                    $("#g"+graph_data[i].host_id).append(str_graph);
-                                    var myChart = echarts.init(document.getElementById(id));
-                                    var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
-                                    if (graph_data[i].state == "正常"){ var myColor = Color[0] }
-                                    if (graph_data[i].state == "严重"){ var myColor = Color[1] }
-                                    if (graph_data[i].state == "警告"){ var myColor = Color[2] }
-                                    var colorGreen = [0.6, '#5FB878'];
-                                    var colorYellow = [0.8, '#F7B824'];
-                                    var colorRed = [1, '#FF5722'];
-                                    if(graph_data[i].units == "%"){
-                                        var ymax = 100;
-                                    }else {
-                                        var ymax = null;
-                                    }
-                                    //图形值
-                                    var option ;
-                                    switch (graph_data[i].graph_type) {
-                                        case "gauge":
-                                            option = {
-                                                title: {
-                                                },
-                                                tooltip : {
-                                                    formatter: "{a} <br/>{b} : {c}%"
-                                                },
-                                                series: [
-                                                    {
-                                                        name: graph_data[i].item_name,
-                                                        type: 'gauge',
-                                                        min:0,
-                                                        max:100,
-                                                        splitNumber: 5,
-                                                        axisLine: {            // 坐标轴线
-                                                            lineStyle: {       // 属性lineStyle控制线条样式
-                                                                color: [colorGreen,colorYellow,colorRed],
-                                                                width: 13
-                                                            }
-                                                        },
-                                                        axisTick: {            // 坐标轴小标记
-                                                            length: 18,        // 属性length控制线长
-                                                            lineStyle: {       // 属性lineStyle控制线条样式
-                                                                color: 'auto'
-                                                            }
-                                                        },
-                                                        splitLine: {           // 分隔线
-                                                            length: 22,         // 属性length控制线长
-                                                            lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-                                                                color: 'auto'
-                                                            }
-                                                        },
-                                                        pointer: {
-                                                            width:5
-                                                        },
-                                                        detail: {
-                                                            formatter:'{value}%',
-                                                            offsetCenter:[0,'60%'],
-                                                            textStyle: {
-                                                                fontWeight: 'bolder', fontSize: 16,color: '#333',
-                                                            }},
-                                                        data: [{value: graph_data[i].datas.length===0 ? 0 : graph_data[i].datas[graph_data[i].datas.length-1].toFixed(2), name: ''}]
+                            console.log('graph_data',graph_data);
+                            $.each(host_ids,function(n,value) {
+                                $("#g"+value).html('');
+                            });
+                            //循环绘制图形
+                            for(var i=0;i<graph_data.length;i++) {
+                                var title = "";
+                                if(graph_data[i].units == "") {
+                                    title = graph_data[i].graph_name;
+                                }else {
+                                    title =graph_data[i].graph_name + "(" + graph_data[i].units +")";
+                                }
+                                //append 图形定位
+                                var id = "g" + graph_data[i].item_id;
+                                var str_graph ="<div class='column'><div class='ui grid'>"+
+                                    "<div class='eight wide column'>"+
+                                    "<h3>"+title+"</h3></div>"+
+                                    "<div class='eight wide column right aligned'>"+
+                                    "<i class='zoom icon' id='z" + graph_data[i].item_id +"' onclick='zoom_graph(this.id)'></i>"+
+                                    "<i class='edit icon' id='e" + graph_data[i].item_id + "' onclick='edit_graph(this.id)'></i>"+
+                                    "<i class='delete icon' id='d" + graph_data[i].item_id + "' data-name='"+title+"' onclick='delete_graph(this.id)'></i></div>"+
+                                    "<div class='sixteen wide column'>"+
+                                    "<div id='"+id+"' class='chart-style'>"+id+"</div></div></div></div>";
+                                $("#g"+graph_data[i].host_id).append(str_graph);
+                                var myChart = echarts.init(document.getElementById(id));
+                                var Color = ['#5FB878', '#DB2828', '#F7B824', '#d2d2d2', '#2F4056'];
+                                if (graph_data[i].state == "正常"){ var myColor = Color[0] }
+                                if (graph_data[i].state == "严重"){ var myColor = Color[1] }
+                                if (graph_data[i].state == "警告"){ var myColor = Color[2] }
+                                var colorGreen = [0.6, '#5FB878'];
+                                var colorYellow = [0.8, '#F7B824'];
+                                var colorRed = [1, '#FF5722'];
+                                if(graph_data[i].units == "%"){
+                                    var ymax = 100;
+                                }else {
+                                    var ymax = null;
+                                }
+                                //图形值
+                                var option ;
+                                switch (graph_data[i].graph_type) {
+                                    case "gauge":
+                                        option = {
+                                            title: {},
+                                            tooltip: {
+                                                formatter: "{a} <br/>{b} : {c}%"
+                                            },
+                                            series: [
+                                                {
+                                                    name: graph_data[i].item_name,
+                                                    type: 'gauge',
+                                                    min: 0,
+                                                    max: 100,
+                                                    splitNumber: 5,
+                                                    axisLine: {            // 坐标轴线
+                                                        lineStyle: {       // 属性lineStyle控制线条样式
+                                                            color: [colorGreen, colorYellow, colorRed],
+                                                            width: 13
+                                                        }
+                                                    },
+                                                    axisTick: {            // 坐标轴小标记
+                                                        length: 18,        // 属性length控制线长
+                                                        lineStyle: {       // 属性lineStyle控制线条样式
+                                                            color: 'auto'
+                                                        }
+                                                    },
+                                                    splitLine: {           // 分隔线
+                                                        length: 22,         // 属性length控制线长
+                                                        lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                                                            color: 'auto'
+                                                        }
+                                                    },
+                                                    pointer: {
+                                                        width: 5
+                                                    },
+                                                    detail: {
+                                                        formatter: '{value}%',
+                                                        offsetCenter: [0, '60%'],
+                                                        textStyle: {
+                                                            fontWeight: 'bolder', fontSize: 16, color: '#333',
+                                                        }
+                                                    },
+                                                    data: [{
+                                                        value: graph_data[i].datas.length === 0 ? 0 : graph_data[i].datas[graph_data[i].datas.length - 1].toFixed(2),
+                                                        name: ''
+                                                    }]
 
                                                 }
                                             ]
@@ -1171,13 +1176,13 @@
                                                 }
                                             },
                                             legend: {
-                                                data:[]
+                                                data: []
                                             },
                                             grid: {
                                                 left: '2%',
                                                 right: '2%',
                                                 bottom: '2%',
-                                                top:'5%',
+                                                top: '5%',
                                                 containLabel: true
                                             },
                                             xAxis: {
@@ -1191,7 +1196,7 @@
                                                 type: 'line',
                                                 data: graph_data[i].datas,
                                                 areaStyle: {
-                                                    normal: { }
+                                                    normal: {}
                                                 },
                                                 color: [myColor]
                                             }]
@@ -1209,13 +1214,13 @@
                                                 }
                                             },
                                             legend: {
-                                                data:[]
+                                                data: []
                                             },
                                             grid: {
                                                 left: '2%',
                                                 right: '2%',
                                                 bottom: '2%',
-                                                top:'5%',
+                                                top: '5%',
                                                 containLabel: true
                                             },
                                             xAxis: {
@@ -1223,7 +1228,7 @@
                                             },
                                             yAxis: {
                                                 max: ymax,
-                                                splitLine:{show: false},
+                                                splitLine: {show: false},
                                             },
                                             series: [{
                                                 name: graph_data[i].item_name,
@@ -1233,6 +1238,7 @@
                                             }]
                                         };
                                 }
+                                console.log('option',option);
                                 myChart.setOption(option);
                             }
                         }
@@ -1613,6 +1619,7 @@
                                     setTimeout("$('#backDeleteModal').modal('hide');",800)*/
                                     //获取图形
                                     getitemsAccordion(host_ids);
+                                    console.log('del');
                                 }
                                 else {
                                     errorMsg_no_data(result.message);
