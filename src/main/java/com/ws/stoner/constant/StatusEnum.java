@@ -6,7 +6,8 @@ package com.ws.stoner.constant;
 public enum StatusEnum {
     WARNING("警告", 1,"yellow","warning"),
     HIGH("严重", 2,"red","high"),
-    OK("正常", 0,"green","ok");
+    OK("正常", 0,"green","ok"),
+    INFO("信息",3,"gray","info");
 
     public String name;
     public int code;

@@ -24,7 +24,7 @@ public class Application extends ZApiMethod {
     public <T> List<T> get(ApplicationGetRequest request, Class<T> clazz) throws ZApiException {
         request.setAuth(this.auth);
         String responseJson = sendRequest(JSON.toJSONString(request, SerializerFeature.NotWriteDefaultValue));
-        List<T> response = JSON.parseArray(JSON.parseObject(responseJson).getJSONArray("result").toString(), clazz);
+         List<T> response = JSON.parseArray(JSON.parseObject(responseJson).getJSONArray("result").toString(), clazz);
         return response;
     }
     

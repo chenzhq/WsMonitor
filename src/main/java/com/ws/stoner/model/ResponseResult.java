@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ws.stoner.constant.ResponseErrorEnum;
+import com.ws.stoner.constant.ResponseSuccessEnum;
 
 /**
  * Created by chenzheqi on 2017/5/24.
@@ -13,17 +14,21 @@ public class ResponseResult<T> {
     private String message;
     @JSONField(serialzeFeatures = SerializerFeature.NotWriteDefaultValue)
     private T data;
-    @JSONField(serialzeFeatures = SerializerFeature.NotWriteDefaultValue)
-    private String errorCode;
+    @JSONField(name="status",serialzeFeatures = SerializerFeature.NotWriteDefaultValue)
+    private String Code;
 
-    public void setErrorInfo(ResponseErrorEnum errorEnum) {
-        this.errorCode = errorEnum.code;
+    public ResponseResult setInfo(ResponseErrorEnum errorEnum) {
+        this.Code = errorEnum.code;
         this.message = errorEnum.name;
+        return this;
     }
 
-    public String getErrorCode() {
-        return errorCode;
+    public ResponseResult setInfo(ResponseSuccessEnum successEnum) {
+        this.Code = successEnum.code;
+        this.message = successEnum.name;
+        return this;
     }
+
 
     public boolean isSuccess() {
         return success;
@@ -31,6 +36,15 @@ public class ResponseResult<T> {
 
     public ResponseResult setSuccess(boolean success) {
         this.success = success;
+        return this;
+    }
+
+    public String getCode() {
+        return Code;
+    }
+
+    public ResponseResult<T> setCode(String code) {
+        Code = code;
         return this;
     }
 

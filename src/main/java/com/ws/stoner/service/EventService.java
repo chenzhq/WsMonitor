@@ -113,7 +113,7 @@ public interface EventService {
     List<ProblemGraphVO> getGraphProblemByTriggerId(String triggerId, String beginTime, String endTime ) throws ServiceException;
 
     /**
-     * 根据 eventId 组装 事件详情弹出框 事件细节信息 EventDetailVO
+     * 根据 eventId 组装 事件详情弹出框 事件细节信息 EventVO
      * @param eventId
      * @return
      * @throws ServiceException

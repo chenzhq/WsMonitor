@@ -77,7 +77,7 @@ zabbix 方法
     List<ProblemListVO> listProblemListVO() throws ServiceException;
 
     /**
-     * 问题管理 问题详情 基础静态信息 ProblemDetailVO
+     * 问题管理 问题详情 基础静态信息 ProblemVO
      * @return
      * @throws ServiceException
      */

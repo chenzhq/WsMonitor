@@ -110,7 +110,7 @@ public class ProblemDetailVO {
 
     @Override
     public String toString() {
-        return "ProblemDetailVO{" +
+        return "ProblemVO{" +
                 "triggerId='" + triggerId + '\'' +
                 ", hostName='" + hostName + '\'' +
                 ", pointName='" + pointName + '\'' +

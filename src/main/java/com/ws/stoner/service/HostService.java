@@ -2,7 +2,6 @@ package com.ws.stoner.service;
 
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefHostDTO;
-import com.ws.stoner.model.view.host.HostDetailInterfaceVO;
 import com.ws.stoner.model.view.host.HostDetailPointVO;
 import com.ws.stoner.model.view.host.HostDetailVO;
 
@@ -127,7 +126,7 @@ public interface HostService {
  */
 
     /**
-     * 根据 BriefHostDTO hostDTO 组装 基本信息的 HostDetailVO
+     * 根据 BriefHostDTO hostDTO 组装 基本信息的 HostVO
      * @return
      * @throws ServiceException
      */

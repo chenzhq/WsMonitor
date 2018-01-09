@@ -70,7 +70,7 @@ public class HostDetailVO {
     @Override
     public String
     toString() {
-        return "HostDetailVO{" +
+        return "HostVO{" +
                 "hostId='" + hostId + '\'' +
                 ", hostName='" + hostName + '\'' +
                 ", state='" + state + '\'' +

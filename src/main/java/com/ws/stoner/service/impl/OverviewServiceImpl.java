@@ -1,7 +1,7 @@
 package com.ws.stoner.service.impl;
 
 
-import com.ws.stoner.constant.OverviewTypeEnum;
+import com.ws.stoner.constant.HostTreeTypeEnum;
 import com.ws.stoner.constant.StatusEnum;
 import com.ws.stoner.dao.MongoGroupDAO;
 import com.ws.stoner.dao.OverviewGroupRepository;
@@ -135,7 +135,7 @@ public class OverviewServiceImpl implements OverviewService {
                 }
             }
             //if type = "组" 给group赋值，state：根据cid  = pid，找所有子节点的state ，List<String>，根据所有子节点状态做处理赋值
-            if(OverviewTypeEnum.GROUP.getName().equals(overviewListGroupVO.getType()) && !"root".equals(overviewListGroupVO.getName())) {
+            if(HostTreeTypeEnum.GROUP.getName().equals(overviewListGroupVO.getType()) && !"root".equals(overviewListGroupVO.getName())) {
                 List<String> childStates = new ArrayList<>();
                 for(OverviewListGroupVO childMongo : overviewListGroupVOS) {
                     if(overviewListGroupVO.getcId().equals(childMongo.getpId())) {
@@ -448,7 +448,7 @@ public class OverviewServiceImpl implements OverviewService {
                             hostDTO.getHostId(),
                             group.getcId(),
                             hostDTO.getName(),
-                            OverviewTypeEnum.HOST.text,
+                            HostTreeTypeEnum.HOST.text,
                             hostState
                     );
                     hostVOS.add(hostVO);
@@ -479,7 +479,7 @@ public class OverviewServiceImpl implements OverviewService {
                     group.getcId(),
                     parent,
                     group.getName(),
-                    OverviewTypeEnum.GROUP.text,
+                    HostTreeTypeEnum.GROUP.text,
                     groupState
             );
             hostVOS.add(groupVO);
@@ -505,7 +505,7 @@ public class OverviewServiceImpl implements OverviewService {
             mongoGroup.setpId("g" + group.getpId());
         }
         mongoGroup.setName(group.getName());
-        mongoGroup.setType(OverviewTypeEnum.GROUP.getName());
+        mongoGroup.setType(HostTreeTypeEnum.GROUP.getName());
         mongoGroup.setGroupChildren(group.getGroupChildren());
         overviewListGroupVOS.add(mongoGroup);
         //step3:判断DO的group_children.length != 0
@@ -538,7 +538,7 @@ public class OverviewServiceImpl implements OverviewService {
                         mongoPoint.setcId("p" + point.getPointId());
                         mongoPoint.setpId("h" + hostId);
                         mongoPoint.setName(point.getName());
-                        mongoPoint.setType(OverviewTypeEnum.POINT.getName());
+                        mongoPoint.setType(HostTreeTypeEnum.POINT.getName());
                         if(StatusEnum.WARNING.code == point.getCustomState()) {
                             mongoPoint.setState(StatusEnum.WARNING.getName());
                         }else if(StatusEnum.HIGH.code ==point.getCustomState()) {

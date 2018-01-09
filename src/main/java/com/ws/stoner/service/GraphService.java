@@ -29,7 +29,7 @@ public interface GraphService {
     List<String> getGraphTypeByValueTypeFromMongo(String valueType) throws ServiceException;
 
     /**
-     * 根据 hostIds 查询出指定设备的 图形监控项 graph item
+     * 根据 hostId 查询出指定设备的 图形监控项 graph item
      * @param hostId
      * @return
      * @throws ServiceException

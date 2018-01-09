@@ -2,6 +2,7 @@ package com.ws.stoner.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.ws.stoner.constant.ResponseErrorEnum;
+import com.ws.stoner.constant.ResponseSuccessEnum;
 import com.ws.stoner.model.ResponseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +20,17 @@ public class RestResultGenerator {
         return result;
     }
 
+    public static <T> ResponseResult<T> genSuccessResult(T data, ResponseSuccessEnum successEnum) {
+        ResponseResult<T> result = new ResponseResult<>();
+        result.setSuccess(true).setInfo(successEnum).setData(data);
+        logger.debug("responseResult : {}", JSON.toJSONString(result));
+        return result;
+    }
+
+
     public static <T> ResponseResult<T> genErrorResult(ResponseErrorEnum errorEnum) {
         ResponseResult<T> result = new ResponseResult<>();
-        result.setSuccess(false).setErrorInfo(errorEnum);
+        result.setSuccess(false).setInfo(errorEnum);
         logger.debug("error: {}", JSON.toJSONString(result));
 
         return result;

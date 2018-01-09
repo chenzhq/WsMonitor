@@ -20,6 +20,8 @@ public class BriefHostDTO {
     private List<BriefHostInterfaceDTO> interfaces; //通过接口获取ip
     @JSONField(name = "applications")
     private List<BriefPointDTO> points;
+    @JSONField(name = "groups")
+    private List<BriefPlatformDTO> platforms;
     private String description;
 
     @Override
@@ -118,6 +120,15 @@ public class BriefHostDTO {
 
     public BriefHostDTO setCustomAvailableState(int customAvailableState) {
         this.customAvailableState = customAvailableState;
+        return this;
+    }
+
+    public List<BriefPlatformDTO> getPlatforms() {
+        return platforms;
+    }
+
+    public BriefHostDTO setPlatforms(List<BriefPlatformDTO> platforms) {
+        this.platforms = platforms;
         return this;
     }
 

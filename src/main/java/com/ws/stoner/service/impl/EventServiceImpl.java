@@ -28,7 +28,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
 import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
@@ -504,7 +503,7 @@ public class EventServiceImpl implements EventService {
     }
 
     /**
-     * 根据 eventId 组装 事件详情弹出框 事件细节信息 EventDetailVO
+     * 根据 eventId 组装 事件详情弹出框 事件细节信息 EventVO
      * @param eventId
      * @return
      * @throws ServiceException

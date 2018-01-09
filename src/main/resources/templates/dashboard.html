@@ -862,6 +862,22 @@
                 }
             }
         });
+
+    var platIds = ["28","29"];
+    var hostIds = ["10314","10310"];
+    var pointIds = ["2521","2522"];
+    $.ajax({
+        type: "get",
+        url: "/tree/items",
+        //data: {platform_ids:platIds},
+        data: {host_ids:hostIds},
+        //data: {point_ids:pointIds},
+        dataType: "json",
+        success: function (result) {
+            console.log("result",result);
+
+        }
+    })
 </script>
 </body>
 </html>

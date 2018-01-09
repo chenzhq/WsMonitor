@@ -12,7 +12,6 @@ import com.ws.stoner.model.dto.BriefHostDTO;
 import com.ws.stoner.model.dto.BriefHostInterfaceDTO;
 import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
-import com.ws.stoner.model.view.host.HostDetailInterfaceVO;
 import com.ws.stoner.model.view.host.HostDetailPointVO;
 import com.ws.stoner.model.view.host.HostDetailVO;
 import com.ws.stoner.service.HostService;
@@ -342,7 +341,7 @@ public class HostServiceImpl implements HostService {
     }
 
     /**
-     * 根据 BriefHostDTO hostDTO 组装 基本信息的 HostDetailVO
+     * 根据 BriefHostDTO hostDTO 组装 基本信息的 HostVO
      * @return
      * @throws ServiceException
      */
@@ -351,7 +350,7 @@ public class HostServiceImpl implements HostService {
         HostDetailVO hostDetailVO = new HostDetailVO();
         //取所有模板
         List<BriefTemplateDTO>  allTemplateDTO = templateServiceImpl.listAllTemplate();
-        //step2:组装 HostDetailVO 对象，赋值：
+        //step2:组装 HostVO 对象，赋值：
         // hostDetail[hostid,name,state,type,ip,description],
         hostDetailVO.setHostId(hostDTO.getHostId());
         hostDetailVO.setHostName(hostDTO.getName());

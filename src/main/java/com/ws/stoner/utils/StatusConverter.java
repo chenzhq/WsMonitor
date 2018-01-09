@@ -10,7 +10,9 @@ import com.ws.stoner.constant.StatusEnum;
 对象状态转换器
  */
 public class StatusConverter {
-
+/*
+host point item platform 等对象状态转换方法
+ */
     //return "正常，警告，严重"
     public static String StatusTransform(int customStatus) {
         String status = "";
@@ -69,6 +71,20 @@ public class StatusConverter {
         return status;
     }
 
+    //return "ok，warning，high"  监控项状态转换方法
+    public static String statusTransForItem(int customStatus,int weight) {
+        String status = "";
+        if(StatusEnum.WARNING.code == customStatus ) {
+            status = StatusEnum.WARNING.text;
+        }else if(StatusEnum.HIGH.code == customStatus){
+            status = StatusEnum.HIGH.text;
+        }else if(StatusEnum.OK.code == customStatus && weight != 0) {
+            status = StatusEnum.OK.text;
+        }
+        return status;
+    }
+
+
     //return "green，yellow，red"
     public static String colorTransform(int customStatus) {
         String color = "";
@@ -97,6 +113,36 @@ public class StatusConverter {
             color = StatusEnum.OK.color;
         }
         return color;
+    }
+
+
+    /*
+ 监控项值、类型转换
+  */
+    //根据 zbx 的 valuetye 和 datatype 转换成 float、integer、Boolean、text、log、string
+    public static String valueTypeTransform(String valueTypeString,String dataTypeString) {
+        int valueType = Integer.parseInt(valueTypeString);
+        int dataType = 0;
+        if(dataTypeString != "" && dataTypeString != null) {
+            dataType = Integer.parseInt(dataTypeString);
+        }
+        String type = "";
+        if(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value == valueType) {
+            type = "float";
+        }else if(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value == valueType) {
+            if(ZApiParameter.ITEM_DATA_TYPE.BOOLEAN.value == dataType) {
+                type = "boolean";
+            }else {
+                type = "integer";
+            }
+        }else if(ZApiParameter.ITEM_VALUE_TYPE.TEXT.value == valueType) {
+            type = "text";
+        }else if(ZApiParameter.ITEM_VALUE_TYPE.LOG.value == valueType) {
+            type = "log";
+        }else if(ZApiParameter.ITEM_VALUE_TYPE.CHARACTOR.value == valueType) {
+            type = "String";
+        }
+        return type;
     }
 
     //return "正常，警告，严重" 根据阀值和表达式判断出状态值
@@ -172,6 +218,21 @@ public class StatusConverter {
 
     }
 
+    //根据触发器的 priority 获取对应的状态名称 return "ok,high,warning"
+    public static String getStatusTextByTriggerPriority(Integer priority) {
+        //PriorityState
+        if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.WARNING.value) ) {
+            return StatusEnum.WARNING.text;
+        }else if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.HIGH.value)) {
+            return StatusEnum.HIGH.text;
+        }else if(priority.equals(ZApiParameter.TRIGGER_PRIORITY.INFORMATION.value)) {
+            return StatusEnum.INFO.text;
+        }else {
+            return StatusEnum.OK.text;
+        }
+
+    }
+
     //根据触发器的 priority 获取对应的状态text return "green，yellow，red"
     public static String getColorByTriggerPriority(Integer priority) {
         //PriorityState
@@ -186,5 +247,33 @@ public class StatusConverter {
         }
 
     }
+
+    //事件状态转换 将 0 和 1 转换成 "ok" 和 "problem"
+    public static String getEventValueState(Integer eventValue) {
+        String eventState = "";
+        if(eventValue.equals(ZApiParameter.EVENT_VALUE.OK.value)) {
+            eventState = "ok";
+        }else if(eventValue.equals(ZApiParameter.EVENT_VALUE.PROBLEM.value)) {
+            eventState = "problem";
+        }else {
+
+        }
+        return eventState;
+    }
+
+    //告警状态转换  success fail sending
+    public static String transAlertState(Integer alertStatus) {
+        String description ;
+        if(alertStatus.equals(ZApiParameter.ALERT_MESSAGE_STATUS.MESSAGE_SENDING.value)) {
+            description =  "sending";
+        }else if(alertStatus.equals(ZApiParameter.ALERT_MESSAGE_STATUS.MESSAGE_FAILED.value)) {
+            description = "failure";
+        }else {
+            description = "success";
+        }
+        return description;
+    }
+
+
 
 }

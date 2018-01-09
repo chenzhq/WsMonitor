@@ -25,13 +25,15 @@ public class BriefItemDTO {
     private String units;
     @JSONField(name = "value_type")
     private String valueType;
+    @JSONField(name = "data_type")
+    private String dataType;
 
     private Integer weight;
     @JSONField(name = "applications")
     private List<BriefPointDTO> points;
 
 
-    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","units","valuemapid","weight"};
+    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","data_type","units","valuemapid","weight"};
 
     public int getCustomState() {
         return customState;
@@ -67,6 +69,15 @@ public class BriefItemDTO {
 
     public BriefItemDTO setLastValue(String lastValue) {
         this.lastValue = lastValue;
+        return this;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public BriefItemDTO setDataType(String dataType) {
+        this.dataType = dataType;
         return this;
     }
 
@@ -141,6 +152,7 @@ public class BriefItemDTO {
                 ", lastValue='" + lastValue + '\'' +
                 ", units='" + units + '\'' +
                 ", valueType='" + valueType + '\'' +
+                ", dataType='" + dataType + '\'' +
                 ", weight=" + weight +
                 ", points=" + points +
                 '}';

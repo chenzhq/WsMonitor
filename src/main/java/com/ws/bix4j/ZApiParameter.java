@@ -300,7 +300,7 @@ public static enum HOSTGROUP_INTERNAL {
  * 监控项类型
  */
     /**
-     * 监控项数据类型
+     * 监控项 value_type
      */
     public static enum ITEM_VALUE_TYPE {
         NUMERIC_FLOAT(0), CHARACTOR(1), LOG(2), NUMERIC_UNSIGNED(3), TEXT(4);
@@ -308,6 +308,19 @@ public static enum HOSTGROUP_INTERNAL {
         public int value;
 
         private ITEM_VALUE_TYPE(int value) {
+            this.value = value;
+        }
+    }
+
+    /**
+     * 监控项 data_type
+     */
+    public static enum ITEM_DATA_TYPE {
+        DECIMAL(0), OCTAL(1), HEXADECIMAL(2), BOOLEAN(3);
+
+        public int value;
+
+        private ITEM_DATA_TYPE(int value) {
             this.value = value;
         }
     }

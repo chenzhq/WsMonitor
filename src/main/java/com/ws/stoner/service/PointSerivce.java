@@ -1,6 +1,5 @@
 package com.ws.stoner.service;
 
-import com.ws.bix4j.access.application.ApplicationGetRequest;
 import com.ws.stoner.exception.ServiceException;
 import com.ws.stoner.model.dto.BriefPointDTO;
 
