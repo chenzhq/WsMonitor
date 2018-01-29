@@ -83,7 +83,12 @@
 				<a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
 				<a class="item" href="#" th:href="@{/calendar}">告警日历</a>
 			</div>
+			<div class="title item">
+				<i class="alarm titleIcon icon"></i>
+				excel管理<i class="dropdown icon"></i>
+			</div>
 			<div class="content">
+				<a class="item" href="#" th:href="@{/excel}">excel导入</a>
 			</div>
 		</div>
 
@@ -145,6 +150,15 @@
 				<div class="ui divider"></div>
                 <a class="item" href="#" th:href="@{/problemlist}">问题列表</a>
                 <a class="item" href="#" th:href="@{/calendar}">告警日历</a>
+			</div>
+		</div>
+		<div class="ui dropdown item displaynone scrolling">
+			<span>excel操作</span>
+			<i class="alarm icon"></i>
+			<div class="menu">
+				<div class="header">excel操作</div>
+				<div class="ui divider"></div>
+				<a class="item" href="#" th:href="@{/excel}">excel导入</a>
 			</div>
 		</div>
 		<div class="ui divider"></div>

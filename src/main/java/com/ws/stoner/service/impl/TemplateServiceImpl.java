@@ -6,6 +6,7 @@ import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
+import com.ws.stoner.model.dto.BriefPointDTO;
 import com.ws.stoner.model.dto.BriefTemplateDTO;
 import com.ws.stoner.model.dto.BriefTemplateGroupDTO;
 import com.ws.stoner.service.TemplateService;
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
 import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
@@ -57,5 +60,23 @@ public class TemplateServiceImpl implements TemplateService {
                 .setOutput(BriefTemplateDTO.PROPERTY_NAMES);
         List<BriefTemplateDTO> templatesDTO = listTemplate(templateGetRequest);
         return templatesDTO;
+    }
+
+    /**
+     * 根据给定的模板名称 查询相关模板，select ItemDTOS and PointDTOS
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefTemplateDTO> getTempByName(String[] tempNames) throws ServiceException {
+        TemplateGetRequest templateGetRequest = new TemplateGetRequest();
+        Map<String,String[]> tempFilter = new HashMap<>();
+        tempFilter.put("name",tempNames);
+        templateGetRequest.getParams()
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setFilter(tempFilter)
+                .setOutput(BriefTemplateDTO.PROPERTY_NAMES);
+        List<BriefTemplateDTO> templatesDTOS = listTemplate(templateGetRequest);
+        return templatesDTOS;
     }
 }

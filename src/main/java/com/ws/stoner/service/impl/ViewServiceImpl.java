@@ -45,7 +45,7 @@ public class ViewServiceImpl implements ViewService {
     private HostService hostService;
 
     @Autowired
-    private PointSerivce pointSerivce;
+    private PointService pointService;
 
     @Autowired
     private TriggerService triggerService;
@@ -189,9 +189,9 @@ public class ViewServiceImpl implements ViewService {
         hostStateNums.add(highStateNum);
         hostState.setTotalNum(allHostNum).setStateNum(hostStateNums);
         //监控点状态统计
-        int allPointNum = pointSerivce.countAllPointByHostIds(hostIds);
-        int warningPointNum = pointSerivce.countWarningPointByHostIds(hostIds);
-        int highPointNum = pointSerivce.countHighPointByHostIds(hostIds);
+        int allPointNum = pointService.countAllPointByHostIds(hostIds);
+        int warningPointNum = pointService.countWarningPointByHostIds(hostIds);
+        int highPointNum = pointService.countHighPointByHostIds(hostIds);
         StateNumVO pointState = new StateNumVO();
         List<StateNumVO.StateNum> pointStateNums = new ArrayList<>();
         StateNumVO.StateNum warningNum = new StateNumVO.StateNum(StatusEnum.WARNING,warningPointNum);

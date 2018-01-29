@@ -13,7 +13,7 @@ import com.ws.stoner.model.view.problem.AlertBriefVO;
 import com.ws.stoner.model.view.problem.ProblemDetailVO;
 import com.ws.stoner.model.view.problem.ProblemListVO;
 import com.ws.stoner.service.AlertService;
-import com.ws.stoner.service.PointSerivce;
+import com.ws.stoner.service.PointService;
 import com.ws.stoner.service.TriggerService;
 import com.ws.stoner.utils.StatusConverter;
 import com.ws.stoner.utils.ThresholdUtils;
@@ -46,7 +46,7 @@ public class TriggerServiceImpl implements TriggerService {
     private AlertService alertService;
 
     @Autowired
-    private PointSerivce pointSerivce;
+    private PointService pointService;
 
     private List<BriefTriggerDTO> listTrigger(TriggerGetRequest request) throws ServiceException {
         List<BriefTriggerDTO> triggers;
@@ -172,7 +172,6 @@ public class TriggerServiceImpl implements TriggerService {
     public List<BriefTriggerDTO> getTriggersByItemIds(List<String> itemIds) throws ServiceException {
         TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
         triggerGetRequest.getParams()
-                .setMonitored(true)
                 .setItemIds(itemIds)
                 .setExpandExpression(true)
                 .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
@@ -288,7 +287,7 @@ public class TriggerServiceImpl implements TriggerService {
         itemIds.add(itemId);
         ProblemDetailVO problemDetailVO = new ProblemDetailVO();
         problemDetailVO.setTriggerId(triggerId);
-        problemDetailVO.setPointName(pointSerivce.getPointsByItemIds(itemIds).get(0).getName());
+        problemDetailVO.setPointName(pointService.getPointsByItemIds(itemIds).get(0).getName());
         problemDetailVO.setHostName(triggerDTO.getHosts().get(0).getName());
         problemDetailVO.setTriggerName(triggerDTO.getName());
         String level = StatusConverter.getStatusByTriggerPriority(triggerDTO.getPriority());

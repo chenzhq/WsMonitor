@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by zkf on 2017/6/1.
  */
-public interface PointSerivce {
+public interface PointService {
 
 /*
  *zabbix api方法
@@ -106,6 +106,14 @@ public interface PointSerivce {
      * @throws ServiceException
      */
     List<BriefPointDTO> getPointsByItemIds(List<String> itemIds) throws ServiceException;
+
+    /**
+     * 根据 pointIds 获取指定 pointDTOS
+     * @param pointIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefPointDTO> getPointDTOSByPointIds(List<String> pointIds) throws ServiceException;
 
 
 

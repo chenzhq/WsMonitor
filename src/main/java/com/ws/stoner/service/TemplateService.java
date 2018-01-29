@@ -21,4 +21,11 @@ public interface TemplateService {
     @Cacheable
     List<BriefTemplateDTO> listAllTemplate() throws ServiceException;
 
+    /**
+     * 根据给定的模板名称 查询相关模板，select ItemDTOS and PointDTOS
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefTemplateDTO> getTempByName(String[] tempNames) throws ServiceException;
+
 }

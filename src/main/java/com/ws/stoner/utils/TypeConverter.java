@@ -1,6 +1,7 @@
 package com.ws.stoner.utils;
 
 import com.ws.stoner.constant.HostTypeEnum;
+import com.ws.stoner.constant.ItemTypeEnum;
 
 /**
  * Created by zhongkf on 2018/1/5
@@ -50,6 +51,48 @@ public  class TypeConverter {
             return "none";
         }
 
+    }
 
+    public static String TransforItemType(String itemType) {
+        int type = Integer.parseInt(itemType);
+        String typeName = "";
+        if(ItemTypeEnum.ZABBIX_AGENT.getCode() == type) {
+            typeName = ItemTypeEnum.ZABBIX_AGENT.getName();
+        }else if(ItemTypeEnum.ZABBIX_TRAPPER.getCode() == type) {
+            typeName = ItemTypeEnum.ZABBIX_TRAPPER.getName();
+        }else if(ItemTypeEnum.SIMPLE_CHECK.getCode() == type) {
+            typeName = ItemTypeEnum.SIMPLE_CHECK.getName();
+        }else if(ItemTypeEnum.SNMPV2_AGENT.getCode() == type) {
+            typeName = ItemTypeEnum.SNMPV2_AGENT.getName();
+        }else if(ItemTypeEnum.ZABBIX_INTERNAL.getCode() == type) {
+            typeName = ItemTypeEnum.ZABBIX_INTERNAL.getName();
+        }else if(ItemTypeEnum.SNMPV3_AGENT.getCode() == type) {
+            typeName = ItemTypeEnum.SNMPV3_AGENT.getName();
+        }else if(ItemTypeEnum.ZABBIX_AGENT_ACTIVE.getCode() == type) {
+            typeName = ItemTypeEnum.ZABBIX_AGENT_ACTIVE.getName();
+        }else if(ItemTypeEnum.ZABBIX_AGGREGATE.getCode() == type) {
+            typeName = ItemTypeEnum.ZABBIX_AGGREGATE.getName();
+        }else if(ItemTypeEnum.WEB_ITEM.getCode() == type) {
+            typeName = ItemTypeEnum.WEB_ITEM.getName();
+        }else if(ItemTypeEnum.EXTERNAL_CHECK.getCode() == type) {
+            typeName = ItemTypeEnum.EXTERNAL_CHECK.getName();
+        }else if(ItemTypeEnum.DATABASE_MONITOR.getCode() == type) {
+            typeName = ItemTypeEnum.DATABASE_MONITOR.getName();
+        }else if(ItemTypeEnum.IPMI_AGENT.getCode() == type) {
+            typeName = ItemTypeEnum.IPMI_AGENT.getName();
+        }else if(ItemTypeEnum.SSH_AGENT.getCode() == type) {
+            typeName = ItemTypeEnum.SSH_AGENT.getName();
+        }else if(ItemTypeEnum.TELNET_AGENT.getCode() == type) {
+            typeName = ItemTypeEnum.TELNET_AGENT.getName();
+        }else if(ItemTypeEnum.CALCULATED.getCode() == type) {
+            typeName = ItemTypeEnum.CALCULATED.getName();
+        }else if(ItemTypeEnum.JMX_AGENT.getCode() == type) {
+            typeName = ItemTypeEnum.JMX_AGENT.getName();
+        }else if(ItemTypeEnum.SNMP_TRAP.getCode() == type) {
+            typeName = ItemTypeEnum.SNMP_TRAP.getName();
+        }else {
+
+        }
+        return typeName;
     }
 }

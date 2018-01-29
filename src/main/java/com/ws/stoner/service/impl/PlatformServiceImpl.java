@@ -37,7 +37,7 @@ public class PlatformServiceImpl implements PlatformService {
     private HostService hostService;
 
     @Autowired
-    private PointSerivce pointSerivce;
+    private PointService pointService;
 
     @Autowired
     private ItemService itemService;
@@ -474,7 +474,7 @@ public class PlatformServiceImpl implements PlatformService {
     public List<PlatDetailPointVO> getPointsByHostId(String hostId) throws ServiceException {
         List<String > hostIds = new ArrayList<>();
         hostIds.add(hostId);
-        List<BriefPointDTO> pointDTOS = pointSerivce.getPointsByHostIds(hostIds);
+        List<BriefPointDTO> pointDTOS = pointService.getPointsByHostIds(hostIds);
         List<PlatDetailPointVO> pointVOS = new ArrayList<>();
         for(BriefPointDTO pointDTO : pointDTOS) {
             PlatDetailPointVO pointVO = new PlatDetailPointVO(

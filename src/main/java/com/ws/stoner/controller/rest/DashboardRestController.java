@@ -9,7 +9,7 @@ import com.ws.stoner.model.view.dashboard.DashboardPointVO;
 import com.ws.stoner.model.view.statepie.StateNumVO;
 import com.ws.stoner.service.HostService;
 import com.ws.stoner.service.PlatformService;
-import com.ws.stoner.service.PointSerivce;
+import com.ws.stoner.service.PointService;
 import com.ws.stoner.service.TemplateService;
 import com.ws.stoner.utils.RestResultGenerator;
 import com.ws.stoner.utils.StatusConverter;
@@ -38,7 +38,7 @@ public class DashboardRestController {
     private PlatformService platformService;
 
     @Autowired
-    private PointSerivce pointSerivce;
+    private PointService pointService;
 
     @Autowired
     private TemplateService templateService;
@@ -71,9 +71,9 @@ public class DashboardRestController {
         int allPointNum;
         int warningPointNum;
         int highPointNum;
-        allPointNum = pointSerivce.countAllPoint();
-        warningPointNum = pointSerivce.countWarningPoint();
-        highPointNum = pointSerivce.countHighPoint();
+        allPointNum = pointService.countAllPoint();
+        warningPointNum = pointService.countWarningPoint();
+        highPointNum = pointService.countHighPoint();
         StateNumVO.StateNum warningStateNum = new StateNumVO.StateNum(StatusEnum.WARNING,warningPointNum);
         StateNumVO.StateNum highStateNum = new StateNumVO.StateNum(StatusEnum.HIGH, highPointNum);
         StateNumVO.StateNum okStateNum = new StateNumVO.StateNum(StatusEnum.OK,allPointNum - warningPointNum - highPointNum);
@@ -207,7 +207,7 @@ public class DashboardRestController {
     public String listPoint() throws ServiceException {
         //step1:获取BriefPointDTO 类型的所有启用的主机的监控点point allPointDTO
         List<BriefPointDTO> allPointDTO = null;
-        allPointDTO = pointSerivce.listAllPoint();
+        allPointDTO = pointService.listAllPoint();
         //step2:新建List<DashboardPointVO>，循环allPointDTO，新建DashboardPointVO，分别赋值
         List<DashboardPointVO> pointVOS = new ArrayList<>();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

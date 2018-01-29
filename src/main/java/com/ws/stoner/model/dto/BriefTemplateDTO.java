@@ -14,6 +14,8 @@ public class BriefTemplateDTO {
     private String name;
     @JSONField(name = "groups")
     private List<BriefTemplateGroupDTO> templateGroups;
+    @JSONField(name = "applications")
+    private List<BriefPointDTO> points;
 
     public static final String[] PROPERTY_NAMES = {"templateid", "name"};
 
@@ -62,6 +64,15 @@ public class BriefTemplateDTO {
 
     public BriefTemplateDTO setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public List<BriefPointDTO> getPoints() {
+        return points;
+    }
+
+    public BriefTemplateDTO setPoints(List<BriefPointDTO> points) {
+        this.points = points;
         return this;
     }
 

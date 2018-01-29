@@ -46,7 +46,7 @@ public class EventServiceImpl implements EventService {
     private TriggerService triggerService;
 
     @Autowired
-    private PointSerivce pointSerivce;
+    private PointService pointService;
 
     @Autowired
     private UserService userService;
@@ -520,7 +520,7 @@ public class EventServiceImpl implements EventService {
         String itemId = triggerDTO.getItems().get(0).getItemId();
         List<String> itemIds = new ArrayList<>();
         itemIds.add(itemId);
-        String pointName = pointSerivce.getPointsByItemIds(itemIds).get(0).getName();
+        String pointName = pointService.getPointsByItemIds(itemIds).get(0).getName();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
         //赋值
         EventDetailVO eventDetailVO = new EventDetailVO();

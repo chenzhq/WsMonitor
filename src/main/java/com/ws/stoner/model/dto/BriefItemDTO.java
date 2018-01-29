@@ -28,12 +28,17 @@ public class BriefItemDTO {
     @JSONField(name = "data_type")
     private String dataType;
 
+    private String type;
+    @JSONField(name = "key_")
+    private String key;
+    private String description;
+
     private Integer weight;
     @JSONField(name = "applications")
     private List<BriefPointDTO> points;
 
 
-    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","data_type","units","valuemapid","weight"};
+    public static final String[] PROPERTY_NAMES = {"itemid", "name","lastclock","custom_state","lastvalue","value_type","data_type","units","valuemapid","weight","type","key_","description"};
 
     public int getCustomState() {
         return customState;
@@ -44,6 +49,32 @@ public class BriefItemDTO {
         return this;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public BriefItemDTO setType(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public BriefItemDTO setKey(String key) {
+        this.key = key;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public BriefItemDTO setDescription(String description) {
+        this.description = description;
+        return this;
+    }
 
     public List<BriefPointDTO> getPoints() {
         return points;

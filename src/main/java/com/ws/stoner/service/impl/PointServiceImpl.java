@@ -3,8 +3,6 @@ package com.ws.stoner.service.impl;
 import com.ws.bix4j.ZApi;
 import com.ws.bix4j.ZApiParameter;
 import com.ws.bix4j.access.application.ApplicationGetRequest;
-import com.ws.bix4j.access.host.HostGetRequest;
-import com.ws.bix4j.access.item.ItemGetRequest;
 import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
@@ -27,7 +25,7 @@ import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
  * Created by zkf on 2017/6/8.
  */
 @Service
-public class PointSerivceImpl implements PointSerivce {
+public class PointServiceImpl implements PointService {
 
     private static final Logger logger = LoggerFactory.getLogger(HostService.class);
     @Autowired
@@ -368,6 +366,26 @@ public class PointSerivceImpl implements PointSerivce {
         appRequest.getParams()
                 .setItemIds(itemIds)
                 .setOutput(BriefPointDTO.PROPERTY_NAMES);
+        List<BriefPointDTO> points = listPoint(appRequest);
+        return points;
+    }
+
+    /**
+     * 根据 pointIds 获取指定 pointDTOS
+     * @param pointIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefPointDTO> getPointDTOSByPointIds(List<String> pointIds) throws ServiceException {
+        ApplicationGetRequest appRequest = new ApplicationGetRequest();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefPointDTO.PROPERTY_NAMES[1]);
+        appRequest.getParams()
+                .setApplicationIds(pointIds)
+                .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
+                .setOutput(BriefPointDTO.PROPERTY_NAMES)
+                .setSortField(sort);
         List<BriefPointDTO> points = listPoint(appRequest);
         return points;
     }

@@ -266,7 +266,6 @@ public class ItemServiceImpl implements ItemService {
         List<String> sort = new ArrayList<>();
         sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
         itemGetRequest.getParams()
-                .setMonitored(true)
                 .setApplicationIds(pointIds)
                 .setWithTriggers(true)
                 .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)

@@ -2,12 +2,7 @@ package com.ws.bix4j.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,11 +16,11 @@ public class UserDO {
     private String surname;
     private String url;
     @JSONField(name = "autologin")
-    private int autoLogin;
+    private String autoLogin;
     @JSONField(name = "autologout")
-    private int autoLogout;
+    private String autoLogout;
     private String lang;
-    private int refresh;
+    private String refresh;
     private int type;
     private String theme;
 
@@ -108,19 +103,19 @@ public class UserDO {
         this.attemptIp = attemptIp;
     }
 
-    public int getAutoLogin() {
+    public String getAutoLogin() {
         return autoLogin;
     }
 
-    public void setAutoLogin(int autoLogin) {
+    public void setAutoLogin(String autoLogin) {
         this.autoLogin = autoLogin;
     }
 
-    public int getAutoLogout() {
+    public String getAutoLogout() {
         return autoLogout;
     }
 
-    public void setAutoLogout(int autoLogout) {
+    public void setAutoLogout(String autoLogout) {
         this.autoLogout = autoLogout;
     }
 
@@ -132,11 +127,11 @@ public class UserDO {
         this.lang = lang;
     }
 
-    public int getRefresh() {
+    public String getRefresh() {
         return refresh;
     }
 
-    public void setRefresh(int refresh) {
+    public void setRefresh(String refresh) {
         this.refresh = refresh;
     }
 
