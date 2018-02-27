@@ -29,7 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.ws.bix4j.exception.ZApiExceptionEnum.NO_AUTH_ASSIGN;
 import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
@@ -116,6 +119,21 @@ public class ItemServiceImpl implements ItemService {
                 .setItemIds(itemIds)
                 .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
                 .setOutput(BriefItemDTO.PROPERTY_NAMES)
+                .setSortField(sort);
+        List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
+        return itemDTOS;
+    }
+
+    @Override
+    public List<BriefItemDTO> getItemsByHostIds(List<String> hostIds) throws ServiceException {
+        ItemGetRequest itemGetRequest = new ItemGetRequest();
+        List<String> sort = new ArrayList<>();
+        sort.add(BriefItemDTO.PROPERTY_NAMES[1]);
+        itemGetRequest.getParams()
+                .setHostIds(hostIds)
+                .setSelectHosts(BriefHostDTO.PROPERTY_NAMES)
+                .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setSelectTriggers(BriefTriggerDTO.PROPERTY_NAMES)
                 .setSortField(sort);
         List<BriefItemDTO> itemDTOS = listItem(itemGetRequest);
         return itemDTOS;

@@ -145,6 +145,26 @@ host point item platform 等对象状态转换方法
         return type;
     }
 
+    //item 信息类型映射
+    public static String getValueTypeString(String valueTypeString) {
+        String typeString = "";
+        int valueType = Integer.parseInt(valueTypeString);
+        if(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_UNSIGNED.value == valueType) {
+            typeString = "数字(无正负)";
+        }else if(ZApiParameter.ITEM_VALUE_TYPE.NUMERIC_FLOAT.value == valueType) {
+            typeString = "浮点数";
+        }else if(ZApiParameter.ITEM_VALUE_TYPE.CHARACTOR.value == valueType) {
+            typeString = "字符";
+        }else if(ZApiParameter.ITEM_VALUE_TYPE.TEXT.value == valueType) {
+            typeString = "文本";
+        }else if(ZApiParameter.ITEM_VALUE_TYPE.LOG.value == valueType) {
+            typeString = "日志";
+        }else {
+            typeString = "";
+        }
+        return typeString;
+    }
+
     //return "正常，警告，严重" 根据阀值和表达式判断出状态值
     public static String getStatusByThresholdValue(Float value,Float warningPointValue,Float highPointValue,String symbol) {
         String status = "";

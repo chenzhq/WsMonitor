@@ -56,6 +56,14 @@ zabbix 方法
     List<BriefTriggerDTO> getTriggersByItemIds(List<String> itemIds) throws ServiceException;
 
     /**
+     * 根据 hostIds 获取触发器 DTOS
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    List<BriefTriggerDTO> getTriggersByHostIds(List<String> hostIds) throws ServiceException;
+
+    /**
      * 列出所有触发器 排除依赖 触发器 BriefTriggerDTOS
      * @return
      * @throws ServiceException

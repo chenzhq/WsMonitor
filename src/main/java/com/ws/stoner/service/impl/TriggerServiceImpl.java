@@ -38,7 +38,7 @@ import static com.ws.bix4j.exception.ZApiExceptionEnum.ZBX_API_AUTH_EXPIRE;
 @Service
 public class TriggerServiceImpl implements TriggerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(HostServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TriggerServiceImpl.class);
     @Autowired
     private ZApi zApi;
 
@@ -175,6 +175,24 @@ public class TriggerServiceImpl implements TriggerService {
                 .setItemIds(itemIds)
                 .setExpandExpression(true)
                 .setSelectItems(BriefItemDTO.PROPERTY_NAMES)
+                .setOutput(BriefTriggerDTO.PROPERTY_NAMES);
+        return listTrigger(triggerGetRequest,BriefTriggerDTO.class);
+    }
+
+    /**
+     * 根据 hostIds 获取触发器 DTOS
+     * @param hostIds
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public List<BriefTriggerDTO> getTriggersByHostIds(List<String> hostIds) throws ServiceException {
+        TriggerGetRequest triggerGetRequest = new TriggerGetRequest();
+        triggerGetRequest.getParams()
+                .setHostIds(hostIds)
+                .setExpandExpression(true)
+                .setExpandDescription(true)
+                .setExpandComment(true)
                 .setOutput(BriefTriggerDTO.PROPERTY_NAMES);
         return listTrigger(triggerGetRequest,BriefTriggerDTO.class);
     }

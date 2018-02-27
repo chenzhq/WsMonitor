@@ -17,6 +17,7 @@ public class BriefTriggerDTO {
     private Integer value;
     @JSONField(name = "manual_close")
     private Integer manualClose;
+    private String comments;
 
     private List<BriefItemDTO> items;
     private List<BriefHostDTO> hosts;
@@ -24,7 +25,7 @@ public class BriefTriggerDTO {
     private List<BriefPlatformDTO> groups;
 
 
-    public static final String[] PROPERTY_NAMES = {"triggerid", "description","expression","priority","value","manual_close"};
+    public static final String[] PROPERTY_NAMES = {"triggerid", "description","expression","priority","value","manual_close","comments"};
 
     public String getTriggerId() {
         return triggerId;
@@ -113,6 +114,15 @@ public class BriefTriggerDTO {
 
     public BriefTriggerDTO setGroups(List<BriefPlatformDTO> groups) {
         this.groups = groups;
+        return this;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public BriefTriggerDTO setComments(String comments) {
+        this.comments = comments;
         return this;
     }
 

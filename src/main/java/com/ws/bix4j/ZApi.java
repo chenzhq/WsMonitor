@@ -1,5 +1,7 @@
 package com.ws.bix4j;
 
+import com.ws.bix4j.access.LLD.DiscoveryRule;
+import com.ws.bix4j.access.TriggerPro.TriggerPro;
 import com.ws.bix4j.access.alert.Alert;
 import com.ws.bix4j.access.application.Application;
 import com.ws.bix4j.access.event.Event;
@@ -8,6 +10,7 @@ import com.ws.bix4j.access.host.Host;
 import com.ws.bix4j.access.hostInterface.HostInterface;
 import com.ws.bix4j.access.hostgroup.HostGroup;
 import com.ws.bix4j.access.item.Item;
+import com.ws.bix4j.access.itemprototype.Itemproto;
 import com.ws.bix4j.access.problem.Problem;
 import com.ws.bix4j.access.template.Template;
 import com.ws.bix4j.access.trigger.Trigger;
@@ -115,5 +118,12 @@ public class ZApi {
     public Usergroup Usergroup() {
         return new Usergroup(uri.toString(), auth);
     }
+    public DiscoveryRule DiscoveryRule() {
+        return new DiscoveryRule(uri.toString(), auth);
+    }
+    public Itemproto Itemproto() {
+        return new Itemproto(uri.toString(), auth);
+    }
+    public TriggerPro TriggerPro() {return new TriggerPro(uri.toString(), auth);}
 
 }

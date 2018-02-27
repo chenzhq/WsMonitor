@@ -5,14 +5,15 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+import static org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND;
 
 /**
  * Created by zhongkf on 2018/1/26
@@ -78,6 +79,20 @@ public class ExportExcelUtil {
         out.close();
         System.out.println("基于流写入执行完毕!");
 
+    }
+
+    public static void createExcelHead(Row headLine, String[] cols,XSSFCellStyle style) {
+        for(int i=0;i<=cols.length-1;i++) {
+            Cell trigger = headLine.createCell(i);
+            style.setFillPattern(SOLID_FOREGROUND);
+            style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            style.setBorderBottom(BorderStyle.THIN); //下边框
+            style.setBorderLeft(BorderStyle.THIN);//左边框
+            style.setBorderTop(BorderStyle.THIN);//上边框
+            style.setBorderRight(BorderStyle.THIN);//右边框
+            trigger.setCellStyle(style);
+            trigger.setCellValue(cols[i]);
+        }
     }
 
 }

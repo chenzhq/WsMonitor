@@ -34,7 +34,7 @@ public class BaseUtils {
         return dest;
     }
 
-    /**
+        /**
      * 比较两个list元素的值是否相等
      * @param <T>
      * @param a

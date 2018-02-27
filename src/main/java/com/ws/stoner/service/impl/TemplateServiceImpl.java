@@ -6,9 +6,7 @@ import com.ws.bix4j.exception.ZApiException;
 import com.ws.bix4j.exception.ZApiExceptionEnum;
 import com.ws.stoner.exception.AuthExpireException;
 import com.ws.stoner.exception.ServiceException;
-import com.ws.stoner.model.dto.BriefPointDTO;
-import com.ws.stoner.model.dto.BriefTemplateDTO;
-import com.ws.stoner.model.dto.BriefTemplateGroupDTO;
+import com.ws.stoner.model.dto.*;
 import com.ws.stoner.service.TemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +72,8 @@ public class TemplateServiceImpl implements TemplateService {
         tempFilter.put("name",tempNames);
         templateGetRequest.getParams()
                 .setSelectApplications(BriefPointDTO.PROPERTY_NAMES)
+                .setSelectDiscoveries(BriefDDLDTO.PROPERTY_NAMES)
+                .setSelectTriggers(BriefTriggerDTO.PROPERTY_NAMES)
                 .setFilter(tempFilter)
                 .setOutput(BriefTemplateDTO.PROPERTY_NAMES);
         List<BriefTemplateDTO> templatesDTOS = listTemplate(templateGetRequest);

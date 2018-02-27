@@ -16,6 +16,10 @@ public class BriefTemplateDTO {
     private List<BriefTemplateGroupDTO> templateGroups;
     @JSONField(name = "applications")
     private List<BriefPointDTO> points;
+    @JSONField(name = "discoveries")
+    private List<BriefDDLDTO> ddls;
+
+    private List<BriefTriggerDTO> triggers;
 
     public static final String[] PROPERTY_NAMES = {"templateid", "name"};
 
@@ -85,7 +89,21 @@ public class BriefTemplateDTO {
         return this;
     }
 
-    public static String[] getPropertyNames() {
-        return PROPERTY_NAMES;
+    public List<BriefDDLDTO> getDdls() {
+        return ddls;
+    }
+
+    public BriefTemplateDTO setDdls(List<BriefDDLDTO> ddls) {
+        this.ddls = ddls;
+        return this;
+    }
+
+    public List<BriefTriggerDTO> getTriggers() {
+        return triggers;
+    }
+
+    public BriefTemplateDTO setTriggers(List<BriefTriggerDTO> triggers) {
+        this.triggers = triggers;
+        return this;
     }
 }
